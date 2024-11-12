@@ -359,7 +359,7 @@
   <entry>
     <title>web入门php篇-ctfshow</title>
     <url>/2024/11/10/web%E5%85%A5%E9%97%A8php%E7%AF%87-ctfshow/</url>
-    <content><![CDATA[<h2 id="web89"><a href="#web89" class="headerlink" title="web89"></a>web89</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;num&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$num</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;num&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/[0-9]/&quot;</span>, <span class="variable">$num</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;no no no!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">intval</span>(<span class="variable">$num</span>))&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    <content><![CDATA[<h1 id="php特性"><a href="#php特性" class="headerlink" title="php特性"></a>php特性</h1><h2 id="web89"><a href="#web89" class="headerlink" title="web89"></a>web89</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;num&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$num</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;num&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/[0-9]/&quot;</span>, <span class="variable">$num</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;no no no!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">intval</span>(<span class="variable">$num</span>))&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
@@ -515,12 +515,57 @@
 
 <p>先审一下代码：</p>
 <p>$allow &#x3D; array();–创建了一个空数组 $allow，用来存储后续生成的随机数。</p>
+<p><strong>array_push</strong>($allow, <strong>rand</strong>(1, $i))代码解释</p>
+<h3 id="相关函数"><a href="#相关函数" class="headerlink" title="相关函数"></a>相关函数</h3><h4 id="rand-函数"><a href="#rand-函数" class="headerlink" title="rand()函数"></a>rand()函数</h4><ul>
+<li><code>rand()</code> 函数<ul>
+<li>这是 PHP 中的一个内置函数，用于生成一个随机整数。</li>
+<li>语法为 <code>**rand(int $min, int $max)**</code>，其中 <code>$min</code> 是生成随机数的下限，<code>$max</code> 是上限。</li>
+<li>在这里，<code>rand(1, $i)</code> 会生成一个介于 1 和 <code>$i</code>（当前循环迭代中的值）之间的随机整数。</li>
+</ul>
+</li>
+</ul>
+<h4 id="array-push-函数"><a href="#array-push-函数" class="headerlink" title="array_push()函数"></a><code>array_push()</code>函数</h4><ul>
+<li><code>array_push()</code> 函数<ul>
+<li>这是 PHP 中用于向数组末尾添加一个或多个元素的函数。</li>
+<li>语法为 <code>array_push(array &amp;$array, mixed ...$values)</code>，其中 <code>$array</code> 是要添加元素的数组，<code>$values</code> 是一个或多个要添加的值。</li>
+<li>在这里，<code>$allow</code> 是目标数组，而 <code>rand(1, $i)</code> 生成的随机数就是要添加的值。</li>
+</ul>
+</li>
+</ul>
+<h4 id="in-array-函数"><a href="#in-array-函数" class="headerlink" title="in_array() 函数"></a><code>in_array()</code> 函数</h4><ul>
+<li><p>这是 PHP 的一个内置函数，用于检查指定的值是否存在于数组中。</p>
+</li>
+<li><p>语法是</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">in_array</span>(<span class="keyword">mixed</span> <span class="variable">$needle</span>, <span class="keyword">array</span> <span class="variable">$haystack</span>, <span class="keyword">bool</span> <span class="variable">$strict</span> = <span class="literal">false</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong><code>$needle</code></strong>: 要搜索的值（在这个例子中是 <code>$_GET[&#39;n&#39;]</code>）。</li>
+<li><strong><code>$haystack</code></strong>: 要搜索的数组（在这个例子中是 <code>$allow</code>）。</li>
+<li>**<code>$strict</code>**（可选）：如果为 <code>true</code>，则在比较时会进行类型检查。</li>
+</ul>
+</li>
+</ul>
+<h4 id="file-put-contents-函数"><a href="#file-put-contents-函数" class="headerlink" title="file_put_contents()函数"></a><code>file_put_contents()</code>函数</h4><ul>
+<li><p>这是 PHP 的一个内置函数，用于将字符串写入文件。如果文件不存在，它会创建一个新文件；如果文件已存在，它会覆盖原文件的内容。</p>
+</li>
+<li><p>语法为</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">file_put_contents</span>(<span class="keyword">string</span> <span class="variable">$filename</span>, <span class="keyword">mixed</span> <span class="variable">$data</span>, <span class="keyword">int</span> <span class="variable">$flags</span> = <span class="number">0</span>, resource <span class="variable">$context</span> = <span class="literal">null</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong><code>$filename</code></strong>: 要写入的文件名，通常是包含路径的字符串。</li>
+<li><strong><code>$data</code></strong>: 要写入文件的内容，可以是字符串。</li>
+<li>**<code>$flags</code>**（可选）：可以使用的标志，例如 <code>FILE_APPEND</code> 来附加内容。</li>
+<li>**<code>$context</code>**（可选）：文件句柄的上下文</li>
+</ul>
+</li>
+</ul>
+<p>返回来看题目</p>
 ]]></content>
       <categories>
         <category>ctfshow</category>
       </categories>
       <tags>
-        <tag>web安全</tag>
+        <tag>php特性</tag>
       </tags>
   </entry>
   <entry>
