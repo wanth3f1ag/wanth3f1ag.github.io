@@ -2222,7 +2222,7 @@
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?</span> <span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;code&#x27;</span>]);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/GXYCTF/image-20241112211615761.png" alt="image-20241112211615761"></p>
-<p>发现有文件后缀的验证，先测试一下看看是前端验证还是后端</p>
+<p>发现有文件后缀的验证，<strong>由此我们得知，文件后缀不可以有ph，那么php3,php5,phtml等后缀自然无法使用了。</strong>先测试一下看看是前端验证还是后端</p>
 <p>先把文件后缀改成jpg格式，然后上传并抓包修改后缀为php，再放包</p>
 <p><img src="/./../image/achieve/202411/GXYCTF/image-20241112211943256.png" alt="image-20241112211943256"></p>
 <p>发现还是对后缀名进行了警告，说明应该不是前端的js验证后缀名了，考虑是不是文件头检测</p>
@@ -2233,6 +2233,7 @@
 <p><img src="/./../image/achieve/202411/GXYCTF/image-20241112212708540.png" alt="image-20241112212708540"></p>
 <p>不放心的话我们可以把2.jpg拖到010里面看一下是否有一句话木马</p>
 <p><img src="/./../image/achieve/202411/GXYCTF/image-20241112213954966.png" alt="image-20241112213954966"></p>
+<p>这里上传图片马记得修改后缀名，图片截的有问题</p>
 <p>也有警告,试一下00截断能不能绕过php</p>
 <p><img src="/./../image/achieve/202411/GXYCTF/image-20241112214958964.png" alt="image-20241112214958964"></p>
 <p>好吧，骗不过他</p>
@@ -2243,11 +2244,17 @@
 <p>意思是可以将上传的jpg文件当作php文件去解析</p>
 <p>然后将后缀名改成.htaccess</p>
 <p>上传看看能不能通过</p>
-<p>发现还是显示上传类型太露骨，没招了，想一想还有什么其他的方法</p>
-<p>突然想起来极客大挑战里面有一道类似的题目，是伪造jpg文件格式进行的文件上传</p>
-<p>那就试试呗</p>
-<p>前面既然图片马也不行，说明应该是对文件的内容进行了验证，例如一句话木马里面的php</p>
-<p>上传一个php文件，然后加上GIF89a伪造jpg格式看看能不能打通</p>
+<p>发现还是显示上传类型太露骨,应该是也对htaccess文件进行了过滤，我们试着把content_type头改一下</p>
+<p>修改如下</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241114231931492.png" alt="image-20241114231931492"></p>
+<p>发现上传成功，我们试着传一个jpg格式的一句话木马</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241114232718954.png" alt="image-20241114232718954"></p>
+<p>结果发现还是传不了，我直接换了一个木马，换成phtml的木马</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;script language=&quot;php&quot;&gt;eval($_REQUEST[cmd])&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241114232900177.png" alt="image-20241114232900177"></p>
+<p>发现这个上传成功了，那我们访问一下木马</p>
+<p>发现没有呈现图片，说明我们的phtml文件被解析执行了，那就直接用蚁剑连接找flag就行了</p>
 ]]></content>
       <categories>
         <category>赛题wp</category>
