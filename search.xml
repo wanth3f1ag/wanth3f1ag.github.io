@@ -861,20 +861,12 @@
 <h2 id="web108"><a href="#web108" class="headerlink" title="web108"></a>web108</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (<span class="title function_ invoke__">ereg</span> (<span class="string">&quot;^[a-zA-Z]+$&quot;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>])===<span class="literal">FALSE</span>)  &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&#x27;error&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//只有36d的人才能看到flag</span></span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">intval</span>(<span class="title function_ invoke__">strrev</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]))==<span class="number">0x36d</span>)&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="相关函数-5"><a href="#相关函数-5" class="headerlink" title="相关函数"></a>相关函数</h3><h4 id="ereg函数"><a href="#ereg函数" class="headerlink" title="ereg函数"></a>ereg函数</h4><p>是PHP旧版本中用于正则表达式匹配的函数，跟preg_match函数作用是一样的,</p>
-<h4 id="a-zA-Z"><a href="#a-zA-Z" class="headerlink" title="/^[a-zA-Z]+$/"></a><code>/^[a-zA-Z]+$/</code></h4><p>+号和$号配合表示用于匹配由纯字母组成的字符串</p>
-<ul>
-<li><code>+</code> 表示匹配一个或多个前面的字符（即字母）。</li>
-<li><code>$</code> 表示匹配字符串的结束位置。</li>
-</ul>
 <h4 id="strrev-函数"><a href="#strrev-函数" class="headerlink" title="strrev()函数"></a>strrev()函数</h4><p><code>strrev</code>是PHP内置的字符串函数，用于将字符串进行反转。它接受一个字符串作为参数，并返回反转后的结果。</p>
 <p>解题</p>
 <h3 id="00截断绕过ereg函数"><a href="#00截断绕过ereg函数" class="headerlink" title="00截断绕过ereg函数"></a>00截断绕过ereg函数</h3><p> ereg函数存在NULL截断漏洞，可以绕过正则过滤，使用%00截断。</p>
 <p>payload:c&#x3D;a%00778</p>
 <h2 id="web109"><a href="#web109" class="headerlink" title="web109"></a>web109</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;v1&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;v2&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$v1</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;v1&#x27;</span>];</span><br><span class="line">    <span class="variable">$v2</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;v2&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/[a-zA-Z]+/&#x27;</span>, <span class="variable">$v1</span>) &amp;&amp; <span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/[a-zA-Z]+/&#x27;</span>, <span class="variable">$v2</span>))&#123;</span><br><span class="line">            <span class="keyword">eval</span>(<span class="string">&quot;echo new <span class="subst">$v1</span>(<span class="subst">$v2</span>());&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="a-zA-Z-1"><a href="#a-zA-Z-1" class="headerlink" title="&#x2F;[a-zA-Z]+&#x2F;"></a>&#x2F;[a-zA-Z]+&#x2F;</h3><p>+号表示检查是否包含至少一个前面的字符</p>
-<p>preg_match(‘&#x2F;[a-zA-Z]+&#x2F;‘, $v1–使用<code>preg_match</code>函数来检查<code>$v1</code>的值是否包含至少一个字母，所以这里只需要v1和v2的字符串里面至少有一个字母就可以了</p>
-<p>eval(“echo new $v1($v2());”)–根据变量<code>$v1</code>的值创建一个新的对象，并调用这个对象的方法，将其返回值作为参数传递给<code>$v2</code>函数，然后将返回值输出到标准输出。</p>
 <p>解题:</p>
 <p>采用php的内置类进行解题</p>
 <p>首先我们要了解到，这里的echo是把v1当成字符串进行输出，那可以想到当一个实例化对象被当作字符产输出的时候会触发什么方法，答案就是__string()魔术方法，那我们把带有这个方法的类列出来</p>
@@ -1224,7 +1216,102 @@
 <p>说白了就是<strong>PHP对无法使用的filter过滤器只会抛出warning而不是error，还是能正常执行的</strong></p>
 </li>
 </ol>
-<h2 id="web130"><a href="#web130" class="headerlink" title="web130"></a>web130</h2>]]></content>
+<h2 id="web130"><a href="#web130" class="headerlink" title="web130"></a>web130</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">very very very（省略25万个very）ctfshow</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;f&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$f</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;f&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/.+?ctfshow/is&#x27;</span>, <span class="variable">$f</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&#x27;bye!&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">stripos</span>(<span class="variable">$f</span>, <span class="string">&#x27;ctfshow&#x27;</span>) === <span class="literal">FALSE</span>)&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&#x27;bye!!&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="非贪婪模式-？"><a href="#非贪婪模式-？" class="headerlink" title=".+?非贪婪模式(.*？)"></a>.+?非贪婪模式(.*？)</h3><ul>
+<li><p><strong>非贪婪模式</strong>：通过在量词后添加 <code>?</code>，使得匹配尽可能少的字符，直到找到第一个满足整个表达式的匹配。</p>
+</li>
+<li><h3 id="常用的量词与非贪婪模式"><a href="#常用的量词与非贪婪模式" class="headerlink" title="常用的量词与非贪婪模式"></a>常用的量词与非贪婪模式</h3><p>为了使用非贪婪模式，可以在以下量词后添加 <code>?</code>：</p>
+<ul>
+<li><code>*?</code>：匹配零个或多个字符（非贪婪）。</li>
+<li><code>+?</code>：匹配一个或多个字符（非贪婪）。</li>
+<li><code>??</code>：匹配零个或一个字符（非贪婪）。</li>
+<li><code>&#123;n,m&#125;?</code>：匹配至少 n 个字符，至多 m 个字符（非贪婪）。</li>
+</ul>
+</li>
+<li><p>.+?”表示非贪婪匹配，即前面的字符至少出现一次</p>
+</li>
+</ul>
+<h4 id="s正则匹配"><a href="#s正则匹配" class="headerlink" title="&#x2F;s正则匹配"></a>&#x2F;s正则匹配</h4><ul>
+<li>这个修饰符表示点号 <code>.</code> 可以匹配换行符。这意味着在多行文本中，<code>.</code> 也可以匹配换行符后的字符。</li>
+</ul>
+<p>所以这个正则匹配的意思是，如果ctfshow前面有任意字符，则匹配成功</p>
+<p>那我们直接传入ctfshow就可以了，只要前面没有字符的话就能同时满足两个if判断</p>
+<p>还有别的方法，我们放在下道题进行深入讲解</p>
+<h2 id="web131"><a href="#web131" class="headerlink" title="web131"></a>web131</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;f&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$f</span> = (String)<span class="variable">$_POST</span>[<span class="string">&#x27;f&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/.+?ctfshow/is&#x27;</span>, <span class="variable">$f</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&#x27;bye!&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">stripos</span>(<span class="variable">$f</span>,<span class="string">&#x27;36Dctfshow&#x27;</span>) === <span class="literal">FALSE</span>)&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&#x27;bye!!&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话一个是得满足ctfshow前面不能有字符，另一个是需要ctfshow前面有36D字符串，这种情况下只能用新的方法了</p>
+<h3 id="正则最大回溯"><a href="#正则最大回溯" class="headerlink" title="正则最大回溯"></a>正则最大回溯</h3><p>在正则匹配中往往有一定的限制，我们可以利用正则最大回溯来超过限制使得正则返回false</p>
+<p>在php的扩展中提供了两个设置项</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span>. pcre.backtrack_limit <span class="comment">//最大回溯数</span></span><br><span class="line"><span class="number">2</span>. pcre.recursion_limit <span class="comment">//最大嵌套数</span></span><br></pre></td></tr></table></figure>
+
+<p>PHP为了防止正则表达式的拒绝服务攻击（reDOS），给pcre设定了一个回溯次数上限pcre.backtrack_limit，默认的backtarck_limit是1000000(100万).</p>
+<p>我们可以通过var_dump(ini_get(‘pcre.backtrack_limit’));的方式查看当前环境下的上限：结果返回为1000000</p>
+<h4 id="非贪婪模式的详解"><a href="#非贪婪模式的详解" class="headerlink" title="非贪婪模式的详解"></a>非贪婪模式的详解</h4><p>在非贪婪模式下， 在可配可不配的情况下，优先不匹配，先将匹配控制交给正则表达式的下一个匹配字符。当之后的匹配失败的时候再回溯，进行匹配</p>
+<p>举个例子</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">匹配的字符串: aaab</span><br><span class="line">正则匹配的字符: .*?b</span><br></pre></td></tr></table></figure>
+
+<p>匹配过程开始的时候, “.<em>?”首先取得匹配控制权, 因为是非贪婪模式, 所以优先不匹配, 将匹配控制交给下一个匹配字符”b”, “b”在源字符串位置1匹配失败(“a”), 于是回溯, 将匹配控制交回给”.</em>?”, 这个时候, “.*?”匹配一个字符”a”, 并再次将控制权交给”b”, 如此反复, 最终得到匹配结果, 这个过程中一共发生了3次回溯.</p>
+<p>利用这个原理，我们可以想到默认的backtarck_limit是十万，所以只要我们让我们的回溯次数超过十万，就会导致匹配失败而退出</p>
+<h3 id="回溯上限绕过脚本"><a href="#回溯上限绕过脚本" class="headerlink" title="回溯上限绕过脚本"></a>回溯上限绕过脚本</h3><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">import requests</span><br><span class="line"> </span><br><span class="line">url=<span class="string">&#x27;http://7827dca0-b812-4948-bac9-0cd382fd656e.challenge.ctf.show/&#x27;</span><span class="comment">#目标url</span></span><br><span class="line">data=&#123;</span><br><span class="line">    <span class="string">&#x27;f&#x27;</span>:<span class="string">&#x27;very&#x27;</span>*<span class="number">250000</span>+<span class="string">&#x27;36Dctfshow&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line">r=requests.<span class="title function_ invoke__">post</span>(url=url,data=data).text</span><br><span class="line"><span class="keyword">print</span>(r)</span><br></pre></td></tr></table></figure>
+
+<p>因为very是四个字符，每个字符都要回溯一次，所以为了达到100万次的上限制，只需要25万个very就行，达到100万次回溯后，后面的36D再进行3次回溯，此时已经超过了限制，就会使正则返回false达到绕过</p>
+<h2 id="web132"><a href="#web132" class="headerlink" title="web132"></a>web132</h2><p>怎么打开是一个网站</p>
+<p><img src="/./../image/achieve/202411/php%E7%89%B9%E6%80%A7---ctfshow/image-20241115145427795.png" alt="image-20241115145427795"></p>
+<p>在源码中没发现什么信息，用dirsearch扫一下目录</p>
+<p><img src="/./../image/achieve/202411/php%E7%89%B9%E6%80%A7---ctfshow/image-20241115150015507.png" alt="image-20241115150015507"></p>
+<p>发现了一个&#x2F;robots.txt，应该是robots协议</p>
+<p>还有一个admin，访问看看</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;username&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;code&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$username</span> = (String)<span class="variable">$_GET</span>[<span class="string">&#x27;username&#x27;</span>];</span><br><span class="line">    <span class="variable">$password</span> = (String)<span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>];</span><br><span class="line">    <span class="variable">$code</span> = (String)<span class="variable">$_GET</span>[<span class="string">&#x27;code&#x27;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$code</span> === <span class="title function_ invoke__">mt_rand</span>(<span class="number">1</span>,<span class="number">0x36D</span>) &amp;&amp; <span class="variable">$password</span> === <span class="variable">$flag</span> || <span class="variable">$username</span> ===<span class="string">&quot;admin&quot;</span>)&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(<span class="variable">$code</span> == <span class="string">&#x27;admin&#x27;</span>)&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="mt-rand-函数"><a href="#mt-rand-函数" class="headerlink" title="mt_rand()函数"></a>mt_rand()函数</h3><p><code>mt_rand()</code> 是 PHP 中的一个随机数生成函数，用于生成伪随机整数。</p>
+<p>函数语法:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> <span class="title function_ invoke__">mt_rand</span>(<span class="keyword">int</span> <span class="variable">$min</span> = <span class="number">0</span>, <span class="keyword">int</span> <span class="variable">$max</span> = MT_RAND_MAX);</span><br></pre></td></tr></table></figure>
+
+<p>参数说明</p>
+<ul>
+<li><strong><code>$min</code></strong>: （可选）生成的随机数的最小值，默认为 <code>0</code>。</li>
+<li><strong><code>$max</code></strong>: （可选）生成的随机数的最大值，默认为 <code>MT_RAND_MAX</code>，通常是 <code>2147483647</code>（即 PHP 中 <code>mt_rand</code> 的最大返回值）。</li>
+</ul>
+<p>返回值</p>
+<ul>
+<li>返回一个介于 <code>$min</code> 和 <code>$max</code> 之间的伪随机整数（包括 <code>$min</code> 和 <code>$max</code>）。</li>
+</ul>
+<p>所以这里会生成1-877之间的随机数</p>
+<p>这里的三个条件通过逻辑运算符连接，不过我们应该先了解一下逻辑运算符的优先级</p>
+<h3 id="逻辑运算符优先级"><a href="#逻辑运算符优先级" class="headerlink" title="逻辑运算符优先级"></a>逻辑运算符优先级</h3><ol>
+<li>**<code>!</code>**（逻辑非，取反）:<ul>
+<li>这是唯一的单目运算符，优先级最高。</li>
+<li><code>!a</code> 表示如果 <code>a</code> 为 <code>false</code>，则结果为 <code>true</code>，反之亦然。</li>
+</ul>
+</li>
+<li>**<code>&amp;&amp;</code>**（逻辑与）:<ul>
+<li>优先级高于 <code>||</code>。</li>
+<li>表达式 <code>a &amp;&amp; b</code> 只有在 <code>a</code> 和 <code>b</code> 都为 <code>true</code> 时结果为 <code>true</code>。</li>
+</ul>
+</li>
+<li>**<code>||</code>**（逻辑或）:<ul>
+<li>优先级低于 <code>&amp;&amp;</code>。</li>
+<li>表达式 <code>a || b</code> 只需 <code>a</code> 或 <code>b</code> 至少有一个为 <code>true</code>，结果即为 <code>true</code>。</li>
+</ul>
+</li>
+</ol>
+<p>这里可以看到，&amp;&amp;的优先级高于||，所以里面的语句可以分成</p>
+<p> if( [$code &#x3D;&#x3D;&#x3D; mt_rand(1,0x36D) &amp;&amp; $password &#x3D;&#x3D;&#x3D; $flag] || $username &#x3D;&#x3D;&#x3D;”admin”)</p>
+<p>这样来看，如果前面两个条件有一个不满足，都会返回false，但在||语句中，只要有一个条件满足即可，所以只要让后面的username满足条件就可以通过if判断语句,第一个if语句满足了，第二个语句就相对容易的多了</p>
+<p>payload:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Payload：?code=admin&amp;password=1&amp;username=admin</span><br></pre></td></tr></table></figure>
+
+<h2 id="web133"><a href="#web133" class="headerlink" title="web133"></a>web133</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="variable">$F</span> = @<span class="variable">$_GET</span>[<span class="string">&#x27;F&#x27;</span>])&#123;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/system|nc|wget|exec|passthru|netcat/i&#x27;</span>, <span class="variable">$F</span>))&#123;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="title function_ invoke__">substr</span>(<span class="variable">$F</span>,<span class="number">0</span>,<span class="number">6</span>));</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;6个字母都还不够呀?!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>@</code> 符号</strong>:</p>
+<ul>
+<li>这是 PHP 的错误抑制运算符。使用 <code>@</code> 运算符可以抑制表达式中可能出现的任何错误或警告。</li>
+</ul>
+<p>这道题限制了参数的字符串长度</p>
+]]></content>
       <categories>
         <category>ctfshow</category>
       </categories>
