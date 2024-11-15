@@ -1103,10 +1103,10 @@
 <h2 id="web126"><a href="#web126" class="headerlink" title="web126"></a>web126</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="variable">$a</span>=<span class="variable">$_SERVER</span>[<span class="string">&#x27;argv&#x27;</span>];</span><br><span class="line"><span class="variable">$c</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;fun&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;CTF_SHOW&#x27;</span>])&amp;&amp;<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;CTF_SHOW.COM&#x27;</span>])&amp;&amp;!<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;fl0g&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/\\\\|\/|\~|\`|\!|\@|\#|\%|\^|\*|\-|\+|\=|\&#123;|\&#125;|\&quot;|\&#x27;|\,|\.|\;|\?|flag|GLOBALS|echo|var_dump|print|g|i|f|c|o|d/i&quot;</span>, <span class="variable">$c</span>) &amp;&amp; <span class="title function_ invoke__">strlen</span>(<span class="variable">$c</span>)&lt;=<span class="number">16</span>)&#123;</span><br><span class="line">         <span class="keyword">eval</span>(<span class="string">&quot;<span class="subst">$c</span>&quot;</span>.<span class="string">&quot;;&quot;</span>);  </span><br><span class="line">         <span class="keyword">if</span>(<span class="variable">$fl0g</span>===<span class="string">&quot;flag_give_me&quot;</span>)&#123;</span><br><span class="line">             <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">         &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>解法和前面的是一样的，没什么大变化</p>
-<h2 id="web127"><a href="#web127" class="headerlink" title="web127"></a>web127</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$ctf_show</span> = <span class="title function_ invoke__">md5</span>(<span class="variable">$flag</span>);</span><br><span class="line"><span class="variable">$url</span> = <span class="variable">$_SERVER</span>[<span class="string">&#x27;QUERY_STRING&#x27;</span>];</span><br><span class="line"><span class="comment">//特殊字符检测</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">waf</span>(<span class="params"><span class="variable">$url</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/\`|\~|\!|\@|\#|\^|\*|\(|\)|\\$|\_|\-|\+|\&#123;|\;|\:|\[|\]|\&#125;|\&#x27;|\&quot;|\&lt;|\,|\&gt;|\.|\\\|\//&#x27;</span>, <span class="variable">$url</span>))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">waf</span>(<span class="variable">$url</span>))&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&quot;嗯哼？&quot;</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">extract</span>(<span class="variable">$_GET</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$ctf_show</span>===<span class="string">&#x27;ilove36d&#x27;</span>)&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="web127"><a href="#web127" class="headerlink" title="web127"></a>web127</h2><h3 id="绕过-SERVER-‘QUERY-STRING’"><a href="#绕过-SERVER-‘QUERY-STRING’" class="headerlink" title="#绕过$_SERVER[‘QUERY_STRING’]"></a>#绕过$_SERVER[‘QUERY_STRING’]</h3><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$ctf_show</span> = <span class="title function_ invoke__">md5</span>(<span class="variable">$flag</span>);</span><br><span class="line"><span class="variable">$url</span> = <span class="variable">$_SERVER</span>[<span class="string">&#x27;QUERY_STRING&#x27;</span>];</span><br><span class="line"><span class="comment">//特殊字符检测</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">waf</span>(<span class="params"><span class="variable">$url</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/\`|\~|\!|\@|\#|\^|\*|\(|\)|\\$|\_|\-|\+|\&#123;|\;|\:|\[|\]|\&#125;|\&#x27;|\&quot;|\&lt;|\,|\&gt;|\.|\\\|\//&#x27;</span>, <span class="variable">$url</span>))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">waf</span>(<span class="variable">$url</span>))&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&quot;嗯哼？&quot;</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">extract</span>(<span class="variable">$_GET</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$ctf_show</span>===<span class="string">&#x27;ilove36d&#x27;</span>)&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这里就是得绕过$url &#x3D; $_SERVER[‘QUERY_STRING’];</p>
-<h3 id="绕过-SERVER-‘QUERY-STRING’"><a href="#绕过-SERVER-‘QUERY-STRING’" class="headerlink" title="绕过$_SERVER[‘QUERY_STRING’]"></a>绕过$_SERVER[‘QUERY_STRING’]</h3><p>payload1:</p>
+<p>payload1:</p>
 <p>因为$_SERVER[‘QUERY_STRING’]是用于获取查询语句(即?号之后的参数)的</p>
 <p><code>$_SERVER[&#39;QUERY_STRING&#39;];</code>获取的查询语句是服务端还没url解码的，所以url编码绕过即可&#96;</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line">?ctf%5fshow=ilove36d</span><br></pre></td></tr></table></figure>
@@ -1118,7 +1118,113 @@
 <p>我们来看看哪些不合法的字符会被解析成下划线</p>
 <h3 id="不合法变量名字符的解析"><a href="#不合法变量名字符的解析" class="headerlink" title="不合法变量名字符的解析"></a>不合法变量名字符的解析</h3><p>在php中，解析字符串变量名的时候，会将一些非法字符转化成下划线，因此我们可以借助这个绕过url获取查询语句的验证</p>
 <p>能够被解析成_的ascii为，+(空格) . %5B([) _</p>
-]]></content>
+<h2 id="web128"><a href="#web128" class="headerlink" title="web128"></a>web128</h2><h3 id="无数字无字母函数"><a href="#无数字无字母函数" class="headerlink" title="#无数字无字母函数"></a>#无数字无字母函数</h3><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$f1</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;f1&#x27;</span>];</span><br><span class="line"><span class="variable">$f2</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;f2&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">check</span>(<span class="variable">$f1</span>))&#123;</span><br><span class="line">    <span class="title function_ invoke__">var_dump</span>(<span class="title function_ invoke__">call_user_func</span>(<span class="title function_ invoke__">call_user_func</span>(<span class="variable">$f1</span>,<span class="variable">$f2</span>)));</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;嗯哼？&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check</span>(<span class="params"><span class="variable">$str</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> !<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/[0-9]|[a-z]/i&#x27;</span>, <span class="variable">$str</span>);</span><br><span class="line">&#125; <span class="literal">NULL</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="相关函数-6"><a href="#相关函数-6" class="headerlink" title="相关函数"></a>相关函数</h3><h4 id="call-user-func-函数-1"><a href="#call-user-func-函数-1" class="headerlink" title="call_user_func()函数"></a>call_user_func()函数</h4><p>在 PHP 中，<code>call_user_func()</code> 函数用于调用一个回调函数。这个函数非常灵活，可以用来调用普通的用户定义函数、静态方法、对象方法等</p>
+<p>基础语法</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">mixed</span> <span class="title function_ invoke__">call_user_func</span>(<span class="keyword">callable</span> <span class="variable">$callback</span>, <span class="keyword">mixed</span> ...<span class="variable">$parameters</span>)</span><br></pre></td></tr></table></figure>
+
+<p>参数说明</p>
+<ul>
+<li><strong>$callback</strong>: 要调用的函数名或方法（可以是字符串或数组）。</li>
+<li><strong>$parameters</strong>: 可变参数，可以传入给回调函数的参数。</li>
+</ul>
+<p>返回值</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">call_user_func()` 将返回被调用函数的返回值。如果要调用的函数没有返回值，则返回 `NULL</span><br></pre></td></tr></table></figure>
+
+<p>回到题目</p>
+<p>这里对f1进行了字母数字的过滤</p>
+<p>对于call_user_func()函数的嵌套，我们可以看到，如果f1是一个可执行的函数，那么这个call_user_func()函数会执行f1函数并传入f2作为参数，但因为外层还有一个call_user_func()函数，所以内部的返回值必须是另一个可调用的函数</p>
+<p>搜查资料可以找到一个函数_()，即 gettext()的拓展函数，但是要求php扩展目录下有php_gettext.dll这个文件</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$domain</span> = <span class="string">&#x27;test&#x27;</span>;</span><br><span class="line"><span class="title function_ invoke__">bindtextdomain</span>(<span class="variable">$domain</span>, <span class="string">&quot;locale/&quot;</span>);<span class="comment">//设置某个域的mo文件路径</span></span><br><span class="line"><span class="title function_ invoke__">textdomain</span>(<span class="variable">$domain</span>);<span class="comment">//设置gettext()函数从哪个域去找mo文件</span></span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">_</span>(<span class="string">&quot;Hi,phper!&quot;</span>);<span class="comment">//_()是gettext()函数的简写形式</span></span><br></pre></td></tr></table></figure>
+
+<p><code>_()</code> 函数在 PHP 中通常用于国际化和本地化的字符串翻译</p>
+<p>所以f1设为_就可以绕过验证也能将内置函数的返回值输出出来，所以f2设置为另一个可以读取flag的函数就可以了</p>
+<p>这里我们将f2设置为get_defined_vars()函数</p>
+<h3 id="get-defined-vars-函数"><a href="#get-defined-vars-函数" class="headerlink" title="get_defined_vars()函数"></a>get_defined_vars()函数</h3><p><code>get_defined_vars()</code> 是 PHP 的一个内置函数，它用于返回当前作用域中所有已定义变量的关联数组,这个函数非常有用，特别是在调试过程中，因为它可以让开发者查看当前作用域内的所有变量及其值。</p>
+<p>基础用法</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">array</span> <span class="title function_ invoke__">get_defined_vars</span>(<span class="keyword">void</span>)</span><br></pre></td></tr></table></figure>
+
+<p>返回值</p>
+<p><code>get_defined_vars()</code> 返回一个关联数组，数组的键是变量名，值是对应的变量值。</p>
+<p>所以最终的payload是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Payload：?f1=_&amp;f2=get_defined_vars</span><br></pre></td></tr></table></figure>
+
+<h2 id="web129"><a href="#web129" class="headerlink" title="web129"></a>web129</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;f&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$f</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;f&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">stripos</span>(<span class="variable">$f</span>, <span class="string">&#x27;ctfshow&#x27;</span>)&gt;<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="title function_ invoke__">readfile</span>(<span class="variable">$f</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="stripos-函数"><a href="#stripos-函数" class="headerlink" title="stripos()函数"></a>stripos()函数</h3><p><code>stripos()</code> 是 PHP 的一个内置函数，用于在一个字符串中查找另一个字符串的首次出现位置，比较时不区分大小写</p>
+<p>基础语法</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> <span class="title function_ invoke__">stripos</span>(<span class="keyword">string</span> <span class="variable">$haystack</span>, <span class="keyword">string</span> <span class="variable">$needle</span>, <span class="keyword">int</span> <span class="variable">$offset</span> = <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<p>参数</p>
+<p><strong>$haystack</strong>: 要搜索的目标字符串。</p>
+<p><strong>$needle</strong>: 要查找的子字符串。</p>
+<p><strong>$offset</strong>: 可选参数，指定从哪个位置开始搜索。默认值是 0。</p>
+<p>返回值</p>
+<ul>
+<li>如果找到 <code>$needle</code>，则返回 <code>$needle</code> 在 <code>$haystack</code> 中首次出现的位置（以 0 为起始索引）。</li>
+<li>如果未找到，返回 <code>FALSE</code>。</li>
+</ul>
+<h3 id="readfile-函数"><a href="#readfile-函数" class="headerlink" title="readfile()函数"></a>readfile()函数</h3><p><code>readfile()</code> 是 PHP 的一个内置函数，用于读取文件并将其内容发送到输出缓冲区</p>
+<p>基础语法</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> <span class="title function_ invoke__">readfile</span>(<span class="keyword">string</span> <span class="variable">$filename</span>, <span class="keyword">bool</span> <span class="variable">$use_include_path</span> = <span class="literal">false</span>, resource <span class="variable">$context</span> = <span class="literal">null</span>)</span><br></pre></td></tr></table></figure>
+
+<p>参数</p>
+<ul>
+<li><strong>$filename</strong>: 要读取的文件的路径（可以是相对路径或绝对路径）。</li>
+<li><strong>$use_include_path</strong>: 可选参数，表示是否在包括路径中查找文件。默认为 <code>false</code>。</li>
+<li><strong>$context</strong>: 可选参数，指定一个上下文资源，用于修改文件的读取行为（例如，设置流选项）。</li>
+</ul>
+<p>返回值</p>
+<ul>
+<li>返回读取的字节数，或者在出错时返回 <code>false</code>。</li>
+</ul>
+<p>解题</p>
+<p>stripos($f, ‘ctfshow’)&gt;0–用于检查字符串 <code>$f</code> 中是否包含子字符串 <code>&#39;ctfshow&#39;</code>，并且这个子字符串第一次出现的位置是否大于 0</p>
+<p>因为readfile()函数是输出一个文件，所以我们的f中应该包含一个文件目录</p>
+<p>但是因为我们不知道flag在哪层目录里面，所以我们试一下目录穿越</p>
+<h3 id="目录穿越"><a href="#目录穿越" class="headerlink" title="目录穿越"></a>目录穿越</h3><p><strong>定义与原理</strong></p>
+<ul>
+<li>定义：目录穿越是指攻击者通过构造特定的URL或请求，绕过Web应用程序的安全机制，访问或执行服务器上的任意文件或命令。</li>
+<li>原理：在文件系统路径中，.. 表示上一级目录。攻击者可以利用这一点，通过构造包含多个 ..&#x2F; 的URL或请求，逐步向上移动目录树，直到能够访问到服务器上的敏感文件或执行受限命令。</li>
+</ul>
+<p><strong>常见攻击手法</strong></p>
+<ul>
+<li>URL参数：攻击者可以在URL中插入 ..&#x2F; 序列，尝试访问上级目录中的文件。</li>
+<li>文件绝对路径：在某些情况下，攻击者可能会尝试使用文件的绝对路径来直接访问目标文件。</li>
+<li>绕过手段：为了绕过Web应用程序的安全检查，攻击者可能会使用URL编码、单次替换（双写）、截断绕过等技巧来构造恶意请求。</li>
+</ul>
+<p>所以我们构造payload</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?f=/ctfshow/../../../../var/www/html/flag.php</span><br></pre></td></tr></table></figure>
+
+<p>其中的..&#x2F;..&#x2F;..&#x2F;这是深层目录，根据需要尝试，另外目录是根据之前的题目猜测得到，var&#x2F;www&#x2F;html&#x2F;index.php也有回显</p>
+<p>或者也可以直接用包装器进行读取flag</p>
+<p>Payload：?f&#x3D;php:&#x2F;&#x2F;filter&#x2F;ctfshow&#x2F;resource&#x3D;flag.php，只要包含了ctfshow且出现位置不为0都可以通过验证</p>
+<p>我一开始很疑惑，这里面的ctfshow不会影响这个payload的实现吗，然后我搜寻了一下得到了较为合理的解释</p>
+<p>在 PHP 中，<code>php://filter</code> 是一个特殊的流包装器，它用于对数据进行过滤或处理。你提到的 payload <code>?f=php://filter/ctfshow/resource=flag.php</code> 使用了 <code>php://filter</code> 来访问名为 <code>flag.php</code> 的文件，并且遭遇到的 <code>stripos($f, &#39;ctfshow&#39;) &gt; 0</code> 检查实际上不会影响对 <code>flag.php</code> 读取的执行。</p>
+<h3 id="要点-PHP对无法使用的filter过滤器只会抛出warning而不是error"><a href="#要点-PHP对无法使用的filter过滤器只会抛出warning而不是error" class="headerlink" title="要点:PHP对无法使用的filter过滤器只会抛出warning而不是error"></a>要点:PHP对无法使用的filter过滤器只会抛出warning而不是error</h3><p>ctfshow过滤器解析</p>
+<ol>
+<li><p><strong>流包装器的工作原理</strong>：</p>
+<ul>
+<li><code>php://filter</code> 允许你对资源进行过滤。在这个情况下，<code>php://filter/ctfshow/resource=flag.php</code> 被理解为请求流过滤器 <code>ctfshow</code> 来处理文件 <code>flag.php</code> 的内容。</li>
+<li><code>ctfshow</code> 在此处并不是直接影响文件读取的内容，而是作为过滤器存在。</li>
+</ul>
+</li>
+<li><p><strong><code>stripos</code> 检查</strong>：</p>
+<ul>
+<li>当 <code>stripos($f, &#39;ctfshow&#39;)</code> 被调用时，它会返回 <code>15</code>（<code>ctfshow</code> 在字符串中的起始索引），因为这个字符串是 <code>php://filter/ctfshow/resource=flag.php</code>。这意味着这个条件会为 <code>true</code>，后续代码将继续执行。</li>
+<li>这里的 <code>ctfshow</code> 实际上不会干扰读取 <code>flag.php</code>，反而它是被作为处理该文件的一部分。</li>
+</ul>
+</li>
+<li><p><strong>文件读取的过程</strong>：</p>
+<ul>
+<li>当 PHP 处理这个请求时，它首先识别到 <code>php://filter</code>，然后应用 <code>ctfshow</code> 过滤器。接着，PHP 会读取 <code>flag.php</code> 文件的内容。</li>
+<li><code>ctfshow</code> 作为过滤器的作用是对输出进行操作，而不是改变读取的文件内容或路径。</li>
+</ul>
+<p>说白了就是<strong>PHP对无法使用的filter过滤器只会抛出warning而不是error，还是能正常执行的</strong></p>
+</li>
+</ol>
+<h2 id="web130"><a href="#web130" class="headerlink" title="web130"></a>web130</h2>]]></content>
       <categories>
         <category>ctfshow</category>
       </categories>
