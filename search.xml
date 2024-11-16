@@ -472,7 +472,13 @@
 
 
 
-<h2 id="GXYCTF2019-StrongestMind"><a href="#GXYCTF2019-StrongestMind" class="headerlink" title="[GXYCTF2019]StrongestMind"></a>[GXYCTF2019]StrongestMind</h2>]]></content>
+<h2 id="GXYCTF2019-StrongestMind"><a href="#GXYCTF2019-StrongestMind" class="headerlink" title="[GXYCTF2019]StrongestMind"></a>[GXYCTF2019]StrongestMind</h2><p><img src="/./../image/achieve/202411/GXYCTF/image-20241116173131330.png" alt="image-20241116173131330"></p>
+<p>算出来填进去看看回显</p>
+<p>发现每次的计算都不一样，那bp抓包提交应该是不行的了，只能写个脚本</p>
+<h3 id="加减法计算脚本"><a href="#加减法计算脚本" class="headerlink" title="加减法计算脚本"></a>加减法计算脚本</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;http://eab93a71-409b-4df1-acfa-26ef255f32a1.node5.buuoj.cn:81/&quot;</span></span><br><span class="line">s = requests.session()</span><br><span class="line">key = re.<span class="built_in">compile</span>(<span class="string">r&#x27;\d+ [-|+] \d+&#x27;</span>)<span class="comment"># 匹配数字加减</span></span><br><span class="line">r = s.get(url=url)<span class="comment"># 获取页面</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">1001</span>):</span><br><span class="line">    a = key.findall(r.text)[<span class="number">0</span>]   <span class="comment"># 匹配第一组:例子 123+456</span></span><br><span class="line">    aa = <span class="built_in">eval</span>(a)<span class="comment"># 计算结果</span></span><br><span class="line">    data = &#123;<span class="string">&quot;answer&quot;</span>: aa&#125;<span class="comment"># 构造提交数据</span></span><br><span class="line">    time.sleep(<span class="number">0.01</span>)<span class="comment"># 延时0.01秒，但不能太快</span></span><br><span class="line">    r = s.post(url=url, data=data)<span class="comment"># 提交数据</span></span><br><span class="line">    r.encoding = <span class="string">&#x27;utf-8&#x27;</span><span class="comment"># 设置编码</span></span><br><span class="line">    <span class="built_in">print</span>(r.text)<span class="comment"># 打印页面内容</span></span><br></pre></td></tr></table></figure>
+
+<p>如果觉得慢的话可以写多线程的或者设置延时时间，这样会快得多，但也容易出现429</p>
+]]></content>
       <categories>
         <category>赛题wp</category>
       </categories>
