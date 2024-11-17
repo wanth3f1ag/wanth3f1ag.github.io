@@ -3205,6 +3205,12 @@
 <p>目录:&#x2F;var&#x2F;www&#x2F;html&#x2F;wap&#x2F;top.php</p>
 <p><img src="https://i-blog.csdnimg.cn/blog_migrate/daaf22b50308e91c4b10a16a032eb322.png#pic_center" alt="img"></p>
 <p>通过对日志文件的排查，最终可以确定top.php文件是恶意文件</p>
+<p>我的方法比较有运气成分，我猜测免杀马用的是base64编码加密，所以我直接手动搜索</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">find ./ -name &quot;*.php&quot; | xargs grep &quot;base64_decode&quot;</span><br></pre></td></tr></table></figure>
+
+<p>这里在<code>/var/www/html/wap/top.php</code>中找到了 Base64 加密方法 <img src="https://s2.loli.net/2024/05/15/VgpkDEW4SxOhbIv.png" alt="img"></p>
+<p>打开看一下这个疑似的文件</p>
+<p><img src="https://s2.loli.net/2024/05/15/NgLJ3dGqirWsDjw.png" alt="img"></p>
 <h6 id="为什么可以确认是恶意文件？"><a href="#为什么可以确认是恶意文件？" class="headerlink" title="为什么可以确认是恶意文件？"></a>为什么可以确认是恶意文件？</h6><ul>
 <li>混淆和隐藏：</li>
 </ul>
@@ -3217,12 +3223,6 @@
 <li>外部输入：</li>
 </ul>
 <p>使用$_GET参数来控制代码行为。通过外部输入来决定代码逻辑，使得攻击者可以远程控制服务器，执行任意PHP代码。</p>
-<p>我的方法比较有运气成分，我猜测免杀马用的是base64编码加密，所以我直接手动搜索</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">find ./ -name &quot;*.php&quot; | xargs grep &quot;base64_decode&quot;</span><br></pre></td></tr></table></figure>
-
-<p>这里在<code>/var/www/html/wap/top.php</code>中找到了 Base64 加密方法 <img src="https://s2.loli.net/2024/05/15/VgpkDEW4SxOhbIv.png" alt="img"></p>
-<p>打开看一下这个疑似的文件</p>
-<p><img src="https://s2.loli.net/2024/05/15/NgLJ3dGqirWsDjw.png" alt="img"></p>
 ]]></content>
       <categories>
         <category>玄机第一章应急响应</category>
