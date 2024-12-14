@@ -8244,7 +8244,9 @@
 <h4 id="sql万能密码"><a href="#sql万能密码" class="headerlink" title="sql万能密码"></a>sql万能密码</h4><h5 id="永真语句"><a href="#永真语句" class="headerlink" title="永真语句"></a>永真语句</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27; or 1=1 </span><br><span class="line"></span><br><span class="line">&#x27; or &#x27;or&#x27;=&#x27;or&#x27;</span><br></pre></td></tr></table></figure>
 
 <p>通过一个永真判断登录，其中，1&#x3D;1恒为真。由于OR运算符的两侧只要有一侧为真，整个表达式就为真，因此整个查询条件就恒为真。这导致无论用户名是什么，只要密码是万能密码，用户都能通过验证。</p>
-<h3 id="堆叠注入"><a href="#堆叠注入" class="headerlink" title="堆叠注入"></a>堆叠注入</h3><p>分号<code>;</code>为MYSQL语句的结束符，若在支持多语句执行的情况下，可利用此方法执行其他恶意语句。比如有函数mysqli_multi_query()，它支持执行一个或多个针对数据库的查询，查询语句使用分号隔开。如果正常的语句是：</p>
+<h3 id="堆叠注入"><a href="#堆叠注入" class="headerlink" title="堆叠注入"></a>堆叠注入</h3><p>堆叠注入就是 <strong>通过添加一个新的查询或者终止查询( ; )，可以达到 修改数据 和 调用存储过程 的目的</strong></p>
+<p>在我们的Web系统中，因为代码通常只返回一个查询结果，因此，堆叠注入第二个语句产生的错误或者结果只能被忽略，我们在前端界面是无法看到返回结果的。因此，在读取数据时，我们建议使用union（联合）注入。同时在使用堆叠注入之前，我们也是需要知道一些数据库相关信息的，例如表名，列名等信息。</p>
+<p>分号<code>;</code>为MYSQL语句的结束符，若在支持多语句执行的情况下，可利用此方法执行其他恶意语句。比如有函数mysqli_multi_query()，它支持执行一个或多个针对数据库的查询，查询语句使用分号隔开。如果正常的语句是：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 1;</span><br></pre></td></tr></table></figure>
 
 <p>若支持堆叠注入，我们就可以在后面添加自己的语句执行命令，如：</p>
@@ -8907,13 +8909,18 @@
 <p>这里的话是把select过滤了的，没办法用上一题的做法了</p>
 <p>这里我们只需要满足输入的账号密码正确就可以，因为这里可以堆叠注入，我先给payload</p>
 <p>payload：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">username=0;drop table ctfshow_user; create table ctfshow_user(`username` varchar(255),`pass` varchar(255)); insert ctfshow_user(`username`,`pass`) values(1,2)</span><br><span class="line">password随便填，不影响</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">username=0;drop table ctfshow_user; create table ctfshow_user(`username` varchar(255),`pass` varchar(255)); insert ctfshow_user(`username`,`pass`) values(1,2)</span><br><span class="line">password随便填，不影响</span><br></pre></td></tr></table></figure>
 
 <p>理解一下这段代码</p>
+<p>这里的话是我们删掉了原来的ctfshow_user表，然后新建一个同名的表并设置里面的两个字段的值，设置好后我们访问登录就可以登录成功了</p>
+<ul>
+<li>varchar(255)</li>
+</ul>
+<p><code>VARCHAR</code> 表示“可变长度字符”（Variable Character），意味着可以存储长度不固定的字符串。(255)指定了这个 <code>VARCHAR</code> 字段可以存储的最大字符数。</p>
+<p>这里其实用alter关键字去做也是可以的但是这里就不演示了</p>
 <h3 id="alter关键字"><a href="#alter关键字" class="headerlink" title="alter关键字"></a>alter关键字</h3><p> SQL 中，<code>ALTER</code> 是一个关键字，用于修改现有数据库对象的结构。具体来说，它可以用于更改表的结构，例如添加、删除或修改列。</p>
 <h4 id="ALTER-TABLE"><a href="#ALTER-TABLE" class="headerlink" title="ALTER TABLE"></a>ALTER TABLE</h4><p>ALTER TABLE命令添加，删除或修改表中的列。</p>
 <p>ALTER TABLE命令还可以添加和删除表中的各种约束。</p>
-<p>这里的话是我们删掉了原来的ctfshow_user表，然后新建一个同名的表并设置里面的两个字段的值，设置好后我们访问登录就可以登录成功了</p>
 <p>payload:</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">usernanme=1</span><br><span class="line">password=2</span><br></pre></td></tr></table></figure>
 
@@ -8927,12 +8934,28 @@
 <h2 id="web199"><a href="#web199" class="headerlink" title="web199"></a>web199</h2><p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241213204706164.png" alt="image-20241213204706164"></p>
 <p>这道题多过滤了一个括号符号，前面的方法走不通</p>
 <p>然后我发现了一个前几道题都能用的方法</p>
+<h3 id="方法一-show-tables"><a href="#方法一-show-tables" class="headerlink" title="方法一:show tables"></a>方法一:show tables</h3><p>利用<code>show</code>。根据题目给的查询语句，可以知道数据库的表名为ctfshow_user，那么可以通过<code>show tables</code>，获取表名的结果集，在这个结果集里定然有一行的数据为ctfshow_user。</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">username=0;show tables</span><br><span class="line">password=ctfshow_user</span><br></pre></td></tr></table></figure>
 
-<p>这个的话</p>
-<p><strong>方法二</strong>：本题过滤了括号，限制了之前payload中的varchar(100)，可以改为text。</p>
+<h3 id="方法二：列名互换"><a href="#方法二：列名互换" class="headerlink" title="方法二：列名互换"></a><strong>方法二</strong>：列名互换</h3><p>本题过滤了括号，限制了之前payload中的varchar(100)，可以改为text。</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0;alter table ctfshow_user change `username` `passw` text;alter table ctfshow_user change `pass` `username` text;alter table ctfshow_user change `passw` `pass` text;</span><br></pre></td></tr></table></figure>
 
+<p>这里的话是实现了一个列名互换，将username和pass互换，然后因为我们已知默认用户名为userAUTO，所以我们可以用这个作为我们的password去登录，这样就可以登录成功了</p>
+<p>(这个方法我没打通，不知道是不是应该爆破我们的username，用0并不能匹配我们的用户名)</p>
+<h2 id="web200"><a href="#web200" class="headerlink" title="web200"></a>web200</h2><p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241214112001228.png" alt="image-20241214112001228"></p>
+<p>多过滤了个逗号，但不影响我们上一题的做法</p>
+<h1 id="练习sqlmap"><a href="#练习sqlmap" class="headerlink" title="练习sqlmap"></a>练习sqlmap</h1><h2 id="web201"><a href="#web201" class="headerlink" title="web201"></a>web201</h2><p><img src="/./../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20241214112743785.png" alt="image-20241214112743785"></p>
+<p>这里的话是需要我们学习sqlmap 的语法和使用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">使用--user-agent 指定agent</span><br><span class="line"> --user-agent=&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36&quot;</span><br><span class="line"> 使用--referer 绕过referer检查</span><br><span class="line"> --referer=&quot;ctf.show&quot;</span><br></pre></td></tr></table></figure>
+
+<p>我们先学习一下sqlmap的使用顺序</p>
+<h3 id="SQLmap使用顺序"><a href="#SQLmap使用顺序" class="headerlink" title="SQLmap使用顺序"></a>SQLmap使用顺序</h3><ol>
+<li>获取当前MySQL中的所有数据库<code>sqlmap -u http://xxx</code></li>
+<li>获取当前数据库名字</li>
+<li>获取数据库下的数据表</li>
+<li>获取表下的列名</li>
+<li>导出数据</li>
+</ol>
 ]]></content>
       <categories>
         <category>ctfshow</category>
