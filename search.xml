@@ -1407,7 +1407,51 @@
 <p>PhantomJS 还使用一个开关，该开关需要一个布尔值，默认情况下设置为。该开关启用 PhantomJS 中的网络安全功能，并禁止触发跨域 XHR 请求。 <code>--web-security</code> <code>True</code></p>
 <p>由于跨域 XHR 限制，本地存储的 HTML 文件不允许触发对任意外部实体的请求，并且由于实现原因，除非在标头中明确指定，否则也无法从跨域实体读取响应。 <code>XHR</code> <code>Same Origin Policy</code></p>
 <p>当经过PhantomJS解析后，可以通过发出XHR请求来读取其中的内容。</p>
-<h2 id="ALL-INFO-U-WANT"><a href="#ALL-INFO-U-WANT" class="headerlink" title="ALL_INFO_U_WANT"></a>ALL_INFO_U_WANT</h2>]]></content>
+<h2 id="ALL-INFO-U-WANT"><a href="#ALL-INFO-U-WANT" class="headerlink" title="ALL_INFO_U_WANT"></a>ALL_INFO_U_WANT</h2><h3 id="日志注入"><a href="#日志注入" class="headerlink" title="#日志注入"></a>#日志注入</h3><p>是一个玩魔方的游戏</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219152554679.png" alt="image-20241219152554679"></p>
+<p>初步猜测是需要拼好这个魔方才能拿到flag，先审视一下我们的页面源代码，顺便扫了一下目录</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219153359664.png" alt="image-20241219153359664"></p>
+<p>发现一个200的&#x2F;index.php.bak文件，进行访问下载</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">visit all_info_u_want.php <span class="keyword">and</span> you will get all information you want</span><br><span class="line"></span><br><span class="line">= =Thinking that it may be difficult, i decided to show you the source code:</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//give you all information you want</span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;all_info_i_want&#x27;</span>])) &#123;</span><br><span class="line">    <span class="title function_ invoke__">phpinfo</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>])) &#123;</span><br><span class="line">    <span class="variable">$file</span> = <span class="string">&quot;/var/www/html/&quot;</span> . <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="comment">//really baby include</span></span><br><span class="line">    <span class="keyword">include</span>(<span class="variable">$file</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">really really really baby challenge right? </span><br></pre></td></tr></table></figure>
+
+<p>这里的话提示我们去访问all_info_u_want.php，但是是空白页面，接着我在all_info_u_want.php目录下传入all_info_i_want参数就得到了当前php版本的配置信息了，</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/all_info_u_want.php?all_info_i_want=1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219153914580.png" alt="image-20241219153914580"></p>
+<p>但是我们的利用点还是include($file)，不过这道题说实真的太仁慈了，这里直接利用日志注入就可以了</p>
+<h3 id="日志注入-1"><a href="#日志注入-1" class="headerlink" title="日志注入"></a>日志注入</h3><h3 id="怎么在php信息中查看是否可以日志注入"><a href="#怎么在php信息中查看是否可以日志注入" class="headerlink" title="怎么在php信息中查看是否可以日志注入"></a>怎么在php信息中查看是否可以日志注入</h3><ul>
+<li><strong>error_log</strong>: 该项显示了 PHP 脚本错误日志的存储路径。如果该路径存在且可写，则表示日志记录功能已开启。</li>
+<li><strong>log_errors</strong>: 该项指示 PHP 是否开启了错误日志记录。若值为 <code>On</code>，则表示日志记录功能已启用；若为 <code>Off</code>，则表示未启用。</li>
+</ul>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219154547767.png" alt="image-20241219154547767"></p>
+<p>这里可以看到是开启了日志记录的功能的，那我们尝试包含一下日志文件</p>
+<p>先在f12的network中查看一下服务器版本</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219154652150.png" alt="image-20241219154652150"></p>
+<p>是nginx的</p>
+<p>对于Ngnix，日志存放路径：&#x2F;var&#x2F;log&#x2F;nginx&#x2F;access.log 和 &#x2F;var&#x2F;log&#x2F;nginx&#x2F;error.log</p>
+<p>日志注入的攻击原理</p>
+<p>中间件的日志文件会保存网站的访问记录,比如HTTP请求行,User-Agent,Referer等客户端信息，如果在HTTP请求中插入恶意代码,那么恶意代码就会保存到日志文件中,访问日志文件的时候，日志文件中的恶意代码就会执行,从而造成任意代码执行甚至获取shell。</p>
+<p>Nginx中的日志分两种，一种是error.log，一种是access.log。error.log可以配置成任意级别，默认级别是error，用来记录Nginx运行期间的处理流程相关的信息；access.log指的是访问日志，用来记录服务器的接入信息（包括记录用户的IP、请求处理时间、浏览器信息等）。</p>
+<p>那我们访问一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/all_info_u_want.php?file=../../../var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
+
+<p>这里需要进行目录穿越哈，因为不知道在哪层目录中，我们挨个添加<code>../</code>就可以，然后就可以看到我们的日志文件了</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219155319757.png" alt="image-20241219155319757"></p>
+<p>抓包，在UA头插入恶意命令或者一句话木马，然后就可以进行rce了</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219155303841.png" alt="image-20241219155303841"></p>
+<p>然后用蚁剑连接</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219155530096.png" alt="image-20241219155530096"></p>
+<p>发现一个假的flag，提示flag在etc文件，让我们自己去找，这里的话可以一个个找也可以直接在终端进行命令</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">find /etc -name “*” | xargs grep “flag&#123;</span><br></pre></td></tr></table></figure>
+
+<p>正常来说这个命令就是用来找包含flag字符串的文件的，但是好像蚁剑里面得把“-name “*””去掉，没搞明白原因</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219160835686.png" alt="image-20241219160835686"></p>
+<p>我说怎么查不出来flag，原来flag是ctfshow开头的</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">find /etc | xargs grep &quot;ctfshow&#123;&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219162259903.png" alt="image-20241219162259903"></p>
+<p>成功拿到flag</p>
+<h2 id="WUSTCTF-朴实无华-Revenge"><a href="#WUSTCTF-朴实无华-Revenge" class="headerlink" title="WUSTCTF_朴实无华_Revenge"></a>WUSTCTF_朴实无华_Revenge</h2>]]></content>
       <categories>
         <category>ctfshow</category>
       </categories>
