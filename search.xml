@@ -5310,8 +5310,8 @@
 <ul>
 <li>eval($c)是将$c当做代码进行执行</li>
 </ul>
-<p>这里的话就是绕过flag</p>
-<p>1.使用一对单引号‘绕过flag</p>
+<p>这里的话就是</p>
+<h3 id="绕过flag-1"><a href="#绕过flag-1" class="headerlink" title="绕过flag"></a>绕过flag</h3><p>1.使用一对单引号‘绕过flag</p>
 <p>2.使用\绕过flag</p>
 <p>3.?或者*等通配符绕过flag</p>
 <h3 id="LINUX通配符"><a href="#LINUX通配符" class="headerlink" title="LINUX通配符"></a><strong>LINUX通配符</strong></h3><p>配符是由shell处理的, 它只会出现在 命令的“参数”里。当shell在“参数”中遇到了通配符时，shell会将其当作路径或文件名去在磁盘上搜寻可能的匹配：若符合要求的匹配存在，则进行代换(路径扩展)；否则就将该通配符作为一个普通字符传递给“命令”，然后再由命令进行处理。总之，通配符 实际上就是一种shell实现的路径扩展功能。在 通配符被处理后, shell会先完成该命令的重组，然后再继续处理重组后的命令，直至执行该命令。</p>
@@ -5426,7 +5426,7 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?c=passthru(&quot;ls&quot;);发现可以回显，证明并没有用过滤双引号</span><br><span class="line">?c=passthru(&quot;ca\t$&#123;IFS&#125;fla?????&quot;);</span><br></pre></td></tr></table></figure>
 
 <p><strong>但语句是错误的，后来看了很多大佬的wp，才知道:</strong></p>
-<p>因为在linux里面<strong>当转义符号()转义普通字符的时候，和普通字符原来的效果是一样的</strong>，意思就是\t和t都是t，只有在转义特殊字符的时候，才起了作用，比如$，$则不再表示变量的意思。</p>
+<p>因为在linux里面<strong>当转义符号(\)转义普通字符的时候，和普通字符原来的效果是一样的</strong>，意思就是\t和t都是t，只有在转义特殊字符的时候，才起了作用，比如$，$则不再表示变量的意思。</p>
 <p>注意：上面的$需要用反斜杠进行转义</p>
 <p>?c&#x3D;passthru(“tac\${IFS}fla*”);</p>
 <p>然后可以获取flag</p>
@@ -12018,7 +12018,18 @@
     <title>php函数知识点积累</title>
     <url>/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/</url>
     <content><![CDATA[<h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>做一期函数的知识点积累，方便忘记的时候查阅</p>
-<h1 id="0x02正文"><a href="#0x02正文" class="headerlink" title="0x02正文"></a>0x02正文</h1><h2 id="eval-函数"><a href="#eval-函数" class="headerlink" title="eval()函数"></a>eval()函数</h2><h2 id="file-get-contents-函数"><a href="#file-get-contents-函数" class="headerlink" title="file_get_contents()函数"></a>file_get_contents()函数</h2><p><code>file_get_contents()</code> 是 PHP 中用于读取文件内容的函数。它可以用于从文件系统、URL、流或数据中读取文件内容，并将其作为字符串返回。</p>
+<h1 id="0x02正文"><a href="#0x02正文" class="headerlink" title="0x02正文"></a>0x02正文</h1><h2 id="eval-函数"><a href="#eval-函数" class="headerlink" title="eval()函数"></a>eval()函数</h2><p>在 PHP 中，<code>eval()</code> 函数用于将字符串作为 PHP 代码执行。它可以动态地执行代码</p>
+<p>基础语法</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">eval</span>(<span class="keyword">string</span> <span class="variable">$code</span>): <span class="keyword">mixed</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>$code</code>：要执行的 PHP 代码字符串。</li>
+<li>返回值：如果代码包含返回语句，将返回返回值；如果没有返回值，将返回 <code>null</code>。</li>
+</ul>
+<p>示例</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$expression</span> = <span class="string">&#x27;3 + 5&#x27;</span>;</span><br><span class="line"><span class="variable">$result</span> = <span class="keyword">eval</span>(<span class="string">&quot;return <span class="subst">$expression</span>;&quot;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$result</span>;  <span class="comment">// 输出: 8</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="file-get-contents-函数"><a href="#file-get-contents-函数" class="headerlink" title="file_get_contents()函数"></a>file_get_contents()函数</h2><p><code>file_get_contents()</code> 是 PHP 中用于读取文件内容的函数。它可以用于从文件系统、URL、流或数据中读取文件内容，并将其作为字符串返回。</p>
 <p>基础语法</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">string</span> <span class="title function_ invoke__">file_get_contents</span> ( <span class="keyword">string</span> <span class="variable">$filename</span> [, <span class="keyword">bool</span> <span class="variable">$use_include_path</span> = <span class="literal">FALSE</span> [, resource <span class="variable">$context</span> [, <span class="keyword">int</span> <span class="variable">$offset</span> = -<span class="number">1</span> [, <span class="keyword">int</span> <span class="variable">$maxlen</span> ]]]] )</span><br></pre></td></tr></table></figure>
 
@@ -12527,6 +12538,17 @@
   <entry>
     <title>1月计划</title>
     <url>/2025/01/10/1%E6%9C%88%E8%AE%A1%E5%88%92/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<ul>
+<li><input disabled="" type="checkbox"> 每天争取15道ctfshow的web入门题目</li>
+<li><input disabled="" type="checkbox"> 每天学一下java方面的知识</li>
+<li><input disabled="" type="checkbox"> 赛题复现</li>
+</ul>
+]]></content>
+      <categories>
+        <category>计划</category>
+      </categories>
+      <tags>
+        <tag>计划</tag>
+      </tags>
   </entry>
 </search>
