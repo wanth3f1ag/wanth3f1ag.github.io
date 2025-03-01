@@ -2957,7 +2957,7 @@
 <h2 id="运算符的优先级"><a href="#运算符的优先级" class="headerlink" title="运算符的优先级"></a>运算符的优先级</h2><table>
 <thead>
 <tr>
-<th align="center">分类</th>
+<th align="center">优先级</th>
 <th align="center">运算符号</th>
 <th align="center">描述</th>
 <th align="center">目数</th>
@@ -3312,8 +3312,8 @@
 <p>[!IMPORTANT]</p>
 <p>一个很容易忽视的点，就是scanf函数中没有精度控制，例如scanf(“%5.2f”,&amp;a);是非法的</p>
 </blockquote>
-<p>另外我们讲一个比较细的点，就是当scanf函数输入多项数据的时候，系统是如何知道哪些算作一个数据项呢?</p>
-<p>1.根据格式字符的类型从输入流中取得数据，当输入流中数据类型和格式字符不一致则判断为这一个数据项结束</p>
+<p>另外我们讲一个比较细的点，就是当scanf函数输入多项数据的时候，系统是如何知道哪些算作一个数据项呢?这就不得不说其工作机制了</p>
+<p><img src="/../image/achieve/202411/C%E8%AF%AD%E8%A8%80/image-20250301113547441.png" alt="image-20250301113547441"></p>
 <p>2.根据格式项中指定的域宽度分割出数据项，就比如我们上面的例子</p>
 <p>3.我们常用的分隔符都是可以分割数据项的，但是在%c输入字符的时候这些则也被认定为有效字符</p>
 <p>那么scanf在执行过程中怎么知道自己该停止了呢?</p>
@@ -3436,7 +3436,7 @@
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="comment">//通过输入等级输出等级标语</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">	<span class="type">char</span> grade=<span class="string">&#x27;A&#x27;</span>;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;输入等级以查看您的评判结果\n&quot;</span>);</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;%c&quot;</span>,&amp;grade);</span><br><span class="line">	<span class="keyword">if</span>(grade&gt;=<span class="number">97</span>&amp;&amp;grade&lt;=<span class="number">122</span>)&#123;</span><br><span class="line">		grade-=<span class="number">32</span>;</span><br><span class="line">	&#125; </span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;您的等级是%c&quot;</span>,grade);</span><br><span class="line">	<span class="keyword">switch</span>(grade)&#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="string">&#x27;A&#x27;</span> : <span class="built_in">printf</span>(<span class="string">&quot;大佬大佬\n&quot;</span>);<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="string">&#x27;B&#x27;</span> : <span class="built_in">printf</span>(<span class="string">&quot;很可以了\n&quot;</span>);<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="string">&#x27;C&#x27;</span> : <span class="built_in">printf</span>(<span class="string">&quot;不错不错\n&quot;</span>);<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="string">&#x27;D&#x27;</span> : <span class="built_in">printf</span>(<span class="string">&quot;看得出来努力了\n&quot;</span>);<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="string">&#x27;E&#x27;</span> : <span class="built_in">printf</span>(<span class="string">&quot;达到抖音人均水平了\n&quot;</span>);<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">default</span> : <span class="built_in">printf</span>(<span class="string">&quot;重修去吧老弟\n&quot;</span>);<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>当然一般考题都会结合break和switch嵌套去进行深入考察，这时候就需要对结构里面的语句进行逐步分析了</p>
-<h4 id="switch嵌套"><a href="#switch嵌套" class="headerlink" title="switch嵌套"></a>switch嵌套</h4><p><em>可以在一个</em> <strong>switch</strong> <em>语句内使用另一个</em> <strong>switch</strong> *语句。即使内部和外部 switch 的 case 常量包含共同的值，也没有矛盾。</p>
+<h4 id="switch嵌套"><a href="#switch嵌套" class="headerlink" title="switch嵌套"></a>switch嵌套</h4><p><em>可以在一个</em> <strong>switch</strong> <em>语句内使用另一个</em> <strong>switch</strong> 语句。即使内部和外部 switch 的 case 常量包含共同的值，也没有矛盾。</p>
 <p>我们举个例子</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="comment">//求a和b的值</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">	<span class="type">int</span> x=<span class="number">1</span>,y=<span class="number">0</span>,a=<span class="number">0</span>,b=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">switch</span>(x)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">1</span> : </span><br><span class="line">		<span class="keyword">switch</span>(y)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">0</span> : a++;<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">1</span> : b++;<span class="keyword">break</span>; </span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">2</span>: a++;b++;<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">3</span>: a++;b++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;a=%d,b=%d\n&quot;</span>,a,b);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//a=2，b=1</span></span><br></pre></td></tr></table></figure>
 
@@ -3559,6 +3559,25 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">goto name;</span><br><span class="line">.</span><br><span class="line">..</span><br><span class="line">...</span><br><span class="line">name:</span><br></pre></td></tr></table></figure>
 
 <p>建议不要用goto语句，这样会显得代码看起来很杂乱无章</p>
+<h2 id="问题-换硬币"><a href="#问题-换硬币" class="headerlink" title="问题:换硬币"></a>问题:换硬币</h2><p>将一笔零钱换成5分、2分和1分的硬币，要求每种硬币至少有一枚，有几种不同的换法？</p>
+<ul>
+<li>输入格式:</li>
+</ul>
+<p>输入在一行中给出待换的零钱数额x∈(8,100)。</p>
+<ul>
+<li>输出格式:</li>
+</ul>
+<p>要求按5分、2分和1分硬币的数量依次从大到小的顺序，输出各种换法。每行输出一种换法，格式为：“fen5:5分硬币数量, fen2:2分硬币数量, fen1:1分硬币数量, total:硬币总数量”。最后一行输出“count &#x3D; 换法个数”。</p>
+<p>这道题算是对循环方法的一个很经典的题目了，这里就是用传统的双重循环去解题的</p>
+<p>思路：</p>
+<ol>
+<li>首先我们要知道一个总和公式：<code>total=fen5 * 5 + fen2 * 2 + fen1 * 1</code>，我们从每种币得最大值开始递减去组合，比如5分的币，最大值就是总价值<code>n-2-1/5</code>,就是5分出现数量最大值，依此类推两分和一分的，然后我们求和运算判断是否等于总价值<code>n</code>即可。</li>
+</ol>
+<p>贴代码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> i, x, t, o, p, sum, amount;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;x);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = (x - <span class="number">2</span> - <span class="number">1</span>) / <span class="number">5</span>; i &gt; <span class="number">0</span>; i--)</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (o = (x - <span class="number">5</span> - <span class="number">1</span>) / <span class="number">2</span>; o &gt; <span class="number">0</span>; o--)</span><br><span class="line">        &#123;</span><br><span class="line">            p = x - (i * <span class="number">5</span> + o * <span class="number">2</span>);</span><br><span class="line">            sum = i * <span class="number">5</span> + o * <span class="number">2</span> + p;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (sum == x &amp;&amp; p &gt; <span class="number">0</span>)&#123;</span><br><span class="line">                amount++;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;fen5:%d, fen2:%d, fen1:%d, total:%d\n&quot;</span>, i, o, p, i + o + p);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;count = %d\n&quot;</span>, amount);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
 <h1 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h1><p>之前在数据类型中讲到构造类型的数组类型，到这里我们细致的讲解一下这个数组</p>
 <p>为什么需要数组呢？什么情况下需要用到数组呢？这是我们需要思考的问题，接下来我们看一个例子</p>
 <p>假如我们班上有五十个同学，每个同学的字母序号和年龄都不一样，这时候老师要求我们统计好同学的序号和年龄等信息并把它输出出来。那么我们需要怎么去进行呢？首先，我们需要先统计，把每个同学的序号记下来，把每个同学的年龄也记下来。这时候我们可以把字母序号和年龄分别写在两张纸上，假定序号是字符类型，我们难道需要一个个把同学的序号进行定义赋值吗，<code>char student1=&#39;A&#39;,student2=&#39;B&#39;...</code>这样也太麻烦了，数量庞大的时候更是无从下手。这时候我们就需要用到数组去进行存放</p>
@@ -4113,7 +4132,10 @@
 <p>格式</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line">数据类型 (*p)[m];</span><br><span class="line">例如 </span><br><span class="line"><span class="type">int</span> a[<span class="number">3</span>][<span class="number">4</span>],(*p)[<span class="number">4</span>];<span class="comment">//定义一个指向含4个元素的一维数组的行指针p</span></span><br><span class="line">p = a;</span><br></pre></td></tr></table></figure>
 
-<p>这里p只能指向一个包含4个元素的一维数组，也就是上面说的二维数组a中的<code>a[1]</code>或<code>a[0]</code>等，而不能指向数组元素。所以p只能对数组行进行操作，不能对行中某个数组元素进行操作</p>
+<ul>
+<li><code>int (*p)[4]</code> 定义的是一个指向含有 4 个 <code>int</code> 元素数组的指针，而不是一个指针数组。</li>
+</ul>
+<p>这里p只能指向一个包含4个元素的一维数组，也就是上面 说的二维数组a中的<code>a[1]</code>或<code>a[0]</code>等，而不能指向数组元素。所以p只能对数组行进行操作，不能对行中某个数组元素进行操作</p>
 <p>如果通过p对数组元素进行操作的话，可以用以下形式进行访问<code>a[i][j]</code>元素</p>
 <ol>
 <li><code>p[i][j]</code></li>
@@ -4175,7 +4197,7 @@
 <li>字符串转大写函数</li>
 </ul>
 <p>char *strupr(char *str);</p>
-<p>然后我们就开始试着编写一下上面这些函数的实现</p>
+<p>然后我们就开始试着编写一下上面几个函数的实现</p>
 <h3 id="strlen-函数的定义"><a href="#strlen-函数的定义" class="headerlink" title="strlen()函数的定义"></a>strlen()函数的定义</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*strlen函数的定义</span></span><br><span class="line"><span class="comment">实现功能:传入一个字符串返回字符串的长度</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="type">unsigned</span> <span class="title function_">strlen</span><span class="params">(<span class="type">char</span> *str)</span>&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> len = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(*str != <span class="string">&#x27;\0&#x27;</span>)&#123;</span><br><span class="line">		str++;</span><br><span class="line">		len ++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="strcat-函数的定义"><a href="#strcat-函数的定义" class="headerlink" title="strcat()函数的定义"></a>strcat()函数的定义</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*字符串连接函数</span></span><br><span class="line"><span class="comment">实现功能: 把 src 所指向的字符串追加到 dest 所指向的字符串的结尾。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="type">char</span> *<span class="title function_">strcat</span><span class="params">(<span class="type">char</span> *strdest, <span class="type">char</span> *strsrc)</span>&#123;</span><br><span class="line">	<span class="keyword">while</span>(*strdest != <span class="string">&#x27;\0&#x27;</span>)&#123;</span><br><span class="line">		strdest++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">while</span>(*strsrc != <span class="string">&#x27;\0&#x27;</span>)&#123;</span><br><span class="line">		*strdest = *strsrc;</span><br><span class="line">		strdest++;</span><br><span class="line">		strsrc++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> strdest;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
@@ -4185,8 +4207,51 @@
 
 <h3 id="strcpy-函数的定义"><a href="#strcpy-函数的定义" class="headerlink" title="strcpy()函数的定义"></a>strcpy()函数的定义</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*字符复制函数</span></span><br><span class="line"><span class="comment">实现功能: 把 src 所指向的字符串复制到 dest。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="type">char</span> *<span class="title function_">strcpy</span><span class="params">(<span class="type">char</span> *strdest,<span class="type">char</span> *strsrc)</span>&#123;</span><br><span class="line">	<span class="keyword">while</span>(*strdest++ = *strsrc++);</span><br><span class="line">	<span class="keyword">return</span> strdest;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="strcmp-函数的定义"><a href="#strcmp-函数的定义" class="headerlink" title="strcmp()函数的定义"></a>strcmp()函数的定义</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*比较函数</span></span><br><span class="line"><span class="comment">实现功能:把 str1 所指向的字符串和 str2 所指向的字符串进行比较。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="strcmp-函数的定义"><a href="#strcmp-函数的定义" class="headerlink" title="strcmp()函数的定义"></a>strcmp()函数的定义</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*比较函数</span></span><br><span class="line"><span class="comment">实现功能:函数strcmp从头至尾顺序地将其对应字符比较，遇到两个字符不等时，两个字符相减得到一个int型值，两个字符串完全相同时，则返回0。  </span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
+<h2 id="指针和函数"><a href="#指针和函数" class="headerlink" title="指针和函数"></a>指针和函数</h2><p>指针可以指向变量，同样也可以指向一个函数，如果使用一个指针指向一个函数的话那我们就可以通过指针来调用其所指向的函数</p>
+<h3 id="指向函数的指针"><a href="#指向函数的指针" class="headerlink" title="指向函数的指针"></a>指向函数的指针</h3><p><strong>函数指针</strong>:在C语言中，一个函数总是占用一段连续的空间，而函数名就是该函数所占内存空间的首地址。任何一个函数在编译的时候都会被分配一个入口地址即函数的首地址。如果我们把这个首地址赋予给一个指针变量，此时该指针就指向这个函数，通常把指向函数的指针称为函数指针</p>
+<p>利用函数指针可以实现对函数的调用，从而转入该函数的入口地址，执行此函数。</p>
+<h3 id="利用函数指针调用函数的步骤"><a href="#利用函数指针调用函数的步骤" class="headerlink" title="利用函数指针调用函数的步骤"></a>利用函数指针调用函数的步骤</h3><ul>
+<li>定义指向函数的指针变量</li>
+</ul>
+<p>定义格式</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">数据类型 (*指针变量名)();</span><br><span class="line">例如:</span><br><span class="line">int (*func)();</span><br><span class="line">数据类型表示被指向函数的返回值类型</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将指针变量指向某函数</li>
+</ul>
+<p>函数指针定义后并不指向任何函数，需要我们将函数的入口地址赋予该指针，入口地址就是函数名</p>
+<p>赋值格式</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">指针变量名 = 函数名;</span><br><span class="line">例如:</span><br><span class="line"><span class="type">int</span> <span class="title function_">func</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span>&#123;</span><br><span class="line">	<span class="comment">//函数体</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">	<span class="type">int</span> (*p)();</span><br><span class="line">	p = func;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>利用函数指针调用函数</li>
+</ul>
+<p>格式</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">(*函数指针名)(实参列表);</span><br><span class="line">例如:</span><br><span class="line">(*p)(a,b);</span><br></pre></td></tr></table></figure>
+
+<p>我们实操一个例子</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">max</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> x &gt; y ? x : y;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">	<span class="type">int</span> a = <span class="number">0</span>,b = <span class="number">0</span>,c = <span class="number">0</span>,maxnum = <span class="number">0</span>;</span><br><span class="line">	<span class="type">int</span> (*p)(<span class="type">int</span>,<span class="type">int</span>) = max;</span><br><span class="line"><span class="comment">//	int (*p)(int,int) = &amp;max;这里&amp;可以省略 </span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;输入需要比大小的三个整数(每个数直接以空格分割):\n&quot;</span>);</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;%d %d %d&quot;</span>,&amp;a,&amp;b,&amp;c);</span><br><span class="line">	maxnum = p(p(a,b),c);<span class="comment">//函数嵌套调用</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;最大的数字是:%d&quot;</span>,maxnum);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话写了一个比大小的函数，然后让函数指针指向这个函数，并通过函数指针去调用函数</p>
+<h3 id="函数指针作为函数参数"><a href="#函数指针作为函数参数" class="headerlink" title="函数指针作为函数参数"></a>函数指针作为函数参数</h3><p>在C语言中，函数指针并不单单只是简单的进行上面的调用，而是主要用来实现函数之间传递函数，这种传递并不是数据或者变量的地址，而是传递函数的入口地址，那么怎么去实现呢？</p>
+<p>我们可以知道，函数的参数可以是变量，常量，指向普通变量的指针变量，数组名，指向数组的指针等等，那么后面还会有一个指向函数的指针我们来学习一下。</p>
+<p>说的简单点就是函数的嵌套使用，我们在函数调用的时候把某个函数的入口地址传递给被调函数，使得我们传递的函数在被调函数中调用，以达到意想不到的效果。</p>
+<p>先写个简单的例子</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;Stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">max</span><span class="params">(<span class="type">int</span> a,<span class="type">int</span> b)</span>&#123;</span><br><span class="line">	<span class="type">int</span> c;</span><br><span class="line">	<span class="comment">//函数体</span></span><br><span class="line">	<span class="keyword">return</span> c; </span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">min</span><span class="params">(<span class="type">int</span> a,<span class="type">int</span> b)</span>&#123;</span><br><span class="line">	<span class="type">int</span> c;</span><br><span class="line">	<span class="comment">//函数体 </span></span><br><span class="line">	<span class="keyword">return</span> c; </span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">common</span><span class="params">(<span class="type">int</span> (*p1)(),<span class="type">int</span> (*p2)())</span>&#123;</span><br><span class="line">	<span class="comment">//函数体 </span></span><br><span class="line">	<span class="type">int</span> y1,y2;</span><br><span class="line">	y1 = (*p1)(<span class="number">2</span>,<span class="number">4</span>);</span><br><span class="line">	y2 = (*p2)(<span class="number">2</span>,<span class="number">3</span>);</span><br><span class="line">	<span class="keyword">return</span> y1+y2; </span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">	<span class="type">int</span> (*p1)(),(*p2)();</span><br><span class="line">	<span class="type">int</span> c=<span class="number">0</span>;</span><br><span class="line">	p1 = max ; </span><br><span class="line">	p2 = min ; </span><br><span class="line">	c = common(p1,p2);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>功能还是很简单的，common函数有两个参数，这两个参数定义为函数指针，然后还有max函数和min函数，这两个函数的入口地址分别用p1和p2指向，然后将p1和p2传入common中，在common中调用p1，p2指向的函数</p>
+<p>这个在common中的函数指针指向的函数就是回调函数</p>
+<ul>
+<li>回调函数</li>
+</ul>
+<p>函数指针变量可以作为某个函数的参数来使用的，回调函数就是一个通过函数指针调用的函数。</p>
+<h3 id="返回指针的函数"><a href="#返回指针的函数" class="headerlink" title="返回指针的函数"></a>返回指针的函数</h3><p>一样的，只不过返回指针的函数返回值一定是一个地址</p>
+<p>格式</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">返回值类型 *函数名(参数列表)&#123;</span><br><span class="line">	<span class="comment">//函数体</span></span><br><span class="line">	<span class="keyword">return</span> 地址或指针变量;</span><br><span class="line">&#125;</span><br><span class="line">例如：</span><br><span class="line"><span class="type">int</span> *<span class="title function_">func</span><span class="params">(<span class="type">int</span> x,<span class="type">int</span> y)</span>&#123;</span><br><span class="line">	<span class="type">int</span> c;</span><br><span class="line">	<span class="comment">//函数体</span></span><br><span class="line">	<span class="keyword">return</span> &amp;c;<span class="comment">//返回c的地址</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意的是，在<code>*func</code>两侧并没有括号，</p>
 ]]></content>
       <categories>
         <category>C语言</category>
