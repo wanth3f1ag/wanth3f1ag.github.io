@@ -18470,10 +18470,34 @@
       </tags>
   </entry>
   <entry>
-    <title>Apache-Struts2-文件上传导致命令执行漏洞复现(CVE-2024-53677)</title>
-    <url>/2025/03/04/Apache-Struts2-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%AF%BC%E8%87%B4%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0(CVE-2024-53677)/</url>
+    <title>Apache-Struts2-文件上传导致命令执行漏洞复现CVE-2024-53677</title>
+    <url>/2025/03/04/Apache-Struts2-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%AF%BC%E8%87%B4%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0CVE-2024-53677/</url>
     <content><![CDATA[<h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>之前好久就说想学着搭建靶场了但是一直没实操，这段时间刚考完试闲下来抓紧把任务做了</p>
-<h1 id="0x02漏洞信息"><a href="#0x02漏洞信息" class="headerlink" title="0x02漏洞信息"></a>0x02漏洞信息</h1><h2 id="Apache-Struts2是什么"><a href="#Apache-Struts2是什么" class="headerlink" title="Apache Struts2是什么"></a>Apache Struts2是什么</h2><p>Apache Struts2是一个基于Java技术的开源Web应用框架，用于开发Java Web应用程序。Apache Struts2框架提供了一套标准的MVC（Model-View-Controller）架构，帮助开发者更好地组织和管理Web应用程序的代码。通过Struts2，开发者可以将应用程序的业务逻辑、用户界面和数据模型相互分离，使代码更易于维护和扩展。</p>
+<h1 id="0x02漏洞信息"><a href="#0x02漏洞信息" class="headerlink" title="0x02漏洞信息"></a>0x02漏洞信息</h1><p><a href="https://cwiki.apache.org/confluence/display/WW/S2-067">官方文档</a>里就有对漏洞的介绍</p>
+<h2 id="Apache-Struts2是什么"><a href="#Apache-Struts2是什么" class="headerlink" title="Apache Struts2是什么"></a>Apache Struts2是什么</h2><p>Apache Struts2是一个基于Java技术的开源Web应用框架，用于开发Java Web应用程序。Apache Struts2框架提供了一套标准的MVC（Model-View-Controller）架构，帮助开发者更好地组织和管理Web应用程序的代码。通过Struts2，开发者可以将应用程序的业务逻辑、用户界面和数据模型相互分离，使代码更易于维护和扩展。</p>
+<h2 id="CVE-2024-53677"><a href="#CVE-2024-53677" class="headerlink" title="CVE-2024-53677"></a>CVE-2024-53677</h2><p>CVE-2024-53677是一个在Apache Struts 框架中发现的严重漏洞，Apache Struts 中的文件上传逻辑存在缺陷。攻击者可以操纵文件上传参数以启用路径遍历，在某些情况下，这可能导致上传可用于执行远程代码执行的恶意文件。</p>
+<h2 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h2><p>Struts 2.0.0至Struts 2.3.37（EOL）</p>
+<p> Struts 2.5.0至Struts 2.5.33（EOL）</p>
+<p>Struts 6.0.0到Struts 6.3.0.2</p>
+<h1 id="0x03靶场搭建"><a href="#0x03靶场搭建" class="headerlink" title="0x03靶场搭建"></a>0x03靶场搭建</h1><p>安装docker<a href="https://cloud.tencent.com/developer/article/2309562">最详细的ubuntu 安装 docker教程</a></p>
+<p>先拉取项目</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/c4oocO/CVE-2024-53677-Docker.git # 拉取项目</span><br></pre></td></tr></table></figure>
+
+<p>然后cd到项目里面</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250304172520022.png" alt="image-20250304172520022"></p>
+<p>然后我们开镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker build --ulimit nofile=122880:122880 -m 3G -t cve-2024-53677 .</span><br></pre></td></tr></table></figure>
+
+<p>等一会好了就看一下镜像有没有拉成</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250304172659996.png" alt="image-20250304172659996"></p>
+<p>然后创建容器运行镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run -p 8080:8080 --ulimit nofile=122880:122880 -m 3G --rm -it cve-2024-53677</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250304172832845.png" alt="image-20250304172832845"></p>
+<p>然后我们访问一下服务器的8080端口看看环境是否搭建成功</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250304172948014.png" alt="image-20250304172948014"></p>
+<h1 id="0x04漏洞复现"><a href="#0x04漏洞复现" class="headerlink" title="0x04漏洞复现"></a>0x04漏洞复现</h1><p>先上传一个1.txt看看是否可以上传</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250304185221399.png" alt="image-20250304185221399"></p>
 ]]></content>
       <categories>
         <category>CVE</category>
