@@ -3,7 +3,7 @@
   <entry>
     <title>深入浅出sql注入</title>
     <url>/2024/12/06/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h1 id="0x01sql注入前置"><a href="#0x01sql注入前置" class="headerlink" title="0x01sql注入前置"></a>0x01sql注入前置</h1><p>讲这个知识之前我们得先问自己三个问题</p>
+    <content><![CDATA[<h1 id="0x01sql注入前置"><a href="#0x01sql注入前置" class="headerlink" title="0x01sql注入前置"></a>0x01sql注入前置</h1><p>讲这个知识之前我们得先问自己几个问题</p>
 <h2 id="什么是数据库？"><a href="#什么是数据库？" class="headerlink" title="什么是数据库？"></a>什么是数据库？</h2><p>简单来说，数据库就是“数据”的“仓库”。数据库是一个组织化的数据集合，用于存储、管理和检索信息。它为存储数据提供了一种格式化的方式，并允许用户和应用程序有效地查询、更新和管理这些数据。数据库中包含表、关系以及操作对象，数据存储在表中。</p>
 <h2 id="什么是sql？"><a href="#什么是sql？" class="headerlink" title="什么是sql？"></a>什么是sql？</h2><p>SQL是结构化查询语言，是一种用于与关系数据库进行交互的标准编程语言。它用于定义、操作和控制数据，以及管理数据库。SQL 是一种高度通用的语言，几乎所有的数据库管理系统（RDBMS）都支持SQL，包括MySQL、PostgreSQL、Microsoft SQL Server 和 Oracle 等。</p>
 <p>sql里有四大最常见的操作，即<strong>增删查改</strong>：</p>
@@ -16,6 +16,7 @@
 <h2 id="什么是sql注入？"><a href="#什么是sql注入？" class="headerlink" title="什么是sql注入？"></a>什么是sql注入？</h2><p><strong>SQL注入：</strong>是发生于应用程序和数据库层的安全漏洞，简而言之，是在输入的字符串之中<strong>注入sql指令</strong>，在设计不良的程序当中<strong>忽略了字符检查</strong>，那么这些注入进去的恶意指令就会被数据库服务器<strong>误认为是正常的sql指令而运行</strong>，因此遭到破坏或是入侵。这种漏洞可能<strong>导致数据泄露、数据篡改、身份冒充和其他严重的安全问题</strong>。</p>
 <h1 id="0x02正文"><a href="#0x02正文" class="headerlink" title="0x02正文"></a>0x02正文</h1><h2 id="mysql注入"><a href="#mysql注入" class="headerlink" title="mysql注入"></a>mysql注入</h2><p>什么是mysql?</p>
 <p>MySQL 是一种开源的关系数据库管理系统（RDBMS），广泛用于存储和管理结构化数据。</p>
+<p>一个MySQL服务器可以有多个数据库，每个数据库可以独立管理，互不干扰。</p>
 <p>我们在讲解mysql注入之前，首先先要搭建一下mysql数据库</p>
 <h3 id="Ubuntu中搭建Mysql服务"><a href="#Ubuntu中搭建Mysql服务" class="headerlink" title="Ubuntu中搭建Mysql服务"></a>Ubuntu中搭建Mysql服务</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo su 进入root用户</span><br><span class="line">sudo apt update 更新所有软件包</span><br><span class="line">sudo apt install mysql-server 安装mysql</span><br><span class="line">sudo systemctl start mysql 启动mysql服务</span><br><span class="line">sudo systemctl restart mysql 重启mysql服务</span><br><span class="line">sudo systemctl stop mysql 关闭mysql服务</span><br><span class="line">sudo systemctl status mysql 查看mysql服务状态</span><br><span class="line">mysql --version 查看版本信息</span><br><span class="line">mysql -u root -p 登录连接数据库</span><br></pre></td></tr></table></figure>
 
@@ -25,6 +26,12 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SHOW DATABASES; 列出 MySQL 数据库管理系统的数据库列表。</span><br></pre></td></tr></table></figure>
 
 <p><img src="/../image/achieve/202411/sql%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA/image-20250114133224791.png" alt="image-20250114133224791"></p>
+<ol>
+<li><strong>mysql</strong>：存储用户权限、用户信息和其他管理相关的数据。</li>
+<li><strong>information_schema</strong>：提供关于数据库元数据的信息。</li>
+<li><strong>performance_schema</strong>：用于监控 MySQL 服务器性能。</li>
+<li><strong>sys</strong>：提供 MySQL 服务器的诊断和性能优化信息。</li>
+</ol>
 <p>接下来我们创建数据库</p>
 <h4 id="1-创建数据库"><a href="#1-创建数据库" class="headerlink" title="1.创建数据库"></a>1.创建数据库</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE DATABASE HELLOWORLD; 创建HELLOWORLD数据库</span><br><span class="line">DROP DATABASE [database_name];直接删除数据库</span><br><span class="line">DROP DATABASE IF EXISTS [database_name];先检查数据库是否存在在进行删除操作</span><br></pre></td></tr></table></figure>
 
@@ -35,7 +42,10 @@
 <p><img src="/../image/achieve/202411/sql%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA/image-20250114133510634.png" alt="image-20250114133510634"></p>
 <p>选择数据库后，你的后续 SQL 查询和操作在指定的数据库 <strong>HELLOWORLD</strong> 上执行</p>
 <p>然后我们创建数据表</p>
-<h4 id="2-创建数据表"><a href="#2-创建数据表" class="headerlink" title="2.创建数据表"></a>2.创建数据表</h4><p>创建 MySQL 数据表需要以下信息：</p>
+<h4 id="2-创建数据表"><a href="#2-创建数据表" class="headerlink" title="2.创建数据表"></a>2.创建数据表</h4><p>我们先看一下创建的数据库里面的表是什么样的</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show tables; 查看当前数据库下的所有表</span><br></pre></td></tr></table></figure>
+
+<p>创建 MySQL 数据表需要以下信息：</p>
 <ul>
 <li>表名</li>
 <li>表字段名</li>
@@ -223,7 +233,7 @@
 </tr>
 </tbody></table>
 <p>以上就是我们的数据类型了，那我们接下来创建一个数据表</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE TABLE users(id INT AUTO_INCREMENT PRIMARY KEY,username VARCHAR(50) NOT NULL,password VARCHAR(100) NOT NULL);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE TABLE [table_name] (</span><br><span class="line">    column1 datatype,</span><br><span class="line">    column2 datatype,</span><br><span class="line">    ...</span><br><span class="line">);</span><br><span class="line">CREATE TABLE users(</span><br><span class="line">id INT AUTO_INCREMENT PRIMARY KEY,</span><br><span class="line">username VARCHAR(50) NOT NULL,</span><br><span class="line">password VARCHAR(100) NOT NULL</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 
 <p>参数解释</p>
 <ul>
@@ -256,11 +266,11 @@
 </li>
 </ul>
 <p>然后我们可以看到是成功创建了一个users数据表的</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SHOW TABLES;显示指定数据库的所有表（使用前需要先指定数据库）</span><br><span class="line">DROP TABLE [table_name]; 直接删除表</span><br><span class="line">DROP TABLE IF EXISTS [table_name];  -- 会检查是否存在，如果存在则删除</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SHOW TABLES;显示指定数据库的所有表（使用前需要先指定数据库）</span><br><span class="line">RENAME TABLE [table_name] to [new table_name];修改表名</span><br><span class="line">DROP TABLE [table_name]; 直接删除表</span><br><span class="line">DROP TABLE IF EXISTS [table_name];  -- 会检查是否存在，如果存在则删除</span><br></pre></td></tr></table></figure>
 
 <p><img src="/../image/achieve/202411/sql%E6%B3%A8%E5%85%A5--ctfshow/image-20250114135354948.png" alt="image-20250114135354948"></p>
 <p>创建数据表后，接下来我们就是向数据表中插入我们的数据了，我们先查看一下我们的字段</p>
-<h4 id="3-插入数据"><a href="#3-插入数据" class="headerlink" title="3.插入数据"></a>3.插入数据</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show columns from 表名 显示数据表的属性，属性类型，主键信息 ，是否为 NULL，默认值等其他信息。</span><br></pre></td></tr></table></figure>
+<h4 id="3-插入数据"><a href="#3-插入数据" class="headerlink" title="3.插入数据"></a>3.插入数据</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show full columns from 表名;查询当前表下所有字段信息</span><br><span class="line">show columns from 表名; 显示数据表的属性，属性类型，主键信息 ，是否为 NULL，默认值等其他信息。</span><br></pre></td></tr></table></figure>
 
 <p><img src="/../image/achieve/202411/sql%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA/image-20250114135829638.png" alt="image-20250114135829638"></p>
 <p>插入数据的话通常用INSERT INTO SQL语法:</p>
@@ -410,7 +420,11 @@
 <p>但是我们要注意:<em>UNION 操作符在合并结果集时会去除重复行，而 UNION ALL 不会去除重复行</em></p>
 <p><img src="/../image/achieve/202411/sql%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA/image-20250117004201279.png" alt="image-20250117004201279"></p>
 <p>我这里创建了一个密码和其他某个一样的密码，然后分别进行了union和union all联合查询，可以发现两个的结果和上面的知识点是一样的。</p>
-<h4 id="ORDER-BY-语句"><a href="#ORDER-BY-语句" class="headerlink" title="ORDER BY 语句"></a>ORDER BY 语句</h4><p><strong>ORDER BY(排序)</strong> 语句可以按照一个或多个列的值进行升序（<strong>ASC</strong>）或降序（<strong>DESC</strong>）排序。</p>
+<ul>
+<li><strong>()中的内容优先查询</strong></li>
+</ul>
+<p>子查询，优先执行<code>()</code>中的查询语句</p>
+<h4 id="ORDER-BY-语句"><a href="#ORDER-BY-语句" class="headerlink" title="ORDER BY 语句"></a>ORDER BY 语句</h4><p><strong>ORDER BY(排序)</strong> 语句可以按照一个或多个列的值进行升序（<strong>ASC</strong>）或降序（<strong>DESC</strong>）排序。和group by一样，<code>group by</code>正常用在数据的分组。但是<code>groupo by</code>还可以用于实现判断数据表中的列数。当<code>group by</code>后面的数字大于列数时，会产生报错。</p>
 <p>语法:</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT column1, column2, ...</span><br><span class="line">FROM table_name</span><br><span class="line">ORDER BY column1 [ASC | DESC], column2 [ASC | DESC], ...;</span><br></pre></td></tr></table></figure>
 
@@ -424,13 +438,24 @@
 <p>1.单列排序</p>
 <p><img src="/../image/achieve/202411/sql%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA/image-20250117005809461.png" alt="image-20250117005809461"></p>
 <p>2.多列排序</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM employees</span><br><span class="line">ORDER BY department_id ASC, hire_date DESC;</span><br></pre></td></tr></table></figure>
+
+<p>3.使用数字表示列的位置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT first_name, last_name, salary</span><br><span class="line">FROM employees</span><br><span class="line">ORDER BY 3 DESC, 1 ASC;</span><br></pre></td></tr></table></figure>
+
+<p>按第三列（salary）降序 DESC 排序，然后按第一列（first_name）升序 ASC 排序。</p>
+<h4 id="group-concat-函数"><a href="#group-concat-函数" class="headerlink" title="**group_concat()**函数"></a>**group_concat()**函数</h4><p>将数据合并到一行显示</p>
+<p>例如</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select group_concat(id,username,password) </span><br><span class="line">from users;</span><br></pre></td></tr></table></figure>
+
 <h4 id="JOIN连接"><a href="#JOIN连接" class="headerlink" title="JOIN连接"></a>JOIN连接</h4><p>JOIN 按照功能大致分为如下三类：</p>
 <ul>
 <li><strong>INNER JOIN（内连接,或等值连接）</strong>：获取两个表中字段匹配关系的记录。</li>
 <li><strong>LEFT JOIN（左连接）：</strong>获取左表所有记录，即使右表没有对应匹配的记录。</li>
 <li><strong>RIGHT JOIN（右连接）：</strong> 与 LEFT JOIN 相反，用于获取右表所有记录，即使左表没有对应匹配的记录。</li>
 </ul>
-<h3 id="MYSQL注入姿势"><a href="#MYSQL注入姿势" class="headerlink" title="MYSQL注入姿势"></a>MYSQL注入姿势</h3><h4 id="INFORMATION-SCHEMA"><a href="#INFORMATION-SCHEMA" class="headerlink" title="INFORMATION_SCHEMA"></a>INFORMATION_SCHEMA</h4><p>我们可以了解到，在mysql&gt;5.0以上版本里都存在一个自带的信息数据库INFORMATION_SCHEMA，这个数据库存储着MYSQL服务器里的其他数据库的全部信息如数据库名，数据库的表，表中的列和数据，所以我们可以通过这个数据库去获取其他数据库的信息，这也是我们后面要讲的绝大多数注入姿势里面都会用到的</p>
+<h3 id="MYSQL注入姿势"><a href="#MYSQL注入姿势" class="headerlink" title="MYSQL注入姿势"></a>MYSQL注入姿势</h3><p>可以实行注入的地方，通常是一个可以与数据库进行连接的地方。</p>
+<h4 id="INFORMATION-SCHEMA"><a href="#INFORMATION-SCHEMA" class="headerlink" title="INFORMATION_SCHEMA"></a>INFORMATION_SCHEMA</h4><p>我们可以了解到，在mysql&gt;5.0以上版本里都存在一个自带的信息数据库INFORMATION_SCHEMA，这个数据库存储着MYSQL服务器里的其他数据库的全部信息如数据库名，数据库的表，表中的列和数据，所以我们可以通过这个数据库去获取其他数据库的信息，这也是我们后面要讲的绝大多数注入姿势里面都会用到的</p>
 <ul>
 <li>SCHEMATA：里面存储着mysql所有数据库的基本信息</li>
 <li>TABLES：里面存储着mysql中的表信息，包括表的创建时间更新时间等等</li>
@@ -444,11 +469,18 @@
 <p>数字型</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from &lt;表名&gt; where id =$_GET[id];</span><br></pre></td></tr></table></figure>
 
-<p>1.判断是否存在SQL注入</p>
-<p>单引号判断法，即在参数后面加上单引号（无论字符型还是整型都会因为单引号个数不匹配而报错）</p>
-<p><strong>2.判断注入方式</strong></p>
+<h4 id="1-判断是否存在SQL注入"><a href="#1-判断是否存在SQL注入" class="headerlink" title="1.判断是否存在SQL注入"></a>1.判断是否存在SQL注入</h4><p>单引号判断法，即在参数后面加上单引号（无论字符型还是整型都会因为单引号个数不匹配而报错）</p>
+<h5 id="常见的闭合方式"><a href="#常见的闭合方式" class="headerlink" title="常见的闭合方式"></a>常见的闭合方式</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">常见的闭合方式：&#x27;&#x27;、&quot;&quot;、(&#x27;&#x27;)、(&quot;&quot;)等</span><br></pre></td></tr></table></figure>
+
+<p><strong>闭合的作用</strong>：为了<strong>使前一段语句正常执行</strong>且<strong>去掉后面语句的限制</strong>，对于后面的语句我们可以用注释符号注释掉</p>
+<p>常见的注释符号就是:<code>--+</code>,<code>#</code>,<code>%23</code></p>
+<h4 id="2-判断注入方式"><a href="#2-判断注入方式" class="headerlink" title="2.判断注入方式"></a><strong>2.判断注入方式</strong></h4><ul>
+<li>• 数字型：当输入的<strong>参数为整形</strong>时，称为数字型注入</li>
+<li>• 字符型：当输入的<strong>参数为字符串</strong>时，称为字符型注入</li>
+</ul>
+<p><em>为什么要判断数字型还是字符型<br>答：构造恶意</em><code>sql</code>语句时，数字型无需判断闭合方式，字符型需要判断闭合方式</p>
 <p><strong>数字型判断：</strong></p>
-<p>用最经典的and 1&#x3D;1和and 1&#x3D;2进行判断</p>
+<p>用最经典的and 1&#x3D;1和and 1&#x3D;2进行判断，数字型一般提交内容为数字，<strong>但数字不一定是数字型</strong></p>
 <p>假设某个注入的注入类型是数字型，那么</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1 and 1=1页面运行正常</span><br><span class="line"></span><br><span class="line">?id=1 and 1=2页面运行错误</span><br></pre></td></tr></table></figure>
 
@@ -468,7 +500,12 @@
 
 <p>解释：当输入 and ‘1’&#x3D;’1时，后台执行 Sql 语句：select * from &lt;表名&gt; where id &#x3D; ‘x’ and ‘1’&#x3D;’1’语法正确，逻辑判断正确，所以返回正确。</p>
 <p>当输入 and ‘1’&#x3D;’2时，后台执行 Sql 语句：select * from &lt;表名&gt; where id &#x3D; ‘x’ and ‘1’&#x3D;’2’语法正确，但逻辑判断错误，所以返回异常。</p>
-<h4 id="sql注入分类"><a href="#sql注入分类" class="headerlink" title="sql注入分类"></a>sql注入分类</h4><ul>
+<p>还有一个方法就是运用运算去进行判断</p>
+<p>数字型是可以计算的，但字符型无法进行计算</p>
+<p>例如</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">使用减法计算id值</span><br><span class="line"></span><br><span class="line">数字型会得到id=1的数据</span><br><span class="line">select * from users where id = 2-1; </span><br><span class="line">字符型会得到id=2的数据</span><br><span class="line">select * from users where id = &#x27;2-1&#x27;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="sql注入分类"><a href="#sql注入分类" class="headerlink" title="sql注入分类"></a>sql注入分类</h3><ul>
 <li>有回显</li>
 </ul>
 <ol>
@@ -508,6 +545,7 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-1&#x27; union select 1,2,(select group_concat(schema.name)from information_schema.schemata)--+</span><br></pre></td></tr></table></figure>
 
 <p>GROUP_CONCAT()用于将分组内的值连接成一个以逗号（或其他分隔符）分隔的字符串,所以这也是为什么我们返回的多个数据库名，表名，列名都是以逗号去分开的原因</p>
+<p><code>union</code>后的数字1和2只用于凑列数，无任何实际意义（可以换为其他内容）</p>
 <ul>
 <li>查询表名</li>
 </ul>
@@ -2227,6 +2265,10 @@
 <p>使用函数套用去看一下当前目录的文件</p>
 <p><img src="/../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20250308231126489.png" alt="image-20250308231126489"></p>
 <p>再用highlight_file去读文件就行</p>
+<h2 id="web14"><a href="#web14" class="headerlink" title="web14"></a>web14</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;secret.php&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$c</span> = <span class="title function_ invoke__">intval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]);</span><br><span class="line">    <span class="title function_ invoke__">sleep</span>(<span class="variable">$c</span>);</span><br><span class="line">    <span class="keyword">switch</span> (<span class="variable">$c</span>) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&#x27;$url&#x27;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&#x27;@A@&#x27;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">555555</span>:</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable">$url</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">44444</span>:</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;@A@&quot;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">3333</span>:</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable">$url</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">222</span>:</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&#x27;@A@&#x27;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">222</span>:</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&#x27;@A@&#x27;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">3333</span>:</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable">$url</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">44444</span>:</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&#x27;@A@&#x27;</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">555555</span>:</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable">$url</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&#x27;@A@&#x27;</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">6000000</span>:</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;<span class="subst">$url</span>&quot;</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&#x27;@A@&#x27;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>intval</code> 函数扫描参数字符串，跳过前面的空格字符，直到遇上数字或正负符号才开始做转换，再遇到非数字或字符串结束时(\0)结束转换，并将结果返回</p>
+<p>对于这题的sleep(),要延缓其下面程序执行的时间。但是我们又不能等太久，可以构造php中的科学计数法绕过，就构造一个time&#x3D;0.3e07（等价于0.3乘10的7次方）的参数吧！当它强制转化为零的时候就会变成零，这样可以满足条件。</p>
 ]]></content>
       <categories>
         <category>ctfshow</category>
