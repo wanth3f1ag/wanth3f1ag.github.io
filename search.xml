@@ -2294,7 +2294,29 @@
 
 <p>第一个payload相当于先执行了system语句然后把结果赋值给变量a，然后eval将变量a的结果返回</p>
 <p>第二个payload就是利用分号逐步执行eval语句的作用，<code>$a</code>是空变量所以啥都不会干，接着就会执行system语句</p>
-<h1 id="一览无余"><a href="#一览无余" class="headerlink" title="一览无余"></a>一览无余</h1><p>只有一个highlight_file函数，扫目录也没发现啥</p>
+<h1 id="一览无余"><a href="#一览无余" class="headerlink" title="一览无余"></a>一览无余</h1><p>只有一个highlight_file函数，扫目录也没发现啥，url中随便输入一个路径返回了nginx&#x2F;1.14.0的版本号，估计是版本漏洞，搜查了一下发现是 CVE-2019-11043漏洞</p>
+<h2 id="CVE-2019-11043漏洞"><a href="#CVE-2019-11043漏洞" class="headerlink" title="#CVE-2019-11043漏洞"></a>#CVE-2019-11043漏洞</h2><p><strong>漏洞描述</strong></p>
+<p>Nginx 上 fastcgi_split_path_info 在处理带有 %0a 的请求时，会因为遇到换行符 \n 导致 PATH_INFO 为空。而 php-fpm 在处理 PATH_INFO</p>
+<p>为空的情况下，存在逻辑缺陷。攻击者通过精心的构造和利用，可以导致远程代码执行。</p>
+<p><strong>利用条件：</strong>nginx配置了fastcgi_split_path_info</p>
+<p><strong>受影响系统：</strong>PHP 5.6-7.x，Nginx&gt;&#x3D;0.7.31</p>
+<p>那我们先来看一下nginx.conf中的具体配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">location ~ [^/]\.php(/|$) &#123;</span><br><span class="line"></span><br><span class="line"> ...</span><br><span class="line"></span><br><span class="line"> fastcgi_split_path_info ^(.+?\.php)(/.*)$;</span><br><span class="line"></span><br><span class="line"> fastcgi_param PATH_INFO $fastcgi_path_info;</span><br><span class="line"></span><br><span class="line"> fastcgi_pass   php:9000;</span><br><span class="line"></span><br><span class="line"> ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解释一下</p>
+<p><code>fastcgi_split_path_info ^(.+?\.php)(/.*)$;</code></p>
+<p>这一行将请求 URI 分割为两部分：</p>
+<ul>
+<li>第一个捕获组 <code>(.+?\.php)</code> 匹配以 <code>.php</code> 结尾的最短路径，作为脚本文件名</li>
+<li>第二个捕获组 <code>(/.*)</code>匹配剩余的路径信息</li>
+<li>结果会被存储在 <code>$fastcgi_script_name</code> 和 <code>$fastcgi_path_info</code> 变量中</li>
+</ul>
+<p>用的是非贪婪匹配 (<code>+?</code>)，这样可以确保只匹配到第一个找到的 <code>.php</code> 文件。</p>
+<ol start="2">
+<li><code>fastcgi_param PATH_INFO $fastcgi_path_info;</code></li>
+</ol>
+<p>这一行将 Nginx 解析出的路径信息传递给 PHP-FPM，作为 <code>PATH_INFO</code> 环境变量。PHP 可以通过 <code>$_SERVER[&#39;PATH_INFO&#39;]</code> 访问这个值。</p>
+<p>此时我们可以使用换行符（％0a）来破坏<code>fastcgi_split_path_info</code>指令中的Regexp。Regexp被损坏导致PATH_INFO为空，从而触发该漏洞。</p>
 ]]></content>
       <categories>
         <category>ctfshow</category>
@@ -5598,35 +5620,32 @@
       </tags>
   </entry>
   <entry>
-    <title>Apache-Struts2-文件上传导致命令执行漏洞复现CVE-2024-53677</title>
-    <url>/2025/03/04/Apache-Struts2-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%AF%BC%E8%87%B4%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0CVE-2024-53677/</url>
-    <content><![CDATA[<h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>之前好久就说想学着搭建靶场了但是一直没实操，这段时间刚考完试闲下来抓紧把任务做了</p>
-<h1 id="0x02漏洞信息"><a href="#0x02漏洞信息" class="headerlink" title="0x02漏洞信息"></a>0x02漏洞信息</h1><p><a href="https://cwiki.apache.org/confluence/display/WW/S2-067">官方文档</a>里就有对漏洞的介绍</p>
-<h2 id="Apache-Struts2是什么"><a href="#Apache-Struts2是什么" class="headerlink" title="Apache Struts2是什么"></a>Apache Struts2是什么</h2><p>Apache Struts2是一个基于Java技术的开源Web应用框架，用于开发Java Web应用程序。Apache Struts2框架提供了一套标准的MVC（Model-View-Controller）架构，帮助开发者更好地组织和管理Web应用程序的代码。通过Struts2，开发者可以将应用程序的业务逻辑、用户界面和数据模型相互分离，使代码更易于维护和扩展。</p>
-<h2 id="CVE-2024-53677"><a href="#CVE-2024-53677" class="headerlink" title="CVE-2024-53677"></a>CVE-2024-53677</h2><p>CVE-2024-53677是一个在Apache Struts 框架中发现的严重漏洞，Apache Struts 中的文件上传逻辑存在缺陷。攻击者可以操纵文件上传参数以启用路径遍历，在某些情况下，这可能导致上传可用于执行远程代码执行的恶意文件。</p>
-<h2 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h2><p>Struts 2.0.0至Struts 2.3.37（EOL）</p>
-<p> Struts 2.5.0至Struts 2.5.33（EOL）</p>
-<p>Struts 6.0.0到Struts 6.3.0.2</p>
-<h1 id="0x03靶场搭建"><a href="#0x03靶场搭建" class="headerlink" title="0x03靶场搭建"></a>0x03靶场搭建</h1><p>安装docker<a href="https://cloud.tencent.com/developer/article/2309562">最详细的ubuntu 安装 docker教程</a></p>
-<p>先拉取项目</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/c4oocO/CVE-2024-53677-Docker.git # 拉取项目</span><br></pre></td></tr></table></figure>
+    <title>CVE-2019-11043漏洞复现</title>
+    <url>/2025/03/04/CVE-2019-11043%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</url>
+    <content><![CDATA[<h1 id="漏洞信息"><a href="#漏洞信息" class="headerlink" title="漏洞信息"></a>漏洞信息</h1><h2 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a><strong>漏洞描述</strong></h2><p>Nginx 上 fastcgi_split_path_info 在处理带有 %0a 的请求时，会因为遇到换行符 \n 导致 PATH_INFO 为空。而 php-fpm 在处理 PATH_INFO</p>
+<p>为空的情况下，存在逻辑缺陷。攻击者通过精心的构造和利用，可以导致远程代码执行。</p>
+<h2 id="利用条件："><a href="#利用条件：" class="headerlink" title="利用条件："></a><strong>利用条件：</strong></h2><p>nginx配置了fastcgi_split_path_info</p>
+<h2 id="受影响系统："><a href="#受影响系统：" class="headerlink" title="受影响系统："></a><strong>受影响系统：</strong></h2><p>PHP 5.6-7.x，Nginx&gt;&#x3D;0.7.31</p>
+<p>那我们先来看一下nginx.conf中的具体配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">location ~ [^/]\.php(/|$) &#123;</span><br><span class="line"></span><br><span class="line"> ...</span><br><span class="line"></span><br><span class="line"> fastcgi_split_path_info ^(.+?\.php)(/.*)$;</span><br><span class="line"></span><br><span class="line"> fastcgi_param PATH_INFO $fastcgi_path_info;</span><br><span class="line"></span><br><span class="line"> fastcgi_pass   php:9000;</span><br><span class="line"></span><br><span class="line"> ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>然后cd到项目里面</p>
-<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250304172520022.png" alt="image-20250304172520022"></p>
-<p>然后我们开镜像</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker build --ulimit nofile=122880:122880 -m 3G -t cve-2024-53677 .</span><br></pre></td></tr></table></figure>
+<p>解释一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fastcgi_split_path_info ^(.+?\.php)(/.*)$;</span><br></pre></td></tr></table></figure>
 
-<p>等一会好了就看一下镜像有没有拉成</p>
-<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250304172659996.png" alt="image-20250304172659996"></p>
-<p>然后创建容器运行镜像</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run -p 8080:8080 --ulimit nofile=122880:122880 -m 3G --rm -it cve-2024-53677</span><br></pre></td></tr></table></figure>
+<p>这一行将请求 URI 分割为两部分：</p>
+<ul>
+<li>第一个捕获组 <code>(.+?\.php)</code> 匹配以 <code>.php</code> 结尾的最短路径，作为脚本文件名</li>
+<li>第二个捕获组 <code>(/.*)</code>匹配剩余的路径信息</li>
+<li>结果会被存储在 <code>$fastcgi_script_name</code> 和 <code>$fastcgi_path_info</code> 变量中</li>
+</ul>
+<p>用的是非贪婪匹配 (<code>+?</code>)，这样可以确保只匹配到第一个找到的 <code>.php</code> 文件。</p>
+<ol>
+<li><code>fastcgi_param PATH_INFO $fastcgi_path_info;</code></li>
+</ol>
+<p>这一行将 Nginx 解析出的路径信息传递给 PHP-FPM，作为 <code>PATH_INFO</code> 环境变量。PHP 可以通过 <code>$_SERVER[&#39;PATH_INFO&#39;]</code> 访问这个值。</p>
+<p>此时我们可以使用换行符（％0a）来破坏<code>fastcgi_split_path_info</code>指令中的Regexp。Regexp被损坏导致PATH_INFO为空，从而触发该漏洞。</p>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><h2 id="安装docker，golang环境"><a href="#安装docker，golang环境" class="headerlink" title="安装docker，golang环境"></a>安装docker，golang环境</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt upgrade</span><br><span class="line">sudo apt-get install docker docker-compose</span><br><span class="line">sudo apt install golang</span><br></pre></td></tr></table></figure>
 
-<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250304172832845.png" alt="image-20250304172832845"></p>
-<p>然后我们访问一下服务器的8080端口看看环境是否搭建成功</p>
-<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250304190322006.png" alt="image-20250304190322006"></p>
-<h1 id="0x04漏洞复现"><a href="#0x04漏洞复现" class="headerlink" title="0x04漏洞复现"></a>0x04漏洞复现</h1><p>先上传一个1.txt看看是否可以上传</p>
-<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250304190346159.png" alt="image-20250304190346159"></p>
-<p>试着访问一下我们传上去的文件，路径为&#x2F;uploads&#x2F;1.txt就可以访问到</p>
 ]]></content>
       <categories>
         <category>CVE</category>
@@ -8325,6 +8344,28 @@
 <li>影响版本</li>
 </ul>
 <p>Apache OFBiz &lt; 18.12.14</p>
+<h1 id="CVE-2019-11043"><a href="#CVE-2019-11043" class="headerlink" title="CVE-2019-11043"></a>CVE-2019-11043</h1><p><strong>漏洞描述</strong></p>
+<p>Nginx 上 fastcgi_split_path_info 在处理带有 %0a 的请求时，会因为遇到换行符 \n 导致 PATH_INFO 为空。而 php-fpm 在处理 PATH_INFO</p>
+<p>为空的情况下，存在逻辑缺陷。攻击者通过精心的构造和利用，可以导致远程代码执行。</p>
+<p><strong>利用条件：</strong>nginx配置了fastcgi_split_path_info</p>
+<p><strong>受影响系统：</strong>PHP 5.6-7.x，Nginx&gt;&#x3D;0.7.31</p>
+<p>那我们先来看一下nginx.conf中的具体配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">location ~ [^/]\.php(/|$) &#123;</span><br><span class="line"></span><br><span class="line"> ...</span><br><span class="line"></span><br><span class="line"> fastcgi_split_path_info ^(.+?\.php)(/.*)$;</span><br><span class="line"></span><br><span class="line"> fastcgi_param PATH_INFO $fastcgi_path_info;</span><br><span class="line"></span><br><span class="line"> fastcgi_pass   php:9000;</span><br><span class="line"></span><br><span class="line"> ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解释一下</p>
+<p><code>fastcgi_split_path_info ^(.+?\.php)(/.*)$;</code></p>
+<p>这一行将请求 URI 分割为两部分：</p>
+<ul>
+<li>第一个捕获组 <code>(.+?\.php)</code> 匹配以 <code>.php</code> 结尾的最短路径，作为脚本文件名</li>
+<li>第二个捕获组 <code>(/.*)</code>匹配剩余的路径信息</li>
+<li>结果会被存储在 <code>$fastcgi_script_name</code> 和 <code>$fastcgi_path_info</code> 变量中</li>
+</ul>
+<p>用的是非贪婪匹配 (<code>+?</code>)，这样可以确保只匹配到第一个找到的 <code>.php</code> 文件。</p>
+<ol start="2">
+<li><code>fastcgi_param PATH_INFO $fastcgi_path_info;</code></li>
+</ol>
+<p>这一行将 Nginx 解析出的路径信息传递给 PHP-FPM，作为 <code>PATH_INFO</code> 环境变量。PHP 可以通过 <code>$_SERVER[&#39;PATH_INFO&#39;]</code> 访问这个值。</p>
+<p>此时我们可以使用换行符（％0a）来破坏<code>fastcgi_split_path_info</code>指令中的Regexp。Regexp被损坏导致PATH_INFO为空，从而触发该漏洞。</p>
 ]]></content>
       <categories>
         <category>CVE</category>
