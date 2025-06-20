@@ -8,8 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
     <meta name="description" content="回顾前面分别学习了CC1和CC6利用反射触发Runtime.getRuntime().exec()去执行命令的，但是往往很多时候代码中的黑名单都会选择禁用Runtime，此时又该怎么做呢？ CC3链就是一种很好的解决方法，他不借助Runtime类中的exec去执行命令，而是利用类加载机制，动态加载恶意类来实现自动执行恶意类代码 0x01类加载机制参考文章：Java基础篇-类加载机制 在了解类加载机">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java反序列化CC3链">
-<meta property="og:url" content="http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/index.html">
+<meta property="og:title" content="Java反序列化CC3链">
+<meta property="og:url" content="http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/index.html">
 <meta property="og:site_name" content="root@wanth3f1ag">
 <meta property="og:description" content="回顾前面分别学习了CC1和CC6利用反射触发Runtime.getRuntime().exec()去执行命令的，但是往往很多时候代码中的黑名单都会选择禁用Runtime，此时又该怎么做呢？ CC3链就是一种很好的解决方法，他不借助Runtime类中的exec去执行命令，而是利用类加载机制，动态加载恶意类来实现自动执行恶意类代码 0x01类加载机制参考文章：Java基础篇-类加载机制 在了解类加载机">
 <meta property="og:locale" content="en_US">
@@ -38,7 +38,7 @@
 <meta property="og:image" content="http://example.com/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250618150704133.png">
 <meta property="og:image" content="http://example.com/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/ALLCC.png">
 <meta property="article:published_time" content="2025-06-17T03:22:38.000Z">
-<meta property="article:modified_time" content="2025-06-18T07:08:14.508Z">
+<meta property="article:modified_time" content="2025-06-20T09:52:02.523Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="java反序列化">
 <meta name="twitter:card" content="summary">
@@ -62,7 +62,7 @@
       
     
     <!-- title -->
-    <title>java反序列化CC3链</title>
+    <title>Java反序列化CC3链</title>
     <!-- async scripts -->
     <!-- Google Analytics -->
 
@@ -127,24 +127,24 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&text=java反序列化CC3链"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=java反序列化CC3链"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&is_video=false&description=java反序列化CC3链"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=java反序列化CC3链&body=Check out this article: http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=java反序列化CC3链"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=java反序列化CC3链"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=java反序列化CC3链"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=java反序列化CC3链"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&name=java反序列化CC3链&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&t=java反序列化CC3链"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&text=Java反序列化CC3链"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=Java反序列化CC3链"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&is_video=false&description=Java反序列化CC3链"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java反序列化CC3链&body=Check out this article: http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=Java反序列化CC3链"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=Java反序列化CC3链"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=Java反序列化CC3链"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=Java反序列化CC3链"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&name=Java反序列化CC3链&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&t=Java反序列化CC3链"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
     
     
       <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.</span> <span class="toc-text">回顾</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">0x01类加载机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#java%E6%96%87%E4%BB%B6%E7%9A%84%E7%BC%96%E8%AF%91"><span class="toc-number">2.1.</span> <span class="toc-text">java文件的编译</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="toc-number">2.2.</span> <span class="toc-text">类加载过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E9%93%BE%E5%AD%90%E7%8E%AF%E5%A2%83"><span class="toc-number">3.</span> <span class="toc-text">0x02 链子环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E9%93%BE%E5%AD%90%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">0x03 链子分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3"><span class="toc-number">5.</span> <span class="toc-text">0x04问题的解决</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05%E6%8E%A5%E5%85%A5CC1"><span class="toc-number">6.</span> <span class="toc-text">0x05接入CC1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E5%85%A5CC1%E7%9A%84EXP"><span class="toc-number">6.1.</span> <span class="toc-text">接入CC1的EXP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06%E6%8E%A5%E5%85%A5CC6"><span class="toc-number">7.</span> <span class="toc-text">0x06接入CC6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">小结</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.</span> <span class="toc-text">回顾</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">0x01类加载机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#java%E6%96%87%E4%BB%B6%E7%9A%84%E7%BC%96%E8%AF%91"><span class="toc-number">2.1.</span> <span class="toc-text">java文件的编译</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="toc-number">2.2.</span> <span class="toc-text">类加载过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-number">3.</span> <span class="toc-text">0x02 影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E9%93%BE%E5%AD%90%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">0x03 链子分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3"><span class="toc-number">5.</span> <span class="toc-text">0x04问题的解决</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05%E6%8E%A5%E5%85%A5CC1"><span class="toc-number">6.</span> <span class="toc-text">0x05接入CC1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E5%85%A5CC1%E7%9A%84EXP"><span class="toc-number">6.1.</span> <span class="toc-text">接入CC1的EXP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06%E6%8E%A5%E5%85%A5CC6"><span class="toc-number">7.</span> <span class="toc-text">0x06接入CC6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">小结</span></a></li></ol>
       </div>
     
   </span>
@@ -157,7 +157,7 @@
   <header>
     
     <h1 class="posttitle p-name" itemprop="name headline">
-        java反序列化CC3链
+        Java反序列化CC3链
     </h1>
 
 
@@ -171,7 +171,7 @@
       
         <time datetime="2025-06-17T03:22:38.000Z" class="dt-published" itemprop="datePublished">2025-06-17</time>
         
-        (Updated: <time datetime="2025-06-18T07:08:14.508Z" class="dt-updated" itemprop="dateModified">2025-06-18</time>)
+        (Updated: <time datetime="2025-06-20T09:52:02.523Z" class="dt-updated" itemprop="dateModified">2025-06-20</time>)
         
       
     </div>
@@ -274,9 +274,9 @@
 
 <p>这里的话通过URLClassLoader加载器去动态加载类并初始化类对象，这里在初始化的时候执行了static静态区里面的代码，从而执行恶意命令</p>
 <p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250617145555669.png" alt="image-20250617145555669"></p>
-<h2 id="0x02-链子环境"><a href="#0x02-链子环境" class="headerlink" title="0x02 链子环境"></a>0x02 链子环境</h2><ul>
+<h2 id="0x02-影响版本"><a href="#0x02-影响版本" class="headerlink" title="0x02 影响版本"></a>0x02 影响版本</h2><ul>
 <li>jdk8u65</li>
-<li>Commons-Collections 3.2.1</li>
+<li>Commons-Collections &lt;&#x3D; 3.2.1</li>
 </ul>
 <h2 id="0x03-链子分析"><a href="#0x03-链子分析" class="headerlink" title="0x03 链子分析"></a>0x03 链子分析</h2><p>前面介绍了类加载机制的基础知识，我们这里还需要介绍一个点：</p>
 <p>当 ClassLoader 加载一个类时,如果这个类之前没有被加载过,它会调用自身的 defineClass() 方法来将类的字节码转换为 Class 对象</p>
@@ -424,23 +424,23 @@
     
     
       <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.</span> <span class="toc-text">回顾</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">0x01类加载机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#java%E6%96%87%E4%BB%B6%E7%9A%84%E7%BC%96%E8%AF%91"><span class="toc-number">2.1.</span> <span class="toc-text">java文件的编译</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="toc-number">2.2.</span> <span class="toc-text">类加载过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E9%93%BE%E5%AD%90%E7%8E%AF%E5%A2%83"><span class="toc-number">3.</span> <span class="toc-text">0x02 链子环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E9%93%BE%E5%AD%90%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">0x03 链子分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3"><span class="toc-number">5.</span> <span class="toc-text">0x04问题的解决</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05%E6%8E%A5%E5%85%A5CC1"><span class="toc-number">6.</span> <span class="toc-text">0x05接入CC1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E5%85%A5CC1%E7%9A%84EXP"><span class="toc-number">6.1.</span> <span class="toc-text">接入CC1的EXP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06%E6%8E%A5%E5%85%A5CC6"><span class="toc-number">7.</span> <span class="toc-text">0x06接入CC6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">小结</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.</span> <span class="toc-text">回顾</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">0x01类加载机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#java%E6%96%87%E4%BB%B6%E7%9A%84%E7%BC%96%E8%AF%91"><span class="toc-number">2.1.</span> <span class="toc-text">java文件的编译</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="toc-number">2.2.</span> <span class="toc-text">类加载过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-number">3.</span> <span class="toc-text">0x02 影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E9%93%BE%E5%AD%90%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">0x03 链子分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3"><span class="toc-number">5.</span> <span class="toc-text">0x04问题的解决</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05%E6%8E%A5%E5%85%A5CC1"><span class="toc-number">6.</span> <span class="toc-text">0x05接入CC1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E5%85%A5CC1%E7%9A%84EXP"><span class="toc-number">6.1.</span> <span class="toc-text">接入CC1的EXP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06%E6%8E%A5%E5%85%A5CC6"><span class="toc-number">7.</span> <span class="toc-text">0x06接入CC6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">小结</span></a></li></ol>
       </div>
     
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&text=java反序列化CC3链"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=java反序列化CC3链"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&is_video=false&description=java反序列化CC3链"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=java反序列化CC3链&body=Check out this article: http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=java反序列化CC3链"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=java反序列化CC3链"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=java反序列化CC3链"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=java反序列化CC3链"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&name=java反序列化CC3链&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/06/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&t=java反序列化CC3链"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&text=Java反序列化CC3链"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=Java反序列化CC3链"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&is_video=false&description=Java反序列化CC3链"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java反序列化CC3链&body=Check out this article: http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=Java反序列化CC3链"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=Java反序列化CC3链"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=Java反序列化CC3链"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&title=Java反序列化CC3链"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&name=Java反序列化CC3链&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/06/17/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/&t=Java反序列化CC3链"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
