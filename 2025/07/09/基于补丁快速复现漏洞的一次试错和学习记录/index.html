@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="🔒 这篇文章需要密码才能阅读">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于补丁快速复现漏洞的一次试错和学习记录">
+<meta property="og:url" content="http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="🔒 这篇文章需要密码才能阅读">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-07-09T14:50:30.000Z">
+<meta property="article:modified_time" content="2025-07-09T15:31:01.922Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="实习收获">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>基于补丁快速复现漏洞的一次试错和学习记录</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/3025/04/16/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/07/07/fastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&text=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&title=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&is_video=false&description=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=基于补丁快速复现漏洞的一次试错和学习记录&body=Check out this article: http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&title=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&title=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&title=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&title=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&name=基于补丁快速复现漏洞的一次试错和学习记录&description=🔒 这篇文章需要密码才能阅读"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&t=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        基于补丁快速复现漏洞的一次试错和学习记录
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-07-09T14:50:30.000Z" class="dt-published" itemprop="datePublished">2025-07-09</time>
+        
+        (Updated: <time datetime="2025-07-09T15:31:01.922Z" class="dt-updated" itemprop="dateModified">2025-07-09</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%AE%9E%E4%B9%A0%E6%94%B6%E8%8E%B7/">实习收获</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%AE%9E%E4%B9%A0%E6%94%B6%E8%8E%B7/" rel="tag">实习收获</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="c111954604b00b98e29c83065a4d41bab2c1e65f195f66da8b58106195b30e85">b7ad80b0f8f28fc180e5c9937d7ec84d8e62c22b158088b6ae8d13582c64a7543854fc9efa3f1bae567f17f2725847ab646ce5ac2023ce3994832fb4632832197917b47dbed4fd7d5c273d9259ad1d2cf206d7947baf721c8498f9690e3afdb17e6ad07235ee06583c68ce09b1de9fa121ab748460180ecf8f12e3b8e13fa86d581330c0f18e6a1b4ae87f3f20e54bf9ee42c287193b8ff35b61c2a06bc9e6700760fc667181d03bf3b7644f9bd58eaa59f90642b4ffe7318fa2c602809d8fed1d57a8ef97e898facdeb40d9b35c3d4a480ddac9b743c0c9100a4e76b7bb51a638e3e00f2c9e40627ffc3e1b1afe83f4b9d1fdc55358256627310cd3a9c4eabd8aeb33dd01f3565c14b9cb979b8808ad78fb74dc88e47400069564536edc6fc493b37c5ef44b35c10b9bb8846ac79463db045a5a5be5422d29bbe0c639216d90d2627ab6e545a550ec19ef47495becb7a56d349f9af53ae5b24e6280f74f7dd632d6e693e868909de58c3597817d15c3255f9caac28abc4f65c15f369055bd26db16ddc03f9fe650da18a3ca4c1cedd09c360d968508220f85285b987b66daf32d5acf23a0f2c509ae8c3796a29c07eeeb4b4ff1d8568f9c64eb816718215fa48eefaa0015058f8b77bad18a8e7e287717a9f4e990922035eef476c82614c450d787bc5f8e777afdd2e68abe78ef5225d8b44b604c335a05bac5fd39423ac02eec6376e34b7d17286872b10d6b41f814f5bab3e68b2d2bd8b87cb9702eb94a36db707302f2f6cc2fc659edbee164321f1fe18b24dde4f7954c2724304593a1fcb83d03e9f4cf8c02bfaa0c0f26148921936c76e790881d981e300935cb42973862a27938defbba71adfe7ca98127e9fb062b66a0dd5f23d2ac853fa6d3116684acfbf0a36ad56fc4b0b66d73179297fabe13916911a245fd7166bab9e782153f537205eaa872d1a79d1e58a65c1c5332cd1902a1f9af0612932ceeea48f1e90bd984b0742ff9fd19abc3dd2d0b3cad68432d3dc5b6d4ae6e69bcf927ced36254c1f94aa4af9634be5abea9a453e4e19465e973b7658cf5463b80049c96be30964c8e0b65758dd72119f909037d91aea02c740a94de82e0aeda06184431ebc0bdba6e6b7f24a9eeed148d55815c81d85d34d8564a2e9768ff632c75d82ded7261176edd47839e83e33d291d13861c39c311845ac5ef94d52f9a942a43160b2000b3e7957938c0d92e316a16b3bf3f58c127f1877ccc4d5d4758ee87315665edba74b7cbd1e701cf207266aad97763759e1c6f2e0a0de77739a283cdb66a4f2fa27fc55a1e4ba0bba819de890f880a55ee9368048bbf5916a6676a8be9ce511268ec1de8072cf51906c1045812b31669e427d0238377fcf7d90f0e166ca7a26934db53cdde693ac1c5bfa9a6033780284a7f9aa253f8f26e2092686eb473d81c787b9844980486a6be6387e97daf8e2f46b31b87faf069810ae407737c89a0f160af01ef9c433e4b541469a5b9e8b219de0ab255e020d2f5b5288a11cbf0af8f6a71ff0c0517b4739a48ad65e782a461e2472588dfbf31fa2e9b782b6b26fb402fc142e7bb441559ab3a13c5d447d1e95f44738079c36366d50911de4373db3a5e15a97cdc5f5b80b02eeadeb2056a7e38b7c157790fd68c3907a1a4bdd606372f3b9600e5758cb57c5736d94848e6716a69f87a234d62d43197944f1726d9a8ffdcbd9e7959f9383af748515872a3425011f1d6083d79eeb51dd2051dbc3858dc2dfddd0a6f35abd1675f765191b254e151862330868a2d68e7d6d87d8e973c0c36f12371c1c0fb136ca03d8f267edfd573cb05890c1e131a38c40bde12acf146adf0f347a8269ed4d7fdb960672f30ec8b5bb2e92f502498a809a8b028fc791edf6852a0f109876ca6f36f1dec1d40887431a3cbe6ec3c1ea98c3404baddf8d1d7bb7c99b6ebfe09d75f96d6524b6b493107dcab855a4dc2f7d755cc480abadf585f38d4562494ede6fe5de1ec4782525ef4d232d56097c927c101a747c4f43c2eb491839d44f7e19b2305e448cb6470cfac9a8397df31b70b63e018422c47b721890e5338b694dfef8b82c2167dcba14497593e0365be1e610c3c93c1ae23354376030d07a225d12630bf1b1810cd66a434d9ea7d8a075bedd29f8bf776971e5fe19393e1a48c390d59ce81ffd4b8a1a3bc878d94b29891a29f6ae88807c3572750c6a54172e52ec02497480b09e960c1c47242c08acc7bfa885c2ad0f7670bb7470aa33440872fb939f3e4b6e7067c641783c68bd269fd48e77a95cad4c20b431f07a880e680b46e47dc3734dabaf2f3809f69bbcc3a4b433415ece20f54f98fbe43c0237477e06287012b2c0973af7dc25c9d0a2eed26b008c3bea585d461242cce3a073f11bbb3e8771fb5f43278ce6060c00bd5307335c2108f32c63ef97686c424990b541e0393012c33b7b2ddb697ba71befc894bd61a021ae2d2fa26817279c0e246661c3b72a23535f8b4bdb7469d4c1db6a9af50f5ee75508815d6d1ac515319ef771ce33350c2e3ba477bd03f1d76cce8c421178ef58146e61fe2d53c14d5c220364aa9b2c99c3518fb104974909fe673df984a332836044cc2b59c4778e44ca855926c73ee27573e9640de751ff0579ec5b35e7fa711d5126847a7dd34e087c93abef4f0be3fd07ec9ea411506444e52b1c4cfd628de49b42274f0e204583bbf7199eca541c7bcc00d405fedd75f5d68bc0a10b24c0968bfa5b7a86f3a33113c436386d800b6c1bdf95e72b8a232bed3e8898562c0c22ad308d3cb638cec8f9ea6177f34ff3b8ba0f7d01fc676475f8f5dffc065ec830866e88a21e51ec15be87c02fcf5daa7b25cd2703878bbf289360257daf2a2aca3f002a8324f77eb066049fec6b80d738b2450d6f90a7fe398d06a0c3ae6269331f320200e5c64c45fc33033c237e22e3305c596dc805622fbf828d9e57e2ff7cc64cef484f8d68e6b84712bad6f6c1bcdbca05391f4af7999b7da5532498646d45e3831626b2e29341c7d6e4815934696cb4aa068d23e0a096f6c82ea1fcd1ad5a829f993a7d96a2c19c87b941d74ab57360b415443294caf1b4c36b1918b42381f81050d5e931b1014e09d1abf1d10bce802d80f10cfe40d8d19ac9fbd4c1757f1dcec</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">没有密码怎么能看呢</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&text=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&title=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&is_video=false&description=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=基于补丁快速复现漏洞的一次试错和学习记录&body=Check out this article: http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&title=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&title=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&title=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&title=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&name=基于补丁快速复现漏洞的一次试错和学习记录&description=🔒 这篇文章需要密码才能阅读"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/07/09/%E5%9F%BA%E4%BA%8E%E8%A1%A5%E4%B8%81%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E6%AC%A1%E8%AF%95%E9%94%99%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/&t=基于补丁快速复现漏洞的一次试错和学习记录"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
