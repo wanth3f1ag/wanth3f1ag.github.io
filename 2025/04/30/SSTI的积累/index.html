@@ -30,7 +30,7 @@
 <meta property="og:image" content="http://example.com/image/achieve/202411/DSBCTF%E5%8D%95%E8%BA%AB%E6%9D%AF/image-20250430170928255.png">
 <meta property="og:image" content="http://example.com/image/achieve/202411/DSBCTF%E5%8D%95%E8%BA%AB%E6%9D%AF/image-20250430171107666.png">
 <meta property="article:published_time" content="2025-04-30T09:03:33.000Z">
-<meta property="article:modified_time" content="2025-05-28T09:59:23.634Z">
+<meta property="article:modified_time" content="2025-08-07T06:44:26.249Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="SSTI的积累">
 <meta name="twitter:card" content="summary">
@@ -136,7 +136,7 @@
     
     
       <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E"><span class="toc-number">1.1.</span> <span class="toc-text">模板引擎</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFssti"><span class="toc-number">1.2.</span> <span class="toc-text">什么是ssti</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Flask%E4%B8%8B%E7%9A%84ssti"><span class="toc-number">2.</span> <span class="toc-text">Flask下的ssti</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFFlask%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">什么是Flask？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jinja2%E7%9A%84%E8%AF%AD%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">Jinja2的语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%A4%8D%E7%8E%B0"><span class="toc-number">2.3.</span> <span class="toc-text">环境复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E5%BE%A1%E6%96%B9%E6%B3%95"><span class="toc-number">2.4.</span> <span class="toc-text">防御方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95"><span class="toc-number">2.5.</span> <span class="toc-text">攻击方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#python%E7%9A%84%E7%BB%A7%E6%89%BF"><span class="toc-number">2.5.1.</span> <span class="toc-text">python的继承</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSTI%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5"><span class="toc-number">2.5.2.</span> <span class="toc-text">SSTI模板注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%931"><span class="toc-number">2.6.</span> <span class="toc-text">魔术方法总结1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#payload%E7%A7%AF%E7%B4%AF"><span class="toc-number">2.7.</span> <span class="toc-text">payload积累</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E7%BB%95%E8%BF%87%E6%89%8B%E6%B3%95"><span class="toc-number">2.8.</span> <span class="toc-text">一些绕过手法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E4%B8%AD%E6%8B%AC%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.1.</span> <span class="toc-text">绕过中括号过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%8D%95%E5%8F%8C%E5%BC%95%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.2.</span> <span class="toc-text">绕过单双引号过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E4%B8%8B%E5%88%92%E7%BA%BF%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.3.</span> <span class="toc-text">绕过下划线过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%B0%8F%E6%95%B0%E7%82%B9%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.4.</span> <span class="toc-text">绕过小数点过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E8%8A%B1%E6%8B%AC%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.5.</span> <span class="toc-text">绕过花括号过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%85%B3%E9%94%AE%E5%AD%97%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.6.</span> <span class="toc-text">绕过关键字过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E6%95%B0%E5%AD%97%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.7.</span> <span class="toc-text">绕过数字过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E7%AC%A6%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.8.</span> <span class="toc-text">绕过符号过滤</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssti%E9%95%BF%E5%BA%A6%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87"><span class="toc-number">2.9.</span> <span class="toc-text">ssti长度限制绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#url-for%E5%87%BD%E6%95%B0"><span class="toc-number">2.9.1.</span> <span class="toc-text">url_for函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86-Payload-%E4%BF%9D%E5%AD%98%E5%9C%A8-config-%E5%85%A8%E5%B1%80%E5%AF%B9%E8%B1%A1%E4%B8%AD"><span class="toc-number">2.9.2.</span> <span class="toc-text">将 Payload 保存在 config 全局对象中</span></a></li></ol></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E"><span class="toc-number">1.1.</span> <span class="toc-text">模板引擎</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFssti"><span class="toc-number">1.2.</span> <span class="toc-text">什么是ssti</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Flask%E4%B8%8B%E7%9A%84Jinja2%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5"><span class="toc-number">2.</span> <span class="toc-text">Flask下的Jinja2模板注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFFlask%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">什么是Flask？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jinja2%E7%9A%84%E8%AF%AD%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">Jinja2的语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%A4%8D%E7%8E%B0"><span class="toc-number">2.3.</span> <span class="toc-text">环境复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E5%BE%A1%E6%96%B9%E6%B3%95"><span class="toc-number">2.4.</span> <span class="toc-text">防御方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95"><span class="toc-number">2.5.</span> <span class="toc-text">攻击方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#python%E7%9A%84%E7%BB%A7%E6%89%BF"><span class="toc-number">2.5.1.</span> <span class="toc-text">python的继承</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSTI%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5"><span class="toc-number">2.5.2.</span> <span class="toc-text">SSTI模板注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%931"><span class="toc-number">2.6.</span> <span class="toc-text">魔术方法总结1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#payload%E7%A7%AF%E7%B4%AF"><span class="toc-number">2.7.</span> <span class="toc-text">payload积累</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E7%BB%95%E8%BF%87%E6%89%8B%E6%B3%95"><span class="toc-number">2.8.</span> <span class="toc-text">一些绕过手法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E4%B8%AD%E6%8B%AC%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.1.</span> <span class="toc-text">绕过中括号过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%8D%95%E5%8F%8C%E5%BC%95%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.2.</span> <span class="toc-text">绕过单双引号过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E4%B8%8B%E5%88%92%E7%BA%BF%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.3.</span> <span class="toc-text">绕过下划线过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%B0%8F%E6%95%B0%E7%82%B9%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.4.</span> <span class="toc-text">绕过小数点过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E8%8A%B1%E6%8B%AC%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.5.</span> <span class="toc-text">绕过花括号过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%85%B3%E9%94%AE%E5%AD%97%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.6.</span> <span class="toc-text">绕过关键字过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E6%95%B0%E5%AD%97%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.7.</span> <span class="toc-text">绕过数字过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E7%AC%A6%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.8.</span> <span class="toc-text">绕过符号过滤</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssti%E9%95%BF%E5%BA%A6%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87"><span class="toc-number">2.9.</span> <span class="toc-text">ssti长度限制绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#url-for%E5%87%BD%E6%95%B0"><span class="toc-number">2.9.1.</span> <span class="toc-text">url_for函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86-Payload-%E4%BF%9D%E5%AD%98%E5%9C%A8-config-%E5%85%A8%E5%B1%80%E5%AF%B9%E8%B1%A1%E4%B8%AD"><span class="toc-number">2.9.2.</span> <span class="toc-text">将 Payload 保存在 config 全局对象中</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ruby%E4%B8%8B%E7%9A%84ERB%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5"><span class="toc-number">2.10.</span> <span class="toc-text">Ruby下的ERB模板注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84payload"><span class="toc-number">2.10.1.</span> <span class="toc-text">常见的payload</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ruby%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-number">2.10.2.</span> <span class="toc-text">Ruby全局变量</span></a></li></ol></li></ol></li></ol>
       </div>
     
   </span>
@@ -163,7 +163,7 @@
       
         <time datetime="2025-04-30T09:03:33.000Z" class="dt-published" itemprop="datePublished">2025-04-30</time>
         
-        (Updated: <time datetime="2025-05-28T09:59:23.634Z" class="dt-updated" itemprop="dateModified">2025-05-28</time>)
+        (Updated: <time datetime="2025-08-07T06:44:26.249Z" class="dt-updated" itemprop="dateModified">2025-08-07</time>)
         
       
     </div>
@@ -206,7 +206,7 @@
 <p>漏洞成因就是服务端接收了用户的恶意输入以后，未经任何处理就将其作为 Web 应用模板内容的一部分，模板引擎在进行目标编译渲染的过程中，执行了用户插入的可以破坏模板的语句，因而可能导致了敏感信息泄露、代码执行、GetShell 等问题。其影响范围主要取决于模版引擎的复杂性。</p>
 <p>凡是使用模板的地方都可能会出现 SSTI 的问题，SSTI 不属于任何一种语言，沙盒绕过也不是，沙盒绕过只是由于模板引擎发现了很大的安全漏洞，然后模板引擎设计出来的一种防护机制，不允许使用没有定义或者声明的模块，这适用于所有的模板引擎。</p>
 <p><img src="/../image/achieve/202411/ssti/1344396-20200911174631687-758048107.png" alt="img"></p>
-<h1 id="Flask下的ssti"><a href="#Flask下的ssti" class="headerlink" title="Flask下的ssti"></a>Flask下的ssti</h1><h2 id="什么是Flask？"><a href="#什么是Flask？" class="headerlink" title="什么是Flask？"></a>什么是Flask？</h2><p>Flask 是一个轻量级的 <strong>Python Web 框架</strong>，用于快速构建 Web 应用程序和 API。</p>
+<h1 id="Flask下的Jinja2模板注入"><a href="#Flask下的Jinja2模板注入" class="headerlink" title="Flask下的Jinja2模板注入"></a>Flask下的Jinja2模板注入</h1><h2 id="什么是Flask？"><a href="#什么是Flask？" class="headerlink" title="什么是Flask？"></a>什么是Flask？</h2><p>Flask 是一个轻量级的 <strong>Python Web 框架</strong>，用于快速构建 Web 应用程序和 API。</p>
 <p>而flask默认使用jinja2作为渲染HTML页面的模板引擎，也是ssti漏洞的常见来源</p>
 <p><code>Jinja2</code> 是 Python 中一个广泛使用的 <strong>模板引擎</strong>，主要用于动态生成 HTML、XML、配置文件等文本内容。</p>
 <h2 id="Jinja2的语法"><a href="#Jinja2的语法" class="headerlink" title="Jinja2的语法"></a>Jinja2的语法</h2><p>Jinja2使用 结构表示一个变量，它是一种特殊的占位符，告诉模版引擎这个位置的值从渲染模版时使用的数据中获取。</p>
@@ -491,6 +491,184 @@
 
 <p><img src="/../image/achieve/202411/DSBCTF%E5%8D%95%E8%BA%AB%E6%9D%AF/image-20250430171107666.png" alt="image-20250430171107666"></p>
 <p>直接打就行，这里能省去一大部分的字符，也是一种很好的绕过方法</p>
+<h2 id="Ruby下的ERB模板注入"><a href="#Ruby下的ERB模板注入" class="headerlink" title="Ruby下的ERB模板注入"></a>Ruby下的ERB模板注入</h2><p>ERB是Ruby自带的模板引擎</p>
+<ul>
+<li>&lt;% 写逻辑脚本(Ruby语法) %&gt;</li>
+<li>&lt;%&#x3D; 直接输出变量值或运算结果 %&gt;</li>
+</ul>
+<p>如何判断是否存在模板注入呢？</p>
+<p>查找 ERB.new 使用点，然后检查用户输入是否被转义或过滤才传入模板，如果没有就存在SSTI</p>
+<p>例如</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">template = <span class="string">&quot;&lt;h1&gt;Hello, <span class="subst">#&#123;params[<span class="symbol">:name</span>]&#125;</span>&lt;/h1&gt;&quot;</span></span><br><span class="line"><span class="variable constant_">ERB</span>.new(template).result(binding)</span><br></pre></td></tr></table></figure>
+
+<p>这里很明显是一种拼接的方法，而没有任何的处理，所以我们可以传入ERB表达式</p>
+<h3 id="常见的payload"><a href="#常见的payload" class="headerlink" title="常见的payload"></a>常见的payload</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;%= <span class="number">7</span> * <span class="number">7</span> %&gt;</span><br><span class="line">&lt;%= <span class="title class_">File</span>.open(‘/etc/passwd’).read %&gt;</span><br><span class="line">&lt;%= <span class="variable language_">self</span> %&gt;    <span class="regexp">//</span>枚举该对象可用的属性及方法</span><br><span class="line">&lt;%= <span class="variable language_">self</span>.<span class="keyword">class</span>.name %&gt;   <span class="regexp">//</span>获取<span class="variable language_">self</span>对象的类名</span><br><span class="line">&lt;%= <span class="variable language_">self</span>.methods %&gt;		<span class="regexp">//</span>获取当前类的可用方法</span><br><span class="line">&lt;%= system(<span class="string">&quot;whoami&quot;</span>)%&gt;	<span class="regexp">//</span>执行系统命令</span><br></pre></td></tr></table></figure>
+
+<p>还有一些Ruby的全局变量</p>
+<h3 id="Ruby全局变量"><a href="#Ruby全局变量" class="headerlink" title="Ruby全局变量"></a>Ruby全局变量</h3><table>
+<thead>
+<tr>
+<th align="center">Ruby全局变量</th>
+<th align="center">中文释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">$!</td>
+<td align="center">错误信息</td>
+</tr>
+<tr>
+<td align="center">$@</td>
+<td align="center">错误发生的位置</td>
+</tr>
+<tr>
+<td align="center">$0</td>
+<td align="center">正在执行的程序的名称</td>
+</tr>
+<tr>
+<td align="center">$&amp;</td>
+<td align="center">成功匹配的字符串</td>
+</tr>
+<tr>
+<td align="center">$&#x2F;</td>
+<td align="center">输入分隔符，默认为换行符</td>
+</tr>
+<tr>
+<td align="center">$\</td>
+<td align="center">输出记录分隔符（print和IO）</td>
+</tr>
+<tr>
+<td align="center">$.</td>
+<td align="center">上次读取的文件的当前输入行号</td>
+</tr>
+<tr>
+<td align="center">$; $-F</td>
+<td align="center">默认字段分隔符</td>
+</tr>
+<tr>
+<td align="center">$,</td>
+<td align="center">输入字符串分隔符，连接多个字符串时用到</td>
+</tr>
+<tr>
+<td align="center">$&#x3D;</td>
+<td align="center">不区分大小写</td>
+</tr>
+<tr>
+<td align="center">$~</td>
+<td align="center">最后一次匹配数据</td>
+</tr>
+<tr>
+<td align="center">$&#96;</td>
+<td align="center">最后一次匹配前的内容</td>
+</tr>
+<tr>
+<td align="center">$’</td>
+<td align="center">最后一次匹配后的内容</td>
+</tr>
+<tr>
+<td align="center">$+</td>
+<td align="center">最后一个括号匹配内容</td>
+</tr>
+<tr>
+<td align="center">$1~$9</td>
+<td align="center">各组匹配结果</td>
+</tr>
+<tr>
+<td align="center">$&lt; ARGF</td>
+<td align="center">命令行中给定的文件的虚拟连接文件（如果未给定任何文件，则从$stdin）</td>
+</tr>
+<tr>
+<td align="center">$&gt;</td>
+<td align="center">打印的默认输出</td>
+</tr>
+<tr>
+<td align="center">$_</td>
+<td align="center">从输入设备中读取的最后一行</td>
+</tr>
+<tr>
+<td align="center">$* ARGV</td>
+<td align="center">命令行参数</td>
+</tr>
+<tr>
+<td align="center">$$</td>
+<td align="center">运行此脚本的Ruby的进程号</td>
+</tr>
+<tr>
+<td align="center">$?</td>
+<td align="center">最后执行的子进程的状态</td>
+</tr>
+<tr>
+<td align="center">$: $-I</td>
+<td align="center">加载的二进制模块（库）的路径</td>
+</tr>
+<tr>
+<td align="center">$“</td>
+<td align="center">数组包含的需要加载的库的名字</td>
+</tr>
+<tr>
+<td align="center">$DEBUG $-d</td>
+<td align="center">调试标志，由-d开关设置</td>
+</tr>
+<tr>
+<td align="center">$LOADED_FEATURES</td>
+<td align="center">$“的别名</td>
+</tr>
+<tr>
+<td align="center">$FILENAME</td>
+<td align="center">来自$&lt;的当前输入文件</td>
+</tr>
+<tr>
+<td align="center">$LOAD_PATH</td>
+<td align="center">$:</td>
+</tr>
+<tr>
+<td align="center">$stderr</td>
+<td align="center">当前标准误差输出</td>
+</tr>
+<tr>
+<td align="center">$stdin</td>
+<td align="center">当前标准输入</td>
+</tr>
+<tr>
+<td align="center">$stdout</td>
+<td align="center">当前标准输出</td>
+</tr>
+<tr>
+<td align="center">$VERBOSE $-v</td>
+<td align="center">详细标志，由-w或-v开关设置</td>
+</tr>
+<tr>
+<td align="center">$-0</td>
+<td align="center">$&#x2F;</td>
+</tr>
+<tr>
+<td align="center">$-a</td>
+<td align="center">只读</td>
+</tr>
+<tr>
+<td align="center">$-i</td>
+<td align="center">在in-place-edit模式下，此变量保存扩展名</td>
+</tr>
+<tr>
+<td align="center">NIL</td>
+<td align="center">0本身</td>
+</tr>
+<tr>
+<td align="center">ENV</td>
+<td align="center">当前环境变量</td>
+</tr>
+<tr>
+<td align="center">RUBY_VERSION</td>
+<td align="center">Ruby版本</td>
+</tr>
+<tr>
+<td align="center">RUBY_RELEASE_DATE</td>
+<td align="center">发布日期</td>
+</tr>
+<tr>
+<td align="center">RUBY_PLATFORM</td>
+<td align="center">平台标识符</td>
+</tr>
+</tbody></table>
 
   </div>
 </article>
@@ -522,7 +700,7 @@
     
     
       <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E"><span class="toc-number">1.1.</span> <span class="toc-text">模板引擎</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFssti"><span class="toc-number">1.2.</span> <span class="toc-text">什么是ssti</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Flask%E4%B8%8B%E7%9A%84ssti"><span class="toc-number">2.</span> <span class="toc-text">Flask下的ssti</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFFlask%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">什么是Flask？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jinja2%E7%9A%84%E8%AF%AD%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">Jinja2的语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%A4%8D%E7%8E%B0"><span class="toc-number">2.3.</span> <span class="toc-text">环境复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E5%BE%A1%E6%96%B9%E6%B3%95"><span class="toc-number">2.4.</span> <span class="toc-text">防御方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95"><span class="toc-number">2.5.</span> <span class="toc-text">攻击方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#python%E7%9A%84%E7%BB%A7%E6%89%BF"><span class="toc-number">2.5.1.</span> <span class="toc-text">python的继承</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSTI%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5"><span class="toc-number">2.5.2.</span> <span class="toc-text">SSTI模板注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%931"><span class="toc-number">2.6.</span> <span class="toc-text">魔术方法总结1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#payload%E7%A7%AF%E7%B4%AF"><span class="toc-number">2.7.</span> <span class="toc-text">payload积累</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E7%BB%95%E8%BF%87%E6%89%8B%E6%B3%95"><span class="toc-number">2.8.</span> <span class="toc-text">一些绕过手法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E4%B8%AD%E6%8B%AC%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.1.</span> <span class="toc-text">绕过中括号过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%8D%95%E5%8F%8C%E5%BC%95%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.2.</span> <span class="toc-text">绕过单双引号过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E4%B8%8B%E5%88%92%E7%BA%BF%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.3.</span> <span class="toc-text">绕过下划线过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%B0%8F%E6%95%B0%E7%82%B9%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.4.</span> <span class="toc-text">绕过小数点过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E8%8A%B1%E6%8B%AC%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.5.</span> <span class="toc-text">绕过花括号过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%85%B3%E9%94%AE%E5%AD%97%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.6.</span> <span class="toc-text">绕过关键字过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E6%95%B0%E5%AD%97%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.7.</span> <span class="toc-text">绕过数字过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E7%AC%A6%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.8.</span> <span class="toc-text">绕过符号过滤</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssti%E9%95%BF%E5%BA%A6%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87"><span class="toc-number">2.9.</span> <span class="toc-text">ssti长度限制绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#url-for%E5%87%BD%E6%95%B0"><span class="toc-number">2.9.1.</span> <span class="toc-text">url_for函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86-Payload-%E4%BF%9D%E5%AD%98%E5%9C%A8-config-%E5%85%A8%E5%B1%80%E5%AF%B9%E8%B1%A1%E4%B8%AD"><span class="toc-number">2.9.2.</span> <span class="toc-text">将 Payload 保存在 config 全局对象中</span></a></li></ol></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E"><span class="toc-number">1.1.</span> <span class="toc-text">模板引擎</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFssti"><span class="toc-number">1.2.</span> <span class="toc-text">什么是ssti</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Flask%E4%B8%8B%E7%9A%84Jinja2%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5"><span class="toc-number">2.</span> <span class="toc-text">Flask下的Jinja2模板注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFFlask%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">什么是Flask？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jinja2%E7%9A%84%E8%AF%AD%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">Jinja2的语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%A4%8D%E7%8E%B0"><span class="toc-number">2.3.</span> <span class="toc-text">环境复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E5%BE%A1%E6%96%B9%E6%B3%95"><span class="toc-number">2.4.</span> <span class="toc-text">防御方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95"><span class="toc-number">2.5.</span> <span class="toc-text">攻击方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#python%E7%9A%84%E7%BB%A7%E6%89%BF"><span class="toc-number">2.5.1.</span> <span class="toc-text">python的继承</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSTI%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5"><span class="toc-number">2.5.2.</span> <span class="toc-text">SSTI模板注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%931"><span class="toc-number">2.6.</span> <span class="toc-text">魔术方法总结1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#payload%E7%A7%AF%E7%B4%AF"><span class="toc-number">2.7.</span> <span class="toc-text">payload积累</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E7%BB%95%E8%BF%87%E6%89%8B%E6%B3%95"><span class="toc-number">2.8.</span> <span class="toc-text">一些绕过手法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E4%B8%AD%E6%8B%AC%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.1.</span> <span class="toc-text">绕过中括号过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%8D%95%E5%8F%8C%E5%BC%95%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.2.</span> <span class="toc-text">绕过单双引号过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E4%B8%8B%E5%88%92%E7%BA%BF%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.3.</span> <span class="toc-text">绕过下划线过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%B0%8F%E6%95%B0%E7%82%B9%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.4.</span> <span class="toc-text">绕过小数点过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E8%8A%B1%E6%8B%AC%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.5.</span> <span class="toc-text">绕过花括号过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%85%B3%E9%94%AE%E5%AD%97%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.6.</span> <span class="toc-text">绕过关键字过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E6%95%B0%E5%AD%97%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.7.</span> <span class="toc-text">绕过数字过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E7%AC%A6%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.8.8.</span> <span class="toc-text">绕过符号过滤</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssti%E9%95%BF%E5%BA%A6%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87"><span class="toc-number">2.9.</span> <span class="toc-text">ssti长度限制绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#url-for%E5%87%BD%E6%95%B0"><span class="toc-number">2.9.1.</span> <span class="toc-text">url_for函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86-Payload-%E4%BF%9D%E5%AD%98%E5%9C%A8-config-%E5%85%A8%E5%B1%80%E5%AF%B9%E8%B1%A1%E4%B8%AD"><span class="toc-number">2.9.2.</span> <span class="toc-text">将 Payload 保存在 config 全局对象中</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ruby%E4%B8%8B%E7%9A%84ERB%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5"><span class="toc-number">2.10.</span> <span class="toc-text">Ruby下的ERB模板注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84payload"><span class="toc-number">2.10.1.</span> <span class="toc-text">常见的payload</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ruby%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-number">2.10.2.</span> <span class="toc-text">Ruby全局变量</span></a></li></ol></li></ol></li></ol>
       </div>
     
 
