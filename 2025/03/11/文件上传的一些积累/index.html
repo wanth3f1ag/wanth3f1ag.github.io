@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="文件上传漏洞是什么？文件上传漏洞是指用户上传了一个可执行的脚本文件，并通过此脚本文件获得了执行服务器端命令的能力。“文件上传”本身并没有问题，但是关键在于服务器怎么去处理上传的文件，如果服务器对上传的文件处理不够到位，没有做到一些恶意代码的过滤，就会导致很严重的后果 所以文件上传漏洞的利用条件就是  上传一个可执行文件或者恶意木马文件 服务器解析不合理，导致文件成功执行  需要额外注意的是，我们上">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件上传的一些积累">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="文件上传漏洞是什么？文件上传漏洞是指用户上传了一个可执行的脚本文件，并通过此脚本文件获得了执行服务器端命令的能力。“文件上传”本身并没有问题，但是关键在于服务器怎么去处理上传的文件，如果服务器对上传的文件处理不够到位，没有做到一些恶意代码的过滤，就会导致很严重的后果 所以文件上传漏洞的利用条件就是  上传一个可执行文件或者恶意木马文件 服务器解析不合理，导致文件成功执行  需要额外注意的是，我们上">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/1.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/image-20250312165347011.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250308231722174-1741770512855-6.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/image-20250312193825688.png">
+<meta property="article:published_time" content="2025-03-11T10:17:37.000Z">
+<meta property="article:modified_time" content="2025-05-16T03:41:25.944Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="文件上传">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>文件上传的一些积累</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/03/13/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%AF%87-ctfshow/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&text=文件上传的一些积累"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&title=文件上传的一些积累"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&is_video=false&description=文件上传的一些积累"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=文件上传的一些积累&body=Check out this article: https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&title=文件上传的一些积累"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&title=文件上传的一些积累"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&title=文件上传的一些积累"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&title=文件上传的一些积累"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&name=文件上传的一些积累&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&t=文件上传的一些积累"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">文件上传漏洞是什么？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#webshell%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">webshell是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC"><span class="toc-number">2.1.</span> <span class="toc-text">常见的一句话木马</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">文件上传的攻击方法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%A0%A1%E9%AA%8C%E4%BB%A5%E5%8F%8A%E7%BB%95%E8%BF%87%E5%A7%BF%E5%8A%BF"><span class="toc-number">4.</span> <span class="toc-text">文件上传校验以及绕过姿势</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%89%8D%E7%AB%AFJavaScript%E6%A0%A1%E9%AA%8C"><span class="toc-number">4.1.</span> <span class="toc-text">客户端前端JavaScript校验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%8E%E7%AB%AF%E6%A0%A1%E9%AA%8C"><span class="toc-number">4.2.</span> <span class="toc-text">服务端后端校验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E5%90%8D%E6%A3%80%E6%B5%8B"><span class="toc-number">4.3.</span> <span class="toc-text">扩展名检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%91%E7%99%BD%E5%90%8D%E5%8D%95%E6%A3%80%E6%B5%8B%E7%BB%95%E8%BF%87%E6%96%B9%E6%B3%95"><span class="toc-number">4.3.1.</span> <span class="toc-text">黑白名单检测绕过方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.</span> <span class="toc-text">服务器解析漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Apache%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.1.</span> <span class="toc-text">Apache解析漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#htaccess%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.2.</span> <span class="toc-text">.htaccess文件解析漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#user-ini%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.3.</span> <span class="toc-text">.user.ini文件解析漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.4.</span> <span class="toc-text">目录解析漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.5.</span> <span class="toc-text">文件解析漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IIS7-0-IIS7-5-%E7%9A%84%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.6.</span> <span class="toc-text">IIS7.0 | IIS7.5 的解析漏洞</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows%E4%B8%8B%E7%BB%95%E8%BF%87%E5%90%8E%E7%BC%80%E5%90%8D%E9%AA%8C%E8%AF%81"><span class="toc-number">4.3.3.</span> <span class="toc-text">Windows下绕过后缀名验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E7%BC%80%E5%90%8D%E7%A9%BA%E6%A0%BC%E7%BB%95%E8%BF%87"><span class="toc-number">4.3.4.</span> <span class="toc-text">后缀名空格绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E7%BC%80%E5%90%8D%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87"><span class="toc-number">4.3.5.</span> <span class="toc-text">后缀名大小写绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E7%BC%80%E5%90%8D%E5%8F%8C%E5%86%99%E7%BB%95%E8%BF%87"><span class="toc-number">4.3.6.</span> <span class="toc-text">后缀名双写绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E8%A7%A3%E6%9E%90%E5%90%8E%E7%BC%80%E7%BB%95%E8%BF%87"><span class="toc-number">4.3.7.</span> <span class="toc-text">可解析后缀绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows%E5%91%BD%E5%90%8D%E6%9C%BA%E5%88%B6%E7%BB%95%E8%BF%87%E5%90%8E%E7%BC%80"><span class="toc-number">4.3.8.</span> <span class="toc-text">Windows命名机制绕过后缀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#00%E6%88%AA%E6%96%AD%E7%BB%95%E8%BF%87"><span class="toc-number">4.3.9.</span> <span class="toc-text">%00截断绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%90%8E%E7%BC%80%E5%90%8D%E6%A3%80%E6%B5%8B"><span class="toc-number">4.3.10.</span> <span class="toc-text">\.绕过后缀名检测</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MIME-%E7%B1%BB%E5%9E%8B%E6%A3%80%E6%B5%8B"><span class="toc-number">4.4.</span> <span class="toc-text">MIME 类型检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%A3%80%E6%B5%8B"><span class="toc-number">4.5.</span> <span class="toc-text">文件内容检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%A4%B4%E7%B1%BB%E5%9E%8B%E6%A3%80%E6%B5%8B"><span class="toc-number">4.5.1.</span> <span class="toc-text">文件头类型检测</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%E7%BB%95%E8%BF%87"><span class="toc-number">4.5.2.</span> <span class="toc-text">对关键字的绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getimagesize%E5%87%BD%E6%95%B0%E6%A3%80%E6%B5%8B"><span class="toc-number">4.5.3.</span> <span class="toc-text">getimagesize函数检测</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BE%E7%89%87%E9%A9%AC%E5%88%B6%E4%BD%9C"><span class="toc-number">4.5.3.1.</span> <span class="toc-text">图片马制作</span></a></li></ol></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        文件上传的一些积累
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-03-11T10:17:37.000Z" class="dt-published" itemprop="datePublished">2025-03-11</time>
+        
+        (Updated: <time datetime="2025-05-16T03:41:25.944Z" class="dt-updated" itemprop="dateModified">2025-05-16</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/">文件上传的一些积累</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" rel="tag">文件上传</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="文件上传漏洞是什么？"><a href="#文件上传漏洞是什么？" class="headerlink" title="文件上传漏洞是什么？"></a>文件上传漏洞是什么？</h1><p><strong>文件上传漏洞是指用户上传了一个可执行的脚本文件，并通过此脚本文件获得了执行服务器端命令的能力。</strong>“文件上传”本身并没有问题，但是关键在于服务器怎么去处理上传的文件，如果服务器对上传的文件处理不够到位，没有做到一些恶意代码的过滤，就会导致很严重的后果</p>
+<p>所以文件上传漏洞的利用条件就是</p>
+<ul>
+<li>上传一个可执行文件或者恶意木马文件</li>
+<li>服务器解析不合理，导致文件成功执行</li>
+</ul>
+<p>需要额外注意的是，我们上传的文件需要可以被脚本语言所解析执行</p>
+<ul>
+<li>说明一：如果对方服务器运行的是PHP环境，你不能上传一个JAVA的后门代码</li>
+<li>说明二：上传文件的目录可以被脚本语言解析执行，如果没有执行权限也不行</li>
+<li>说明三：一般文件上传后会返回一个地址，如果无法连接到也不能构成文件上传漏洞</li>
+</ul>
+<ol>
+<li><strong>文件上传漏洞常存在的地方</strong>就是网站中任何可以上传文件的地方例如上传头像，上传文档的口子</li>
+</ol>
+<p>那么我们上传的文件通常就是webshell，后门文件</p>
+<h1 id="webshell是什么？"><a href="#webshell是什么？" class="headerlink" title="webshell是什么？"></a>webshell是什么？</h1><p>具体的直接看文章</p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/235651.html">一文详解Webshell</a></p>
+<p><strong>Webshell是黑客经常使用的一种恶意脚本，其目的是获得对服务器的执行操作权限，比如执行系统命令、窃取用户数据、删除web页面、修改主页等</strong>其实就是一种网页后门，通常用php，asp或jsp去编写</p>
+<h2 id="常见的一句话木马"><a href="#常见的一句话木马" class="headerlink" title="常见的一句话木马"></a>常见的一句话木马</h2><ul>
+<li>PHP</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php eval($_GET[&#x27;x&#x27;])?&gt;</span><br><span class="line">&lt;?php assert($_POST[&#x27;x&#x27;]);?&gt;</span><br><span class="line">&lt;?php eval($_POST[&#x27;x&#x27;])?&gt;</span><br><span class="line">x就是我们传入的参数，也就是蚁剑的密码</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>ASP</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;%eval request(&quot;x&quot;)%&gt;   </span><br><span class="line">&lt;%execute request(&quot;x&quot;)%&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>JSP</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;%Runtime.getRuntime().exec(request.getParameter(&quot;x&quot;));%&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="文件上传的攻击方法"><a href="#文件上传的攻击方法" class="headerlink" title="文件上传的攻击方法"></a>文件上传的攻击方法</h1><p>在目标网站中找到可以上传文件的地方-&gt;尝试上传.php .aspx等动态脚本语言文件测试其是否可以直接上传-&gt;需要绕过的地方进行绕过</p>
+<h1 id="文件上传校验以及绕过姿势"><a href="#文件上传校验以及绕过姿势" class="headerlink" title="文件上传校验以及绕过姿势"></a>文件上传校验以及绕过姿势</h1><p>参考文章<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1938541">https://cloud.tencent.com/developer/article/1938541</a></p>
+<p>分为前端(客户端)和后端(服务端)</p>
+<p><img src="/../image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/1.png" alt="img"></p>
+<h2 id="客户端前端JavaScript校验"><a href="#客户端前端JavaScript校验" class="headerlink" title="客户端前端JavaScript校验"></a>客户端前端JavaScript校验</h2><p>Web应用系统虽然对用户上传的文件进行了校验，但是校验是通过前端javascript代码完成的。</p>
+<p>前端的验证通常只有对文件后缀名进行验证，通常可以通过以下两个方法去绕过</p>
+<ul>
+<li>禁用浏览器JavaScript功能</li>
+</ul>
+<p>从根源解决问题，如果JS被禁用了，那么前端的JavaScript校验就失效了，此时我们就可以正常上传恶意文件</p>
+<ul>
+<li><p>在当前网站源码中删除相应的JavaScript代码</p>
+</li>
+<li><p>BP上传改包</p>
+</li>
+</ul>
+<p>例如一个只存在前端校验的网站要求我们上传png文件，此时我们可以先将我们的恶意文件的后缀名改成png，然后在上传的时候将请求包用BP抓包，在请求包中将后缀名改成可以被web服务器解析的后缀名，达到一个绕过前端验证的效果</p>
+<p>如何判断当前页面使用前端is的验证方式:</p>
+<blockquote>
+<p>   前端验证通过以后，表单成功提交后会通过浏览器发出─条网络请求，但是如果前端验证不成功，则不会发出这项网络请求;可以在浏览器的网络元素中查看是否发出了网络请求。</p>
+</blockquote>
+<h2 id="服务端后端校验"><a href="#服务端后端校验" class="headerlink" title="服务端后端校验"></a>服务端后端校验</h2><h2 id="扩展名检测"><a href="#扩展名检测" class="headerlink" title="扩展名检测"></a>扩展名检测</h2><p>通常是针对文件的扩展名后缀进行检测，主要是通过黑白名单进行过滤检测，如果不符全过滤规则则不允许上传。</p>
+<p>首先是关于后缀名的解析漏洞</p>
+<h3 id="黑白名单检测绕过方法"><a href="#黑白名单检测绕过方法" class="headerlink" title="黑白名单检测绕过方法"></a>黑白名单检测绕过方法</h3><p>黑名单就是对某些后缀名开启了过滤，要求只要是这些后缀名的文件都不被允许上传，例如upload-labs靶场的Pass-03</p>
+<p><img src="/../image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/image-20250312165347011.png" alt="image-20250312165347011"></p>
+<h3 id="服务器解析漏洞"><a href="#服务器解析漏洞" class="headerlink" title="服务器解析漏洞"></a>服务器解析漏洞</h3><h4 id="Apache解析漏洞"><a href="#Apache解析漏洞" class="headerlink" title="Apache解析漏洞"></a>Apache解析漏洞</h4><p>漏洞原理</p>
+<p><code>Apache</code> 解析文件的规则是<code>从右到左</code>开始判断解析，如果<code>后缀名</code>为<code>不可识别</code>文件解析，就再往左判断。比如<code>test.php.a.b</code>的“<code>.a</code>”和“<code>.b</code>”这两种后缀是<code>apache</code>不可识别解析，<code>apache</code>就会把<code>test.php.a.b</code>解析成<code>test.php</code>。</p>
+<p>影响版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apache 1.x  apache 2.2.x</span><br></pre></td></tr></table></figure>
+
+<h4 id="htaccess文件解析漏洞"><a href="#htaccess文件解析漏洞" class="headerlink" title=".htaccess文件解析漏洞"></a>.htaccess文件解析漏洞</h4><p><strong>前提条件</strong>：Apache 的 AllowOverride 指令来设置启动.htaccess文件的使用</p>
+<p>htaccess 文件是一种用于 Apache Web 服务器的配置文件，它允许网站管理员对网站的访问权限、重写规则（URL 重写）、错误页面处理、MIME 类型设置以及其他服务器配置进行精细控制。这个文件通常位于网站的根目录或子目录中，并且其名称前面的点（.）表示它是一个隐藏文件，在大多数操作系统中默认不会显示。</p>
+<p>需要注意，.htaccess文件的作用域为其所在目录与其所有的子目录，若是子目录也存在.htaccess文件，则会覆盖父目录的.htaccess效果。</p>
+<p>如果<strong>Web服务器是Apache</strong>且<strong>黑名单没有对.htaccess做限制</strong>，那么可以上传.htaccess配置文件到目录中覆盖Apache的设置，可以通过配置执行webshell。</p>
+<p>.htaccess 常见指令</p>
+<ul>
+<li><strong>AddType 指令</strong></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpeg .png</span><br></pre></td></tr></table></figure>
+
+<p><strong>AddType 指令可以将给定的文件扩展名映射到指定的内容类型。</strong></p>
+<p>这个指令的主要作用是文件上传时候如果我们上传一个后缀为png或者jpeg的文件，当它们被访问时，应该用PHP解析器来解析。意味着我们可以通过在这些后缀的文件中插入恶意php代码去达到我们的进攻目的</p>
+<p>或者也可以这样设置</p>
+<ul>
+<li><strong>SetHandler指令</strong></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plaintext</span><br><span class="line">SetHandler application/x-httpd-php</span><br></pre></td></tr></table></figure>
+
+<p><strong>SetHandler 指令可以强制所有匹配的文件被一个指定的处理器处理。</strong></p>
+<p>这个指令的主要作用是告诉 Apache，任何匹配的文件都应该通过 PHP 处理器来处理。当前目录及其子目录下所有文件都会被当做 php 解析。</p>
+<p>攻击方法</p>
+<p>如果我们的黑名单对所有php文件都进行了严格过滤，前面的绕过行不通，那么我们可以利用.htaccess文件的指令让Apache去执行我们的php文件，例如<br>上传一个.htaccess文件去覆盖原有的配置，文件内容:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpeg .png</span><br></pre></td></tr></table></figure>
+
+<p>我们可以上传一个后缀名为png或者jpeg的一句话木马，上传后Apache会根据配置文件里指定的后缀名文件按照php去解析执行，从而达到一个文件上传getshell的效果</p>
+<h4 id="user-ini文件解析漏洞"><a href="#user-ini文件解析漏洞" class="headerlink" title=".user.ini文件解析漏洞"></a>.user.ini文件解析漏洞</h4><p>首先了解一下什么是.user.ini文件</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250308231722174-1741770512855-6.png" alt="image-20250308231722174">.user.ini 是 PHP 的用户级配置文件。这个文件允许用户在特定目录中自定义一些 PHP 配置选项，以覆盖全局 PHP 配置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auto_prepend_file=top.html   ; 指定一个文件，自动包含在要执行的文件前。</span><br><span class="line">auto_append_file=down.html  ; 指定一个文件，自动包含在要执行的文件后。</span><br></pre></td></tr></table></figure>
+
+<p><code>.user.ini</code>和<code>.htaccess</code>一样是对当前目录的所以<code>php</code>文件的配置设置，即写了<code>.user.ini</code>和它同目录的文件会优先使用<code>.user.ini</code>中设置的配置属性。</p>
+<p>攻击方法</p>
+<p>为了利用auto_append_file，我们首先上传.user.ini内容为 <code>auto_append_file=“xxx”</code> xxx为我们上传的文件名，接着上传一个带木马的文件(根据黑名单过滤来确定可上传文件后缀名) 因为upload有php文件，所以这个php就会添加一个include(“shell.png”)，就会包含到木马,这样就在每个php文件上包含了我们的木马文件。</p>
+<h4 id="目录解析漏洞"><a href="#目录解析漏洞" class="headerlink" title="目录解析漏洞"></a>目录解析漏洞</h4><p>在 IIS5.x&#x2F;6.0 中，在网站下建立文件夹的名字为*.asp、*.asa、*.cer、*.cdx 的文件夹，那么其目录内的任何扩展名的文件都会被IIS当做asp文件来解释并执行。例如创建目录 test.asp，那么 &#x2F;test.asp&#x2F;1.jpg 将被当做asp文件来执行。假设黑客可以控制上传文件夹路径，就可以不管上传后你的图片改不改名都能拿shell了</p>
+<h4 id="文件解析漏洞"><a href="#文件解析漏洞" class="headerlink" title="文件解析漏洞"></a>文件解析漏洞</h4><p>在 IIS5.x&#x2F;6.0 中， 分号后面的不被解析，也就是说 a.asp;.jpg 会被服务器看成是a.asp。还有IIS6.0默认的可执行文件除了asp还包含这两种 .asa  .cer 。而有些网站对用户上传的文件进行校验，只是校验其后缀名。所以我们只要上传 <em>.asp;.jpg、</em>.asa;.jpg、*.cer;.jpg 后缀的文件，就可以通过服务器校验，并且服务器会把它当成asp文件执行。</p>
+<h4 id="IIS7-0-IIS7-5-的解析漏洞"><a href="#IIS7-0-IIS7-5-的解析漏洞" class="headerlink" title="IIS7.0 | IIS7.5 的解析漏洞"></a>IIS7.0 | IIS7.5 的解析漏洞</h4><p>其实就是nginx对文件的检索规则，举个例子，当php遇到文件路径&#x2F;1.jpg&#x2F;2.txt&#x2F;3.php时，若&#x2F;1.jpg&#x2F;2.txt&#x2F;3.php不存在，则会去掉最后的&#x2F;3.php，然后判断&#x2F;1.jpg&#x2F;2.txt是否存在，若存在，则把&#x2F;1.jpg&#x2F;2.txt当做文件&#x2F;1.jpg&#x2F;2.txt&#x2F;3.php，若&#x2F;1.jpg&#x2F;2.txt仍不存在，则继续去掉&#x2F;2.txt，以此类推。</p>
+<h3 id="Windows下绕过后缀名验证"><a href="#Windows下绕过后缀名验证" class="headerlink" title="Windows下绕过后缀名验证"></a>Windows下绕过后缀名验证</h3><p>基于windows特性，同样的使用 1.php. . 1.php空格 1.php.空格  1.php::$DATA等格式都可以，可以绕过黑名单，也能让文件最终保存为 1.php 。</p>
+<h3 id="后缀名空格绕过"><a href="#后缀名空格绕过" class="headerlink" title="后缀名空格绕过"></a>后缀名空格绕过</h3><p>windows系统中，在文件名后面留一个空格，然后上传上去后空格会被自动的省略，对于有些过滤规则来说有没有空格是不一样的，但是对于操作系统来说，文件名的最后一个是空格会直接将其删除。</p>
+<h3 id="后缀名大小写绕过"><a href="#后缀名大小写绕过" class="headerlink" title="后缀名大小写绕过"></a>后缀名大小写绕过</h3><ul>
+<li>文件后缀名大小写绕过：例如<code>*.Php</code>，<code>*.Jsp</code></li>
+</ul>
+<p>大小写绕过原理：windows系统下，对于文件名中的大小写不敏感，例如：text.php和Test.PHP是一样的，但是linux系统下。对于文件名中的大小写敏感。例如text.php和TexT.php就是不一样的<br> 基于windows可以上传一些安全漏洞</p>
+<h3 id="后缀名双写绕过"><a href="#后缀名双写绕过" class="headerlink" title="后缀名双写绕过"></a>后缀名双写绕过</h3><ul>
+<li>文件后缀名双写绕过：例如<code>*.pphphp</code>，检测会将中间的php过滤掉，替换成空格，然后会继续拼接成php，但这取决于检测的方法是什么样的</li>
+</ul>
+<h3 id="可解析后缀绕过"><a href="#可解析后缀绕过" class="headerlink" title="可解析后缀绕过"></a><strong>可解析后缀绕过</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">asp: asa cer aspx</span><br><span class="line">jsp: jspx jspf jspa </span><br><span class="line">php: php php3 php4 php5 phtml pht </span><br><span class="line">exe: exee </span><br></pre></td></tr></table></figure>
+
+<h3 id="Windows命名机制绕过后缀"><a href="#Windows命名机制绕过后缀" class="headerlink" title="Windows命名机制绕过后缀"></a>Windows命名机制绕过后缀</h3><ul>
+<li>特殊文件后缀名绕过：<strong>利用Windows的命名机制</strong>，修改数据包里的文件名改为 test.php. 或者 test.asp_。在绕过上传之后windows系统会自动去掉 点和空格，但是Unix&#x2F;Linux没有这个机制</li>
+</ul>
+<h3 id="00截断绕过"><a href="#00截断绕过" class="headerlink" title="%00截断绕过"></a>%00截断绕过</h3><p>截断条件：PHP版本小于5.3.4，PHP的magic_quotes_gpc为OFF状态</p>
+<p>在 PHP 中，<code>magic_quotes_gpc</code> 是一个配置选项，用于自动转义通过 GET、POST、COOKIE 等方式传递的数据。当 <code>magic_quotes_gpc</code> 的值为 <code>OFF</code> 时，PHP 不会自动对这些数据进行转义处理。</p>
+<p>原理:由于文件上传后的<code>路径用户可以控制</code>，攻击者可以利用手动添加字符串标识符<code>0X00</code>的方式来将后面的拼接的内容<code>进行截断</code>，导致后面的内容无效，而且后面的内容又可以帮助我们绕过黑白名单的检测。</p>
+<p>攻击方法</p>
+<p><img src="/../image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/image-20250312193825688.png" alt="image-20250312193825688"></p>
+<h3 id="绕过后缀名检测"><a href="#绕过后缀名检测" class="headerlink" title="\.绕过后缀名检测"></a><code>\.绕过后缀名检测</code></h3><p>参考文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/YYYYU_ZHIZZZ/article/details/134287200">文件上传upload-labs 第20关 pathinfo()函数</a></p>
+<p>如果PHP版本过高那空字符截断就无效了，只能用一个之前从未使用的方法，在两个系统环境使用有一点点区别。在windows下部署可以抓包保存文件名使用1.php&#x2F;.    1.php.   1.php&#x2F;.等，在linux下部署就只能用1.php&#x2F;. 这个了。原因很简单，文件命名的时候 &#x2F; \ 在windows是禁止的而 &#x2F; 在linux也是禁止的，所以不会出现在文件名中最终保存还是1.php文件名。但是 \ 在linux是一个转义符号允许出现在文件名中，出现在后缀(1.php.)那就没什么意义了。</p>
+<p>​    关于为什么 &#x2F; 后面要一个点，是因为pathinfo函数返回后缀名（最后一个点号后面的字符串）的时候会去除 &#x2F; 和 \ 。如果使用1.php&#x2F;的话，那么去除 &#x2F; 后返回的真实的php后缀被读取到就会黑名单匹配上。加上一个点pathinfo函数读取的就是最后的点后面的字符串，点后面是空字符串不是有效拓展名它就返回为空，空就不会匹配黑名单以达到绕过黑名单目的。</p>
+<p>​    再拓展一下 . 在linux的作用。如果linux下有一个文件1.php.的文件，使用php  1.php.命令去执行，那么会认为文件名是 1.php. 就会找不到这个文件。正确做法是php ‘1.php.‘告诉系统 \ 是文件名一部分而不是转义符号。</p>
+<h2 id="MIME-类型检测"><a href="#MIME-类型检测" class="headerlink" title="MIME 类型检测"></a>MIME 类型检测</h2><p>MIME 类型（Multipurpose Internet Mail Extensions， 多用途互联网邮件扩展）是一种标准，用于表示文件的类型和格式，通常用于网络传输。MIME 类型主要由两部分组成：主类型和子类型，中间用斜杠（&#x2F;）分隔。</p>
+<p>常见的MIME类型:</p>
+<blockquote>
+<p><code>text/plain</code> （纯文本） </p>
+<p> <code>text/html</code> （HTML文档）</p>
+<p> <code>text/javascript</code> （js代码） </p>
+<p> <code>application/xhtml+xml</code> （XHTML文档） </p>
+<p><code>image/gif</code> （GIF图像） </p>
+<p> <code>image/jpeg</code> （JPEG图像） </p>
+<p> <code>image/png</code> （PNG图像）  </p>
+<p><code>video/mpeg</code> （MPEG动画） </p>
+<p> <code>application/octet-stream</code> （二进制数据）  </p>
+<p><code>application/pdf</code> （PDF文档）</p>
+</blockquote>
+<p>这是在服务端的对文件头content-type的检测，大致代码实现如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//upload-labs(Pass-02)</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span> ((<span class="variable">$_FILES</span>[<span class="string">&#x27;upload_file&#x27;</span>][<span class="string">&#x27;type&#x27;</span>] == <span class="string">&#x27;image/jpeg&#x27;</span>) || (<span class="variable">$_FILES</span>[<span class="string">&#x27;upload_file&#x27;</span>][<span class="string">&#x27;type&#x27;</span>] == <span class="string">&#x27;image/png&#x27;</span>) || (<span class="variable">$_FILES</span>[<span class="string">&#x27;upload_file&#x27;</span>][<span class="string">&#x27;type&#x27;</span>] == <span class="string">&#x27;image/gif&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<p>在文件上传的过程中，服务端会针对我们上传的文件生成一个数组，其中有一项就是文件的类型type；根据黑白名单里和我们上传的文件的类型进行比较，符合要求才能上传文件到服务端</p>
+<p>绕过方法</p>
+<p>部分Web应用系统判定文件类型是通过<code>content-type字段</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">抓包后更改Content-Type为允许的类型绕过该代码限制，比如将php文件的Content-Type:application/octet-stream修改为image/jpeg、image/png、image/gif等就可以</span><br></pre></td></tr></table></figure>
+
+<h2 id="文件内容检测"><a href="#文件内容检测" class="headerlink" title="文件内容检测"></a>文件内容检测</h2><h3 id="文件头类型检测"><a href="#文件头类型检测" class="headerlink" title="文件头类型检测"></a>文件头类型检测</h3><p>在每一个文件（包括图片，视频或其他的非ASCII文件）的开头（十六进制表示）实际上都有一片区域来显示这个文件的实际用法，这就是文件头标志。我们可以通过16进制编辑器例如010editor打开文件，添加服务器允许的文件头以绕过检测。</p>
+<p>常见的文件头：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gif: GIF89a(47 49 46 38 39 61)</span><br><span class="line">jpg: jpeg: FF D8 FF</span><br><span class="line">png: 89 50 4E 47 0D 0A</span><br><span class="line">在进行文件头绕过时，我们可以把上面的文件头添加到我们的一句话木马内容最前面，达到绕过文件头检测的目的。</span><br></pre></td></tr></table></figure>
+
+<h3 id="对关键字的绕过"><a href="#对关键字的绕过" class="headerlink" title="对关键字的绕过"></a>对关键字的绕过</h3><ul>
+<li>如果过滤了php的话，我们可以换成别的一句话木马或者用短标签去进行绕过</li>
+</ul>
+<p>这里的 <code>&lt;?=</code> 是一个完整的输出语句，它会执行 <code>echo eval($_POST[&#39;cmd&#39;])</code> 并输出其结果。由于 <code>&lt;?=</code> 本身就是一个输出语句，因此在这种情况下，不需要额外的分号 <code>;</code> 来结束语句。</p>
+<ul>
+<li><p>过滤了一句话木马中的<code>[]</code>方括号，可以用<code>&#123;&#125;</code>替换，在 PHP 中，使用方括号 <code>[]</code> 或花括号 <code>&#123;&#125;</code> 都可以用于访问数组的元素。</p>
+</li>
+<li><p>过滤括号，可以用内联执行去绕过</p>
+</li>
+</ul>
+<p>使用内联执行会将 &#96;&#96;内的输出作为前面命令的输入</p>
+<ul>
+<li>当命令执行跟木马上传失败的时候，可以利用日志包含上传或者直接包含文件去进行读取</li>
+</ul>
+<h3 id="getimagesize函数检测"><a href="#getimagesize函数检测" class="headerlink" title="getimagesize函数检测"></a>getimagesize函数检测</h3><p>一般文件内容验证使用getimagesize函数检测会判断文件是否是一个有效的文件图片，这时候就需要我们制作图片马去进行绕过</p>
+<h4 id="图片马制作"><a href="#图片马制作" class="headerlink" title="图片马制作"></a>图片马制作</h4><p>准备一张图片，这里为<code>a.png</code>，和一个一句话木马<code>a.php</code>，通过以下命令合成一个图片马<code>3.php</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">copy a.png /b + a.php /a 3.php  </span><br><span class="line">/b:指定以二进制格式复制、合并文件，用于图像或者声音类文件</span><br><span class="line">/a:指定以ascii格式复制、合并文件用于txt等文本类文件</span><br></pre></td></tr></table></figure>
+
+<p><strong>这条命令的意思是：通过<code>copy命令</code>，把<code>a.png</code>图片文件，以二进制文件形式添加到<code>a.php</code>文件中，以<code>ASCII文本文件</code>形式输出为<code>3.php</code>文件。</strong></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">文件上传漏洞是什么？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#webshell%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">webshell是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC"><span class="toc-number">2.1.</span> <span class="toc-text">常见的一句话木马</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">文件上传的攻击方法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%A0%A1%E9%AA%8C%E4%BB%A5%E5%8F%8A%E7%BB%95%E8%BF%87%E5%A7%BF%E5%8A%BF"><span class="toc-number">4.</span> <span class="toc-text">文件上传校验以及绕过姿势</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%89%8D%E7%AB%AFJavaScript%E6%A0%A1%E9%AA%8C"><span class="toc-number">4.1.</span> <span class="toc-text">客户端前端JavaScript校验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%8E%E7%AB%AF%E6%A0%A1%E9%AA%8C"><span class="toc-number">4.2.</span> <span class="toc-text">服务端后端校验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E5%90%8D%E6%A3%80%E6%B5%8B"><span class="toc-number">4.3.</span> <span class="toc-text">扩展名检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%91%E7%99%BD%E5%90%8D%E5%8D%95%E6%A3%80%E6%B5%8B%E7%BB%95%E8%BF%87%E6%96%B9%E6%B3%95"><span class="toc-number">4.3.1.</span> <span class="toc-text">黑白名单检测绕过方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.</span> <span class="toc-text">服务器解析漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Apache%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.1.</span> <span class="toc-text">Apache解析漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#htaccess%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.2.</span> <span class="toc-text">.htaccess文件解析漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#user-ini%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.3.</span> <span class="toc-text">.user.ini文件解析漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.4.</span> <span class="toc-text">目录解析漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.5.</span> <span class="toc-text">文件解析漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IIS7-0-IIS7-5-%E7%9A%84%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.3.2.6.</span> <span class="toc-text">IIS7.0 | IIS7.5 的解析漏洞</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows%E4%B8%8B%E7%BB%95%E8%BF%87%E5%90%8E%E7%BC%80%E5%90%8D%E9%AA%8C%E8%AF%81"><span class="toc-number">4.3.3.</span> <span class="toc-text">Windows下绕过后缀名验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E7%BC%80%E5%90%8D%E7%A9%BA%E6%A0%BC%E7%BB%95%E8%BF%87"><span class="toc-number">4.3.4.</span> <span class="toc-text">后缀名空格绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E7%BC%80%E5%90%8D%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87"><span class="toc-number">4.3.5.</span> <span class="toc-text">后缀名大小写绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E7%BC%80%E5%90%8D%E5%8F%8C%E5%86%99%E7%BB%95%E8%BF%87"><span class="toc-number">4.3.6.</span> <span class="toc-text">后缀名双写绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E8%A7%A3%E6%9E%90%E5%90%8E%E7%BC%80%E7%BB%95%E8%BF%87"><span class="toc-number">4.3.7.</span> <span class="toc-text">可解析后缀绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows%E5%91%BD%E5%90%8D%E6%9C%BA%E5%88%B6%E7%BB%95%E8%BF%87%E5%90%8E%E7%BC%80"><span class="toc-number">4.3.8.</span> <span class="toc-text">Windows命名机制绕过后缀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#00%E6%88%AA%E6%96%AD%E7%BB%95%E8%BF%87"><span class="toc-number">4.3.9.</span> <span class="toc-text">%00截断绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%90%8E%E7%BC%80%E5%90%8D%E6%A3%80%E6%B5%8B"><span class="toc-number">4.3.10.</span> <span class="toc-text">\.绕过后缀名检测</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MIME-%E7%B1%BB%E5%9E%8B%E6%A3%80%E6%B5%8B"><span class="toc-number">4.4.</span> <span class="toc-text">MIME 类型检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%A3%80%E6%B5%8B"><span class="toc-number">4.5.</span> <span class="toc-text">文件内容检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%A4%B4%E7%B1%BB%E5%9E%8B%E6%A3%80%E6%B5%8B"><span class="toc-number">4.5.1.</span> <span class="toc-text">文件头类型检测</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%E7%BB%95%E8%BF%87"><span class="toc-number">4.5.2.</span> <span class="toc-text">对关键字的绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getimagesize%E5%87%BD%E6%95%B0%E6%A3%80%E6%B5%8B"><span class="toc-number">4.5.3.</span> <span class="toc-text">getimagesize函数检测</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BE%E7%89%87%E9%A9%AC%E5%88%B6%E4%BD%9C"><span class="toc-number">4.5.3.1.</span> <span class="toc-text">图片马制作</span></a></li></ol></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&text=文件上传的一些积累"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&title=文件上传的一些积累"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&is_video=false&description=文件上传的一些积累"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=文件上传的一些积累&body=Check out this article: https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&title=文件上传的一些积累"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&title=文件上传的一些积累"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&title=文件上传的一些积累"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&title=文件上传的一些积累"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&name=文件上传的一些积累&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/&t=文件上传的一些积累"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

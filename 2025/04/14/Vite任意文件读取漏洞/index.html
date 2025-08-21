@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="参考文章：Vite开发服务器任意文件读取漏洞(CVE-2025-30208) 搜索语句12Fofa:body&#x3D;&quot;&#x2F;@vite&#x2F;client&quot;Hunter:web.body&#x3D;&quot;&#x2F;@vite&#x2F;client&quot;   CVE-2025-302080x01漏洞描述Vite 是一款现代化的前端开发构建工具，它提供了快速的开发服务器和高效的构建能力，广泛应用于 Vue.js">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vite任意文件读取漏洞">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="参考文章：Vite开发服务器任意文件读取漏洞(CVE-2025-30208) 搜索语句12Fofa:body&#x3D;&quot;&#x2F;@vite&#x2F;client&quot;Hunter:web.body&#x3D;&quot;&#x2F;@vite&#x2F;client&quot;   CVE-2025-302080x01漏洞描述Vite 是一款现代化的前端开发构建工具，它提供了快速的开发服务器和高效的构建能力，广泛应用于 Vue.js">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415113804108.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414172350488.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414191851121.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414192210485.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414192401858.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415085926446.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415090637451.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415100452791.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415100438951.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414194743924.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414172521020.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414172805529.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415093001405.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415100210796.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415102919286.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415104318207.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415104355716.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415104421592.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415105503014.png">
+<meta property="article:published_time" content="2025-04-14T08:00:27.000Z">
+<meta property="article:modified_time" content="2025-07-12T14:09:38.380Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="漏洞复现">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415113804108.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Vite任意文件读取漏洞</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/04/16/TGCTF2025/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/04/09/%E5%95%86%E4%B8%98CTF/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&text=Vite任意文件读取漏洞"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&title=Vite任意文件读取漏洞"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&is_video=false&description=Vite任意文件读取漏洞"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Vite任意文件读取漏洞&body=Check out this article: https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&title=Vite任意文件读取漏洞"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&title=Vite任意文件读取漏洞"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&title=Vite任意文件读取漏洞"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&title=Vite任意文件读取漏洞"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&name=Vite任意文件读取漏洞&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&t=Vite任意文件读取漏洞"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E8%AF%AD%E5%8F%A5"><span class="toc-number">1.</span> <span class="toc-text">搜索语句</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2025-30208"><span class="toc-number">2.</span> <span class="toc-text">CVE-2025-30208</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-number">2.1.</span> <span class="toc-text">0x01漏洞描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02%E6%BC%8F%E6%B4%9E%E6%88%90%E5%9B%A0"><span class="toc-number">2.2.</span> <span class="toc-text">0x02漏洞成因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-linux%E4%B8%8B"><span class="toc-number">2.3.</span> <span class="toc-text">0x03环境搭建(linux下)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E6%BA%90%E7%A0%81"><span class="toc-number">2.3.1.</span> <span class="toc-text">分析源码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">2.4.</span> <span class="toc-text">0x04漏洞复现</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2025-31125"><span class="toc-number">3.</span> <span class="toc-text">CVE-2025-31125</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-number">3.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E6%BA%90%E7%A0%81-%E6%BC%8F%E6%B4%9E%E6%88%90%E5%9B%A0"><span class="toc-number">3.2.</span> <span class="toc-text">从源码-&gt;漏洞成因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">3.3.</span> <span class="toc-text">漏洞复现</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2025-31486"><span class="toc-number">4.</span> <span class="toc-text">CVE-2025-31486</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC-1"><span class="toc-number">4.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E6%BA%90%E7%A0%81-%E6%BC%8F%E6%B4%9E%E6%88%90%E5%9B%A0-1"><span class="toc-number">4.2.</span> <span class="toc-text">从源码-&gt;漏洞成因</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Vite任意文件读取漏洞
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-04-14T08:00:27.000Z" class="dt-published" itemprop="datePublished">2025-04-14</time>
+        
+        (Updated: <time datetime="2025-07-12T14:09:38.380Z" class="dt-updated" itemprop="dateModified">2025-07-12</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/CVE/">CVE</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag">漏洞复现</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>参考文章：<a href="Vite%E5%BC%80%E5%8F%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E(CVE-2025-30208)">Vite开发服务器任意文件读取漏洞(CVE-2025-30208)</a></p>
+<h1 id="搜索语句"><a href="#搜索语句" class="headerlink" title="搜索语句"></a>搜索语句</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Fofa:body=&quot;/@vite/client&quot;</span><br><span class="line">Hunter:web.body=&quot;/@vite/client&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415113804108.png" alt="image-20250415113804108"></p>
+<h1 id="CVE-2025-30208"><a href="#CVE-2025-30208" class="headerlink" title="CVE-2025-30208"></a>CVE-2025-30208</h1><h2 id="0x01漏洞描述"><a href="#0x01漏洞描述" class="headerlink" title="0x01漏洞描述"></a>0x01漏洞描述</h2><p>Vite 是一款现代化的前端开发构建工具，它提供了快速的开发服务器和高效的构建能力，广泛应用于 Vue.js 项目的开发过程中。</p>
+<ul>
+<li>漏洞原理</li>
+</ul>
+<p>由于 Vite 开发服务器在处理特定 URL 请求时，没有对请求的路径进行严格的安全检查和限制，导致攻击者可以绕过保护机制，非法访问项目根目录外的敏感文件。攻击者只需在浏览器输入一个 URL，就可能会造成源码、SSH密钥、数据库账号、用户数据等目标机器上的任意文件信息泄露。</p>
+<ul>
+<li>漏洞影响版本</li>
+</ul>
+<p>目前受影响的NextJS版本：<br>6.2.0 &lt;&#x3D; Vite &lt;&#x3D; 6.2.2</p>
+<p>6.1.0 &lt;&#x3D; Vite &lt;&#x3D; 6.1.1</p>
+<p>6.0.0 &lt;&#x3D; Vite &lt;&#x3D; 6.0.11</p>
+<p>5.0.0 &lt;&#x3D; Vite &lt;&#x3D; 5.4.14</p>
+<p>Vite &lt;&#x3D; 4.5.9</p>
+<h2 id="0x02漏洞成因"><a href="#0x02漏洞成因" class="headerlink" title="0x02漏洞成因"></a>0x02漏洞成因</h2><p><strong>Vite开发服务器有提供一种<code>@fs</code>机制，这种机制可以用于限制访问，以防止访问Vite允许列表之外的文件</strong>，即<code>@fs</code>拒绝访问 Vite 服务允许列表之外的文件。在 URL 中添加<code>?raw??</code>或<code>?import&amp;raw??</code>可以绕过此限制，并返回文件内容（如果存在）。之所以存在这种绕过，是因为<code>?</code>在多个位置，诸如 之类的尾部分隔符会被删除，但在查询字符串正则表达式中却没有考虑到这一点。</p>
+<h2 id="0x03环境搭建-linux下"><a href="#0x03环境搭建-linux下" class="headerlink" title="0x03环境搭建(linux下)"></a>0x03环境搭建(linux下)</h2><p><strong>使用create-vite包</strong></p>
+<p><code>create-vite</code>是一个项目脚手架工具，其核心功能是帮助开发者快速搭建基于 Vite 的项目初始结构。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm create vite@latest my-project -y -- --template vue-ts</span><br><span class="line">cd my-project</span><br><span class="line">grep &quot;\&quot;vite\&quot;:&quot; package.json#会得到&quot;vite&quot;: &quot;^6.2.0&quot;，把^去掉</span><br><span class="line">npm install</span><br><span class="line">npm run dev</span><br></pre></td></tr></table></figure>
+
+<p>一开始一直都失败，后面更新了一下node.js的版本，因为我是外部IP访问的这个，所以还得把地址改一下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//在 vite.config.js 中配置</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineConfig &#125; <span class="keyword">from</span> <span class="string">&#x27;vite&#x27;</span></span><br><span class="line"><span class="keyword">import</span> vue <span class="keyword">from</span> <span class="string">&#x27;@vitejs/plugin-vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(&#123;</span><br><span class="line">  <span class="attr">plugins</span>: [<span class="title function_">vue</span>()],</span><br><span class="line">  <span class="attr">server</span>: &#123;</span><br><span class="line">    <span class="attr">host</span>: <span class="string">&#x27;0.0.0.0&#x27;</span>, <span class="comment">// 监听所有网络接口（默认是 127.0.0.1 仅本地访问）</span></span><br><span class="line">    <span class="attr">port</span>: <span class="number">5173</span>,      <span class="comment">// 指定端口（默认 5173）</span></span><br><span class="line">    <span class="attr">open</span>: <span class="literal">true</span>       <span class="comment">// 启动时自动打开浏览器（可选）</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414172350488.png" alt="image-20250414172350488"></p>
+<p>搭建环境成功</p>
+<p>我们先看一下<code>@fs</code>的配置</p>
+<p>在 Vite 的配置中，<code>server.fs.allow</code> 选项通常位于 <strong><code>vite.config.js</code></strong> 或 <strong><code>vite.config.ts</code></strong> 文件中</p>
+<p>在 Vite 服务器的 URL 处理逻辑中，<code>@fs</code> 机制原本用于限制对非白名单目录的访问，例如有</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">export default defineConfig(&#123;</span><br><span class="line">  server: &#123;</span><br><span class="line">    fs: &#123;</span><br><span class="line">      // Allow serving files from one level up to the project root</span><br><span class="line">      allow: [path.resolve(__dirname, &#x27;src&#x27;)],</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>解释一下代码：</p>
+<ul>
+<li>**<code>server.fs.allow</code>**：Vite 的 <strong>文件系统访问白名单</strong>，默认只允许访问 <strong>项目根目录</strong>。</li>
+<li><code>path.resolve(__dirname, &#39;src&#39;)</code><ul>
+<li><code>__dirname</code>：当前配置文件所在的目录（通常是项目根目录）。</li>
+<li><code>path.resolve()</code>：解析出 <code>src</code> 目录的 <strong>绝对路径</strong>（如 <code>/Users/yourname/project/src</code>）。</li>
+</ul>
+</li>
+<li>**<code>[&#39;src&#39;]</code>**：表示只允许 Vite 访问 <code>src</code> 目录及其子目录。</li>
+</ul>
+<p>看看官方文档中的解释</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414191851121.png" alt="image-20250414191851121"></p>
+<p>翻译一下第一段话意思就是限制可以通过&#x2F;@fs&#x2F;提供的文件。当server.fs.strict设置为true时，访问此目录列表之外的文件（这些文件不是从允许的文件导入的）将导致403。</p>
+<p>例如我们如果直接访问其他目录是无效的</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414192210485.png" alt="image-20250414192210485"></p>
+<p>但是访问src目录下的文件是可以的</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414192401858.png" alt="image-20250414192401858"></p>
+<p>然后我们的漏洞点在哪呢？Vite 在 URL 解析过程中会移除部分特殊字符，而未正确考虑查询参数的影响，导致攻击者可以构造特别的请求能绕过安全检查</p>
+<p>然后我们看一下V6.2.0的源码找一下漏洞点</p>
+<h3 id="分析源码"><a href="#分析源码" class="headerlink" title="分析源码"></a>分析源码</h3><p>首先是在<code>\vite-create-vite-6.2.0\packages\vite\src\node\server\middlewares\transform.ts</code>文件中有URL处理的一段代码</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415085926446.png" alt="image-20250415085926446"></p>
+<p>有一个removeTimestampQuery函数，跟进看一下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">removeTimestampQuery</span>(<span class="params">url: string</span>): string &#123;</span><br><span class="line">  <span class="keyword">return</span> url.<span class="title function_">replace</span>(timestampRE, <span class="string">&#x27;&#x27;</span>).<span class="title function_">replace</span>(trailingSeparatorRE, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>后面的replace就不说了，就是处理空字节占位符</p>
+<p>然后这里有两个正则匹配</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">const timestampRE = /\bt=\d&#123;13&#125;&amp;?\b/</span><br><span class="line">const trailingSeparatorRE = /[?&amp;]$/</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第一个是为了处理时间戳参数</li>
+<li>第二个是检测 URL 末尾是否有多余的 <strong>查询参数分隔符</strong>（<code>?</code> 或 <code>&amp;</code>），用于清理无效的 URL 格式。</li>
+</ul>
+<p>这里是URL处理的一部分，我们继续往下分析</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415090637451.png" alt="image-20250415090637451"></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (</span><br><span class="line">  (rawRE.<span class="title function_">test</span>(url) || urlRE.<span class="title function_">test</span>(url)) &amp;&amp;</span><br><span class="line">  !<span class="title function_">ensureServingAccess</span>(url, server, res, next)</span><br><span class="line">) &#123;</span><br><span class="line">  <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码是 <strong>Vite 开发服务器</strong> 中用于 <strong>检查文件访问权限的核心逻辑</strong>，主要目的是 <strong>防止未经授权的文件系统访问</strong>。</p>
+<p>有两个正则匹配</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export const urlRE = /(\?|&amp;)url(?:&amp;|$)/</span><br><span class="line">export const rawRE = /(\?|&amp;)raw(?:&amp;|$)/</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>匹配 URL 中的 <strong><code>url</code> 查询参数</strong>（如 <code>?url</code> 或 <code>&amp;url</code>），通常用于 <strong>动态资源请求</strong> 或 <strong>代理转发</strong>。</li>
+<li>匹配 URL 中的 <strong><code>raw</code> 查询参数</strong>（如 <code>?raw</code> 或 <code>&amp;raw</code>），通常用于 <strong>强制返回原始文件内容</strong></li>
+</ul>
+<p>在官方文档中url和raw的作用是什么呢？</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415100452791.png" alt="image-20250415100452791"></p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415100438951.png" alt="image-20250415100438951"></p>
+<p>例如我们的poc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rawRE.test(&quot;/@fs/C://windows/win.ini?import&amp;raw?&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>为什么这里没有匹配上rawRE的正则匹配呢？因为 <code>raw</code> 后必须接 <code>&amp;</code> 或字符串结束。这里在结尾用?号的话能绕过这个匹配让<code>urlRE.test(url)</code>为false。例如我们传入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/@fs/etc/passwd?import&amp;raw</span><br></pre></td></tr></table></figure>
+
+<p>此时是匹配上的，所以无法返回文件内容</p>
+<p>至于urlRE的匹配，本身poc里就没有url参数，自然而然就不匹配了</p>
+<p>再看官方的修复对比v6.2.2和v6.2.3：增加了一条正则进行匹配，这段正则专门匹配URL 末尾是否有多余的查询参数分隔符（<code>?</code> 或 <code>&amp;</code>）从而修复了该问题，但是也迎来了另一个绕过方式，也就是<code>CVE-2025-31125</code>，这个我们下面再讲</p>
+<p><strong>权限校验（ensureServingAccess）</strong></p>
+<p>我们先跟踪一下源码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">ensureServingAccess</span>(<span class="params"></span></span><br><span class="line"><span class="params">  url: string,</span></span><br><span class="line"><span class="params">  server: ViteDevServer,</span></span><br><span class="line"><span class="params">  res: ServerResponse,</span></span><br><span class="line"><span class="params">  next: Connect.NextFunction,</span></span><br><span class="line"><span class="params"></span>): boolean &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="title function_">isFileServingAllowed</span>(url, server)) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (<span class="title function_">isFileReadable</span>(<span class="title function_">cleanUrl</span>(url))) &#123;</span><br><span class="line">    <span class="keyword">const</span> urlMessage = <span class="string">`The request url &quot;<span class="subst">$&#123;url&#125;</span>&quot; is outside of Vite serving allow list.`</span></span><br><span class="line">    <span class="keyword">const</span> hintMessage = <span class="string">`</span></span><br><span class="line"><span class="string"><span class="subst">$&#123;server.config.server.fs.allow.map((i) =&gt; <span class="string">`- <span class="subst">$&#123;i&#125;</span>`</span>).join(<span class="string">&#x27;\n&#x27;</span>)&#125;</span></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Refer to docs https://vite.dev/config/server-options.html#server-fs-allow for configurations and more details.`</span></span><br><span class="line"></span><br><span class="line">    server.<span class="property">config</span>.<span class="property">logger</span>.<span class="title function_">error</span>(urlMessage)</span><br><span class="line">    server.<span class="property">config</span>.<span class="property">logger</span>.<span class="title function_">warnOnce</span>(hintMessage + <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    res.<span class="property">statusCode</span> = <span class="number">403</span></span><br><span class="line">    res.<span class="title function_">write</span>(<span class="title function_">renderRestrictedErrorHTML</span>(urlMessage + <span class="string">&#x27;\n&#x27;</span> + hintMessage))</span><br><span class="line">    res.<span class="title function_">end</span>()</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// if the file doesn&#x27;t exist, we shouldn&#x27;t restrict this path as it can</span></span><br><span class="line">    <span class="comment">// be an API call. Middlewares would issue a 404 if the file isn&#x27;t handled</span></span><br><span class="line">    <span class="title function_">next</span>()</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们逐层分析</p>
+<ul>
+<li><code>if (isFileServingAllowed(url, server))</code>这里的话是检测URL 是否匹配 <code>server.config.server.fs.allow</code> 配置的允许路径。默认允许路径是&#x2F;src</li>
+<li><code>if (isFileReadable(cleanUrl(url)))</code>检测是否<em>文件存在但路径不在允许列表中</em>，如果存在则返回403，否则执行next()</li>
+</ul>
+<p>检测是否在allow允许范围内，所以这段if的意思就是如果我们传入的是特殊路径但是不在访问允许的范围内，则会终止我们的请求</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414194743924.png" alt="image-20250414194743924"></p>
+<p>在这段代码中，<code>return</code> 的作用是 <strong>立即终止当前中间件函数的执行</strong>，并阻止请求继续向下传递。</p>
+<p>所以这里的话漏洞点在于正则匹配无法处理掉尾部特殊字符例如<code>?</code>，<code>&amp;</code>等，导致判断句为flase，请求继续往下传递而不会终止，这时候即使我们访问的是非法路径也会继续读取文件内容并返回</p>
+<p>分析完漏洞点，然后我们复现一下</p>
+<h2 id="0x04漏洞复现"><a href="#0x04漏洞复现" class="headerlink" title="0x04漏洞复现"></a>0x04漏洞复现</h2><p>然后我们试一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/@fs/etc/passwd?import&amp;raw??</span><br></pre></td></tr></table></figure>
+
+<p>成功回显</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414172521020.png" alt="image-20250414172521020"></p>
+<p>然后我们在tmp目录下随便写个txt文件，并尝试读取一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/@fs/tmp/1.txt?import&amp;raw??</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250414172805529.png" alt="image-20250414172805529"></p>
+<p>也是可以的</p>
+<p>解释一下后面的绕过机制</p>
+<p>ai给出的结果是</p>
+<ul>
+<li><code>?import</code>：触发 Vite 的 <strong>模块导入逻辑</strong>（原本用于加载 ES 模块）。</li>
+<li><code>&amp;raw??</code>：强制返回文件原始内容（绕过权限检查的漏洞点）。</li>
+</ul>
+<h1 id="CVE-2025-31125"><a href="#CVE-2025-31125" class="headerlink" title="CVE-2025-31125"></a>CVE-2025-31125</h1><h2 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h2><p>6.2.0 &lt;&#x3D; vite &lt;&#x3D; 6.2.3</p>
+<p>6.1.0 &lt;&#x3D; vite &lt;&#x3D; 6.1.2</p>
+<p>6.0.0 &lt;&#x3D; vite &lt;&#x3D; 6.0.12</p>
+<p>5.0.0 &lt;&#x3D; vite &lt;&#x3D; 5.4.15</p>
+<p>vite &lt;&#x3D; 4.5.10 </p>
+<p>对比CVE-2025-30208的影响版本</p>
+<p>6.2.0 &lt;&#x3D; Vite &lt;&#x3D; 6.2.2</p>
+<p>6.1.0 &lt;&#x3D; Vite &lt;&#x3D; 6.1.1</p>
+<p>6.0.0 &lt;&#x3D; Vite &lt;&#x3D; 6.0.11</p>
+<p>5.0.0 &lt;&#x3D; Vite &lt;&#x3D; 5.4.14</p>
+<p>Vite &lt;&#x3D; 4.5.9</p>
+<h2 id="从源码-漏洞成因"><a href="#从源码-漏洞成因" class="headerlink" title="从源码-&gt;漏洞成因"></a>从源码-&gt;漏洞成因</h2><p>之前在上面我们就讲过了继CVE-2025-30208之后的一些修复，也就是在v6.2.3中，我们分析一下该版本的源码</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415093001405.png" alt="image-20250415093001405"></p>
+<p>相比于之前的版本</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> trailingQuerySeparatorsRE = <span class="regexp">/[?&amp;]+$/</span>      </span><br><span class="line"><span class="keyword">const</span> urlWithoutTrailingQuerySeparators = url.<span class="title function_">replace</span>(</span><br><span class="line">        trailingQuerySeparatorsRE,</span><br><span class="line">        <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">      )</span><br></pre></td></tr></table></figure>
+
+<p>其实就是**移除 URL 末尾多余的 <code>?</code> 或 <code>&amp;</code>**，所以30208的payload是打不进去的，但是出现了新的绕过方式CVE-2025-31125</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415100210796.png" alt="image-20250415100210796"></p>
+<p>?import&amp;?inline&#x3D;1.wasm?init 结尾允许攻击者读取任意文件，并返回文件内容（如果存在）。</p>
+<p>然后我们看一下inline参数</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415102919286.png" alt="image-20250415102919286"></p>
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>这里话拿vite6.2.3去进行复现</p>
+<p>正常的话是读取不了文件的</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415104318207.png" alt="image-20250415104318207"></p>
+<p>CVE-2025-30208的poc也是不行的</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415104355716.png" alt="image-20250415104355716"></p>
+<p>利用官方POC</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/@fs/etc/passwd?import&amp;inline=1.wasm?init</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415104421592.png" alt="image-20250415104421592"></p>
+<p>成功打进去了</p>
+<p>这个CVE在6.2.4版本已被修复，但后续又出现了新的绕过方式</p>
+<h1 id="CVE-2025-31486"><a href="#CVE-2025-31486" class="headerlink" title="CVE-2025-31486"></a>CVE-2025-31486</h1><h2 id="影响版本-1"><a href="#影响版本-1" class="headerlink" title="影响版本"></a>影响版本</h2><ul>
+<li>6.2.0 &lt;&#x3D; Vite &lt;&#x3D; 6.2.4</li>
+<li>6.1.0 &lt;&#x3D; Vite &lt;&#x3D; 6.1.3</li>
+<li>6.0.0 &lt;&#x3D; Vite &lt;&#x3D; 6.0.13</li>
+<li>5.0.0 &lt;&#x3D; Vite &lt;&#x3D; 5.4.16</li>
+<li>Vite &lt;&#x3D; 4.5.11</li>
+</ul>
+<p>对比CVE-2025-31125的影响版本</p>
+<p>6.2.0 &lt;&#x3D; vite &lt;&#x3D; 6.2.3</p>
+<p>6.1.0 &lt;&#x3D; vite &lt;&#x3D; 6.1.2</p>
+<p>6.0.0 &lt;&#x3D; vite &lt;&#x3D; 6.0.12</p>
+<p>5.0.0 &lt;&#x3D; vite &lt;&#x3D; 5.4.15</p>
+<p>vite &lt;&#x3D; 4.5.10 </p>
+<h2 id="从源码-漏洞成因-1"><a href="#从源码-漏洞成因-1" class="headerlink" title="从源码-&gt;漏洞成因"></a>从源码-&gt;漏洞成因</h2><p>我们把6.2.4的源码下下来分析一下</p>
+<p>看看这次又有什么变化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const urlRE = /[?&amp;]url\b/</span><br><span class="line">const rawRE = /[?&amp;]raw\b/</span><br><span class="line">const inlineRE = /[?&amp;]inline\b/</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250415105503014.png" alt="image-20250415105503014"></p>
+<p>相对于之前的来说，就是禁用了inline参数的绕过方式，那么这时候又能怎么绕过呢？我也不会，等我分析出来了再写</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E8%AF%AD%E5%8F%A5"><span class="toc-number">1.</span> <span class="toc-text">搜索语句</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2025-30208"><span class="toc-number">2.</span> <span class="toc-text">CVE-2025-30208</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-number">2.1.</span> <span class="toc-text">0x01漏洞描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02%E6%BC%8F%E6%B4%9E%E6%88%90%E5%9B%A0"><span class="toc-number">2.2.</span> <span class="toc-text">0x02漏洞成因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-linux%E4%B8%8B"><span class="toc-number">2.3.</span> <span class="toc-text">0x03环境搭建(linux下)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E6%BA%90%E7%A0%81"><span class="toc-number">2.3.1.</span> <span class="toc-text">分析源码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">2.4.</span> <span class="toc-text">0x04漏洞复现</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2025-31125"><span class="toc-number">3.</span> <span class="toc-text">CVE-2025-31125</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-number">3.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E6%BA%90%E7%A0%81-%E6%BC%8F%E6%B4%9E%E6%88%90%E5%9B%A0"><span class="toc-number">3.2.</span> <span class="toc-text">从源码-&gt;漏洞成因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">3.3.</span> <span class="toc-text">漏洞复现</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2025-31486"><span class="toc-number">4.</span> <span class="toc-text">CVE-2025-31486</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC-1"><span class="toc-number">4.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E6%BA%90%E7%A0%81-%E6%BC%8F%E6%B4%9E%E6%88%90%E5%9B%A0-1"><span class="toc-number">4.2.</span> <span class="toc-text">从源码-&gt;漏洞成因</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&text=Vite任意文件读取漏洞"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&title=Vite任意文件读取漏洞"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&is_video=false&description=Vite任意文件读取漏洞"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Vite任意文件读取漏洞&body=Check out this article: https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&title=Vite任意文件读取漏洞"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&title=Vite任意文件读取漏洞"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&title=Vite任意文件读取漏洞"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&title=Vite任意文件读取漏洞"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&name=Vite任意文件读取漏洞&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/04/14/Vite%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E/&t=Vite任意文件读取漏洞"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

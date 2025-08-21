@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x01废话之前在打春秋云镜的靶场的时候接触过一点内网穿透，当时也学着搭了一下隧道，不过还是得认真学习一下。 参考文章: 图文总结：正向代理与反向代理  内网代理搭建 加上参考了N1的内网渗透体系建设的书 0x02前置知识在渗透测试的过程中，通常我们打进外网getshell之后，就需要对内网进行渗透，此时除了需要对内网进行基础的信息收集之外，还需要通过端口转发或搭建代理等方式去完成与内网之间的通道">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内网代理的搭建学习">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="0x01废话之前在打春秋云镜的靶场的时候接触过一点内网穿透，当时也学着搭了一下隧道，不过还是得认真学习一下。 参考文章: 图文总结：正向代理与反向代理  内网代理搭建 加上参考了N1的内网渗透体系建设的书 0x02前置知识在渗透测试的过程中，通常我们打进外网getshell之后，就需要对内网进行渗透，此时除了需要对内网进行基础的信息收集之外，还需要通过端口转发或搭建代理等方式去完成与内网之间的通道">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA/image-20250314143137263.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA/image-20250314151850375.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA/image-20250309230505042.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA/image-20250309231411403.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA/image-20250315205420389.png">
+<meta property="article:published_time" content="2025-03-13T12:05:13.000Z">
+<meta property="article:modified_time" content="2025-04-01T10:25:09.169Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="渗透">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA/image-20250314143137263.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>内网代理的搭建学习</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/03/17/web%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%AF%87-ctfshow/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/03/13/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%AF%87-ctfshow/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&text=内网代理的搭建学习"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&title=内网代理的搭建学习"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&is_video=false&description=内网代理的搭建学习"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网代理的搭建学习&body=Check out this article: https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&title=内网代理的搭建学习"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&title=内网代理的搭建学习"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&title=内网代理的搭建学习"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&title=内网代理的搭建学习"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&name=内网代理的搭建学习&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&t=内网代理的搭建学习"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%BA%9F%E8%AF%9D"><span class="toc-number">1.</span> <span class="toc-text">0x01废话</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">2.</span> <span class="toc-text">0x02前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E5%90%91%E4%BB%A3%E7%90%86%E5%92%8C%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86"><span class="toc-number">2.1.</span> <span class="toc-text">正向代理和反向代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E5%90%91%E8%BF%9E%E6%8E%A5%E5%92%8C%E5%8F%8D%E5%90%91%E8%BF%9E%E6%8E%A5"><span class="toc-number">2.2.</span> <span class="toc-text">正向连接和反向连接</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-number">3.</span> <span class="toc-text">0x03端口转发</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84"><span class="toc-number">3.1.</span> <span class="toc-text">端口映射</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E6%90%AD%E5%BB%BA"><span class="toc-number">4.</span> <span class="toc-text">0x04内网代理搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%AD%E5%BB%BAssh%E9%9A%A7%E9%81%93"><span class="toc-number">4.1.</span> <span class="toc-text">搭建ssh隧道</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E5%B1%82%E7%9A%84ssh%E9%9A%A7%E9%81%93%E6%90%AD%E5%BB%BA"><span class="toc-number">4.1.1.</span> <span class="toc-text">单层的ssh隧道搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E5%B1%82%E7%9A%84SSH%E9%9A%A7%E9%81%93%E6%90%AD%E5%BB%BA"><span class="toc-number">4.1.2.</span> <span class="toc-text">多层的SSH隧道搭建</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8Stowaway%E6%90%AD%E5%BB%BA%E9%9A%A7%E9%81%93"><span class="toc-number">4.2.</span> <span class="toc-text">利用Stowaway搭建隧道</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        内网代理的搭建学习
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-03-13T12:05:13.000Z" class="dt-published" itemprop="datePublished">2025-03-13</time>
+        
+        (Updated: <time datetime="2025-04-01T10:25:09.169Z" class="dt-updated" itemprop="dateModified">2025-04-01</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%B8%97%E9%80%8F/" rel="tag">渗透</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="0x01废话"><a href="#0x01废话" class="headerlink" title="0x01废话"></a>0x01废话</h1><p>之前在打春秋云镜的靶场的时候接触过一点内网穿透，当时也学着搭了一下隧道，不过还是得认真学习一下。</p>
+<p>参考文章:</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wzh2010/p/18031168">图文总结：正向代理与反向代理 </a></p>
+<p><a target="_blank" rel="noopener" href="https://fushuling.com/index.php/2023/09/21/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E6%90%AD%E5%BB%BA/">内网代理搭建</a></p>
+<p>加上参考了N1的内网渗透体系建设的书</p>
+<h1 id="0x02前置知识"><a href="#0x02前置知识" class="headerlink" title="0x02前置知识"></a>0x02前置知识</h1><p>在渗透测试的过程中，通常我们打进外网getshell之后，就需要对内网进行渗透，此时除了需要对内网进行基础的信息收集之外，还需要通过端口转发或搭建代理等方式去完成与内网之间的通道搭建</p>
+<p> 在学习端口转发和隧道搭建之前，我们需要理清楚两个知识点</p>
+<h2 id="正向代理和反向代理"><a href="#正向代理和反向代理" class="headerlink" title="正向代理和反向代理"></a>正向代理和反向代理</h2><p>其实正向代理和反向代理都位于客户端和真实服务器之间的，都是为了将客户端发送的请求转发给服务器，然后再将服务器的响应返回给客户端</p>
+<p>正向代理的作用是什么呢？</p>
+<ul>
+<li>正向代理可以隐藏客户端的真实IP地址，代理服务器代表客户端去向服务器发起请求。根据一定的规则限制或允许客户端的访问请求，实现访问控制功能。</li>
+<li>在某些地区或网络环境下，用户可能无法直接访问某些网站或服务。那么我们可以通过设置正向代理来突破这些限制，实现访问。</li>
+</ul>
+<p>反向代理的作用是什么呢？</p>
+<ul>
+<li>反向代理可以隐藏后端服务器的真实地址和端口，防止直接攻击（如DoS&#x2F;DDoS）。同时，还可以实现SSL加密、访问控制等安全功能。</li>
+<li>反向代理可以根据后端服务器的负载情况，将请求分发到不同的服务器上，实现负载均衡，提高系统的整体性能。(CDN的实现)</li>
+</ul>
+<p>这两个的区别是什么？</p>
+<ul>
+<li><strong>代理对象</strong>不同，正向代理是为客户端提供代理服务的，旨在保护客户端的隐私安全；而反向代理是为服务器提供代理服务的，旨在保护服务器的隐私安全。</li>
+<li>服务对象：在正向代理中，服务器不知道真正的用户是谁；而在反向代理中，用户不知道真正的服务器是谁。说白了就是正向代理将客户端的请求发送给服务器的时候，会隐藏客户端的真实IP地址，而反向代理在返回服务器的响应的时候会隐藏服务器的真实IP地址。</li>
+<li><strong>用途和目的：</strong> 正向代理的主要用途是为在防火墙内的局域网客户端提供访问Internet的途径，侧重于解决访问限制问题。而反向代理的主要用途是将防火墙后面的服务器提供给Internet用户访问，其目的在于实现负载均衡、安全防护等。</li>
+</ul>
+<h2 id="正向连接和反向连接"><a href="#正向连接和反向连接" class="headerlink" title="正向连接和反向连接"></a>正向连接和反向连接</h2><p>什么是正向连接？</p>
+<ul>
+<li>正向连接(攻击机去连接靶机)就是受控制端主机监听一个端口，然后由控制端主机主动去连接受控端主机的过程，适用于<strong>受控主机具有公网IP</strong>的情况。</li>
+</ul>
+<p>什么是反向连接？</p>
+<ul>
+<li>反向连接(靶机主动连接攻击机)就是控制端主句监听一个端口，由受控端主机反向去连接控制端主机的过程，适用于受控端没有公网IP的情况，但是同时也是需要<strong>受控端可以出网</strong>才能实现的。</li>
+</ul>
+<p>但是在我们正常的渗透中，正向连接往往都会受到受控主机上的防火墙限制或者权限不足的情况所困扰，这时候反向连接可以更好的完成两个机子之间的连接</p>
+<p>前置知识了解完了，我们开始学习如何进行代理搭建</p>
+<h1 id="0x03端口转发"><a href="#0x03端口转发" class="headerlink" title="0x03端口转发"></a>0x03端口转发</h1><p>端口转发(Port Forwarding)是网络地址转换(NAT)的一种应用。通过端口转发，我们可以将一个网络端口上收到的数据转发到另一个网络端口，转发的端口可以是本机的端口也可以是其他主机上的端口。</p>
+<p><strong>端口转发实现的作用是什么呢？</strong>假如内网部署的安全机制例如防火墙会检查某个敏感端口的连接情况，会对数据的传入起到一个阻断作用，这时候我们可以通过端口转发将这个敏感端口的数据转发到另一个不会被防火墙检测的端口上，以此建立起一个通信隧道，这样就可以绕过防火墙的检测并与指定的端口实现通信，所以搭建代理的过程又被称为是搭建隧道的过程。</p>
+<p>另外我们讲到端口转发，就不得不提到一个端口映射，之前我一直以为所谓将数据转发的过程叫做端口映射，后来仔细百度了才知道这两者是不一样的。</p>
+<h2 id="端口映射"><a href="#端口映射" class="headerlink" title="端口映射"></a>端口映射</h2><p>端口映射：也是一种网络地址转换的应用，不过它是用于把公网的地址翻译成私有地址。端口映射可以将外网主机收到的请求映射到内网主机上，使得没有公网IP地址的内网主机能够对外提供相应的服务</p>
+<p>看到一个师傅给的例子我觉得挺形象的，就是比如我们在内网中有一台Web服务器，但是其他网域中的用户是没有办法直接访问该服务器。所以在路由器上设置一个端口映射，只要q用户访问路由器ip的80端口，那么路由器会把自动把流量转到内网Web服务器的80端口上。并且，在路由器上还存在一个Session，当内网服务器返回数据给路由器时，路由器能准确的将消息发送给外网请求用户的主机。在这过程中，路由器充当了一个反向代理的作用，他保护了内网中主机的安全。</p>
+<p>其实这两个应用本质上都是为了访问内网服务器上无法访问到的服务，只不过是操作的方法不一样</p>
+<h1 id="0x04内网代理搭建"><a href="#0x04内网代理搭建" class="headerlink" title="0x04内网代理搭建"></a>0x04内网代理搭建</h1><h2 id="搭建ssh隧道"><a href="#搭建ssh隧道" class="headerlink" title="搭建ssh隧道"></a>搭建ssh隧道</h2><h3 id="单层的ssh隧道搭建"><a href="#单层的ssh隧道搭建" class="headerlink" title="单层的ssh隧道搭建"></a>单层的ssh隧道搭建</h3><p>例如我们在内网渗透的时候已经拿到了一台位于某个内网中的服务器的shell，那我们可以利用这个服务器作为跳板使得我们可以访问该内网内的其他服务器然后展开我们的渗透</p>
+<p>环境拓扑如下，我这里借一下师傅的图</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA/image-20250314143137263.png" alt="image-20250314143137263"></p>
+<p>此时我们想要搭建ssh隧道使得我们可以访问办公网的web服务器</p>
+<ul>
+<li><strong>本地端口转发</strong>–流量从SSH客户端主机转发到 SSH 服务器主机，然后转发到目标机器端口。</li>
+</ul>
+<p>在Windows攻击机命令行运行:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -L 8085:172.2.136.5:80 ctfshow@pwn.challenge.ctf.show -p 28227</span><br></pre></td></tr></table></figure>
+
+<p>参数<code>-L</code>：将目标端口代理在本机的端口上</p>
+<p>这里的话就是将内网主机的80端口的流量转发到主机的8085端口上，然后通过访问localhost:8085去访问内网主机的服务，具体的实现过程是这样的：</p>
+<ul>
+<li>先通过SSH协议连接到可控服务器的28227端口上，此时可控服务器就作为跳板或代理服务器</li>
+<li>配置本地端口转发，此时所有发往本地 <code>8085</code> 端口的请求，会通过SSH加密隧道转发到代理服务器，再由代理服务器转发到内网主机 <code>172.2.136.5</code> 的80端口。</li>
+<li>端口转发流程：我们访问本地的8085端口的时候，SSH将请求先发送到代理服务器的28227端口，并由代理服务器将请求发送到内网主机的80端口，请求的响应数据原路返回，通过加密隧道传回本地8085端口</li>
+</ul>
+<p>SSH搭建隧道的应用场景：</p>
+<ul>
+<li>访问内网服务：当内网目标主机无法直接通过公网访问服务的时候，我们就可以通过搭建SSH隧道进行内网穿透，打破限制</li>
+<li>安全加密传输：所有流量通过SSH加密，防止中间人攻击导致数据泄露</li>
+</ul>
+<p>除了本地端口转发，还有远程端口转发</p>
+<ul>
+<li><strong>远程端口转发</strong>–其实大差不差，不过是用的我们自己的远程服务器进行端口转发的</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh - R 8085:[Remote IP]:172.2.136.5:80 ctfshow@pwn.challenge.ctf.show -p 28227</span><br></pre></td></tr></table></figure>
+
+<h3 id="多层的SSH隧道搭建"><a href="#多层的SSH隧道搭建" class="headerlink" title="多层的SSH隧道搭建"></a>多层的SSH隧道搭建</h3><p>多层的话就要进行多层端口的转发了</p>
+<p>环境拓扑：</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA/image-20250314151850375.png" alt="image-20250314151850375"></p>
+<p>有两个可控的服务器，一个位于表层一个位于深层，假如表层内网有服务器的话隧道搭建和上面的单层是一样的，但是这里我们需要访问的内网web服务器位于深层内网，这时候就需要进行多层隧道的搭建了</p>
+<p>首先我们先在表层内网服务器上运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -L 8085:172.2.136.5:80 ctfshow@pwn.challenge.ctf.show -p 28227</span><br></pre></td></tr></table></figure>
+
+<p>在表层内网和深层内网之间建立隧道，使得我们可以通过访问表层内网服务器的8085端口去访问内网web服务的80端口，然后我们在Windows上运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -L 8086:127.0.0.1:8085 root@vps_ip -p vps_port</span><br></pre></td></tr></table></figure>
+
+<p>在攻击机和表层内网之间建立隧道，使得我们可以通过访问8086端口去访问表层内网服务器的8085端口</p>
+<p>然后我们就可以通过在本地访问8086直接访问深层内网中的172.2.136.5的web服务</p>
+<h2 id="利用Stowaway搭建隧道"><a href="#利用Stowaway搭建隧道" class="headerlink" title="利用Stowaway搭建隧道"></a>利用Stowaway搭建隧道</h2><p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA/image-20250309230505042.png" alt="image-20250309230505042"></p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA/image-20250309231411403.png" alt="image-20250309231411403"></p>
+<p>这个工具很好用，命令也比较简单，可以分正反向代理去搭建代理</p>
+<p>在这些参数里面我们只需要关注<code>-l</code>，<code>-s</code>，<code>-c</code>这三个参数，其中<code>-l</code>，<code>-c</code>这两个参数的使用取决于是正向连接还是反向连接，主动连接的一方就是采用主动模式的参数<code>-c</code></p>
+<p>搭建正向代理，就让攻击机去连接靶机。</p>
+<p>先在靶机上监听端口(我用的Linux云服务器)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\windows_x64_agent.exe -l 9999</span><br></pre></td></tr></table></figure>
+
+<p>然后在自己的攻击机上进行正向代理的连接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\windows_x64_admin.exe -c [靶机的公网ip]:9999</span><br></pre></td></tr></table></figure>
+
+<p>然后就可以了</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA/image-20250315205420389.png" alt="image-20250315205420389"></p>
+<p>搭建反向代理，就让靶机去主动连接攻击机</p>
+<p>先在攻击机上监听端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\windows_x64_admin.exe -l 9999</span><br></pre></td></tr></table></figure>
+
+<p>然后在靶机上进行反向代理的连接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\windows_x64_agent.exe -c [攻击机的公网ip]:9999</span><br></pre></td></tr></table></figure>
+
+<p>其实这里的话能不能开启代理主要有两个条件，一是需要被连接的靶机有公网ip，二是靶机和攻击机在同一个局域网中，二者满足其一就可以（这个是我和我朋友同时连接同一个热点然后实践实验出来的）说白了就是两个机子之间要能互相通信。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%BA%9F%E8%AF%9D"><span class="toc-number">1.</span> <span class="toc-text">0x01废话</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">2.</span> <span class="toc-text">0x02前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E5%90%91%E4%BB%A3%E7%90%86%E5%92%8C%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86"><span class="toc-number">2.1.</span> <span class="toc-text">正向代理和反向代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E5%90%91%E8%BF%9E%E6%8E%A5%E5%92%8C%E5%8F%8D%E5%90%91%E8%BF%9E%E6%8E%A5"><span class="toc-number">2.2.</span> <span class="toc-text">正向连接和反向连接</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-number">3.</span> <span class="toc-text">0x03端口转发</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84"><span class="toc-number">3.1.</span> <span class="toc-text">端口映射</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E6%90%AD%E5%BB%BA"><span class="toc-number">4.</span> <span class="toc-text">0x04内网代理搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%AD%E5%BB%BAssh%E9%9A%A7%E9%81%93"><span class="toc-number">4.1.</span> <span class="toc-text">搭建ssh隧道</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E5%B1%82%E7%9A%84ssh%E9%9A%A7%E9%81%93%E6%90%AD%E5%BB%BA"><span class="toc-number">4.1.1.</span> <span class="toc-text">单层的ssh隧道搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E5%B1%82%E7%9A%84SSH%E9%9A%A7%E9%81%93%E6%90%AD%E5%BB%BA"><span class="toc-number">4.1.2.</span> <span class="toc-text">多层的SSH隧道搭建</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8Stowaway%E6%90%AD%E5%BB%BA%E9%9A%A7%E9%81%93"><span class="toc-number">4.2.</span> <span class="toc-text">利用Stowaway搭建隧道</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&text=内网代理的搭建学习"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&title=内网代理的搭建学习"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&is_video=false&description=内网代理的搭建学习"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网代理的搭建学习&body=Check out this article: https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&title=内网代理的搭建学习"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&title=内网代理的搭建学习"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&title=内网代理的搭建学习"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&title=内网代理的搭建学习"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&name=内网代理的搭建学习&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/03/13/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%90%AD%E5%BB%BA%E5%AD%A6%E4%B9%A0/&t=内网代理的搭建学习"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

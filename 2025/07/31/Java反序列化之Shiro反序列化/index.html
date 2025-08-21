@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Apache Shiro 是一个强大且灵活的 Java 安全框架，用于处理 身份认证、授权、密码加密、会话管理 等功能。 在分析Shiro反序列化的过程中，我会更偏向于对项目源码的解读，也是借此机会学一下这个框架的一些基础逻辑 Shiro反序列化主要分为shiro550和shiro721 在shiro版本小于1.2.5时，被称作shiro-550，shiro反序列化的产生原因主要是因为rememb">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shiro反序列化">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="Apache Shiro 是一个强大且灵活的 Java 安全框架，用于处理 身份认证、授权、密码加密、会话管理 等功能。 在分析Shiro反序列化的过程中，我会更偏向于对项目源码的解读，也是借此机会学一下这个框架的一些基础逻辑 Shiro反序列化主要分为shiro550和shiro721 在shiro版本小于1.2.5时，被称作shiro-550，shiro反序列化的产生原因主要是因为rememb">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731163646275.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731164058166.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731164721240.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731164045385.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731165734505.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731165941905.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731184646815.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801103831754.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801104914788.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801105509471.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801110002322.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801114136900.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801114741943.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801153707910.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801153746178.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801154009302.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801155428962.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801155642682.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801155649820.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801160104550.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801160014768.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801160228451.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801160638941.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801163627218.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801163657976.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801160735802.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801160828360.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801162219622.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801162541902.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801162629699.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801162759765.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801162851975.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801162915951.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801170858043.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250803215909797.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250803220007805.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250803220103463.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250803220205893.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250803220301578.png">
+<meta property="article:published_time" content="2025-07-31T06:50:00.000Z">
+<meta property="article:modified_time" content="2025-08-11T06:39:36.744Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="java反序列化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731163646275.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Shiro反序列化</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/08/04/Nepctf2025-safe-bank%E6%B7%B1%E7%A9%B6/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/07/29/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BFastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=Shiro反序列化"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Shiro反序列化"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=Shiro反序列化"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Shiro反序列化&body=Check out this article: https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Shiro反序列化"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Shiro反序列化"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Shiro反序列化"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Shiro反序列化"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=Shiro反序列化&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=Shiro反序列化"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shiro550"><span class="toc-number">2.</span> <span class="toc-text">Shiro550</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-number">2.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E5%88%A4%E6%96%AD"><span class="toc-number">2.2.</span> <span class="toc-text">特征判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.3.</span> <span class="toc-text">漏洞介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shiro%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E5%88%86%E6%9E%90"><span class="toc-number">2.4.</span> <span class="toc-text">shiro登录逻辑分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%AF%86%E6%B5%81%E7%A8%8B"><span class="toc-number">2.5.</span> <span class="toc-text">解密流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#shiro721"><span class="toc-number">3.</span> <span class="toc-text">shiro721</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC-1"><span class="toc-number">3.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E5%88%A4%E6%96%AD-1"><span class="toc-number">3.2.</span> <span class="toc-text">特征判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86"><span class="toc-number">3.3.</span> <span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8EOracle%E5%A1%AB%E5%85%85%E6%94%BB%E5%87%BB"><span class="toc-number">3.4.</span> <span class="toc-text">关于Oracle填充攻击</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Shiro反序列化
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-07-31T06:50:00.000Z" class="dt-published" itemprop="datePublished">2025-07-31</time>
+        
+        (Updated: <time datetime="2025-08-11T06:39:36.744Z" class="dt-updated" itemprop="dateModified">2025-08-11</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/javasec/">javasec</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag">java反序列化</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><strong>Apache Shiro</strong> 是一个强大且灵活的 <strong>Java 安全框架</strong>，用于处理 <strong>身份认证、授权、密码加密、会话管理</strong> 等功能。</p>
+<p>在分析Shiro反序列化的过程中，我会更偏向于对项目源码的解读，也是借此机会学一下这个框架的一些基础逻辑</p>
+<p>Shiro反序列化主要分为shiro550和shiro721</p>
+<p>在shiro版本小于1.2.5时，被称作<code>shiro-550</code>，shiro反序列化的产生原因主要是因为<strong>rememberMe</strong>内容，原因是AES密钥被硬编码在shiro源码中，导致在cookie中的rememberMe可以被插入恶意代码造成代码执行。在1.2.5之后，shiro使用了随机密钥，又因为<strong>padding oracle attack</strong>导致反序列化，被称作<code>shiro-721</code>。</p>
+<p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://infernity.top/2025/02/26/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">Shiro反序列化</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/395728.html">深入探究Shiro反序列化漏洞</a></p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>jdk版本这里是1.8.0_65</p>
+<p>1、从github中下载shiro1.2.4</p>
+<p><a target="_blank" rel="noopener" href="https://codeload.github.com/apache/shiro/zip/refs/tags/shiro-root-1.2.4">https://codeload.github.com/apache/shiro/zip/refs/tags/shiro-root-1.2.4</a></p>
+<p>解压后用IDEA打开，并修改pom.xml的内容，把<code>jstl依赖</code>版本改为<code>1.2</code>，没有的话自己加一个</p>
+<p><code> Shiro 1.2.4 的内部依赖或运行机制与 JSTL 的 1.2 版本兼容性最好</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>javax.servlet<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jstl<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>但是这里的话源码一直下不下来，得配置maven代理，或者换maven的版本为3.8.1之前的。从 <strong>Maven 3.8.1</strong> 开始，默认禁止了通过不安全的 http:&#x2F;&#x2F; 仓库下载依赖。</p>
+<p>然后需要配置一个tomcat服务器，具体配置的话看<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36389060/article/details/114895961%E6%88%96%E8%80%85https://blog.csdn.net/m0_48170265/article/details/129073985">https://blog.csdn.net/qq_36389060/article/details/114895961或者https://blog.csdn.net/m0_48170265/article/details/129073985</a></p>
+<p>我这里是jdk1.8的，所以需要将pom中的版本换一下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">jdk.version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">jdk.version</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>2、安装配置Tomcat服务器</p>
+<p>Tomcat下载官网：<a target="_blank" rel="noopener" href="https://tomcat.apache.org/%EF%BC%8C%E6%8C%89%E7%9D%80%E7%AC%AC%E4%BA%8C%E4%B8%AA%E9%93%BE%E6%8E%A5%E5%AE%89%E8%A3%85%E4%B8%80%E4%B8%8B%EF%BC%8C">https://tomcat.apache.org/，按着第二个链接安装一下，</a></p>
+<p>DOS窗口输入<code>startup.bat</code>回车后访问8080端口看看是否安装成功</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731163646275.png" alt="image-20250731163646275"></p>
+<p>这样的话就算成功了</p>
+<p>然后我们配置tomcat服务器</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731164058166.png" alt="image-20250731164058166"></p>
+<p>编辑配置的时候让我们的项目用tomcat去运行</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731164721240.png" alt="image-20250731164721240"></p>
+<p>部署的工件选samples-web:war</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731164045385.png" alt="image-20250731164045385"></p>
+<p>配置好后启动服务器</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731165734505.png" alt="image-20250731165734505"></p>
+<p>到此环境就算搭建好了</p>
+<h2 id="Shiro550"><a href="#Shiro550" class="headerlink" title="Shiro550"></a>Shiro550</h2><h3 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h3><p>shiro &lt;&#x3D; 1.2.4</p>
+<h3 id="特征判断"><a href="#特征判断" class="headerlink" title="特征判断"></a>特征判断</h3><p>响应包中包含字段remember&#x3D;deleteMe字段</p>
+<h3 id="漏洞介绍"><a href="#漏洞介绍" class="headerlink" title="漏洞介绍"></a>漏洞介绍</h3><p>在shiro版本小于1.2.5时，被称作<code>shiro-550</code>。<strong>shiro-550主要是由shiro的rememberMe内容反序列化导致的命令执行漏洞</strong>，造成的原因是默认加密密钥是硬编码在shiro源码中，任何有权访问源代码的人都可以知道默认加密密钥。 于是攻击者可以创建一个恶意对象，对其进行序列化、编码，然后将其作为cookie的rememberMe字段内容发送，Shiro 将对其解码和反序列化，导致服务器运行一些恶意代码。</p>
+<h3 id="shiro登录逻辑分析"><a href="#shiro登录逻辑分析" class="headerlink" title="shiro登录逻辑分析"></a>shiro登录逻辑分析</h3><p>换成调试模式运行服务器，访问login.jsp来到登录界面</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731165941905.png" alt="image-20250731165941905"></p>
+<p>尝试登录一下，记得选上Remember Me选项</p>
+<p>我们先找一下登录逻辑处理，先看看src&#x2F;main&#x2F;webapp&#x2F;WEB-INF&#x2F;web.xml，<code>web.xml</code> 文件是 <strong>Java Web 项目的部署描述文件</strong></p>
+<p>看看里面关于配置shiro的核心过滤器</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>ShiroFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>org.apache.shiro.web.servlet.ShiroFilter<span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>ShiroFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里定义了一个ShiroFilter过滤器，并且使用的是自带的ShiroFilter类，<code>url-pattern=&quot;/*&quot;</code> 表示该过滤器拦截 <strong>所有请求</strong></p>
+<p>然后我们看一下shiro.ini文件，这里定义了Shiro的登录逻辑，权限规则，拦截路径</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250731184646815.png" alt="image-20250731184646815"></p>
+<ul>
+<li>设置全局登录页面为login.jsp，当用户访问需要认证的资源但未登录的时候会重定向到该页面</li>
+<li><code>/login.jsp = authc</code>使用authc过滤器处理登录请求</li>
+</ul>
+<p><code>authc</code> 是 Apache Shiro 中的一个 <strong>内置过滤器（Filter）</strong>，该过滤器主要是执行登录请求处理，判断是否登录授权访问等功能</p>
+<p>接下来我们看一下在登录页面发起post表单请求后的处理逻辑</p>
+<p>1、当我们在登录界面发起请求的时候，shiro会启动自身的安全过滤器链，也就是调用AbstractShiroFilter#doFilterInternal()方法</p>
+<p>我们直接来到AbstractShiroFilter类，断点打在doFilterInternal方法，登录的时候会进入这个方法。</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801103831754.png" alt="image-20250801103831754"></p>
+<p>2、然后该方法会给我们找到匹配的过滤器，也就是之前说的authc，对应的类就是<code>org.apache.shiro.web.filter.authc.FormAuthenticationFilter</code>类，他是authc的处理逻辑的核心入口。</p>
+<p>3、调用FormAuthenticationFilter#onAccessDenied()方法</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801104914788.png" alt="image-20250801104914788"></p>
+<p>分析一下代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="type">boolean</span> <span class="title function_">onAccessDenied</span><span class="params">(ServletRequest request, ServletResponse response)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="keyword">if</span> (isLoginRequest(request, response)) &#123;<span class="comment">//判断当前请求是否是shiro.loginUrl</span></span><br><span class="line">        <span class="keyword">if</span> (isLoginSubmission(request, response)) &#123;<span class="comment">//判断当前请求是否是POST 请求并且包含表单字段，也就是登录操作</span></span><br><span class="line">            <span class="keyword">if</span> (log.isTraceEnabled()) &#123;</span><br><span class="line">                log.trace(<span class="string">&quot;Login submission detected.  Attempting to execute login.&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> executeLogin(request, response);<span class="comment">//执行登录认证逻辑函数</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (log.isTraceEnabled()) &#123;</span><br><span class="line">                log.trace(<span class="string">&quot;Login page view.&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//allow them to see the login page ;)</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;<span class="comment">//如果不是POST请求就放行，显示登录页面</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (log.isTraceEnabled()) &#123;</span><br><span class="line">            log.trace(<span class="string">&quot;Attempting to access a path which requires authentication.  Forwarding to the &quot;</span> +</span><br><span class="line">                    <span class="string">&quot;Authentication url [&quot;</span> + getLoginUrl() + <span class="string">&quot;]&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        saveRequestAndRedirectToLogin(request, response);<span class="comment">//如果是访问的其他受保护的资源，就返回false</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为我们是提交表单的POST请求，所以会调用executeLogin函数，我们跟进看看</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801105509471.png" alt="image-20250801105509471"></p>
+<p>这里主要是从请求中创建一个令牌token，生成一个 <code>AuthenticationToken</code> 对象，登录成功后触发onLoginSuccess方法返回true。</p>
+<p>4、真正的登录认证函数：org.apache.shiro.subject.support.DelegatingSubject#login()</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801110002322.png" alt="image-20250801110002322"></p>
+<p>5、然后一直来到DefaultSecurityManager类找到rememberMeSuccessfulLogin函数，这是用于处理<code>Remember Me</code>功能的部分</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801114136900.png" alt="image-20250801114136900"></p>
+<p>先调用AbstractRememberMeManager类的onSuccessfulLogin方法，这个方法是处理登录成功逻辑的</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801114741943.png" alt="image-20250801114741943"></p>
+<p>重点在于第一行代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">forgetIdentity(subject);</span><br></pre></td></tr></table></figure>
+
+<p>这个功能的话在于清除旧的<code>&quot;记住我&quot;</code>的身份，我们跟进这来到CookieRememberMeManager的forgetIdentity方法</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801153707910.png" alt="image-20250801153707910"></p>
+<p>然后继续跟进里面的forgetIdentity方法</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801153746178.png" alt="image-20250801153746178"></p>
+<p>这里的话会获取cookie字段然后删除该字段，我们跟进一下</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801154009302.png" alt="image-20250801154009302"></p>
+<p>分析一下代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">removeFrom</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> getName();<span class="comment">//获取Cookie的名称，这里是rememberMe</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">value</span> <span class="operator">=</span> DELETED_COOKIE_VALUE;<span class="comment">//设置一个值未deleteMe</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">comment</span> <span class="operator">=</span> <span class="literal">null</span>; <span class="comment">//don&#x27;t need to add extra size to the response - comments are irrelevant for deletions</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">domain</span> <span class="operator">=</span> getDomain();</span><br><span class="line">        <span class="type">String</span> <span class="variable">path</span> <span class="operator">=</span> calculatePath(request);</span><br><span class="line">        <span class="type">int</span> <span class="variable">maxAge</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">//always zero for deletion</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">version</span> <span class="operator">=</span> getVersion();</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">secure</span> <span class="operator">=</span> isSecure();</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">httpOnly</span> <span class="operator">=</span> <span class="literal">false</span>; <span class="comment">//no need to add the extra text, plus the value &#x27;deleteMe&#x27; is not sensitive at all</span></span><br><span class="line"></span><br><span class="line">        addCookieHeader(response, name, value, comment, domain, path, maxAge, version, secure, httpOnly);</span><br><span class="line"><span class="comment">//调用方法设置set-Cookie头，并将上面的rememberMe=deleteMe加入到响应头</span></span><br><span class="line">        log.trace(<span class="string">&quot;Removed &#x27;&#123;&#125;&#x27; cookie by setting maxAge=0&quot;</span>, name);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话就是返回一个Set-Cookie响应头，将rememberMe设置为deleteMe，我们继续往下走，回到onSuccessfulLogin方法</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801155428962.png" alt="image-20250801155428962"></p>
+<p>检查登录的时候是否选择了“记住我”选项，之前我们传的时候就选上了，所以直接步入rememberIdentity函数</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801155642682.png" alt="image-20250801155642682"></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801155649820.png" alt="image-20250801155649820"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">rememberIdentity</span><span class="params">(Subject subject, PrincipalCollection accountPrincipals)</span> &#123;</span><br><span class="line">    <span class="type">byte</span>[] bytes = convertPrincipalsToBytes(accountPrincipals);</span><br><span class="line">    rememberSerializedIdentity(subject, bytes);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话会将身份信息转化成字节数组，并传入rememberSerializedIdentity方法中。</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801160104550.png" alt="image-20250801160104550"></p>
+<p>可以看到这里传入的值是root</p>
+<p>跟进convertPrincipalsToBytes方法看看</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801160014768.png" alt="image-20250801160014768"></p>
+<p>进行了一个序列化操作，判断不为空之后进入一个encrypt方法，我们继续步入</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801160228451.png" alt="image-20250801160228451"></p>
+<p>使用 <code>cipherService.encrypt()</code> 对序列化数据进行加密，密钥由 <code>getEncryptionCipherKey()</code>提供，最后将加密后的数据转成byte数组返回。这里的加密方式为AES&#x2F;CBC&#x2F;PKCS5Padding</p>
+<p>在<code>encrypt()</code>中，可以看到使用的加密算法是AES，使用AES算法对cookie进行加密。</p>
+<p>接着进入getEncryptionCipherKey方法</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801160638941.png" alt="image-20250801160638941"></p>
+<p>这是一个getter方法，用来获取当前对象中的 AES 加密密钥字段，我们看看这个字段的setter方法</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801163627218.png" alt="image-20250801163627218"></p>
+<p>然后我们看看哪里调用了这个函数</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801163657976.png" alt="image-20250801163657976"></p>
+<p>在<code>setCipherKey()</code>中同时给加解密密钥赋值，我们跟进看一下CipherKey</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801160735802.png" alt="image-20250801160735802"></p>
+<p>可以看见密钥\DEFAULT_CIPHER_KEY_BYTES\是一个常量，就是然后看看哪里调用了这个setCipherKey()方法</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801160828360.png" alt="image-20250801160828360"></p>
+<p>所以这里最终获取到的加密密钥：<code>kPH+bIxk5D2deZiIxcaaaA==</code>，返回后进入cipherService.encrypt函数</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801162219622.png" alt="image-20250801162219622"></p>
+<p>生成初始化向量ivBytes后，进入具体的加密函数，重点在最后的return中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> encrypt(plaintext, key, ivBytes, generate);</span><br></pre></td></tr></table></figure>
+
+<p>在加密完成后返回到之前的rememberIdentity函数，下面的rememberSerializedIdentity实现了记住序列化身份的功能</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801162541902.png" alt="image-20250801162541902"></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801162629699.png" alt="image-20250801162629699"></p>
+<p>这里的话会对序列化的数据进行base64加密，并将信息加入Cookie字段中，然后我们一直返回，回到一开始的executeLogin方法</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801162759765.png" alt="image-20250801162759765"></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801162851975.png" alt="image-20250801162851975"></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801162915951.png" alt="image-20250801162915951"></p>
+<p>以上就是大致的登录逻辑分析了</p>
+<p>这时候不难发现，这里的话加密密钥是一个常量，所以这里也是漏洞利用点</p>
+<h3 id="解密流程"><a href="#解密流程" class="headerlink" title="解密流程"></a>解密流程</h3><p>我们尝试一下带着刚刚生成的rememberMe字段的值去访问一下限制访问页面account，看看后端对cookie解密的处理逻辑是什么样的</p>
+<p>在AbstractShiroFilter类的doFilterInternal方法下断点，单步进入DefaultSecurityManager类的createSubject方法</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250801170858043.png" alt="image-20250801170858043"></p>
+<p>继续跟进resolvePrincipals方法，单步到getRememberedIdentity，RememberMeManager获取后进入getRememberedPrincipals方法</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250803215909797.png" alt="image-20250803215909797"></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250803220007805.png" alt="image-20250803220007805"></p>
+<p>然后看这里的第一个函数getRememberedSerializedIdentity，可以看到先获取cookie中的值，然后base64解密，生成二进制数后返回</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250803220103463.png" alt="image-20250803220103463"></p>
+<p>然后看第二个函数convertBytesToPrincipals，先获取解密服务，解密服务不为空后，将二进制数据传入decrypt函数进行解密，之后return deserialize(bytes)</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250803220205893.png" alt="image-20250803220205893"></p>
+<p>在deserialize方法中，跟进后发现有一个readObject()方法，可以触发apache.commons利用链漏洞</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250803220301578.png" alt="image-20250803220301578"></p>
+<p>所以整个过程就是：读取cookie中rememberMe值-&gt;base64解码-&gt;AES解密-&gt;反序列化</p>
+<p>那么这里的话获取密钥就成了关键，只要获取到密钥，就可以进行反序列化操作。密钥的话我们之前分析过，是一个固定的常量，所以就可以很轻松的利用到整个漏洞了。</p>
+<p>在1.2.5之后，shiro采取了随机密钥，虽然阻止了shiro550的利用方式。但由于padding oracle attack也导致了反序列化。也就是我们的shiro721</p>
+<h2 id="shiro721"><a href="#shiro721" class="headerlink" title="shiro721"></a>shiro721</h2><h3 id="影响版本-1"><a href="#影响版本-1" class="headerlink" title="影响版本"></a>影响版本</h3><p>Apache Shiro &lt;&#x3D; 1.4.1</p>
+<h3 id="特征判断-1"><a href="#特征判断-1" class="headerlink" title="特征判断"></a>特征判断</h3><p>响应包中包含字段remember&#x3D;deleteMe字段</p>
+<h3 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h3><p>在Shiro721漏洞中，由于Apache Shiro cookie中通过 AES-128-CBC 模式加密的rememberMe字段存在问题，用户可通过Padding Oracle Attack来构造恶意的rememberMe字段，并重新请求网站，进行反序列化攻击，最终导致任意代码执行。</p>
+<p>虽然使用Padding Oracle Attack可以绕过密钥直接构造攻击密文，但是在进行攻击之前我们需要获取一个合法用户的Cookie。</p>
+<h3 id="关于Oracle填充攻击"><a href="#关于Oracle填充攻击" class="headerlink" title="关于Oracle填充攻击"></a>关于Oracle填充攻击</h3><p>**Padding Oracle Attack（填充预言攻击）**是一种针对对称加密模式（尤其是 **CBC 模式**）的攻击方式，攻击者通过观察服务器对错误填充的响应，可以**逐字节恢复密文对应的明文**，甚至伪造合法的加密数据。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shiro550"><span class="toc-number">2.</span> <span class="toc-text">Shiro550</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-number">2.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E5%88%A4%E6%96%AD"><span class="toc-number">2.2.</span> <span class="toc-text">特征判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.3.</span> <span class="toc-text">漏洞介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shiro%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E5%88%86%E6%9E%90"><span class="toc-number">2.4.</span> <span class="toc-text">shiro登录逻辑分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%AF%86%E6%B5%81%E7%A8%8B"><span class="toc-number">2.5.</span> <span class="toc-text">解密流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#shiro721"><span class="toc-number">3.</span> <span class="toc-text">shiro721</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC-1"><span class="toc-number">3.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E5%88%A4%E6%96%AD-1"><span class="toc-number">3.2.</span> <span class="toc-text">特征判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86"><span class="toc-number">3.3.</span> <span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8EOracle%E5%A1%AB%E5%85%85%E6%94%BB%E5%87%BB"><span class="toc-number">3.4.</span> <span class="toc-text">关于Oracle填充攻击</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=Shiro反序列化"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Shiro反序列化"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=Shiro反序列化"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Shiro反序列化&body=Check out this article: https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Shiro反序列化"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Shiro反序列化"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Shiro反序列化"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Shiro反序列化"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=Shiro反序列化&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/07/31/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BShiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=Shiro反序列化"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

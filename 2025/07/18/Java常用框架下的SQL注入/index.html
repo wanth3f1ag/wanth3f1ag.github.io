@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="🔒 这篇文章需要密码才能阅读">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java常用框架下的SQL注入">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="🔒 这篇文章需要密码才能阅读">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-07-18T07:53:19.000Z">
+<meta property="article:modified_time" content="2025-07-29T03:12:46.304Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="SQL注入">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Java常用框架下的SQL注入</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/07/25/NepCTF2025/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/07/16/XYCTF2024%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&text=Java常用框架下的SQL注入"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&title=Java常用框架下的SQL注入"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&is_video=false&description=Java常用框架下的SQL注入"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java常用框架下的SQL注入&body=Check out this article: https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&title=Java常用框架下的SQL注入"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&title=Java常用框架下的SQL注入"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&title=Java常用框架下的SQL注入"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&title=Java常用框架下的SQL注入"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&name=Java常用框架下的SQL注入&description=🔒 这篇文章需要密码才能阅读"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&t=Java常用框架下的SQL注入"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Java常用框架下的SQL注入
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-07-18T07:53:19.000Z" class="dt-published" itemprop="datePublished">2025-07-18</time>
+        
+        (Updated: <time datetime="2025-07-29T03:12:46.304Z" class="dt-updated" itemprop="dateModified">2025-07-29</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/javasec/">javasec</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/SQL%E6%B3%A8%E5%85%A5/" rel="tag">SQL注入</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="68b71afb1b004c63c715c76c028e14593567f2d2a1adeacce4246c3ad82f9079">b7ad80b0f8f28fc180e5c9937d7ec84d8e62c22b158088b6ae8d13582c64a7540a882552c9a9fd7158f28e3e17cc36ebb0d21521f2f8b924ed69faacb11fbd88469f3d36b6d3b6e95e19e9b456cdd0103f4bcb0be6558ddb1ba46f5b20614de21548c9886a649aff16ca4b8b20c1a47589104d6fab6ece95c205182d6f09db724d6c8920922c97b6087afb2cacfe76da0ed300dcdef135a3e5976a3a9aa2077f5ac8064330b89d580ee95cacceb20efe3b06ae1fb1109827e61dbbde4cdc506f0e0198a316c94affe3a85467ed8f792a67a45ea0e9db2fde74e072ef392b0e4f24dbb27a7aa8d05f7b8c20bf27455e7e96dbfee5e576d90fe67c527236927f661469d1ed26ecb47b4615b1377ca21e53ec018c179832e7f578d493b9308719f88168c4adf688d15fa67151f8eef6ea14182e519788947d70c7fe6766f1578b2669d094e6761380cafa1940e224ef44005594a4ee64faec598d5d016b1421714573c39efb7bb745720ca2fc7193c1add6ae4a81edcf1fbf53902e4973552c03147bbd290e32c75ce905685e838c90759af3717d4bcaa2ff57545297fba9985c98c617f1eceb3cf62d3094cef47c5b03b06bacf6e42db1f88ce0ec6db65c1f2f69863bc5754c4d4c4b0ca6aa4a5efdaed660886b051765b81fe130f9f87d85610b07f2b01ae378ed905806ceab4a34f8fa395b882ec433537c487aefb58fe94436ad962317d0a1b2e021c02ce2bfefd426d641fc740437c66855423cbaf35d59bb51db2c824f9834b0e7e0011c87b7c627ea4e9639cc230ec16dbf4604be47a1ec16beb41bd68199099c2ec9623b5a5bdcb867316a01c4b547b8cdbc4cb9058402aeb94c806090a1b8ccaf4ce71f34c8ad9845d61bef4adc9c5c93f5048a0687c8f81564dd7d033157606338eff7f29e3034978ac1fa95b69b1fb51965bcec6cc015a1d3855932a0bf5d28a55f2719550bf564e19ece341b911fbe5270d8679fda616cfbdf8c73b24656d108ca6fc3b432c43cea98b425037eba7000807d8afefb2cba83a2d6fa8f38073bb69054d365a2ecd7b350e131883ef88c27373f743fdeca36f28461f9f0a97fef55e6d7f9f650d0aba8f64cf5a38ac634a28ddddfc3aae881c09a875044d41ea3f0c03309b5402d2698923ebe61e7b878e4f3f4bb105bdd1d59e57cd1504bbeb556353e830148566d712b5afc9311669f07222910408cdb724aab220f4a256d9d683b99cc5f286a4d6849550fdbf301be67e5e90c3f567755ed173b8cbd4efb773e3616591a118615a6eb4785763346e73694d052b17ee9a2eda0c19379d48c494a4a4b9f199a0eba513ae0d14014a69d6fde295c913eb7dfcc1c4e6281dd0569c80a808ea4aa3c206e4998a7e9f55129e6fa8b19307623ff149026bbc0baf2dfc8d2e6998b526c0cc22e2ec391b5bc21a08fca4e6511238eb2980198cbaf8182f6c51c820cd148dfceb898d140ca0c556f23a17cff7c486f13288cdc420a4697ce90d6f6a2c596a39acf17b3ca4bc4cf7acfd143862b8508e389ce0768836aa30ae796bccc8b39a55951d46aa2005b6a53021c814c323daf95150ebda9b83d91e2ef215cdcc4a7ad75c905fca2eb5bd4e9d3ec4eae5e3abfe76863bdcbd5bd9b9cb0e93b0f79af0e7dbbefa7c1e264e5ed016605f96f25e96c2742bf79344dc070230d1351d1d6725619db93598ba7d6e35565fe04440ef15559854a32ff624ce81a64e943a7a453e41ea2c2424c93ffc3f17a582e44d210fc82dcb5a79fb3196931bb518d3d572209ae4cb8fe7e5310863bdc1b5cab1b9e75c8af523b10f05be940bab5142c8675857949ca27d2bf3ed3a19ccdc4ce0ac1261a4758103bd5bc6c554d5708a4fae73811f9a084e1f530c37e0a7aa527082167aa8c08753b3681276ea2625340e1971f6aa7a9852ca7275ea88fc77810176fe8bfdf31c5fc19db7ce42f4e6df45cfb2a8820cd2689f03e100361e1dfbad96029c76031e0e83fd59d8b149c3106bf2132fcb08dab98f3da5652d29236b0c110d273d8ae3323bb3f2f219835c7a78e59f314289eb4c4c3bf8443b5567a466f1376214a02818593818bba20715d562a88e66f9e51fb422f7ea5a42181b00e21d68bc43812f75009993ab8a88650d546124f60a5bd5a59a1fb6b05837d9a193ec4a2c9266bf02426bea84e636a2aac554d54ff0109088693317bc86702ae161173fcbdc649da0e2549320a0baa84e31665e44cd0a9248a00bc081681b4b1a1a9fae1c53a85df6c9c330147c1a6babed3b941eba050db2e201268af61c67a8a2d00b320b9fb4552d3d27f849d71e83210ec4dead6557643e2eda4ed070356bd0125423e6a3845391296bc22826e22c3157485393accf6d89f87e3e786a40c49fade28ca162bdcc7efaf2f3bde618945e9fa6457878dcfb3065f292155ca741d41b62c2b65c18aa84e99f0515970f2a379bb208e2930ee77f85c54b2909eec907bceb101f17864e94436eff41f8217ff210fc90cce4b4b6b2f85edd977132b5f31680d265fef4a7075ac82bbdf3010855425052ae0e3315ccb63547145ca49aaf481e3e2c027696c839c9b8603a1d024a38dffc11d4beca6b543adc1592f87f3712bb36230bf44a93a0d93c8bba12ca0da0e0b214c70ab680976361ecea1da6e6f3237edf8a1ea2847b78f55e91960ab19bb1a49c810654e6b779ea1713b13768736fcff88e72b715494f5c526b6cefc35290595e5e02d42b4743af77af5ba63f367aa77c6c3afec93c2388976d382f49e64cfc07848ea42ff31c983201a272d505bcd57acfbd2afa76588220b741f8fa2e0f6ff358668cf748e32a74e11a71b9df351987ec4bd3faa51d7d77f3f70eb509c9137985604ca3ee52cbf86bb121ddfddeb0f5b7dc25a34056a686d519241040df4097249ff56813e4a52e3a535dd1840a5cc05bc10768ed3408ee0aebb64510f766b4b96266ac4ec9a0a484a97a322e6b8963e50a0ef3229b4fbd6026dde1e2e591b4192f27544fd81e708595db24bd2c7388295482f8421c88d6a61c327f5f1192739e574175dbe9c371607f0b004a297a5b0ca87d9bbc5c66e6b817ab3c2986c55610cfc92c5ca861da551642e54c11ed4e91791e66175c4a0453224af98479ce28218cf94dddb7aa88a84375b7648363d630084b235d22e5c47e3911a13c8ae6d2f5c98ab14dee2fcc06b8b25e17b9073e1f64435cf645287168c26997f7fe84cb5f8ab38420a6ba6bc20ad4fd9c5190e13cbe334c81cf6597c9453032d79eb13fcf4c8751828a5d85ae409c2f64b64caba3abea0d0303114b0d9b1372841098410abcaeb80408a864acafadb093575d7b2e712e9f0ce1bfc923bdd002e243d255581b0404c0a644742a5048f03261797fbcb1454cc1d9b5b24635690eac5881b57d43be294be451fafb240b55cf282d83de0f8dfa275c66800037a14c917791d885d57114e383c293d448405ddfa3d2cd3feb50f2450630ff0fd4af3e5e06021fead6f789055fd10b221abf7db4fd4774b2d7ef55e3182cec1d8305846b9b6ed92260cc7d76886bd62fd29907066057ee0b9ac2dd2c2c37306311ced2d4e7cc1ef0437e11caa167698a64bc22ad31f39759c7a59229f5ecba35c63fcb8f73e97a6254d7b206e076370af3f2c4dd343870640af1b562518b3c2e8e38203a2e0c89d282ff589d357809241c0eddc8665bdc2c2d9880a3e4be3b7f51fcc90a7d6d847e3d7dfc824594fe74f4aa72781bdfc6cc4a3588ad210d2b1cff26b813efc6a4d3e4e9ae3e2519c41160e8f20a96fab0a3be2417dfb308472f054c6b47842f02e7c3aa3887ff8cd0de4d595dc989c0c3189d307710e175c27859a9741ac8c2361fc6347557ac0c016f9db1d207c6a6b9ffb66dac84e720aa9275724d6c409e7bee11ef5d335bfbb8f72c23b3a72ac3a7f2e3310c8b711167f2ab4b5af140e26b0c905dd21105385963315677a1363a535734a89fbb473d0143d911f6e6add867e1a08f9adc99e881bc1a951e061f9b1458d42ab3939db5c9cb6094cb81eb2664f9f5051c046eb352978742294417cf5b72fe6cb7fd04c0062b722592807215f821df02d27794121e27cd95b7a1539ab0cccec80426f64191aeaf33f4bef3bb6c7b2cc5a9b67ba5c7890f0150e09239359598526a8f45ae284cd0bfa4b6c95228ab09b9b8a6486f172cca6beb0e9d045ec366862cb14101cfaa96494860c779adfe010d0ef060e4d9dd19f3b6edc8c0980cb2c90094902f178311e630f993df7e3826c9d0277cf3537279deea5af4f8e303cdfd93cd490d36b9e4d319bc39b3c1eda52e98ab2ec0273bde4d031e616b8d4f3c3a5244daec9d012dc2ebdfaaecf6c62e611c22546cb5a5e1868398f9bd006a61b72d318044f91f0d06a9bc5f38d51f717277a250ef54f041cc8b00cef68aa610c61421fe35edc6afac85d8de44d222d14b07a78aef99bfc1e4ed25229ec9ecdf30e91d8a01282bf84769f1f4d1caf13051f15ee4df4960042547041c156efe973631a18cb739d6fcb67484949c772966901559e9c37658974bb22cf4f8d3eb1cb80565868d9e792a057125a75a10a2a406613c508459d129209467ae86d8b0b5ced9f1a393d165530eed843a86078b0a0199b8c4077f981c11e00cbf6e26e972dec3ecb790410286b805c11c28e609cc7ef7815e11e19a445294e58af4f5712e0e83b0f9b1ae658f2cc11774217ab5bcf15d7f2cbf39fde31ad9e71bba2a0519048b1622d4461f9c7247691569687a749f86e7f2abb41725e3e7362ed1a3be1df40fe4c8881390e64d57ac3d4f066b723bfea5d208ee78dba03ea3c34342e68db0717af47de180f0fa0cf305c7c7320c2d722167a8bcec2f2f186d6e5c4b35918ffdef636df2d8bc466f37f79741f78b4be6c7710a6a1d9a740a2f9a7f19478725a6ed9ab97bf70f1d91ee56804ff523dbcbd6f26ada8f9c201e9be6e23e88ec954ba6f451c7853762d8bff2ef38d1503d976bcab302c9e5447b0bcd11a6b996441c033f737866fb9b0ffd62b0bb142e353c8d55e34551bb7e4f8fc5427f2ea912b69a00e7dc463048c914b3a3fbdd6ba5324b3c51d23086b3cdc9dd4ba9edbb21f1cd559a626f25cc65ab9248c86c3fe9eb2f33b6d3cd693ec221f5cd1b68b8786d1d25c842e5d2199f27c4d141531ad0bd015e03d00c0b415344a6b58e2355b4494743f2f9f64ac2e8f5a0da9790322423f38f6e3eda3f06391756ef3ec6dfebedb686ff0fe6357e458f86a66cbb9f53de717b57c95408f44110bea3765477247742cc5aa8f7a2821219f5c296e52e272a4bb00483840d95cf1b1bd3abb1a362a45fb1ecf76239171e0950560eea3ede74dd67e813cf0d9511c8e6c88653131d06a670d0bf34aafabd11e19bb4c6cbd7108f8f1272fef46734524a58b3a38febb5894623164d0ac915f8fa36e2b46b4d174a2990ef7964fb8a81e8d0f2e9d818f7c6fb63e9adb9721e7526aa603a22e498178e5c8613643e36b71c085c98512ee1c319af2850341a917968b79c8a342f27cd9a979f6b357fc8c8e3dd8e560e398ba9820ef380936d83fc25f3833883ab254bd662f852c4e9b83ab8ee3f4ac8cf82f8136a62349df2a22ef26d98f070a22bcfc6aa8c287fabeff6cd35a592211885ac64ac63984bcaa1253a2047f05e7b5c6831ed4edb909f82c5027797e3ef081c33a475185baeafee00ace9d5fa018d0efde77a00246806d3de8947ed4cd2cdb48e5ff5c15b44c52073aac4ddb947db6556dc91df95c1bb11469f49138c023d7d6c382d166132e0d65d4c17bb03769b2fdc7b592a25107b45ced3673d8db2f391662294c3e48292ce6d2594b105b4ff2c7ae31f4ac8c8837761f7b7e2ba6a889dd69f1c6a49694a501093af37736d721c3d56bbee66c99d6a967c7ef27a8bc22f28e716f795b4ce12c4a9fa6edbdd1402870b7f72b40cddbcc4c529385414d895f2b0ddf7aab65539295f85f2df642e99303007f4b886d24a412efa88d057a8a8d9531521b970604ae64774f69100414fa8f9777c7fb1035e8be3fa55974a7f897d9c7b581832059a8ddfa680efd703cdd7759096abedacb9d62a1a777e3d3e017e24de9be13c615b402c1ae04e93c83e797c579d5532e05d1cf00963f0f0c9f22c26195086299fd3790e96bb05308fb4545bda459ad45b9679b038c3e9a8f93e65d7d5f7f620e84c86f982ef2412d3baf5891b14c03d877ac58a9d148a9bdc348f62d75a9a4892fe8e5f057326d230fbf7dfeb08e12d6797a2f4bdd55d2cd8385583978e5648cbd2cda464b6ec6967b6e46e0576869692d4b9da67756e9d4ffc6fce98f67d52f808be8d6966d2179d2a04b420b7aaccc9e9f8c01caf9a9a917cb864c142a115b486b0eebf6d48c627abdcacfb1c53e1832a95e3700de6e16e4d71f064e202ed518c1186fc037f1fbd24f1b907b310bf58870211e79c5ad3317a1bb8c85c468c431185ad12fd08fb20750ef53a3fa1efc8df2bdb8c5a46acd81dff76b97fab3746647dbdb7ace3c83c0b6660c9a005aedbfce335bd5c00b16ac176283e3e04d24cf28302eda7fd7eaedeaffdc4c08abe3027460f9426eb092032d61e61fa20c6c006742d2ff7c6994ec7db41f72f88f51a8b0b553e2d7a8fe7895383c633667e95960f68812005b0708e57bd5d030d5ff825be8e7c747ab8688d1b813e328bc97c685736e8afc35f449fa762b653dbdc7d5dbc25beda1f77b762e11153c2312d634f2e1a06ede124297402d5aca099894898c05f2487f98299ae8dc762e665d80aab67571bc2378475bf0415213306298b7964f1b02e90b19a733edb266198d2edd4773f2b7bff0fea831674777530845919e532612f0737b4338b440704672fa79d8e5a858be8e36d2d63803824127247346464f92d22d4935a191849fb80fbbb6c357e149637f75ecdf0288c6c6f2e5ff14f9ec3a13ef5da179ecf4b9ea7843920a0bc14a61d13b51df858d95c005679cea993eb3c67c1b6a89ef74af05cd99ad9bc45352ef8a9c12ee13b62a0fa7ad3fbafb4e862dd016f21596d7141507609fd1663353727bc196875365f1cfa9b55530fb6f019f92f2934a0fde08fac3e9c6b5b619526e4e409dc7c605671a08b66de596b85823d3027e7df7014f3099adf98a1dfb33be03c068269c7be0142ea51428464e72b0228d8370544903ca70c88ca0bf60d93e0e53359e877f24ce47990fb47dd9d280001d87dc92f8fcf875427b41921706a62359006e32f653f792ae4ecdb13535c7cca05471b31aceae9d8849aad5890e7b445f75eca43c6322bc7d6c9ac5eb205868b15f181a07359865d210d61155ac5a92e0fc5f822c79b48b01c6745223a9c35a0d8e5f2b550f6ff3b1133b2de84417b2f15b72e5c21bb169a6dc58dc620d65448989aea9057b750e8ae48c19798edf3bde8ec53f11b476e93636</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">没有密码怎么能看呢</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&text=Java常用框架下的SQL注入"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&title=Java常用框架下的SQL注入"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&is_video=false&description=Java常用框架下的SQL注入"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java常用框架下的SQL注入&body=Check out this article: https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&title=Java常用框架下的SQL注入"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&title=Java常用框架下的SQL注入"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&title=Java常用框架下的SQL注入"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&title=Java常用框架下的SQL注入"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&name=Java常用框架下的SQL注入&description=🔒 这篇文章需要密码才能阅读"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/07/18/Java%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6%E4%B8%8B%E7%9A%84SQL%E6%B3%A8%E5%85%A5/&t=Java常用框架下的SQL注入"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

