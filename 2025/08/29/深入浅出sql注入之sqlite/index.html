@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="之前的文章写的太长了，感觉打开看的时候加载很慢，所以打算分章节去写了 sqlite基础知识基础知识参考:菜鸟教程 什么是sqlite? SQLite 是一个轻量级的关系型数据库管理系统（RDBMS），它以 C 语言编写，SQLite是一个进程内的库，实现了自给自足的、无服务器的、零配置的、事务性的 SQL 数据库引擎。 关于sqlite的命令，还是跟其他数据库一样，有DDL，DML，DQL三种命令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入浅出sql注入之sqlite">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="之前的文章写的太长了，感觉打开看的时候加载很慢，所以打算分章节去写了 sqlite基础知识基础知识参考:菜鸟教程 什么是sqlite? SQLite 是一个轻量级的关系型数据库管理系统（RDBMS），它以 C 语言编写，SQLite是一个进程内的库，实现了自给自足的、无服务器的、零配置的、事务性的 SQL 数据库引擎。 关于sqlite的命令，还是跟其他数据库一样，有DDL，DML，DQL三种命令">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250210093129451.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/sql%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA/image-20250829152535383.png">
+<meta property="article:published_time" content="2025-08-29T03:09:17.000Z">
+<meta property="article:modified_time" content="2025-08-29T08:17:16.765Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="SQLITE注入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250210093129451.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>深入浅出sql注入之sqlite</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/08/26/Java%E4%BB%8E0%E5%88%B01%E7%9A%84%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&text=深入浅出sql注入之sqlite"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&title=深入浅出sql注入之sqlite"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&is_video=false&description=深入浅出sql注入之sqlite"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=深入浅出sql注入之sqlite&body=Check out this article: https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&title=深入浅出sql注入之sqlite"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&title=深入浅出sql注入之sqlite"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&title=深入浅出sql注入之sqlite"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&title=深入浅出sql注入之sqlite"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&name=深入浅出sql注入之sqlite&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&t=深入浅出sql注入之sqlite"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#sqlite%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">sqlite基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Sqlite%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA"><span class="toc-number">1.1.</span> <span class="toc-text">Sqlite服务搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sqlite%E5%91%BD%E4%BB%A4"><span class="toc-number">1.2.</span> <span class="toc-text">sqlite命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sqlite%E8%AF%AD%E6%B3%95"><span class="toc-number">1.3.</span> <span class="toc-text">sqlite语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sqlite%E6%B3%A8%E9%87%8A"><span class="toc-number">1.3.1.</span> <span class="toc-text">sqlite注释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E7%9A%84%E5%BC%80%E5%A7%8B%E5%92%8C%E7%BB%93%E6%9D%9F"><span class="toc-number">1.3.2.</span> <span class="toc-text">语句的开始和结束</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.3.3.</span> <span class="toc-text">1、创建数据库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#open%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">.open命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#databases%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">.databases命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#quit%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">.quit命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#dump%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.3.4.</span> <span class="toc-text">.dump命令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81-%E9%99%84%E5%8A%A0-%E9%80%89%E6%8B%A9-%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.3.4.</span> <span class="toc-text">2、 附加(选择)数据库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ATTACH-DATABASE%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">ATTACH DATABASE命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#database%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">.database命令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%88%86%E7%A6%BB%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.3.5.</span> <span class="toc-text">3、分离数据库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DETACH-DATABASE%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.5.1.</span> <span class="toc-text">DETACH DATABASE命令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E8%A1%A8"><span class="toc-number">1.3.6.</span> <span class="toc-text">4、创建数据表</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#CREATE-TABLE%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.6.1.</span> <span class="toc-text">CREATE TABLE命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sqlite%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.3.6.2.</span> <span class="toc-text">sqlite数据类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sqlite%E7%BA%A6%E6%9D%9F"><span class="toc-number">1.3.6.3.</span> <span class="toc-text">sqlite约束</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#tables-%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.6.4.</span> <span class="toc-text">.tables 命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#schema-%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.6.5.</span> <span class="toc-text">.schema 命令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE%E8%A1%A8"><span class="toc-number">1.3.7.</span> <span class="toc-text">5、删除数据表</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        深入浅出sql注入之sqlite
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-08-29T03:09:17.000Z" class="dt-published" itemprop="datePublished">2025-08-29</time>
+        
+        (Updated: <time datetime="2025-08-29T08:17:16.765Z" class="dt-updated" itemprop="dateModified">2025-08-29</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/SQL%E6%B3%A8%E5%85%A5/">SQL注入</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/SQLITE%E6%B3%A8%E5%85%A5/" rel="tag">SQLITE注入</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>之前的文章写的太长了，感觉打开看的时候加载很慢，所以打算分章节去写了</p>
+<h1 id="sqlite基础知识"><a href="#sqlite基础知识" class="headerlink" title="sqlite基础知识"></a>sqlite基础知识</h1><p>基础知识参考:<a target="_blank" rel="noopener" href="https://www.runoob.com/sqlite/sqlite-tutorial.html">菜鸟教程</a></p>
+<p>什么是sqlite?</p>
+<p>SQLite 是一个轻量级的关系型数据库管理系统（RDBMS），它以 C 语言编写，SQLite是一个进程内的库，实现了自给自足的、无服务器的、零配置的、事务性的 SQL 数据库引擎。</p>
+<p>关于sqlite的命令，还是跟其他数据库一样，有DDL，DML，DQL三种命令</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250210093129451.png" alt="image-20250210093129451"></p>
+<p>和mysql一样，我们先学习一些基础语句</p>
+<h2 id="Sqlite服务搭建"><a href="#Sqlite服务搭建" class="headerlink" title="Sqlite服务搭建"></a>Sqlite服务搭建</h2><p>这次测试我就放Windows里面测了，这样方便些</p>
+<p>先去SQLite下载Windows版本的二进制文件，需要下载一个<a target="_blank" rel="noopener" href="https://www.sqlite.org/2025/sqlite-tools-win-x64-3500400.zip">sqlite-tools-win-x64-3500400.zip</a>和<a target="_blank" rel="noopener" href="https://www.sqlite.org/2025/sqlite-dll-win-x64-3500400.zip">sqlite-dll-win-x64-3500400.zip</a></p>
+<ul>
+<li><code>sqlite-tools-win-x64-*.zip</code> —— 包含 <code>sqlite3.exe</code> 命令行工具（推荐用于日常管理数据库）。</li>
+<li>可选：<code>sqlite-dll-win-x64-*.zip</code> —— 包含 DLL，用于程序中调用 SQLite。</li>
+</ul>
+<p>然后我们解压两个二进制文件，并将当前文件夹添加到PATH中</p>
+<p>并在命令行中进行验证</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\23232&gt;sqlite3</span><br><span class="line">SQLite version 3.50.4 2025-07-30 19:33:53</span><br><span class="line">Enter &quot;.help&quot; for usage hints.</span><br><span class="line">Connected to a transient in-memory database.</span><br><span class="line">Use &quot;.open FILENAME&quot; to reopen on a persistent database.</span><br><span class="line"><span class="meta prompt_">sqlite&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>出现版本号以及命令行界面，就代表安装成功了</p>
+<h2 id="sqlite命令"><a href="#sqlite命令" class="headerlink" title="sqlite命令"></a>sqlite命令</h2><p>介绍几个sqlite比较重要的命令</p>
+<p>首先就是<code>.help</code>命令，该命令可以获取所有的点命令及其介绍</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">sqlite&gt; .help</span><br><span class="line">.archive ...             Manage SQL archives</span><br><span class="line">.auth ON|OFF             Show authorizer callbacks</span><br><span class="line">.backup ?DB? FILE        Backup DB (default &quot;main&quot;) to FILE</span><br><span class="line">.bail on|off             Stop after hitting an error.  Default OFF</span><br><span class="line">.cd DIRECTORY            Change the working directory to DIRECTORY</span><br><span class="line">.changes on|off          Show number of rows changed by SQL</span><br><span class="line">.check GLOB              Fail if output since .testcase does not match</span><br><span class="line">.clone NEWDB             Clone data into NEWDB from the existing database</span><br><span class="line">.connection [close] [#]  Open or close an auxiliary database connection</span><br><span class="line">.crlf ?on|off?           Whether or not to use \r\n line endings</span><br><span class="line">.databases               List names and files of attached databases</span><br><span class="line">.dbconfig ?op? ?val?     List or change sqlite3_db_config() options</span><br><span class="line">.dbinfo ?DB?             Show status information about the database</span><br><span class="line">.dbtotxt                 Hex dump of the database file</span><br><span class="line">.dump ?OBJECTS?          Render database content as SQL</span><br><span class="line">.echo on|off             Turn command echo on or off</span><br><span class="line">.eqp on|off|full|...     Enable or disable automatic EXPLAIN QUERY PLAN</span><br><span class="line">.excel                   Display the output of next command in spreadsheet</span><br><span class="line">.exit ?CODE?             Exit this program with return-code CODE</span><br><span class="line">.expert                  EXPERIMENTAL. Suggest indexes for queries</span><br><span class="line">.explain ?on|off|auto?   Change the EXPLAIN formatting mode.  Default: auto</span><br><span class="line">.filectrl CMD ...        Run various sqlite3_file_control() operations</span><br><span class="line">.fullschema ?--indent?   Show schema and the content of sqlite_stat tables</span><br><span class="line">.headers on|off          Turn display of headers on or off</span><br><span class="line">.help ?-all? ?PATTERN?   Show help text for PATTERN</span><br><span class="line">.import FILE TABLE       Import data from FILE into TABLE</span><br><span class="line">.indexes ?TABLE?         Show names of indexes</span><br><span class="line">.intck ?STEPS_PER_UNLOCK?  Run an incremental integrity check on the db</span><br><span class="line">.limit ?LIMIT? ?VAL?     Display or change the value of an SQLITE_LIMIT</span><br><span class="line">.lint OPTIONS            Report potential schema issues.</span><br><span class="line">.load FILE ?ENTRY?       Load an extension library</span><br><span class="line">.log FILE|on|off         Turn logging on or off.  FILE can be stderr/stdout</span><br><span class="line">.mode ?MODE? ?OPTIONS?   Set output mode</span><br><span class="line">.nonce STRING            Suspend safe mode for one command if nonce matches</span><br><span class="line">.nullvalue STRING        Use STRING in place of NULL values</span><br><span class="line">.once ?OPTIONS? ?FILE?   Output for the next SQL command only to FILE</span><br><span class="line">.open ?OPTIONS? ?FILE?   Close existing database and reopen FILE</span><br><span class="line">.output ?FILE?           Send output to FILE or stdout if FILE is omitted</span><br><span class="line">.parameter CMD ...       Manage SQL parameter bindings</span><br><span class="line">.print STRING...         Print literal STRING</span><br><span class="line">.progress N              Invoke progress handler after every N opcodes</span><br><span class="line">.prompt MAIN CONTINUE    Replace the standard prompts</span><br><span class="line">.quit                    Stop interpreting input stream, exit if primary.</span><br><span class="line">.read FILE               Read input from FILE or command output</span><br><span class="line">.recover                 Recover as much data as possible from corrupt db.</span><br><span class="line">.restore ?DB? FILE       Restore content of DB (default &quot;main&quot;) from FILE</span><br><span class="line">.save ?OPTIONS? FILE     Write database to FILE (an alias for .backup ...)</span><br><span class="line">.scanstats on|off|est    Turn sqlite3_stmt_scanstatus() metrics on or off</span><br><span class="line">.schema ?PATTERN?        Show the CREATE statements matching PATTERN</span><br><span class="line">.separator COL ?ROW?     Change the column and row separators</span><br><span class="line">.session ?NAME? CMD ...  Create or control sessions</span><br><span class="line">.sha3sum ...             Compute a SHA3 hash of database content</span><br><span class="line">.shell CMD ARGS...       Run CMD ARGS... in a system shell</span><br><span class="line">.show                    Show the current values for various settings</span><br><span class="line">.stats ?ARG?             Show stats or turn stats on or off</span><br><span class="line">.system CMD ARGS...      Run CMD ARGS... in a system shell</span><br><span class="line">.tables ?TABLE?          List names of tables matching LIKE pattern TABLE</span><br><span class="line">.timeout MS              Try opening locked tables for MS milliseconds</span><br><span class="line">.timer on|off            Turn SQL timer on or off</span><br><span class="line">.trace ?OPTIONS?         Output each SQL statement as it is run</span><br><span class="line">.version                 Show source, library and compiler versions</span><br><span class="line">.vfsinfo ?AUX?           Information about the top-level VFS</span><br><span class="line">.vfslist                 List all available VFSes</span><br><span class="line">.vfsname ?AUX?           Print the name of the VFS stack</span><br><span class="line">.width NUM1 NUM2 ...     Set minimum column widths for columnar output</span><br><span class="line">.www                     Display output of the next command in web browser</span><br></pre></td></tr></table></figure>
+
+<p>我们关注几个比较重要的命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.help   获取可用的点命令的清单</span><br><span class="line">.show   显示各种设置的当前值</span><br><span class="line">.quite 退出SQLite 提示符</span><br><span class="line">.databases 列出数据库的名称及其所依附的文件</span><br><span class="line">.schema ?TABLE? 显示 CREATE 语句,例如.schema sqlite_master</span><br></pre></td></tr></table></figure>
+
+<h2 id="sqlite语法"><a href="#sqlite语法" class="headerlink" title="sqlite语法"></a>sqlite语法</h2><h3 id="sqlite注释"><a href="#sqlite注释" class="headerlink" title="sqlite注释"></a>sqlite注释</h3><p>SQL 注释以两个连续的 <code>-</code> 字符（ASCII 0x2d）开始，并扩展至下一个换行符（ASCII 0x0a）或直到输入结束，以先到者为准。</p>
+<p>也可以使用 C 风格的注释，以 <code>&quot;/*&quot;</code> 开始，并扩展至下一个 <code>&quot;*/&quot;</code> 字符对或直到输入结束，以先到者为准。SQLite的注释可以跨越多行。</p>
+<h3 id="语句的开始和结束"><a href="#语句的开始和结束" class="headerlink" title="语句的开始和结束"></a>语句的开始和结束</h3><p>所有的 SQLite 语句可以以任何关键字开始，如 SELECT、INSERT、UPDATE、DELETE、ALTER、DROP 等，所有的语句以分号 <strong>;</strong> 结束。</p>
+<h3 id="1、创建数据库"><a href="#1、创建数据库" class="headerlink" title="1、创建数据库"></a>1、创建数据库</h3><p>在sqlite中，每个数据库都是以文件的形式存在的</p>
+<p>所以我们要创建数据库的语法就是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlite3 test.db</span><br></pre></td></tr></table></figure>
+
+<p>然后我们在当前目录下可以看到创建的数据库文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">E:\SQLite&gt;sqlite3 test.db</span><br><span class="line">SQLite version 3.50.4 2025-07-30 19:33:53</span><br><span class="line">Enter &quot;.help&quot; for usage hints.</span><br><span class="line">sqlite&gt; .databases;</span><br><span class="line">Error: unknown command or invalid arguments:  &quot;databases;&quot;. Enter &quot;.help&quot; for help</span><br><span class="line">sqlite&gt; .databases</span><br><span class="line">main: E:\SQLite\test.db r/w</span><br><span class="line">sqlite&gt; .quit</span><br><span class="line"></span><br><span class="line">E:\SQLite&gt;dir</span><br><span class="line"> 驱动器 E 中的卷是 web</span><br><span class="line"> 卷的序列号是 3492-78F9</span><br><span class="line"></span><br><span class="line"> E:\SQLite 的目录</span><br><span class="line"></span><br><span class="line">2025/08/29  15:17    &lt;DIR&gt;          .</span><br><span class="line">2025/07/31  03:48         3,176,960 sqldiff.exe</span><br><span class="line">2025/08/29  14:59         1,344,617 sqlite-dll-win-x64-3500400.zip</span><br><span class="line">2025/08/29  14:59         6,430,656 sqlite-tools-win-x64-3500400.zip</span><br><span class="line">2025/07/31  03:49             8,280 sqlite3.def</span><br><span class="line">2025/07/31  03:49         3,232,256 sqlite3.dll</span><br><span class="line">2025/07/31  03:48         3,885,056 sqlite3.exe</span><br><span class="line">2025/07/31  03:48         4,439,040 sqlite3_analyzer.exe</span><br><span class="line">2025/07/31  03:49         3,122,688 sqlite3_rsync.exe</span><br><span class="line">2025/08/29  15:17                 0 test.db</span><br><span class="line">               9 个文件     25,639,553 字节</span><br><span class="line">               1 个目录 58,361,475,072 可用字节</span><br></pre></td></tr></table></figure>
+
+<p>此时生成的test.db数据库文件将被sqlite引擎用作数据库，并且可以发现在创建了数据库文件后会自动进入sqlite提示符</p>
+<h4 id="open命令"><a href="#open命令" class="headerlink" title=".open命令"></a>.open命令</h4><p>另外我们也可以在sqlite的命令行中用.open去打开数据库文件，如果数据库存在则打开他，不存在则创建</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.open test.db</span><br></pre></td></tr></table></figure>
+
+<p>这里的话会直接进入该数据库文件</p>
+<h4 id="databases命令"><a href="#databases命令" class="headerlink" title=".databases命令"></a>.databases命令</h4><p><code>.databases</code> 是一个命令，用于显示当前已连接数据库的列表及其相关信息。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sqlite&gt; .open test.db</span><br><span class="line">sqlite&gt; .databases</span><br><span class="line">main: E:\SQLite\test.db r/w</span><br></pre></td></tr></table></figure>
+
+<h4 id="quit命令"><a href="#quit命令" class="headerlink" title=".quit命令"></a>.quit命令</h4><p>该命令会退出sqlite提示符</p>
+<h4 id="dump命令"><a href="#dump命令" class="headerlink" title=".dump命令"></a>.dump命令</h4><p><code>.dump</code> 命令用于导出数据库或特定表的内容</p>
+<p><img src="/../image/achieve/202411/sql%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA/image-20250829152535383.png" alt="image-20250829152535383"></p>
+<p>上面结果说明当前数据库没有表或数据</p>
+<h3 id="2、-附加-选择-数据库"><a href="#2、-附加-选择-数据库" class="headerlink" title="2、 附加(选择)数据库"></a>2、 附加(选择)数据库</h3><p>如果我们有多个数据库文件可以操作使用，而我们想要使用其中一个的时候，我们就可以用SQLite 的 <strong>ATTACH DATABASE</strong> 语句来选择一个特定的数据库，使用该命令后，所有的 SQLite 语句将在附加的数据库下执行。</p>
+<p>其作用是什么呢？前面我们可以知道，sqlite中每个数据库就代表一个文件，那我们一次也只能打开一个数据库文件，此时如果我们希望用到其他数据库的内容该怎么办呢？这时候就可以用到附加数据库去进行处理了</p>
+<p>举个例子，假如我们需要对两个数据库 <code>user.db</code> 和 <code>new.db</code>，我们需要将user的表复制到new.db中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ATTACH DATABASE &#x27;new.db&#x27; AS newdb;</span><br><span class="line">CREATE TABLE newdb.users AS SELECT * FROM main.users;</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>newdb</code> 数据库里创建一张新表 <code>users</code>，并把 <code>main.users</code> 表里的所有数据完整复制过去。</p>
+<h4 id="ATTACH-DATABASE命令"><a href="#ATTACH-DATABASE命令" class="headerlink" title="ATTACH DATABASE命令"></a>ATTACH DATABASE命令</h4><p>基础语法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ATTACH DATABASE file_name AS database_name;</span><br></pre></td></tr></table></figure>
+
+<p>我们测试一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sqlite&gt; attach database &#x27;test.db&#x27; as &#x27;TEST&#x27;;</span><br><span class="line">sqlite&gt; .databases</span><br><span class="line">main: E:\SQLite\test.db r/w</span><br><span class="line">TEST: E:\SQLite\test.db r/w</span><br></pre></td></tr></table></figure>
+
+<p>为什么这里有两个呢？其实是因为当我们用open命令去打开一个数据库文件的时候，sqlite会自动将该数据库文件挂载到main中，而后面我们自己附加的数据库设置为TEST没问题</p>
+<h4 id="database命令"><a href="#database命令" class="headerlink" title=".database命令"></a>.database命令</h4><p>该命令会显示当前 SQLite 连接中所有已附加的数据库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sqlite&gt; attach database &#x27;test.db&#x27; as &#x27;TEST&#x27;;</span><br><span class="line">sqlite&gt; .databases</span><br><span class="line">main: E:\SQLite\test.db r/w</span><br><span class="line">TEST: E:\SQLite\test.db r/w</span><br><span class="line">sqlite&gt; .database</span><br><span class="line">main: E:\SQLite\test.db r/w</span><br><span class="line">TEST: E:\SQLite\test.db r/w</span><br></pre></td></tr></table></figure>
+
+<p>其实区别不大</p>
+<blockquote>
+<p>[!IMPORTANT]</p>
+<p>数据库名称 <strong>main</strong> 和 <strong>temp</strong> 被保留用于主数据库和存储临时表及其他临时数据对象的数据库。这两个数据库名称可用于每个数据库连接，且不应该被用于附加，否则将得到一个警告消息</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sqlite&gt; attach database &#x27;test.db&#x27; as &#x27;main&#x27;;</span><br><span class="line">Runtime error: database main is already in use</span><br><span class="line">sqlite&gt; attach database &#x27;test.db&#x27; as &#x27;temp&#x27;;</span><br><span class="line">Runtime error: database temp is already in use</span><br></pre></td></tr></table></figure>
+
+<p>可以看到这两个名称都是被占用了的</p>
+<h3 id="3、分离数据库"><a href="#3、分离数据库" class="headerlink" title="3、分离数据库"></a>3、分离数据库</h3><p>和上面的附加数据库相反，分离数据库主要是将我们附加的数据库从当前会话中删除</p>
+<h4 id="DETACH-DATABASE命令"><a href="#DETACH-DATABASE命令" class="headerlink" title="DETACH DATABASE命令"></a>DETACH DATABASE命令</h4><p><em>SQLite 的</em> <strong>DETACH DATABASE</strong> <em>语句是用来把命名数据库从一个数据库连接分离和游离出来，连接是之前使用 ATTACH 语句附加的。</em>但是我们无法分离main或temp数据库</p>
+<p>基础语法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DETACH DATABASE 别名;</span><br></pre></td></tr></table></figure>
+
+<p>举个例子</p>
+<p>我们先附加两个数据库<code>TEST</code>和<code>TEST2</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sqlite&gt; attach database &#x27;test.db&#x27; as &#x27;TEST2&#x27;</span><br><span class="line">   ...&gt; ;</span><br><span class="line">sqlite&gt; .database</span><br><span class="line">main: E:\SQLite\test.db r/w</span><br><span class="line">TEST: E:\SQLite\test.db r/w</span><br><span class="line">TEST2: E:\SQLite\test.db r/w</span><br></pre></td></tr></table></figure>
+
+<p>然后我们尝试将TEST2给分离出去</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sqlite&gt; detach database &#x27;TEST2&#x27;;</span><br><span class="line">sqlite&gt; .database</span><br><span class="line">main: E:\SQLite\test.db r/w</span><br><span class="line">TEST: E:\SQLite\test.db r/w</span><br></pre></td></tr></table></figure>
+
+<p>此时不难看到，之前的TEST是不会受影响的，仍然和main保持连接</p>
+<h3 id="4、创建数据表"><a href="#4、创建数据表" class="headerlink" title="4、创建数据表"></a>4、创建数据表</h3><h4 id="CREATE-TABLE命令"><a href="#CREATE-TABLE命令" class="headerlink" title="CREATE TABLE命令"></a>CREATE TABLE命令</h4><p>SQLite 的 <strong>CREATE TABLE</strong> 语句用于在任何给定的数据库创建一个新表。创建基本表，涉及到命名表、定义列及每一列的数据类型。其实和mysql的创建表是一样的</p>
+<p>语法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE database_name.table_name(</span><br><span class="line">   column1 datatype  PRIMARY KEY(one or more columns),</span><br><span class="line">   column2 datatype,</span><br><span class="line">   column3 datatype,</span><br><span class="line">   .....</span><br><span class="line">   columnN datatype,</span><br><span class="line">);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>好了，又该了解一下数据类型了</p>
+<h4 id="sqlite数据类型"><a href="#sqlite数据类型" class="headerlink" title="sqlite数据类型"></a>sqlite数据类型</h4><p><a target="_blank" rel="noopener" href="https://www.runoob.com/sqlite/sqlite-data-types.html">https://www.runoob.com/sqlite/sqlite-data-types.html</a></p>
+<p>常用的数据类型主要有五大类</p>
+<table>
+<thead>
+<tr>
+<th align="left">数据类型</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">NULL</td>
+<td align="left">值是一个 NULL 值。</td>
+</tr>
+<tr>
+<td align="left">INTEGER</td>
+<td align="left">值是一个带符号的整数，根据值的大小存储在 1、2、3、4、6 或 8 字节中。</td>
+</tr>
+<tr>
+<td align="left">REAL</td>
+<td align="left">值是一个浮点值，存储为 8 字节的 IEEE 浮点数字。</td>
+</tr>
+<tr>
+<td align="left">TEXT</td>
+<td align="left">值是一个文本字符串，使用数据库编码（UTF-8、UTF-16BE 或 UTF-16LE）存储。</td>
+</tr>
+<tr>
+<td align="left">BLOB</td>
+<td align="left">值是一个 blob 数据，完全根据它的输入存储。</td>
+</tr>
+</tbody></table>
+<p>往细分的话就是很多小类了，可以直接看菜鸟教程中的亲和类型</p>
+<p>然后还要sqlite的约束</p>
+<h4 id="sqlite约束"><a href="#sqlite约束" class="headerlink" title="sqlite约束"></a>sqlite约束</h4><p><a target="_blank" rel="noopener" href="https://www.runoob.com/sqlite/sqlite-constraints.html">https://www.runoob.com/sqlite/sqlite-constraints.html</a></p>
+<p>约束其实就是用来限制插入到表中的数据类型</p>
+<p>常用的约束</p>
+<ul>
+<li><strong>NOT NULL 约束</strong>：确保某列不能有 NULL 值。</li>
+<li><strong>DEFAULT 约束</strong>：当某列没有指定值时，为该列提供默认值。</li>
+<li><strong>UNIQUE 约束</strong>：确保某列中的所有值是不同的。</li>
+<li><strong>PRIMARY Key 约束</strong>：唯一标识数据库表中的各行&#x2F;记录。</li>
+<li><strong>CHECK 约束</strong>：CHECK 约束确保某列中的所有值满足一定条件。</li>
+</ul>
+<p>介绍完了，我们回到创建数据表中</p>
+<p>尝试创建一个数据表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sqlite&gt; create table helloworld(</span><br><span class="line">(x1...&gt; id integer primary key not null,</span><br><span class="line">(x1...&gt; username text not null,</span><br><span class="line">(x1...&gt; password text not null</span><br><span class="line">(x1...&gt; );</span><br></pre></td></tr></table></figure>
+
+<h4 id="tables-命令"><a href="#tables-命令" class="headerlink" title=".tables 命令"></a><strong>.tables</strong> 命令</h4><p><strong>.tables</strong> 命令可以用于 <strong>显示当前数据库里所有表的列表</strong>。</p>
+<p>我们看看刚刚创建的数据表是否存在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sqlite&gt; create table helloworld(</span><br><span class="line">(x1...&gt; id integer primary key not null,</span><br><span class="line">(x1...&gt; username text not null,</span><br><span class="line">(x1...&gt; password text not null</span><br><span class="line">(x1...&gt; );</span><br><span class="line">sqlite&gt; .tables</span><br><span class="line">TEST.helloworld  helloworld</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>主数据库表</strong>：<code>helloworld</code> 是您在当前数据库中创建的表，属于主数据库（通常是 <code>main</code> 数据库）。</li>
+<li><strong>附加数据库表</strong>：<code>TEST.helloworld</code> 表示在一个名为 <code>TEST</code> 的附加数据库中的 <code>helloworld</code> 表。</li>
+</ol>
+<h4 id="schema-命令"><a href="#schema-命令" class="headerlink" title=".schema 命令"></a><strong>.schema</strong> 命令</h4><p><strong>.schema</strong> 命令可以用于查看数据库对象的 <strong>所有表、索引、触发器等对象的创建 SQL</strong>。<strong>创建 SQL</strong>（通常指 <strong>CREATE 语句</strong>）是用来 <strong>创建数据库对象</strong> 的 SQL 命令。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sqlite&gt; .schema</span><br><span class="line">CREATE TABLE helloworld(</span><br><span class="line">id integer primary key not null,</span><br><span class="line">username text not null,</span><br><span class="line">password text not null</span><br><span class="line">);</span><br><span class="line">CREATE TABLE TEST.helloworld(</span><br><span class="line">id integer primary key not null,</span><br><span class="line">username text not null,</span><br><span class="line">password text not null</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h3 id="5、删除数据表"><a href="#5、删除数据表" class="headerlink" title="5、删除数据表"></a>5、删除数据表</h3>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#sqlite%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">sqlite基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Sqlite%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA"><span class="toc-number">1.1.</span> <span class="toc-text">Sqlite服务搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sqlite%E5%91%BD%E4%BB%A4"><span class="toc-number">1.2.</span> <span class="toc-text">sqlite命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sqlite%E8%AF%AD%E6%B3%95"><span class="toc-number">1.3.</span> <span class="toc-text">sqlite语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sqlite%E6%B3%A8%E9%87%8A"><span class="toc-number">1.3.1.</span> <span class="toc-text">sqlite注释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E7%9A%84%E5%BC%80%E5%A7%8B%E5%92%8C%E7%BB%93%E6%9D%9F"><span class="toc-number">1.3.2.</span> <span class="toc-text">语句的开始和结束</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.3.3.</span> <span class="toc-text">1、创建数据库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#open%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">.open命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#databases%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">.databases命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#quit%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">.quit命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#dump%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.3.4.</span> <span class="toc-text">.dump命令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81-%E9%99%84%E5%8A%A0-%E9%80%89%E6%8B%A9-%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.3.4.</span> <span class="toc-text">2、 附加(选择)数据库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ATTACH-DATABASE%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">ATTACH DATABASE命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#database%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">.database命令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%88%86%E7%A6%BB%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.3.5.</span> <span class="toc-text">3、分离数据库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DETACH-DATABASE%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.5.1.</span> <span class="toc-text">DETACH DATABASE命令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E8%A1%A8"><span class="toc-number">1.3.6.</span> <span class="toc-text">4、创建数据表</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#CREATE-TABLE%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.6.1.</span> <span class="toc-text">CREATE TABLE命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sqlite%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.3.6.2.</span> <span class="toc-text">sqlite数据类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sqlite%E7%BA%A6%E6%9D%9F"><span class="toc-number">1.3.6.3.</span> <span class="toc-text">sqlite约束</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#tables-%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.6.4.</span> <span class="toc-text">.tables 命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#schema-%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.6.5.</span> <span class="toc-text">.schema 命令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE%E8%A1%A8"><span class="toc-number">1.3.7.</span> <span class="toc-text">5、删除数据表</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&text=深入浅出sql注入之sqlite"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&title=深入浅出sql注入之sqlite"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&is_video=false&description=深入浅出sql注入之sqlite"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=深入浅出sql注入之sqlite&body=Check out this article: https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&title=深入浅出sql注入之sqlite"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&title=深入浅出sql注入之sqlite"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&title=深入浅出sql注入之sqlite"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&title=深入浅出sql注入之sqlite"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&name=深入浅出sql注入之sqlite&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/&t=深入浅出sql注入之sqlite"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

