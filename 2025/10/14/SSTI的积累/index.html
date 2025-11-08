@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/DSBCTF%E5%8D%95%E8%BA%AB%E6%9D%AF/image-20250430170928255.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/DSBCTF%E5%8D%95%E8%BA%AB%E6%9D%AF/image-20250430171107666.png">
 <meta property="article:published_time" content="2025-10-14T09:03:33.000Z">
-<meta property="article:modified_time" content="2025-11-04T03:46:08.843Z">
+<meta property="article:modified_time" content="2025-11-08T05:44:52.363Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="SSTI的积累">
 <meta name="twitter:card" content="summary">
@@ -164,7 +164,7 @@
       
         <time datetime="2025-10-14T09:03:33.000Z" class="dt-published" itemprop="datePublished">2025-10-14</time>
         
-        (Updated: <time datetime="2025-11-04T03:46:08.843Z" class="dt-updated" itemprop="dateModified">2025-11-04</time>)
+        (Updated: <time datetime="2025-11-08T05:44:52.363Z" class="dt-updated" itemprop="dateModified">2025-11-08</time>)
         
       
     </div>
@@ -210,12 +210,12 @@
 <h1 id="Flask下的Jinja2模板注入"><a href="#Flask下的Jinja2模板注入" class="headerlink" title="Flask下的Jinja2模板注入"></a>Flask下的Jinja2模板注入</h1><h2 id="什么是Flask？"><a href="#什么是Flask？" class="headerlink" title="什么是Flask？"></a>什么是Flask？</h2><p>Flask 是一个轻量级的 <strong>Python Web 框架</strong>，用于快速构建 Web 应用程序和 API。</p>
 <p>而flask默认使用jinja2作为渲染HTML页面的模板引擎，也是ssti漏洞的常见来源</p>
 <p><code>Jinja2</code> 是 Python 中一个广泛使用的 <strong>模板引擎</strong>，主要用于动态生成 HTML、XML、配置文件等文本内容。</p>
-<h2 id="Jinja2的语法"><a href="#Jinja2的语法" class="headerlink" title="Jinja2的语法"></a>Jinja2的语法</h2><p>Jinja2使用 结构表示一个变量，它是一种特殊的占位符，告诉模版引擎这个位置的值从渲染模版时使用的数据中获取。</p>
+<h2 id="Jinja2的语法"><a href="#Jinja2的语法" class="headerlink" title="Jinja2的语法"></a>Jinja2的语法</h2><p>Jinja2使用 <code>&#123;&#123;name&#125;&#125;</code>结构表示一个变量，它是一种特殊的占位符，告诉模版引擎这个位置的值从渲染模版时使用的数据中获取。</p>
 <p>Jinja2 模板同样支持控制语句，像在<code>&#123;%…%&#125;</code>块中使用if语句</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;%if 1==1%&#125;air&#123;%endif%&#125;</span><br></pre></td></tr></table></figure>
 
 <p>Jinja2同样也有自己的注释语法</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="comment"># #&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="comment">#这里是注释内容#&#125;</span></span><br></pre></td></tr></table></figure>
 
 <h2 id="FLask模板渲染函数"><a href="#FLask模板渲染函数" class="headerlink" title="FLask模板渲染函数"></a>FLask模板渲染函数</h2><p>Flask提供两个模版渲染函数 render_template() 和render_template_string()。</p>
 <h3 id="render-template"><a href="#render-template" class="headerlink" title="render_template()"></a>render_template()</h3><p>看看函数的定义</p>
@@ -234,7 +234,7 @@
 <h2 id="环境复现"><a href="#环境复现" class="headerlink" title="环境复现"></a>环境复现</h2><p>在起环境的时候我们先看一下环境下的app.py漏洞源码</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request</span><br><span class="line"><span class="keyword">from</span> jinja2 <span class="keyword">import</span> Template</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>():</span><br><span class="line">    name = request.args.get(<span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;guest&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    t = Template(<span class="string">&quot;Hello &quot;</span> + name)</span><br><span class="line">    <span class="keyword">return</span> t.render()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    app.run()</span><br></pre></td></tr></table></figure>
 
-<p>t &#x3D; Template(“hello” + name) 这行代码表示，将前端输入的name拼接到模板，但是此时没有对name参数进行一定的过滤和检测，那么我们如果传入?name&#x3D;64就会返回64的结果，这是因为Jinja2的基础语法<code>&#123;&#123;&#125;&#125;</code>会把其中的内容会被当作 Python 代码执行，并将结果渲染到页面上，这也是我们漏洞的成因</p>
+<p><code>t = Template(&quot;hello&quot; + name)</code> 这行代码表示，将前端输入的name拼接到模板，但是此时没有对name参数进行一定的过滤和检测，那么我们如果传入<code>?name=&#123;&#123;8*8&#125;&#125;</code>就会返回64的结果，这是因为Jinja2的基础语法<code>&#123;&#123;&#125;&#125;</code>会把其中的内容会被当作 Python 代码执行，并将结果渲染到页面上，这也是我们漏洞的成因</p>
 <h2 id="防御方法"><a href="#防御方法" class="headerlink" title="防御方法"></a>防御方法</h2><p>那如果我们事先对模板进行渲染后再传入数据，那么就可以避免模板注入的存在，修复一下上面的漏洞代码</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request</span><br><span class="line"><span class="keyword">from</span> jinja2 <span class="keyword">import</span> Template</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>():</span><br><span class="line">    name = request.args.get(<span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;guest&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    t = Template(<span class="string">&quot;Hello &#123;&#123;n&#125;&#125;&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> t.render(n=name)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    app.run()</span><br></pre></td></tr></table></figure>
 

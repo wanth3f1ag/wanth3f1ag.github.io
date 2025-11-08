@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言打靶场的时候遇到了，正好学习一下 Kerberos是什么Kerberos是一种网络身份认证协议，由MIT麻省理工学院开发，其设计理念是通过使用密钥加密技术为客户机&#x2F;服务器之间提供强大的认证服务 在域环境下，AD域使用Kerberos协议进行验证，熟悉和掌握Kerberos协议是域渗透的基础。 在fushuling师傅中借用过一位大师傅的话：”Kerberos协议要解决的实际上就是一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="域渗透之Kerberos协议">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="前言打靶场的时候遇到了，正好学习一下 Kerberos是什么Kerberos是一种网络身份认证协议，由MIT麻省理工学院开发，其设计理念是通过使用密钥加密技术为客户机&#x2F;服务器之间提供强大的认证服务 在域环境下，AD域使用Kerberos协议进行验证，熟悉和掌握Kerberos协议是域渗透的基础。 在fushuling师傅中借用过一位大师傅的话：”Kerberos协议要解决的实际上就是一个">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/1-1024x700.png">
+<meta property="article:published_time" content="2025-11-07T04:19:10.000Z">
+<meta property="article:modified_time" content="2025-11-07T07:07:21.942Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="Kerberos协议">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/1-1024x700.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>域渗透之Kerberos协议</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/11/08/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BBloodHound%E5%88%86%E6%9E%90%E5%9F%9F%E7%8E%AF%E5%A2%83/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/11/07/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9CTime/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&text=域渗透之Kerberos协议"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&title=域渗透之Kerberos协议"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&is_video=false&description=域渗透之Kerberos协议"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=域渗透之Kerberos协议&body=Check out this article: https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&title=域渗透之Kerberos协议"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&title=域渗透之Kerberos协议"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&title=域渗透之Kerberos协议"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&title=域渗透之Kerberos协议"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&name=域渗透之Kerberos协议&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&t=域渗透之Kerberos协议"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">Kerberos是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">Kerberos认证过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9AAS-REQ"><span class="toc-number">3.1.</span> <span class="toc-text">第一步：AS_REQ</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95"><span class="toc-number">3.1.1.</span> <span class="toc-text">利用手法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9AAS-REP"><span class="toc-number">3.2.</span> <span class="toc-text">第二步：AS_REP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">利用手法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9ATGS-REQ"><span class="toc-number">3.3.</span> <span class="toc-text">第三步：TGS_REQ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9ATGS-REP"><span class="toc-number">3.4.</span> <span class="toc-text">第四步：TGS_REP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95%EF%BC%9A%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE"><span class="toc-number">3.4.1.</span> <span class="toc-text">利用手法：白银票据</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9AAP-REQ%E5%92%8CAP-REP"><span class="toc-number">3.5.</span> <span class="toc-text">第五步：AP_REQ和AP_REP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PAC%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">4.</span> <span class="toc-text">PAC是什么</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        域渗透之Kerberos协议
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-11-07T04:19:10.000Z" class="dt-published" itemprop="datePublished">2025-11-07</time>
+        
+        (Updated: <time datetime="2025-11-07T07:07:21.942Z" class="dt-updated" itemprop="dateModified">2025-11-07</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Kerberos%E5%8D%8F%E8%AE%AE/" rel="tag">Kerberos协议</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>打靶场的时候遇到了，正好学习一下</p>
+<h2 id="Kerberos是什么"><a href="#Kerberos是什么" class="headerlink" title="Kerberos是什么"></a>Kerberos是什么</h2><p>Kerberos是一种网络身份认证协议，由MIT麻省理工学院开发，其设计理念是通过使用密钥加密技术为客户机&#x2F;服务器之间提供强大的认证服务</p>
+<p>在域环境下，AD域使用Kerberos协议进行验证，熟悉和掌握<code>Kerberos</code>协议是域渗透的基础。</p>
+<p>在fushuling师傅中借用过一位大师傅的话：”Kerberos协议要解决的实际上就是一个身份认证的问题，顾名思义，<strong>当一个客户机去访问一个服务器的某服务时，服务器如何判断该客户机是否有权限来访问本服务器上的服务，同时保证在该过程中的通讯内容即便被拦截或者被篡改也不影响整个通讯的安全性</strong>。”</p>
+<p>Kerberos协议中的角色主要包括三种：</p>
+<ul>
+<li>访问服务的客户机client</li>
+<li>提供服务的服务器Server</li>
+<li>密钥分发中心KDC(Key Distribution Center)</li>
+</ul>
+<p>然后KDC分为两部分</p>
+<ul>
+<li>身份验证服务器AS（Authentication Service）：验证Client的身份，验证通过之后，AS就会发放TGT票据给Client。</li>
+<li>票据授予服务器TGS（Ticket Granting Service）：当Client获取的TGT票据后，TGS会给Clinet换取访问Server端的ST服务票据给client</li>
+</ul>
+<p>另外还需要介绍一下其他的几个名词：</p>
+<ul>
+<li>TGT ：认证票据 Ticket Granting Ticket，</li>
+<li>ST  ：服务票据 Service Ticket，由TGS服务发布.</li>
+<li>DC：域控制器Domain Controller</li>
+<li>AD：活动目录Active Directory，集中管理网络中的用户、计算机、权限、策略和资源访问。</li>
+</ul>
+<p>其实从上面已经能猜到，<strong>Kerberos协议是一种利用票据进行认证的认证协议，KDC服务默认会安装在域控DC中，而Client和Server分别是域中的用户和服务，而在Kerberos中Client是否有权限访问Server端的服务由KDC发放的票据来决定。</strong></p>
+<h2 id="Kerberos认证过程"><a href="#Kerberos认证过程" class="headerlink" title="Kerberos认证过程"></a>Kerberos认证过程</h2><p>Kerberos认证流程大致为以下几步：</p>
+<ul>
+<li>客户端client向KDC的AS请求TGT票据</li>
+<li>客户端通过AS认证后，AS会向客户端发放TGT票据</li>
+<li>客户端携带TGT票据，向KDC的TGS请求ST服务票据</li>
+<li>客户端通过TGS认证后，TGS会向客户端发放ST服务票据</li>
+<li>客户端使用ST服务票据向服务器请求服务</li>
+</ul>
+<p>fushuling师傅的图</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/1-1024x700.png" alt="img"></p>
+<p>具体分步骤来详细讲一下</p>
+<p>首先是客户端与KDC中AS之间的认证，使用 AS_REQ 和 AS_REP 两个步骤</p>
+<h3 id="第一步：AS-REQ"><a href="#第一步：AS-REQ" class="headerlink" title="第一步：AS_REQ"></a>第一步：AS_REQ</h3><p>当我们client访问服务器Server时，需要输入用户名和密码，此时kerberos服务会向KDC的AS发送认证请求，请求包中包含：请求用户名，主机名，加密类型和Authenticator(用户NTLM hash加密的时间戳)以及一些其他信息。</p>
+<p>可以看到这里用到了用户的hash，那么就可能出现以下几种攻击手法</p>
+<h4 id="利用手法"><a href="#利用手法" class="headerlink" title="利用手法"></a>利用手法</h4><ul>
+<li>哈希传递（PTH）</li>
+</ul>
+<p>因为使用的是用户的HASH加密的时间戳作为请求凭据，所以我们可以通过hash传递来伪造用户发起请求，这是最常规的方法了</p>
+<ul>
+<li>密码喷洒攻击</li>
+</ul>
+<p>内网一般管理的都很薄弱，为了方便通常会使用相同的密码对服务器进行配置，当用户名存在，密码正确或者错误的时候，返回包也不一样，因此通过密码喷洒可能会出现意想不到的效果</p>
+<h3 id="第二步：AS-REP"><a href="#第二步：AS-REP" class="headerlink" title="第二步：AS_REP"></a>第二步：AS_REP</h3><p>KDC在接收请求后会进行认证，检查用户的密码Hash，对请求包中的Authenticator进行解密时间戳，如果时间戳在范围内则认证成功并返回krbtgt hash加密的TGT票据，TGT里面包含PAC，PAC包含Client的sid、Client所在的组。除此之外AS会生成一个临时秘钥Login session key，并使用<strong>用户客户端</strong>NTLM-Hash加密Login session key作为响应包的一部分内容。</p>
+<p><strong>TGT票据凭据里面最核心的东西就是krbtgt hash加密的TGT票据和用户hash加密的session key。</strong></p>
+<h4 id="利用手法-1"><a href="#利用手法-1" class="headerlink" title="利用手法"></a>利用手法</h4><ul>
+<li>黄金票据</li>
+</ul>
+<p>简单来说如果我们拥有了krbtgt用户的hash，就可以自己给自己签发任意用户的TGT票据，从而跳过AS验证，但是需要具备的条件：</p>
+<ol>
+<li>域名称</li>
+<li>krbtgt用户的NTML密码哈希，也就是hash</li>
+<li>需要伪造的用户名</li>
+<li>域的SID值</li>
+</ol>
+<p>当client客户端获取到TGT票据后就可以向KDC的TGS请求ST服务票据和请求访问了，使用TGS_REQ 和 TGS_REP 两个步骤</p>
+<h3 id="第三步：TGS-REQ"><a href="#第三步：TGS-REQ" class="headerlink" title="第三步：TGS_REQ"></a>第三步：TGS_REQ</h3><p>client客户端携带着TGT票据向TGS认证服务请求ST票据，此时TGS通过krbtgt的hash解密TGT票据，然后验证客户端的身份。</p>
+<h3 id="第四步：TGS-REP"><a href="#第四步：TGS-REP" class="headerlink" title="第四步：TGS_REP"></a>第四步：TGS_REP</h3><p>TGS会首先检查自身是否存在客户端所请求的服务，如果存在则会使用krbtgt用户的NTLM Hash解密TGT并得到Login session key，然后用Login session key解密Authenticator，如果解密成功，且验证时间戳在范围内则通过TGS认证，随后TGS将会给客户端用户发放ST服务票据。TGS生成的ST服务票据其中包括ticket和一个新的session key。其中ticket中enc_part部分是使用要请求的服务的hash进行加密的。</p>
+<h4 id="利用手法：白银票据"><a href="#利用手法：白银票据" class="headerlink" title="利用手法：白银票据"></a>利用手法：白银票据</h4><p>在ST服务票据的ticket中的encpart是使用服务的hash进行加密的，所以如果我们拥有了服务的hash，也就可以自己签发任意用户的ST票据，也就是白银票据。与黄金票据相比，白银票据只能访问特定访问，并且伪造的白银票据没有带有有效KDC签名的PAC。如果将目标主机配置为验证KDC PAC签名，则银票将不起作用。这里需要具备的条件：</p>
+<ol>
+<li>域名称</li>
+<li>域的SID值</li>
+<li>服务名</li>
+<li>服务的hash</li>
+<li>伪造的用户名</li>
+<li>目标服务FQDN</li>
+</ol>
+<h3 id="第五步：AP-REQ和AP-REP"><a href="#第五步：AP-REQ和AP-REP" class="headerlink" title="第五步：AP_REQ和AP_REP"></a>第五步：AP_REQ和AP_REP</h3><p>经过了前面的认证过程，一直都是client在和KDC进行交互，接下来就是client和Server的真正通讯了</p>
+<p>当客户端拿到TGS_REP发来的ST服务票据后，就需要拿着ST去请求访问服务了。</p>
+<p>客户端首先将ST票据中解密后的session key缓存，然后客户端将ST服务票据和session key加密的时间戳一起发送给服务端。</p>
+<p>服务端会使用自己的hash解密ST服务票据从中提取Session Key，并用Session Key验证时间戳，从而确立客户端的身份</p>
+<h2 id="PAC是什么"><a href="#PAC是什么" class="headerlink" title="PAC是什么"></a>PAC是什么</h2><p>其实早期的Kerberos认证在TGS_REP的过程中存在一个认证的缺陷，在这个过程中，KDC不会验证用户是否有权限访问服务，只要请求的TGT票据解密结果是正确的，则会返回ST服务票据，这也导致了一个很严重的安全漏洞，只要我们提供用户的hash是正确的，那么都可以请求域中的任何一个服务的票据。</p>
+<p>为了解决相关的权限认证问题，微软引入了PAC（Privilege Attribute Certificate）即特权属性证书</p>
+<p>在前面我们也说过在AS_REQ返回的TGT票据中会包含PAC，PAC中包含用户的sid，用户所在的组，并且在后续的TGS_REQ过程中KDC也会验证PAC签名，确保PAC没有被篡改，如果PAC完好，则重新构造新的PAC放在TGS票据中，到最后一步AP_Rep这里，服务会拿着PAC去KDC那边询问用户有没有访问权限，KDC解密PAC。获取用户的sid，以及所在的组，再判断用户是否有访问服务的权限，有访问权限就允许用户访问。</p>
+<p>关于攻击的话后面再回来写了，主要还是在于黄金票据和白银票据的详细做法</p>
+<p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://fushuling.com/index.php/2023/09/02/windows%e5%9f%9f%e6%b8%97%e9%80%8f%e4%b9%8bkerberos%e5%8d%8f%e8%ae%ae/">https://fushuling.com/index.php/2023/09/02/windows%e5%9f%9f%e6%b8%97%e9%80%8f%e4%b9%8bkerberos%e5%8d%8f%e8%ae%ae/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/smileleooo/p/18187195">https://www.cnblogs.com/smileleooo/p/18187195</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">Kerberos是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">Kerberos认证过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9AAS-REQ"><span class="toc-number">3.1.</span> <span class="toc-text">第一步：AS_REQ</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95"><span class="toc-number">3.1.1.</span> <span class="toc-text">利用手法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9AAS-REP"><span class="toc-number">3.2.</span> <span class="toc-text">第二步：AS_REP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">利用手法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9ATGS-REQ"><span class="toc-number">3.3.</span> <span class="toc-text">第三步：TGS_REQ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9ATGS-REP"><span class="toc-number">3.4.</span> <span class="toc-text">第四步：TGS_REP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95%EF%BC%9A%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE"><span class="toc-number">3.4.1.</span> <span class="toc-text">利用手法：白银票据</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9AAP-REQ%E5%92%8CAP-REP"><span class="toc-number">3.5.</span> <span class="toc-text">第五步：AP_REQ和AP_REP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PAC%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">4.</span> <span class="toc-text">PAC是什么</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&text=域渗透之Kerberos协议"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&title=域渗透之Kerberos协议"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&is_video=false&description=域渗透之Kerberos协议"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=域渗透之Kerberos协议&body=Check out this article: https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&title=域渗透之Kerberos协议"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&title=域渗透之Kerberos协议"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&title=域渗透之Kerberos协议"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&title=域渗透之Kerberos协议"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&name=域渗透之Kerberos协议&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/&t=域渗透之Kerberos协议"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
