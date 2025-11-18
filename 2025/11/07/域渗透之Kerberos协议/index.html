@@ -6,16 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="前言打靶场的时候遇到了，正好学习一下 Kerberos是什么Kerberos是一种网络身份认证协议，由MIT麻省理工学院开发，其设计理念是通过使用密钥加密技术为客户机&#x2F;服务器之间提供强大的认证服务 在域环境下，AD域使用Kerberos协议进行验证，熟悉和掌握Kerberos协议是域渗透的基础。 在fushuling师傅中借用过一位大师傅的话：”Kerberos协议要解决的实际上就是一个">
+    <meta name="description" content="打靶场的时候遇到了，正好学习一下 Kerberos是什么Kerberos是一种网络身份认证协议，由MIT麻省理工学院开发，其设计理念是通过使用密钥加密技术为客户机&#x2F;服务器之间提供强大的认证服务 在域环境下，AD域使用Kerberos协议进行验证，熟悉和掌握Kerberos协议是域渗透的基础。 在fushuling师傅中借用过一位大师傅的话：”Kerberos协议要解决的实际上就是一个身份">
 <meta property="og:type" content="article">
 <meta property="og:title" content="域渗透之Kerberos协议">
 <meta property="og:url" content="https://wanth3f1ag.top/2025/11/07/%E5%9F%9F%E6%B8%97%E9%80%8F%E4%B9%8BKerberos%E5%8D%8F%E8%AE%AE/index.html">
 <meta property="og:site_name" content="root@wanth3f1ag">
-<meta property="og:description" content="前言打靶场的时候遇到了，正好学习一下 Kerberos是什么Kerberos是一种网络身份认证协议，由MIT麻省理工学院开发，其设计理念是通过使用密钥加密技术为客户机&#x2F;服务器之间提供强大的认证服务 在域环境下，AD域使用Kerberos协议进行验证，熟悉和掌握Kerberos协议是域渗透的基础。 在fushuling师傅中借用过一位大师傅的话：”Kerberos协议要解决的实际上就是一个">
+<meta property="og:description" content="打靶场的时候遇到了，正好学习一下 Kerberos是什么Kerberos是一种网络身份认证协议，由MIT麻省理工学院开发，其设计理念是通过使用密钥加密技术为客户机&#x2F;服务器之间提供强大的认证服务 在域环境下，AD域使用Kerberos协议进行验证，熟悉和掌握Kerberos协议是域渗透的基础。 在fushuling师傅中借用过一位大师傅的话：”Kerberos协议要解决的实际上就是一个身份">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/1-1024x700.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/07eb20a1-2424-e22a-6a39-a64f110f4023.png">
 <meta property="article:published_time" content="2025-11-07T04:19:10.000Z">
-<meta property="article:modified_time" content="2025-11-09T09:09:41.784Z">
+<meta property="article:modified_time" content="2025-11-11T06:32:57.835Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="Kerberos协议">
 <meta name="twitter:card" content="summary">
@@ -122,7 +123,7 @@
     
     
       <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">Kerberos是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">Kerberos认证过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9AAS-REQ"><span class="toc-number">3.1.</span> <span class="toc-text">第一步：AS_REQ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9AAS-REP"><span class="toc-number">3.2.</span> <span class="toc-text">第二步：AS_REP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9ATGS-REQ"><span class="toc-number">3.3.</span> <span class="toc-text">第三步：TGS_REQ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9ATGS-REP"><span class="toc-number">3.4.</span> <span class="toc-text">第四步：TGS_REP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8ESPN"><span class="toc-number">3.5.</span> <span class="toc-text">关于SPN</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95%EF%BC%9A%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE"><span class="toc-number">3.5.1.</span> <span class="toc-text">利用手法：白银票据</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9AAP-REQ%E5%92%8CAP-REP"><span class="toc-number">3.6.</span> <span class="toc-text">第五步：AP_REQ和AP_REP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PAC%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">4.</span> <span class="toc-text">PAC是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Attack-methods"><span class="toc-number">5.</span> <span class="toc-text">Attack_methods</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AS-REQ%E9%98%B6%E6%AE%B5%E7%9A%84%E6%94%BB%E5%87%BB"><span class="toc-number">5.1.</span> <span class="toc-text">AS_REQ阶段的攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95"><span class="toc-number">5.1.1.</span> <span class="toc-text">利用手法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AS-REP%E9%98%B6%E6%AE%B5%E7%9A%84%E6%94%BB%E5%87%BB"><span class="toc-number">5.2.</span> <span class="toc-text">AS_REP阶段的攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95-1"><span class="toc-number">5.2.1.</span> <span class="toc-text">利用手法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kerberosating%E6%94%BB%E5%87%BB"><span class="toc-number">5.3.</span> <span class="toc-text">Kerberosating攻击</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">Kerberos是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">Kerberos认证过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9AAS-REQ"><span class="toc-number">2.1.</span> <span class="toc-text">第一步：AS_REQ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9AAS-REP"><span class="toc-number">2.2.</span> <span class="toc-text">第二步：AS_REP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9ATGS-REQ"><span class="toc-number">2.3.</span> <span class="toc-text">第三步：TGS_REQ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9ATGS-REP"><span class="toc-number">2.4.</span> <span class="toc-text">第四步：TGS_REP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8ESPN"><span class="toc-number">2.5.</span> <span class="toc-text">关于SPN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9AAP-REQ%E5%92%8CAP-REP"><span class="toc-number">2.6.</span> <span class="toc-text">第五步：AP_REQ和AP_REP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PAC%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">3.</span> <span class="toc-text">PAC是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Attack-methods"><span class="toc-number">4.</span> <span class="toc-text">Attack_methods</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AS-REQ%E9%98%B6%E6%AE%B5%E7%9A%84%E6%94%BB%E5%87%BB"><span class="toc-number">5.</span> <span class="toc-text">AS_REQ阶段的攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95"><span class="toc-number">5.1.</span> <span class="toc-text">利用手法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AS-REP%E9%98%B6%E6%AE%B5%E7%9A%84%E6%94%BB%E5%87%BB"><span class="toc-number">6.</span> <span class="toc-text">AS_REP阶段的攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE"><span class="toc-number">6.1.</span> <span class="toc-text">黄金票据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TGS-REQ-TGS-REP%E9%98%B6%E6%AE%B5%E7%9A%84%E6%94%BB%E5%87%BB"><span class="toc-number">7.</span> <span class="toc-text">TGS_REQ &amp; TGS_REP阶段的攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Kerberosating%E6%94%BB%E5%87%BB"><span class="toc-number">7.1.</span> <span class="toc-text">Kerberosating攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE"><span class="toc-number">7.2.</span> <span class="toc-text">白银票据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A7%94%E6%B4%BE%E6%94%BB%E5%87%BB"><span class="toc-number">8.</span> <span class="toc-text">委派攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%9F%9F%E5%A7%94%E6%B4%BE"><span class="toc-number">8.1.</span> <span class="toc-text">什么是域委派</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A7%94%E6%B4%BE%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-number">8.2.</span> <span class="toc-text">委派的分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%9E%E7%BA%A6%E6%9D%9F%E5%A7%94%E6%B4%BE%E6%94%BB%E5%87%BB"><span class="toc-number">8.3.</span> <span class="toc-text">非约束委派攻击</span></a></li></ol></li></ol>
       </div>
     
   </span>
@@ -149,7 +150,7 @@
       
         <time datetime="2025-11-07T04:19:10.000Z" class="dt-published" itemprop="datePublished">2025-11-07</time>
         
-        (Updated: <time datetime="2025-11-09T09:09:41.784Z" class="dt-updated" itemprop="dateModified">2025-11-09</time>)
+        (Updated: <time datetime="2025-11-11T06:32:57.835Z" class="dt-updated" itemprop="dateModified">2025-11-11</time>)
         
       
     </div>
@@ -174,7 +175,7 @@
   
 
   <div class="content e-content" itemprop="articleBody">
-    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>打靶场的时候遇到了，正好学习一下</p>
+    <p>打靶场的时候遇到了，正好学习一下</p>
 <h2 id="Kerberos是什么"><a href="#Kerberos是什么" class="headerlink" title="Kerberos是什么"></a>Kerberos是什么</h2><p>Kerberos是一种网络身份认证协议，由MIT麻省理工学院开发，其设计理念是通过使用密钥加密技术为客户机&#x2F;服务器之间提供强大的认证服务</p>
 <p>在域环境下，AD域使用Kerberos协议进行验证，熟悉和掌握<code>Kerberos</code>协议是域渗透的基础。</p>
 <p>在fushuling师傅中借用过一位大师傅的话：”Kerberos协议要解决的实际上就是一个身份认证的问题，顾名思义，<strong>当一个客户机去访问一个服务器的某服务时，服务器如何判断该客户机是否有权限来访问本服务器上的服务，同时保证在该过程中的通讯内容即便被拦截或者被篡改也不影响整个通讯的安全性</strong>。”</p>
@@ -210,30 +211,27 @@
 <p>具体分步骤来详细讲一下</p>
 <p>首先是客户端与KDC中AS之间的认证，使用 AS_REQ 和 AS_REP 两个步骤</p>
 <h3 id="第一步：AS-REQ"><a href="#第一步：AS-REQ" class="headerlink" title="第一步：AS_REQ"></a>第一步：AS_REQ</h3><p>当我们client访问服务器Server时，需要输入用户名和密码，此时kerberos服务会向KDC的AS发送认证请求，<strong>请求包中包含：请求用户名，主机名，加密类型和Authenticator(用户NTLM hash加密的时间戳)以及一些其他信息。</strong></p>
-<h3 id="第二步：AS-REP"><a href="#第二步：AS-REP" class="headerlink" title="第二步：AS_REP"></a>第二步：AS_REP</h3><p>KDC在接收请求后会进行认证，检查用户的密码Hash，对请求包中的Authenticator进行解密时间戳，如果时间戳在范围内则认证成功并返回krbtgt hash加密的TGT票据。</p>
+<h3 id="第二步：AS-REP"><a href="#第二步：AS-REP" class="headerlink" title="第二步：AS_REP"></a>第二步：AS_REP</h3><p>KDC在接收请求后会进行认证，检查用户的密码Hash，对请求包中的Authenticator进行解密时间戳，如果时间戳在范围内则认证成功并<strong>返回krbtgt hash加密的TGT票据。</strong></p>
 <p>AS_REP 返回包包含两个主要信息：ticket和enc-part：</p>
 <p>ticket包含了TGT，而TGT就是ticket分类下的enc-part。此部分enc-part内容是由域控的NTLM-HASH加密的，只有域控上的KDC能够解密，用于下一步的凭证。TGT中包含了一个关键信息：login session key。独立出来的另一个enc-part包含用户hash加密后的login session key。用户解密该部分后可以拿到原始的login session key。</p>
 <p><strong>TGT票据凭据里面最核心的东西就是krbtgt hash加密的TGT票据和用户hash加密的session key。</strong></p>
 <p>当client客户端获取到TGT票据和原始的login session key后就可以向KDC的TGS请求ST服务票据和请求访问了，使用TGS_REQ 和 TGS_REP 两个步骤</p>
 <h3 id="第三步：TGS-REQ"><a href="#第三步：TGS-REQ" class="headerlink" title="第三步：TGS_REQ"></a>第三步：TGS_REQ</h3><p>client客户端携带着TGT票据和原始的login session key向TGS认证服务请求ST票据，此时TGS通过krbtgt的hash解密TGT票据，然后验证客户端的身份。</p>
 <h3 id="第四步：TGS-REP"><a href="#第四步：TGS-REP" class="headerlink" title="第四步：TGS_REP"></a>第四步：TGS_REP</h3><p><strong>TGS会首先检查自身是否存在客户端所请求的服务</strong>，如果存在则会使用krbtgt用户的NTLM Hash解密TGT并得到Login session key，然后用Login session key解密Authenticator，如果解密成功，且验证时间戳在范围内则通过TGS认证，随后TGS将会给客户端用户发放ST服务票据。TGS生成的ST服务票据其中包括ticket和一个新的session key。其中ticket中enc_part部分是使用要请求的服务的hash进行加密的。</p>
-<h3 id="关于SPN"><a href="#关于SPN" class="headerlink" title="关于SPN"></a>关于SPN</h3><p>我们知道，域是基于微软的活动目录(AD)服务工作的。而每个在域内运行的服务都需要在AD注册SPN。每个SPN信息都包含一个服务以及一个允许登录的用户。并且一个服务可以注册多条SPN用来绑定多个用户。只有这样，在客户端client拿着TGT请求访问某个服务的时候，TGS才能通过查询SPN来确定域内是否存在该请求的服务</p>
+<h3 id="关于SPN"><a href="#关于SPN" class="headerlink" title="关于SPN"></a>关于SPN</h3><p>我们知道，域是基于微软的活动目录(AD)服务工作的。而每个在域内运行的使用Kerberos的服务都需要一个SPN。每个SPN信息都包含一个服务以及一个允许登录的用户。并且一个服务可以注册多条SPN用来绑定多个用户。只有这样，在客户端client拿着TGT请求访问某个服务的时候，TGS才能通过查询SPN来确定域内是否存在该请求的服务</p>
+<p>SPN分为两种，一种是注册在AD上机器用户下，另一种注册在域用户账户下：当一个服务的权限为Local System或Network Service，则SPN注册在机器帐户(Computers)下，当一个服务的权限为一个域用户，则SPN注册在域用户帐户(Users)下</p>
+<p>SPN的格式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service/hostname[:port][/instance]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>serviceclass是服务的名称，常见的有SMTP、WWW、HOST等</li>
+<li>hostname是主机名或 FQDN，也就是<strong>完全限定域名</strong>（包含主机名和完整域名路径的完整域名）</li>
+</ul>
 <blockquote>
 <p>[!IMPORTANT]</p>
 <p>需要注意的是：查询SPN的操作不只是KDC才能做，因为不管提供的域账户有无访问指定服务的权限，KDC都会查找SPN所对应的服务，所以只要是拥有TGT的客户端用户也能完成。这也就涉及到一个重要的攻击Kerberosating攻击了</p>
 </blockquote>
 <p><strong>到这里我们能明白TGS的一个工作原理：在TGS工作的认证上，他只负责认证用户带来的TGT是否有效，以及请求的对应服务是否存在，而并不在乎用户是否有访问权限</strong></p>
-<p>所以我们是可以通过这个认证上的漏洞去拿到ST票据的，而拿到ST票据后能干嘛呢？那就来到白银票据的利用了</p>
-<h4 id="利用手法：白银票据"><a href="#利用手法：白银票据" class="headerlink" title="利用手法：白银票据"></a>利用手法：白银票据</h4><p>之前就说过，<strong>在ST服务票据的ticket中的encpart是使用服务的hash进行加密的</strong>，所以如果我们拥有了ST票据，也就拿到了服务账户的NTLM-HASH，NTLM-HASH是根据密码hash而来，且其算法是公开的，只要枚举服务账户原始密码，进行爆破，再匹配解密后的格式特征，就能拿到服务账户的密码，前提是密码在你的密码字典中。</p>
-<p>拿到服务账户的密码后就可以自己签发任意用户的ST票据，这个ST票据就是白银票据。与黄金票据相比，白银票据只能访问特定访问，并且伪造的白银票据没有带有有效KDC签名的PAC。如果将目标主机配置为验证KDC PAC签名，则银票将不起作用。这里需要具备的条件：</p>
-<ol>
-<li>域名称</li>
-<li>域的SID值</li>
-<li>服务名</li>
-<li>服务的hash</li>
-<li>伪造的用户名</li>
-<li>目标服务FQDN</li>
-</ol>
 <h3 id="第五步：AP-REQ和AP-REP"><a href="#第五步：AP-REQ和AP-REP" class="headerlink" title="第五步：AP_REQ和AP_REP"></a>第五步：AP_REQ和AP_REP</h3><p>经过了前面的认证过程，一直都是client在和KDC进行交互，接下来就是client和Server的真正通讯了</p>
 <p>当客户端拿到TGS_REP发来的ST服务票据后，就需要拿着ST去请求访问服务了。</p>
 <p>客户端首先将ST票据中解密后的session key缓存，然后客户端将ST服务票据和session key加密的时间戳一起发送给服务端。</p>
@@ -241,9 +239,9 @@
 <h2 id="PAC是什么"><a href="#PAC是什么" class="headerlink" title="PAC是什么"></a>PAC是什么</h2><p>其实早期的Kerberos认证在TGS_REP的过程中存在一个认证的缺陷，在这个过程中，KDC不会验证用户是否有权限访问服务，只要请求的TGT票据解密结果是正确的，则会返回ST服务票据，这也导致了一个很严重的安全漏洞，只要我们提供用户的hash是正确的，那么都可以请求域中的任何一个服务的票据。</p>
 <p>为了解决相关的权限认证问题，微软引入了PAC（Privilege Attribute Certificate）即特权属性证书</p>
 <p>在前面我们也说过在AS_REQ返回的TGT票据中会包含PAC，PAC中包含用户的sid，用户所在的组，并且在后续的TGS_REQ过程中KDC也会验证PAC签名，确保PAC没有被篡改，如果PAC完好，则重新构造新的PAC放在TGS票据中，到最后一步AP_Rep这里，服务会拿着PAC去KDC那边询问用户有没有访问权限，KDC解密PAC。获取用户的sid，以及所在的组，再判断用户是否有访问服务的权限，有访问权限就允许用户访问。</p>
-<h2 id="Attack-methods"><a href="#Attack-methods" class="headerlink" title="Attack_methods"></a>Attack_methods</h2><h3 id="AS-REQ阶段的攻击"><a href="#AS-REQ阶段的攻击" class="headerlink" title="AS_REQ阶段的攻击"></a>AS_REQ阶段的攻击</h3><p>前面我们就知道在该阶段的请求包会包含请求用户名，主机名，加密类型和Authenticator(用户NTLM hash加密的时间戳)等信息，其中核心信息就是加密后的时间戳。只要时间戳信息满足要求，就能通过认证。</p>
+<h2 id="Attack-methods"><a href="#Attack-methods" class="headerlink" title="Attack_methods"></a>Attack_methods</h2><h2 id="AS-REQ阶段的攻击"><a href="#AS-REQ阶段的攻击" class="headerlink" title="AS_REQ阶段的攻击"></a>AS_REQ阶段的攻击</h2><p>前面我们就知道在该阶段的请求包会包含请求用户名，主机名，加密类型和Authenticator(用户NTLM hash加密的时间戳)等信息，其中核心信息就是加密后的时间戳。只要时间戳信息满足要求，就能通过认证。</p>
 <p>可以看到这里用到了用户的hash，那么就可能出现以下几种攻击手法</p>
-<h4 id="利用手法"><a href="#利用手法" class="headerlink" title="利用手法"></a>利用手法</h4><ul>
+<h3 id="利用手法"><a href="#利用手法" class="headerlink" title="利用手法"></a>利用手法</h3><ul>
 <li>哈希传递（PTH）</li>
 </ul>
 <p>因为使用的是用户的HASH加密的时间戳作为请求凭据，所以我们可以通过hash传递来伪造用户发起请求，这是最常规的方法了</p>
@@ -257,28 +255,23 @@
 <p>内网一般管理的都很薄弱，为了方便通常会使用相同的密码对服务器进行配置，当用户名存在，密码正确或者错误的时候，返回包也不一样，因此通过密码喷洒可能会出现意想不到的效果</p>
 <p>需要注意的是：由于Kerberos内置安全机制，用户认证失败多次就会锁定用户，所以我们只能指定用户密码去爆破用户名</p>
 <p>这里的话可以用到<code>GetTGT</code>工具来向域控制器申请并获取 Kerberos 的 TGT，他会使用有效凭据向KDC发起AS-REQ来换取TGT</p>
-<h3 id="AS-REP阶段的攻击"><a href="#AS-REP阶段的攻击" class="headerlink" title="AS_REP阶段的攻击"></a>AS_REP阶段的攻击</h3><h4 id="利用手法-1"><a href="#利用手法-1" class="headerlink" title="利用手法"></a>利用手法</h4><ul>
-<li>黄金票据</li>
-</ul>
-<p>简单来说如果我们拥有了krbtgt用户的hash，就可以自己给自己签发任意用户的TGT票据，从而跳过AS验证，但是需要具备的条件：</p>
+<h2 id="AS-REP阶段的攻击"><a href="#AS-REP阶段的攻击" class="headerlink" title="AS_REP阶段的攻击"></a>AS_REP阶段的攻击</h2><h3 id="黄金票据"><a href="#黄金票据" class="headerlink" title="黄金票据"></a>黄金票据</h3><p>简单来说如果我们拥有了krbtgt用户的hash，就可以自己给自己签发任意用户的TGT票据，从而跳过AS验证，但是需要具备的条件：</p>
 <ol>
-<li><p>域名称</p>
-</li>
-<li><p>krbtgt用户的NTML密码哈希，也就是hash</p>
-</li>
-<li><p>需要伪造的用户名</p>
-</li>
-<li><p>域的SID值</p>
-</li>
-<li><p>impacket中的工具ticketer（该工具是本地生成的）</p>
-</li>
+<li>域名称</li>
+<li>域的KRBTGT账户NTLM密码哈希，也就是hash</li>
+<li>需要伪造的用户名</li>
+<li>域的SID值</li>
 </ol>
-<p>命令：<code>ticketer -domain-sid sid值 -nthash krbtgt-hash -domain 域名 伪造的用户</code></p>
-<ol start="2">
-<li>mimikatz直接生成然后导入到内存中</li>
-</ol>
-<p>命令：<code>Kerberos::golden /user:administrator /domain:域名 /sid：SID值 /krbtgt:NTLM-HASH /ptt(后面如果携带ptt就会自动注入到内存，如果不携带就会在本地生成)</code></p>
-<h3 id="Kerberosating攻击"><a href="#Kerberosating攻击" class="headerlink" title="Kerberosating攻击"></a>Kerberosating攻击</h3><p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/network/365349.html">https://www.freebuf.com/articles/network/365349.html</a></p>
+<p>impacket中的工具ticketer（该工具是本地生成的）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ticketer -domain-sid sid值 -nthash krbtgt-hash -domain 域名 伪造的用户</span><br></pre></td></tr></table></figure>
+
+<p>mimikatz导出krbtgt的Hash</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsadump::dcsync /domain:域名 /user:krbtgt</span><br></pre></td></tr></table></figure>
+
+<p>然后结合域的SID和krbtgt的Hash，生成黄金票据</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Kerberos::golden /user:administrator /domain:域名 /sid：SID值 /krbtgt:哈希值 /ptt(后面如果携带ptt就会自动注入到内存，如果不携带就会在本地生成)</span><br></pre></td></tr></table></figure>
+
+<h2 id="TGS-REQ-TGS-REP阶段的攻击"><a href="#TGS-REQ-TGS-REP阶段的攻击" class="headerlink" title="TGS_REQ &amp; TGS_REP阶段的攻击"></a>TGS_REQ &amp; TGS_REP阶段的攻击</h2><h3 id="Kerberosating攻击"><a href="#Kerberosating攻击" class="headerlink" title="Kerberosating攻击"></a>Kerberosating攻击</h3><p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/network/365349.html">https://www.freebuf.com/articles/network/365349.html</a></p>
 <p>Kerberosating攻击发生在Kerberos协议的TGS_REP阶段，KDC的TGS服务返回一个由服务Hash 加密的ST给客户端。由于该ST是用服务Hash进行加密的，因此客户端在拿到该ST后可以用于本地离线爆破。</p>
 <p>Kerberosating攻击过程：</p>
 <ol>
@@ -300,6 +293,36 @@
 <p>参考文章：</p>
 <p><a target="_blank" rel="noopener" href="https://fushuling.com/index.php/2023/09/02/windows%e5%9f%9f%e6%b8%97%e9%80%8f%e4%b9%8bkerberos%e5%8d%8f%e8%ae%ae/">https://fushuling.com/index.php/2023/09/02/windows%e5%9f%9f%e6%b8%97%e9%80%8f%e4%b9%8bkerberos%e5%8d%8f%e8%ae%ae/</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/smileleooo/p/18187195">https://www.cnblogs.com/smileleooo/p/18187195</a></p>
+<h3 id="白银票据"><a href="#白银票据" class="headerlink" title="白银票据"></a>白银票据</h3><p>之前就说过，<strong>在TGS工作的认证上，他只负责认证用户带来的TGT是否有效，以及请求的对应服务是否存在，而并不在乎用户是否有访问权限</strong> ，<strong>在ST服务票据的ticket中的encpart是使用服务的hash进行加密的</strong>，所以如果我们拥有了ST票据，也就拿到了服务账户的NTLM-HASH，NTLM-HASH是根据密码hash而来，且其算法是公开的，只要枚举服务账户原始密码，进行爆破，再匹配解密后的格式特征，就能拿到服务账户的密码，前提是密码在你的密码字典中。</p>
+<p>拿到服务账户的密码后就可以自己签发任意用户的ST票据，这个ST票据就是白银票据。与黄金票据相比，白银票据只能访问特定访问，并且伪造的白银票据没有带有有效KDC签名的PAC。如果将目标主机配置为验证KDC PAC签名，则银票将不起作用。这里需要具备的条件：</p>
+<ol>
+<li>域名称</li>
+<li>域的SID值</li>
+<li>服务名</li>
+<li>服务的hash</li>
+<li>伪造的用户名</li>
+<li>目标服务FQDN</li>
+</ol>
+<p>但是白银票据的关键就是在于如何获取到服务的密钥哈希，有时候就会需要用到Kerberoasting进行破解，或者用猕猴桃从内存中进行获取哈希</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe <span class="string">&quot;privilege::debug&quot;</span> <span class="string">&quot;sekurlsa::logonPasswords&quot;</span> &gt; <span class="string">&#x27;xxx.txt&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后用猕猴桃进行制造白银票据</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kerberos::golden /user:用户名 /domain:域名 /sid:域sid /target:目标服务器 /service:目标服务 /rc4:目标服务器的<span class="built_in">hash</span> /ptt</span><br></pre></td></tr></table></figure>
+
+<h2 id="委派攻击"><a href="#委派攻击" class="headerlink" title="委派攻击"></a>委派攻击</h2><p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://forum.butian.net/share/1591">https://forum.butian.net/share/1591</a></p>
+<p><a target="_blank" rel="noopener" href="https://y4er.com/posts/kerberos-unconstrained-delegation/">https://y4er.com/posts/kerberos-unconstrained-delegation/</a></p>
+<h3 id="什么是域委派"><a href="#什么是域委派" class="headerlink" title="什么是域委派"></a>什么是域委派</h3><p>简单来说就是域内用户账户的权限委派给服务账号，服务账号能以用户账号的身份在域内展开活动。</p>
+<p>微软的官方流程图</p>
+<p><img src="/../image/achieve/202411/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/07eb20a1-2424-e22a-6a39-a64f110f4023.png" alt="image.png"></p>
+<p>跟以往的Kerberos请求服务的流程有什么不一样呢？其实就在于委派可以大量减轻用户和目标服务的直接直接交互和参与，更多的是依靠委派去和目标服务进行交互</p>
+<h3 id="委派的分类"><a href="#委派的分类" class="headerlink" title="委派的分类"></a>委派的分类</h3><p>主要分为三类：</p>
+<ul>
+<li>非约束委派</li>
+<li>约束委派</li>
+<li>基于资源的约束委派</li>
+</ul>
+<h3 id="非约束委派攻击"><a href="#非约束委派攻击" class="headerlink" title="非约束委派攻击"></a>非约束委派攻击</h3><p>非约束委派其实是用户账户将自身的TGT转发给服务账户使用。服务账户可以请求得到域用户的TGT票据</p>
 
   </div>
 </article>
@@ -331,7 +354,7 @@
     
     
       <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">Kerberos是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">Kerberos认证过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9AAS-REQ"><span class="toc-number">3.1.</span> <span class="toc-text">第一步：AS_REQ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9AAS-REP"><span class="toc-number">3.2.</span> <span class="toc-text">第二步：AS_REP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9ATGS-REQ"><span class="toc-number">3.3.</span> <span class="toc-text">第三步：TGS_REQ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9ATGS-REP"><span class="toc-number">3.4.</span> <span class="toc-text">第四步：TGS_REP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8ESPN"><span class="toc-number">3.5.</span> <span class="toc-text">关于SPN</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95%EF%BC%9A%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE"><span class="toc-number">3.5.1.</span> <span class="toc-text">利用手法：白银票据</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9AAP-REQ%E5%92%8CAP-REP"><span class="toc-number">3.6.</span> <span class="toc-text">第五步：AP_REQ和AP_REP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PAC%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">4.</span> <span class="toc-text">PAC是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Attack-methods"><span class="toc-number">5.</span> <span class="toc-text">Attack_methods</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AS-REQ%E9%98%B6%E6%AE%B5%E7%9A%84%E6%94%BB%E5%87%BB"><span class="toc-number">5.1.</span> <span class="toc-text">AS_REQ阶段的攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95"><span class="toc-number">5.1.1.</span> <span class="toc-text">利用手法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AS-REP%E9%98%B6%E6%AE%B5%E7%9A%84%E6%94%BB%E5%87%BB"><span class="toc-number">5.2.</span> <span class="toc-text">AS_REP阶段的攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95-1"><span class="toc-number">5.2.1.</span> <span class="toc-text">利用手法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kerberosating%E6%94%BB%E5%87%BB"><span class="toc-number">5.3.</span> <span class="toc-text">Kerberosating攻击</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">Kerberos是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">Kerberos认证过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9AAS-REQ"><span class="toc-number">2.1.</span> <span class="toc-text">第一步：AS_REQ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9AAS-REP"><span class="toc-number">2.2.</span> <span class="toc-text">第二步：AS_REP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9ATGS-REQ"><span class="toc-number">2.3.</span> <span class="toc-text">第三步：TGS_REQ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9ATGS-REP"><span class="toc-number">2.4.</span> <span class="toc-text">第四步：TGS_REP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8ESPN"><span class="toc-number">2.5.</span> <span class="toc-text">关于SPN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9AAP-REQ%E5%92%8CAP-REP"><span class="toc-number">2.6.</span> <span class="toc-text">第五步：AP_REQ和AP_REP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PAC%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">3.</span> <span class="toc-text">PAC是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Attack-methods"><span class="toc-number">4.</span> <span class="toc-text">Attack_methods</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AS-REQ%E9%98%B6%E6%AE%B5%E7%9A%84%E6%94%BB%E5%87%BB"><span class="toc-number">5.</span> <span class="toc-text">AS_REQ阶段的攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95"><span class="toc-number">5.1.</span> <span class="toc-text">利用手法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AS-REP%E9%98%B6%E6%AE%B5%E7%9A%84%E6%94%BB%E5%87%BB"><span class="toc-number">6.</span> <span class="toc-text">AS_REP阶段的攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE"><span class="toc-number">6.1.</span> <span class="toc-text">黄金票据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TGS-REQ-TGS-REP%E9%98%B6%E6%AE%B5%E7%9A%84%E6%94%BB%E5%87%BB"><span class="toc-number">7.</span> <span class="toc-text">TGS_REQ &amp; TGS_REP阶段的攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Kerberosating%E6%94%BB%E5%87%BB"><span class="toc-number">7.1.</span> <span class="toc-text">Kerberosating攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE"><span class="toc-number">7.2.</span> <span class="toc-text">白银票据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A7%94%E6%B4%BE%E6%94%BB%E5%87%BB"><span class="toc-number">8.</span> <span class="toc-text">委派攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%9F%9F%E5%A7%94%E6%B4%BE"><span class="toc-number">8.1.</span> <span class="toc-text">什么是域委派</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A7%94%E6%B4%BE%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-number">8.2.</span> <span class="toc-text">委派的分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%9E%E7%BA%A6%E6%9D%9F%E5%A7%94%E6%B4%BE%E6%94%BB%E5%87%BB"><span class="toc-number">8.3.</span> <span class="toc-text">非约束委派攻击</span></a></li></ol></li></ol>
       </div>
     
 
