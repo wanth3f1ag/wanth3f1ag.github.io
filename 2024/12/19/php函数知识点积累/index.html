@@ -1,18 +1,51 @@
 <!DOCTYPE html>
-<html lang=en>
+<html lang="zh-CN">
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="0x01前言做一期函数的知识点积累，方便忘记的时候查阅 0x02正文mb_strpos()函数查找字符串在另一个字符串中首次出现的位置 语法 123456mb_strpos(    string $haystack,    string $needle,    int $offset &#x3D; 0,    ?string $encoding &#x3D; null): int|false  参数  haystac">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="php函数知识点积累">
 <meta property="og:type" content="article">
 <meta property="og:title" content="php函数知识点积累">
 <meta property="og:url" content="https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/index.html">
 <meta property="og:site_name" content="root@wanth3f1ag">
-<meta property="og:description" content="0x01前言做一期函数的知识点积累，方便忘记的时候查阅 0x02正文mb_strpos()函数查找字符串在另一个字符串中首次出现的位置 语法 123456mb_strpos(    string $haystack,    string $needle,    int $offset &#x3D; 0,    ?string $encoding &#x3D; null): int|false  参数  haystac">
-<meta property="og:locale" content="en_US">
+<meta property="og:description" content="php函数知识点积累">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/php%E7%89%B9%E6%80%A7---ctfshow/image-20250428092145955.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/php%E7%89%B9%E6%80%A7---ctfshow/image-20250428092220871.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/php%E7%89%B9%E6%80%A7---ctfshow/image-20250428092450339.png">
@@ -21,169 +54,280 @@
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%B0%E6%98%A5%E6%AC%A2%E4%B9%90%E8%B5%9B/image-20250203111521812-1738552523822-13.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%B0%E6%98%A5%E6%AC%A2%E4%B9%90%E8%B5%9B/image-20250203111338722-1738552421550-9.png">
 <meta property="article:published_time" content="2024-12-19T15:12:02.000Z">
-<meta property="article:modified_time" content="2025-10-17T03:14:55.150Z">
+<meta property="article:modified_time" content="2025-12-01T11:09:54.985Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="php函数">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/php%E7%89%B9%E6%80%A7---ctfshow/image-20250428092145955.png">
-    
-    
-      
-        
-          <link rel="shortcut icon" href="/images/favicon.ico">
-        
-      
-      
-        
-          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-        
-      
-    
-    <!-- title -->
-    <title>php函数知识点积累</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
 
 
-    <!-- Umami Analytics -->
+<link rel="canonical" href="https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/">
 
 
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/","path":"2024/12/19/php函数知识点积累/","title":"php函数知识点积累"}</script>
 
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">H0me</a></li><!--
-     --><!--
-       --><li><a href="/about/">A6out</a></li><!--
-     --><!--
-       --><li><a href="/tags/">T6gs</a></li><!--
-     --><!--
-       --><li><a href="/categories/">Catagory</a></li><!--
-     --><!--
-       --><li><a href="/links/">L1nks</a></li><!--
-     --><!--
-       --><li><a href="/search/">s4arch</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="Previous post" href="/2024/12/21/ctfshowAK%E8%B5%9B/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="Next post" href="/2024/12/13/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&text=php函数知识点积累"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&title=php函数知识点积累"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&is_video=false&description=php函数知识点积累"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=php函数知识点积累&body=Check out this article: https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&title=php函数知识点积累"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&title=php函数知识点积累"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&title=php函数知识点积累"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&title=php函数知识点积累"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&name=php函数知识点积累&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&t=php函数知识点积累"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E6%AD%A3%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">0x02正文</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#mb-strpos-%E5%87%BD%E6%95%B0"><span class="toc-number">2.1.</span> <span class="toc-text">mb_strpos()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mb-substr-%E5%87%BD%E6%95%B0"><span class="toc-number">2.2.</span> <span class="toc-text">mb_substr()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#implode%E5%87%BD%E6%95%B0"><span class="toc-number">2.3.</span> <span class="toc-text">implode函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#preg-replace-%E5%87%BD%E6%95%B0"><span class="toc-number">2.4.</span> <span class="toc-text">preg_replace()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#str-split-%E5%87%BD%E6%95%B0"><span class="toc-number">2.5.</span> <span class="toc-text">str_split()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#phpinfo-%E5%87%BD%E6%95%B0"><span class="toc-number">2.6.</span> <span class="toc-text">phpinfo()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#addslashes-%E5%87%BD%E6%95%B0"><span class="toc-number">2.7.</span> <span class="toc-text">addslashes()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getimagesize-%E5%87%BD%E6%95%B0"><span class="toc-number">2.8.</span> <span class="toc-text">getimagesize()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#eval-%E5%87%BD%E6%95%B0"><span class="toc-number">2.9.</span> <span class="toc-text">eval()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#file-get-contents-%E5%87%BD%E6%95%B0"><span class="toc-number">2.10.</span> <span class="toc-text">file_get_contents()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8Ftips"><span class="toc-number">2.10.1.</span> <span class="toc-text">小tips:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#array-merge-%E5%87%BD%E6%95%B0"><span class="toc-number">2.11.</span> <span class="toc-text">array_merge()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#show-source-%E5%87%BD%E6%95%B0"><span class="toc-number">2.12.</span> <span class="toc-text">show_source()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#strstr-%E5%87%BD%E6%95%B0"><span class="toc-number">2.13.</span> <span class="toc-text">strstr()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#preg-match-%E5%87%BD%E6%95%B0"><span class="toc-number">2.14.</span> <span class="toc-text">preg_match()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PCRE%E6%AD%A3%E5%88%99%E8%AF%AD%E6%B3%95"><span class="toc-number">2.14.1.</span> <span class="toc-text">PCRE正则语法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E5%89%B2%E7%AC%A6%E5%8F%B7"><span class="toc-number">2.14.1.1.</span> <span class="toc-text">分割符号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%85%83%E5%AD%97%E7%AC%A6"><span class="toc-number">2.14.1.2.</span> <span class="toc-text">正则表达式元字符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E6%96%AD%E8%A8%80%E7%9B%AE%E6%A0%87%E7%9A%84%E8%B5%B7%E6%AD%A2"><span class="toc-number">2.14.1.3.</span> <span class="toc-text">关于断言目标的起止</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%84%B1%E5%AD%97%E7%AC%A6"><span class="toc-number">2.14.1.3.1.</span> <span class="toc-text">脱字符(^)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BE%8E%E5%85%83%E7%AC%A6"><span class="toc-number">2.14.1.3.2.</span> <span class="toc-text">美元符($)</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E7%B1%BB"><span class="toc-number">2.14.1.4.</span> <span class="toc-text">字符类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AF%E9%80%89%E8%B7%AF%E5%BE%84"><span class="toc-number">2.14.1.5.</span> <span class="toc-text">可选路径(|)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F%E4%BF%AE%E9%A5%B0%E7%AC%A6"><span class="toc-number">2.14.1.6.</span> <span class="toc-text">模式修饰符</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B4%AA%E5%A9%AA%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.14.2.</span> <span class="toc-text">贪婪模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%9E%E8%B4%AA%E5%A9%AA%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.14.3.</span> <span class="toc-text">非贪婪模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#die-%E5%87%BD%E6%95%B0"><span class="toc-number">2.15.</span> <span class="toc-text">die()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#include-%E5%87%BD%E6%95%B0"><span class="toc-number">2.16.</span> <span class="toc-text">include()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#md5-%E5%87%BD%E6%95%B0"><span class="toc-number">2.17.</span> <span class="toc-text">md5()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#setcookie-%E5%87%BD%E6%95%B0"><span class="toc-number">2.18.</span> <span class="toc-text">setcookie()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#strtoupper-%E5%87%BD%E6%95%B0"><span class="toc-number">2.19.</span> <span class="toc-text">strtoupper()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#substr-%E5%87%BD%E6%95%B0"><span class="toc-number">2.20.</span> <span class="toc-text">substr()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ord-%E5%87%BD%E6%95%B0"><span class="toc-number">2.21.</span> <span class="toc-text">ord()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#print-r-%E5%87%BD%E6%95%B0"><span class="toc-number">2.22.</span> <span class="toc-text">print_r()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#array-pop%E5%87%BD%E6%95%B0"><span class="toc-number">2.23.</span> <span class="toc-text">array_pop函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#explode-%E5%87%BD%E6%95%B0"><span class="toc-number">2.24.</span> <span class="toc-text">explode()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#intval-%E5%87%BD%E6%95%B0"><span class="toc-number">2.25.</span> <span class="toc-text">intval()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#intval-%E7%9A%84%E6%88%AA%E6%96%AD%E7%89%B9%E6%80%A7"><span class="toc-number">2.25.1.</span> <span class="toc-text">intval() 的截断特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#strpos-%E5%87%BD%E6%95%B0"><span class="toc-number">2.26.</span> <span class="toc-text">strpos()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#highlight-file-%E5%87%BD%E6%95%B0"><span class="toc-number">2.27.</span> <span class="toc-text">highlight_file()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rand-%E5%87%BD%E6%95%B0"><span class="toc-number">2.28.</span> <span class="toc-text">rand()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#array-push-%E5%87%BD%E6%95%B0"><span class="toc-number">2.29.</span> <span class="toc-text">array_push()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#in-array-%E5%87%BD%E6%95%B0"><span class="toc-number">2.30.</span> <span class="toc-text">in_array() 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#file-put-contents-%E5%87%BD%E6%95%B0"><span class="toc-number">2.31.</span> <span class="toc-text">file_put_contents()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#is-numeric-%E5%87%BD%E6%95%B0"><span class="toc-number">2.32.</span> <span class="toc-text">is_numeric()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#call-user-func-%E5%87%BD%E6%95%B0"><span class="toc-number">2.33.</span> <span class="toc-text">call_user_func()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#call-user-func-array%E5%87%BD%E6%95%B0"><span class="toc-number">2.34.</span> <span class="toc-text">call_user_func_array函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hex2bin-%E5%87%BD%E6%95%B0"><span class="toc-number">2.35.</span> <span class="toc-text">hex2bin()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sha1-%E5%87%BD%E6%95%B0"><span class="toc-number">2.36.</span> <span class="toc-text">sha1()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#foreach-%E5%87%BD%E6%95%B0"><span class="toc-number">2.37.</span> <span class="toc-text">foreach()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#parse-str-%E5%87%BD%E6%95%B0"><span class="toc-number">2.38.</span> <span class="toc-text">parse_str()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#strrev-%E5%87%BD%E6%95%B0"><span class="toc-number">2.39.</span> <span class="toc-text">strrev()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getcwd-%E5%87%BD%E6%95%B0"><span class="toc-number">2.40.</span> <span class="toc-text">getcwd()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#is-file-%E5%87%BD%E6%95%B0"><span class="toc-number">2.41.</span> <span class="toc-text">is_file()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#str-replace-%E5%87%BD%E6%95%B0"><span class="toc-number">2.42.</span> <span class="toc-text">str_replace()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#trim-%E5%87%BD%E6%95%B0"><span class="toc-number">2.43.</span> <span class="toc-text">trim()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#get-defined-vars-%E5%87%BD%E6%95%B0"><span class="toc-number">2.44.</span> <span class="toc-text">get_defined_vars()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#stripos-%E5%87%BD%E6%95%B0"><span class="toc-number">2.45.</span> <span class="toc-text">stripos()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87stripos"><span class="toc-number">2.45.1.</span> <span class="toc-text">绕过stripos</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#readfile-%E5%87%BD%E6%95%B0"><span class="toc-number">2.46.</span> <span class="toc-text">readfile()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mt-rand-%E5%87%BD%E6%95%B0"><span class="toc-number">2.47.</span> <span class="toc-text">mt_rand()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mt-srand-%E5%87%BD%E6%95%B0"><span class="toc-number">2.48.</span> <span class="toc-text">mt_srand()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#exec-%E5%87%BD%E6%95%B0"><span class="toc-number">2.49.</span> <span class="toc-text">exec()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#strripos-%E5%87%BD%E6%95%B0"><span class="toc-number">2.50.</span> <span class="toc-text">strripos()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sleep-%E5%87%BD%E6%95%B0"><span class="toc-number">2.51.</span> <span class="toc-text">sleep()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#create-funtion-%E5%87%BD%E6%95%B0"><span class="toc-number">2.52.</span> <span class="toc-text">create_funtion()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hash-%E5%87%BD%E6%95%B0"><span class="toc-number">2.53.</span> <span class="toc-text">hash()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#extract-%E5%87%BD%E6%95%B0"><span class="toc-number">2.54.</span> <span class="toc-text">extract()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#count-%E5%87%BD%E6%95%B0"><span class="toc-number">2.55.</span> <span class="toc-text">count()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#key-%E5%87%BD%E6%95%B0"><span class="toc-number">2.56.</span> <span class="toc-text">key()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#spl-autoload-extensions-%E5%87%BD%E6%95%B0"><span class="toc-number">2.57.</span> <span class="toc-text">spl_autoload_extensions()函数</span></a></li></ol></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        php函数知识点积累
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">wanTh3flag</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2024-12-19T15:12:02.000Z" class="dt-published" itemprop="datePublished">2024-12-19</time>
-        
-        (Updated: <time datetime="2025-10-17T03:14:55.150Z" class="dt-updated" itemprop="dateModified">2025-10-17</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/php%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/">php知识点积累</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/php%E5%87%BD%E6%95%B0/" rel="tag">php函数</a>
-    </div>
-
-
-    </div>
-  </header>
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>php函数知识点积累 | root@wanth3f1ag</title>
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>做一期函数的知识点积累，方便忘记的时候查阅</p>
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">0x01前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02%E6%AD%A3%E6%96%87"><span class="nav-number">2.</span> <span class="nav-text">0x02正文</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mb-strpos-%E5%87%BD%E6%95%B0"><span class="nav-number">2.1.</span> <span class="nav-text">mb_strpos()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mb-substr-%E5%87%BD%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text">mb_substr()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#implode%E5%87%BD%E6%95%B0"><span class="nav-number">2.3.</span> <span class="nav-text">implode函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#preg-replace-%E5%87%BD%E6%95%B0"><span class="nav-number">2.4.</span> <span class="nav-text">preg_replace()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#str-split-%E5%87%BD%E6%95%B0"><span class="nav-number">2.5.</span> <span class="nav-text">str_split()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#phpinfo-%E5%87%BD%E6%95%B0"><span class="nav-number">2.6.</span> <span class="nav-text">phpinfo()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#addslashes-%E5%87%BD%E6%95%B0"><span class="nav-number">2.7.</span> <span class="nav-text">addslashes()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getimagesize-%E5%87%BD%E6%95%B0"><span class="nav-number">2.8.</span> <span class="nav-text">getimagesize()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#eval-%E5%87%BD%E6%95%B0"><span class="nav-number">2.9.</span> <span class="nav-text">eval()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#file-get-contents-%E5%87%BD%E6%95%B0"><span class="nav-number">2.10.</span> <span class="nav-text">file_get_contents()函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8Ftips"><span class="nav-number">2.10.1.</span> <span class="nav-text">小tips:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#array-merge-%E5%87%BD%E6%95%B0"><span class="nav-number">2.11.</span> <span class="nav-text">array_merge()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#show-source-%E5%87%BD%E6%95%B0"><span class="nav-number">2.12.</span> <span class="nav-text">show_source()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#strstr-%E5%87%BD%E6%95%B0"><span class="nav-number">2.13.</span> <span class="nav-text">strstr()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#preg-match-%E5%87%BD%E6%95%B0"><span class="nav-number">2.14.</span> <span class="nav-text">preg_match()函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PCRE%E6%AD%A3%E5%88%99%E8%AF%AD%E6%B3%95"><span class="nav-number">2.14.1.</span> <span class="nav-text">PCRE正则语法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%89%B2%E7%AC%A6%E5%8F%B7"><span class="nav-number">2.14.1.1.</span> <span class="nav-text">分割符号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%85%83%E5%AD%97%E7%AC%A6"><span class="nav-number">2.14.1.2.</span> <span class="nav-text">正则表达式元字符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%96%AD%E8%A8%80%E7%9B%AE%E6%A0%87%E7%9A%84%E8%B5%B7%E6%AD%A2"><span class="nav-number">2.14.1.3.</span> <span class="nav-text">关于断言目标的起止</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%84%B1%E5%AD%97%E7%AC%A6"><span class="nav-number">2.14.1.3.1.</span> <span class="nav-text">脱字符(^)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BE%8E%E5%85%83%E7%AC%A6"><span class="nav-number">2.14.1.3.2.</span> <span class="nav-text">美元符($)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E7%B1%BB"><span class="nav-number">2.14.1.4.</span> <span class="nav-text">字符类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E9%80%89%E8%B7%AF%E5%BE%84"><span class="nav-number">2.14.1.5.</span> <span class="nav-text">可选路径(|)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E4%BF%AE%E9%A5%B0%E7%AC%A6"><span class="nav-number">2.14.1.6.</span> <span class="nav-text">模式修饰符</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%AA%E5%A9%AA%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.14.2.</span> <span class="nav-text">贪婪模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E8%B4%AA%E5%A9%AA%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.14.3.</span> <span class="nav-text">非贪婪模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#die-%E5%87%BD%E6%95%B0"><span class="nav-number">2.15.</span> <span class="nav-text">die()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#include-%E5%87%BD%E6%95%B0"><span class="nav-number">2.16.</span> <span class="nav-text">include()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#md5-%E5%87%BD%E6%95%B0"><span class="nav-number">2.17.</span> <span class="nav-text">md5()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#setcookie-%E5%87%BD%E6%95%B0"><span class="nav-number">2.18.</span> <span class="nav-text">setcookie()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#strtoupper-%E5%87%BD%E6%95%B0"><span class="nav-number">2.19.</span> <span class="nav-text">strtoupper()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#substr-%E5%87%BD%E6%95%B0"><span class="nav-number">2.20.</span> <span class="nav-text">substr()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ord-%E5%87%BD%E6%95%B0"><span class="nav-number">2.21.</span> <span class="nav-text">ord()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#print-r-%E5%87%BD%E6%95%B0"><span class="nav-number">2.22.</span> <span class="nav-text">print_r()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#array-pop%E5%87%BD%E6%95%B0"><span class="nav-number">2.23.</span> <span class="nav-text">array_pop函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#explode-%E5%87%BD%E6%95%B0"><span class="nav-number">2.24.</span> <span class="nav-text">explode()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#intval-%E5%87%BD%E6%95%B0"><span class="nav-number">2.25.</span> <span class="nav-text">intval()函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#intval-%E7%9A%84%E6%88%AA%E6%96%AD%E7%89%B9%E6%80%A7"><span class="nav-number">2.25.1.</span> <span class="nav-text">intval() 的截断特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#strpos-%E5%87%BD%E6%95%B0"><span class="nav-number">2.26.</span> <span class="nav-text">strpos()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#highlight-file-%E5%87%BD%E6%95%B0"><span class="nav-number">2.27.</span> <span class="nav-text">highlight_file()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rand-%E5%87%BD%E6%95%B0"><span class="nav-number">2.28.</span> <span class="nav-text">rand()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#array-push-%E5%87%BD%E6%95%B0"><span class="nav-number">2.29.</span> <span class="nav-text">array_push()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#in-array-%E5%87%BD%E6%95%B0"><span class="nav-number">2.30.</span> <span class="nav-text">in_array() 函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#file-put-contents-%E5%87%BD%E6%95%B0"><span class="nav-number">2.31.</span> <span class="nav-text">file_put_contents()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#is-numeric-%E5%87%BD%E6%95%B0"><span class="nav-number">2.32.</span> <span class="nav-text">is_numeric()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#call-user-func-%E5%87%BD%E6%95%B0"><span class="nav-number">2.33.</span> <span class="nav-text">call_user_func()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#call-user-func-array%E5%87%BD%E6%95%B0"><span class="nav-number">2.34.</span> <span class="nav-text">call_user_func_array函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hex2bin-%E5%87%BD%E6%95%B0"><span class="nav-number">2.35.</span> <span class="nav-text">hex2bin()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sha1-%E5%87%BD%E6%95%B0"><span class="nav-number">2.36.</span> <span class="nav-text">sha1()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#foreach-%E5%87%BD%E6%95%B0"><span class="nav-number">2.37.</span> <span class="nav-text">foreach()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#parse-str-%E5%87%BD%E6%95%B0"><span class="nav-number">2.38.</span> <span class="nav-text">parse_str()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#strrev-%E5%87%BD%E6%95%B0"><span class="nav-number">2.39.</span> <span class="nav-text">strrev()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getcwd-%E5%87%BD%E6%95%B0"><span class="nav-number">2.40.</span> <span class="nav-text">getcwd()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#is-file-%E5%87%BD%E6%95%B0"><span class="nav-number">2.41.</span> <span class="nav-text">is_file()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#str-replace-%E5%87%BD%E6%95%B0"><span class="nav-number">2.42.</span> <span class="nav-text">str_replace()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#trim-%E5%87%BD%E6%95%B0"><span class="nav-number">2.43.</span> <span class="nav-text">trim()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#get-defined-vars-%E5%87%BD%E6%95%B0"><span class="nav-number">2.44.</span> <span class="nav-text">get_defined_vars()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stripos-%E5%87%BD%E6%95%B0"><span class="nav-number">2.45.</span> <span class="nav-text">stripos()函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%95%E8%BF%87stripos"><span class="nav-number">2.45.1.</span> <span class="nav-text">绕过stripos</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#readfile-%E5%87%BD%E6%95%B0"><span class="nav-number">2.46.</span> <span class="nav-text">readfile()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mt-rand-%E5%87%BD%E6%95%B0"><span class="nav-number">2.47.</span> <span class="nav-text">mt_rand()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mt-srand-%E5%87%BD%E6%95%B0"><span class="nav-number">2.48.</span> <span class="nav-text">mt_srand()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#exec-%E5%87%BD%E6%95%B0"><span class="nav-number">2.49.</span> <span class="nav-text">exec()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#strripos-%E5%87%BD%E6%95%B0"><span class="nav-number">2.50.</span> <span class="nav-text">strripos()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sleep-%E5%87%BD%E6%95%B0"><span class="nav-number">2.51.</span> <span class="nav-text">sleep()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#create-funtion-%E5%87%BD%E6%95%B0"><span class="nav-number">2.52.</span> <span class="nav-text">create_funtion()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hash-%E5%87%BD%E6%95%B0"><span class="nav-number">2.53.</span> <span class="nav-text">hash()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#extract-%E5%87%BD%E6%95%B0"><span class="nav-number">2.54.</span> <span class="nav-text">extract()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#count-%E5%87%BD%E6%95%B0"><span class="nav-number">2.55.</span> <span class="nav-text">count()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#key-%E5%87%BD%E6%95%B0"><span class="nav-number">2.56.</span> <span class="nav-text">key()函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#spl-autoload-extensions-%E5%87%BD%E6%95%B0"><span class="nav-number">2.57.</span> <span class="nav-text">spl_autoload_extensions()函数</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">117</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="php函数知识点积累 | root@wanth3f1ag">
+      <meta itemprop="description" content="php函数知识点积累">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          php函数知识点积累
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-12-19 23:12:02" itemprop="dateCreated datePublished" datetime="2024-12-19T23:12:02+08:00">2024-12-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-12-01 19:09:54" itemprop="dateModified" datetime="2025-12-01T19:09:54+08:00">2025-12-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/php%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/" itemprop="url" rel="index"><span itemprop="name">php知识点积累</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>22k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>20 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">php函数知识点积累</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>做一期函数的知识点积累，方便忘记的时候查阅</p>
 <h1 id="0x02正文"><a href="#0x02正文" class="headerlink" title="0x02正文"></a>0x02正文</h1><h2 id="mb-strpos-函数"><a href="#mb-strpos-函数" class="headerlink" title="mb_strpos()函数"></a>mb_strpos()函数</h2><p>查找字符串在另一个字符串中首次出现的位置</p>
 <p>语法</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mb_strpos(</span><br><span class="line">    string $haystack,</span><br><span class="line">    string $needle,</span><br><span class="line">    int $offset = 0,</span><br><span class="line">    ?string $encoding = null</span><br><span class="line">): int|false</span><br></pre></td></tr></table></figure>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mb_strpos(</span><br><span class="line">    <span class="built_in">string</span> $haystack,</span><br><span class="line">    <span class="built_in">string</span> $needle,</span><br><span class="line">    <span class="built_in">int</span> $offset = <span class="number">0</span>,</span><br><span class="line">    ?<span class="built_in">string</span> $encoding = <span class="literal">null</span></span><br><span class="line">): <span class="built_in">int</span>|<span class="literal">false</span></span><br></pre></td></tr></table></figure>
 
 <p>参数</p>
 <ul>
@@ -203,7 +347,7 @@
 <p>返回值</p>
 <p>返回 string 的 <code>haystack</code> 中 <code>needle</code> 首次出现位置的数值。 如果没有找到 <code>needle</code>，它将返回 **<code>false</code>**。</p>
 <h2 id="mb-substr-函数"><a href="#mb-substr-函数" class="headerlink" title="mb_substr()函数"></a>mb_substr()函数</h2><p>获取部分字符串</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mb_substr(</span><br><span class="line">    string $string,</span><br><span class="line">    int $start,</span><br><span class="line">    ?int $length = null,</span><br><span class="line">    ?string $encoding = null</span><br><span class="line">): string</span><br></pre></td></tr></table></figure>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mb_substr(</span><br><span class="line">    <span class="built_in">string</span> $string,</span><br><span class="line">    <span class="built_in">int</span> $start,</span><br><span class="line">    ?<span class="built_in">int</span> $length = <span class="literal">null</span>,</span><br><span class="line">    ?<span class="built_in">string</span> $encoding = <span class="literal">null</span></span><br><span class="line">): <span class="built_in">string</span></span><br></pre></td></tr></table></figure>
 
 <p>参数</p>
 <ul>
@@ -278,7 +422,7 @@
 </ul>
 <h2 id="str-split-函数"><a href="#str-split-函数" class="headerlink" title="str_split()函数"></a>str_split()函数</h2><p>在 PHP 中，<code>str_split()</code> 函数用于 <strong>将字符串分割为字符数组</strong>，通常用于处理字符级操作。</p>
 <p>基础语法</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array str_split(string $string, int $length = 1)</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">array</span> <span class="title function_ invoke__">str_split</span>(<span class="keyword">string</span> <span class="variable">$string</span>, <span class="keyword">int</span> <span class="variable">$length</span> = <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>参数<ul>
@@ -371,7 +515,7 @@
 <li><strong>$highlight</strong>: 可选，默认值为 1。如果设置为 1，PHP 将高亮显示源代码；如果设置为 0，则不进行高亮显示。</li>
 </ul>
 <p>示例</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 显示当前文件的源代码</span><br><span class="line">show_source(__FILE__);</span><br><span class="line"></span><br><span class="line">// 显示特定文件的源代码</span><br><span class="line">show_source(&#x27;example.php&#x27;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 显示当前文件的源代码</span></span><br><span class="line"><span class="built_in">show_source</span>(__FILE__);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 显示特定文件的源代码</span></span><br><span class="line"><span class="built_in">show_source</span>(&#x27;example.php&#x27;);</span><br></pre></td></tr></table></figure>
 
 <p>返回值</p>
 <ul>
@@ -381,7 +525,7 @@
 <li><code>strstr</code> 函数用于查找一个字符串在另一个字符串中的首次出现。如果找到了，它会返回从匹配位置到字符串末尾的部分；如果没有找到，则返回 <code>false</code>。<code>strstr</code> 是区分大小写的。</li>
 </ul>
 <p>函数原型</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">php</span><br><span class="line">string strstr ( string $haystack , string $needle [, bool $before_needle = false ] )</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">php</span><br><span class="line"><span class="keyword">string</span> <span class="title function_ invoke__">strstr</span> ( <span class="keyword">string</span> <span class="variable">$haystack</span> , <span class="keyword">string</span> <span class="variable">$needle</span> [, <span class="keyword">bool</span> <span class="variable">$before_needle</span> = <span class="literal">false</span> ] )</span><br></pre></td></tr></table></figure>
 
 <ol>
 <li>**<code>$haystack</code>**：要搜索的字符串，即干草堆。</li>
@@ -557,7 +701,7 @@
 
 <h2 id="explode-函数"><a href="#explode-函数" class="headerlink" title="explode()函数"></a>explode()函数</h2><p><code>explode()</code> 函数是 PHP 中用于将字符串分割成数组的一个内置函数</p>
 <p>基础语法</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array explode(string $delimiter, string $string[, int $limit = PHP_INT_MAX])</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">array</span> <span class="title function_ invoke__">explode</span>(<span class="keyword">string</span> <span class="variable">$delimiter</span>, <span class="keyword">string</span> <span class="variable">$string</span>[, <span class="keyword">int</span> <span class="variable">$limit</span> = PHP_INT_MAX])</span><br></pre></td></tr></table></figure>
 
 <p>参数说明</p>
 <ol>
@@ -576,7 +720,7 @@
 </ol>
 <h2 id="intval-函数"><a href="#intval-函数" class="headerlink" title="intval()函数"></a>intval()函数</h2><p><code>intval()</code> 函数是 PHP 中的一个内置函数，用于将变量转换为整型。</p>
 <p>基础语法</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">intval(mixed $value, int $base = 10): int</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">intval</span>(<span class="keyword">mixed</span> <span class="variable">$value</span>, <span class="keyword">int</span> <span class="variable">$base</span> = <span class="number">10</span>): <span class="keyword">int</span></span><br></pre></td></tr></table></figure>
 
 <ul>
 <li><strong><code>$value</code></strong>: 必需，要转换的变量，可以是任何类型。</li>
@@ -817,7 +961,7 @@
 <li>如果未找到，返回 <code>FALSE</code>。</li>
 </ul>
 <h3 id="绕过stripos"><a href="#绕过stripos" class="headerlink" title="绕过stripos"></a>绕过stripos</h3><p>例如</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if (stripos($purpose, &quot;rce&quot;) === false)</span><br></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">if</span> (stripos(<span class="variable">$purpose</span>, <span class="string">&quot;rce&quot;</span>) === <span class="literal">false</span>)</span><br></pre></td></tr></table></figure>
 
 <p>这里可以采用数组绕过的方式，stripos处理数组的时候会返回null，null&#x3D;false，可以满足tiao’j</p>
 <h2 id="readfile-函数"><a href="#readfile-函数" class="headerlink" title="readfile()函数"></a>readfile()函数</h2><p><code>readfile()</code> 是 PHP 的一个内置函数，用于读取文件并将其内容发送到输出缓冲区</p>
@@ -950,171 +1094,124 @@
 <p>返回值 </p>
 <p>返回 <code>value</code> 中的元素的数量。在 PHP 8.0.0 之前，如果参数既不是数组也不是实现了 <code>Countable</code> 接口的对象，将返回 <code>1</code>。当 <code>value</code> 为 <strong><code>null</code></strong> 时返回 <code>0</code>。</p>
 <h2 id="key-函数"><a href="#key-函数" class="headerlink" title="key()函数"></a>key()函数</h2><p>key用于从关联数组中取得键名</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">key(arrcay|object `$array`): int|string|null</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">key</span>(arrcay|<span class="keyword">object</span> `<span class="variable">$array</span>`): <span class="keyword">int</span>|<span class="keyword">string</span>|<span class="literal">null</span></span><br></pre></td></tr></table></figure>
 
 <p><strong>key()</strong> 返回数组中当前单元的键名。</p>
 <h2 id="spl-autoload-extensions-函数"><a href="#spl-autoload-extensions-函数" class="headerlink" title="spl_autoload_extensions()函数"></a>spl_autoload_extensions()函数</h2><p>spl_autoload_extensions — 注册并返回 spl_autoload 的默认文件扩展名</p>
 <p><img src="/../image/achieve/202411/%E6%96%B0%E6%98%A5%E6%AC%A2%E4%B9%90%E8%B5%9B/image-20250203111521812-1738552523822-13.png" alt="image-20250203111521812"></p>
 <p><img src="/../image/achieve/202411/%E6%96%B0%E6%98%A5%E6%AC%A2%E4%B9%90%E8%B5%9B/image-20250203111338722-1738552421550-9.png" alt="image-20250203111338722"></p>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">H0me</a></li>
-        
-          <li><a href="/about/">A6out</a></li>
-        
-          <li><a href="/tags/">T6gs</a></li>
-        
-          <li><a href="/categories/">Catagory</a></li>
-        
-          <li><a href="/links/">L1nks</a></li>
-        
-          <li><a href="/search/">s4arch</a></li>
-        
-      </ul>
     </div>
 
     
     
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E6%AD%A3%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">0x02正文</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#mb-strpos-%E5%87%BD%E6%95%B0"><span class="toc-number">2.1.</span> <span class="toc-text">mb_strpos()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mb-substr-%E5%87%BD%E6%95%B0"><span class="toc-number">2.2.</span> <span class="toc-text">mb_substr()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#implode%E5%87%BD%E6%95%B0"><span class="toc-number">2.3.</span> <span class="toc-text">implode函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#preg-replace-%E5%87%BD%E6%95%B0"><span class="toc-number">2.4.</span> <span class="toc-text">preg_replace()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#str-split-%E5%87%BD%E6%95%B0"><span class="toc-number">2.5.</span> <span class="toc-text">str_split()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#phpinfo-%E5%87%BD%E6%95%B0"><span class="toc-number">2.6.</span> <span class="toc-text">phpinfo()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#addslashes-%E5%87%BD%E6%95%B0"><span class="toc-number">2.7.</span> <span class="toc-text">addslashes()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getimagesize-%E5%87%BD%E6%95%B0"><span class="toc-number">2.8.</span> <span class="toc-text">getimagesize()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#eval-%E5%87%BD%E6%95%B0"><span class="toc-number">2.9.</span> <span class="toc-text">eval()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#file-get-contents-%E5%87%BD%E6%95%B0"><span class="toc-number">2.10.</span> <span class="toc-text">file_get_contents()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8Ftips"><span class="toc-number">2.10.1.</span> <span class="toc-text">小tips:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#array-merge-%E5%87%BD%E6%95%B0"><span class="toc-number">2.11.</span> <span class="toc-text">array_merge()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#show-source-%E5%87%BD%E6%95%B0"><span class="toc-number">2.12.</span> <span class="toc-text">show_source()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#strstr-%E5%87%BD%E6%95%B0"><span class="toc-number">2.13.</span> <span class="toc-text">strstr()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#preg-match-%E5%87%BD%E6%95%B0"><span class="toc-number">2.14.</span> <span class="toc-text">preg_match()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PCRE%E6%AD%A3%E5%88%99%E8%AF%AD%E6%B3%95"><span class="toc-number">2.14.1.</span> <span class="toc-text">PCRE正则语法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E5%89%B2%E7%AC%A6%E5%8F%B7"><span class="toc-number">2.14.1.1.</span> <span class="toc-text">分割符号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%85%83%E5%AD%97%E7%AC%A6"><span class="toc-number">2.14.1.2.</span> <span class="toc-text">正则表达式元字符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E6%96%AD%E8%A8%80%E7%9B%AE%E6%A0%87%E7%9A%84%E8%B5%B7%E6%AD%A2"><span class="toc-number">2.14.1.3.</span> <span class="toc-text">关于断言目标的起止</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%84%B1%E5%AD%97%E7%AC%A6"><span class="toc-number">2.14.1.3.1.</span> <span class="toc-text">脱字符(^)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BE%8E%E5%85%83%E7%AC%A6"><span class="toc-number">2.14.1.3.2.</span> <span class="toc-text">美元符($)</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E7%B1%BB"><span class="toc-number">2.14.1.4.</span> <span class="toc-text">字符类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AF%E9%80%89%E8%B7%AF%E5%BE%84"><span class="toc-number">2.14.1.5.</span> <span class="toc-text">可选路径(|)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F%E4%BF%AE%E9%A5%B0%E7%AC%A6"><span class="toc-number">2.14.1.6.</span> <span class="toc-text">模式修饰符</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B4%AA%E5%A9%AA%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.14.2.</span> <span class="toc-text">贪婪模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%9E%E8%B4%AA%E5%A9%AA%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.14.3.</span> <span class="toc-text">非贪婪模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#die-%E5%87%BD%E6%95%B0"><span class="toc-number">2.15.</span> <span class="toc-text">die()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#include-%E5%87%BD%E6%95%B0"><span class="toc-number">2.16.</span> <span class="toc-text">include()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#md5-%E5%87%BD%E6%95%B0"><span class="toc-number">2.17.</span> <span class="toc-text">md5()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#setcookie-%E5%87%BD%E6%95%B0"><span class="toc-number">2.18.</span> <span class="toc-text">setcookie()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#strtoupper-%E5%87%BD%E6%95%B0"><span class="toc-number">2.19.</span> <span class="toc-text">strtoupper()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#substr-%E5%87%BD%E6%95%B0"><span class="toc-number">2.20.</span> <span class="toc-text">substr()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ord-%E5%87%BD%E6%95%B0"><span class="toc-number">2.21.</span> <span class="toc-text">ord()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#print-r-%E5%87%BD%E6%95%B0"><span class="toc-number">2.22.</span> <span class="toc-text">print_r()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#array-pop%E5%87%BD%E6%95%B0"><span class="toc-number">2.23.</span> <span class="toc-text">array_pop函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#explode-%E5%87%BD%E6%95%B0"><span class="toc-number">2.24.</span> <span class="toc-text">explode()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#intval-%E5%87%BD%E6%95%B0"><span class="toc-number">2.25.</span> <span class="toc-text">intval()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#intval-%E7%9A%84%E6%88%AA%E6%96%AD%E7%89%B9%E6%80%A7"><span class="toc-number">2.25.1.</span> <span class="toc-text">intval() 的截断特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#strpos-%E5%87%BD%E6%95%B0"><span class="toc-number">2.26.</span> <span class="toc-text">strpos()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#highlight-file-%E5%87%BD%E6%95%B0"><span class="toc-number">2.27.</span> <span class="toc-text">highlight_file()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rand-%E5%87%BD%E6%95%B0"><span class="toc-number">2.28.</span> <span class="toc-text">rand()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#array-push-%E5%87%BD%E6%95%B0"><span class="toc-number">2.29.</span> <span class="toc-text">array_push()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#in-array-%E5%87%BD%E6%95%B0"><span class="toc-number">2.30.</span> <span class="toc-text">in_array() 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#file-put-contents-%E5%87%BD%E6%95%B0"><span class="toc-number">2.31.</span> <span class="toc-text">file_put_contents()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#is-numeric-%E5%87%BD%E6%95%B0"><span class="toc-number">2.32.</span> <span class="toc-text">is_numeric()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#call-user-func-%E5%87%BD%E6%95%B0"><span class="toc-number">2.33.</span> <span class="toc-text">call_user_func()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#call-user-func-array%E5%87%BD%E6%95%B0"><span class="toc-number">2.34.</span> <span class="toc-text">call_user_func_array函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hex2bin-%E5%87%BD%E6%95%B0"><span class="toc-number">2.35.</span> <span class="toc-text">hex2bin()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sha1-%E5%87%BD%E6%95%B0"><span class="toc-number">2.36.</span> <span class="toc-text">sha1()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#foreach-%E5%87%BD%E6%95%B0"><span class="toc-number">2.37.</span> <span class="toc-text">foreach()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#parse-str-%E5%87%BD%E6%95%B0"><span class="toc-number">2.38.</span> <span class="toc-text">parse_str()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#strrev-%E5%87%BD%E6%95%B0"><span class="toc-number">2.39.</span> <span class="toc-text">strrev()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getcwd-%E5%87%BD%E6%95%B0"><span class="toc-number">2.40.</span> <span class="toc-text">getcwd()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#is-file-%E5%87%BD%E6%95%B0"><span class="toc-number">2.41.</span> <span class="toc-text">is_file()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#str-replace-%E5%87%BD%E6%95%B0"><span class="toc-number">2.42.</span> <span class="toc-text">str_replace()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#trim-%E5%87%BD%E6%95%B0"><span class="toc-number">2.43.</span> <span class="toc-text">trim()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#get-defined-vars-%E5%87%BD%E6%95%B0"><span class="toc-number">2.44.</span> <span class="toc-text">get_defined_vars()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#stripos-%E5%87%BD%E6%95%B0"><span class="toc-number">2.45.</span> <span class="toc-text">stripos()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87stripos"><span class="toc-number">2.45.1.</span> <span class="toc-text">绕过stripos</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#readfile-%E5%87%BD%E6%95%B0"><span class="toc-number">2.46.</span> <span class="toc-text">readfile()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mt-rand-%E5%87%BD%E6%95%B0"><span class="toc-number">2.47.</span> <span class="toc-text">mt_rand()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mt-srand-%E5%87%BD%E6%95%B0"><span class="toc-number">2.48.</span> <span class="toc-text">mt_srand()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#exec-%E5%87%BD%E6%95%B0"><span class="toc-number">2.49.</span> <span class="toc-text">exec()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#strripos-%E5%87%BD%E6%95%B0"><span class="toc-number">2.50.</span> <span class="toc-text">strripos()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sleep-%E5%87%BD%E6%95%B0"><span class="toc-number">2.51.</span> <span class="toc-text">sleep()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#create-funtion-%E5%87%BD%E6%95%B0"><span class="toc-number">2.52.</span> <span class="toc-text">create_funtion()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hash-%E5%87%BD%E6%95%B0"><span class="toc-number">2.53.</span> <span class="toc-text">hash()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#extract-%E5%87%BD%E6%95%B0"><span class="toc-number">2.54.</span> <span class="toc-text">extract()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#count-%E5%87%BD%E6%95%B0"><span class="toc-number">2.55.</span> <span class="toc-text">count()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#key-%E5%87%BD%E6%95%B0"><span class="toc-number">2.56.</span> <span class="toc-text">key()函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#spl-autoload-extensions-%E5%87%BD%E6%95%B0"><span class="toc-number">2.57.</span> <span class="toc-text">spl_autoload_extensions()函数</span></a></li></ol></li></ol>
-      </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&text=php函数知识点积累"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&title=php函数知识点积累"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&is_video=false&description=php函数知识点积累"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=php函数知识点积累&body=Check out this article: https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&title=php函数知识点积累"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&title=php函数知识点积累"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&title=php函数知识点积累"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&title=php函数知识点积累"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&name=php函数知识点积累&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/&t=php函数知识点积累"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
 </div>
 
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2024/12/19/php%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E7%A7%AF%E7%B4%AF/" title="php函数知识点积累">https://wanth3f1ag.top/2024/12/19/php函数知识点积累/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/php%E5%87%BD%E6%95%B0/" rel="tag"># php函数</a>
+          </div>
+
         
-        
-<footer id="footer">
-    <div class="footer-left">
-        Copyright ©
-        
-        
-        2024-2025
-        wanTh3flag
-        <br>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/12/13/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="prev" title="基础知识">
+                  <i class="fa fa-angle-left"></i> 基础知识
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/12/21/ctfshowAK%E8%B5%9B/" rel="next" title="ctfshowAK赛">
+                  ctfshowAK赛 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:12</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
     </div>
-    
-    <div class="footer-right">
-        <nav>
-            <ul>
-                <!--
-                --><li><a href="/">H0me</a></li><!--
-                --><!--
-                --><li><a href="/about/">A6out</a></li><!--
-                --><!--
-                --><li><a href="/tags/">T6gs</a></li><!--
-                --><!--
-                --><li><a href="/categories/">Catagory</a></li><!--
-                --><!--
-                --><li><a href="/links/">L1nks</a></li><!--
-                --><!--
-                --><li><a href="/search/">s4arch</a></li><!--
-                -->
-            </ul>
-            <ul>
-                
-                <!-- 不蒜子统计 -->
-                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
-                <span class="post-meta-divider">|</span>
-                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
-                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-                
-            </ul>
-        </nav>
-    </div>
-</footer>
-
-
-    </div>
-    <!-- styles -->
-
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
+  </footer>
 
   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
-      }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "Copied!");
-      e.clearSelection();
-    })
-  })
-  </script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-
-<script src="/js/main.js"></script>
-
-<!-- search -->
-
-<!-- Baidu Analytics -->
-
-<!-- Cloudflare Analytics -->
-
-<!-- Disqus Comments -->
-
-<!-- utterances Comments -->
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
 </body>
 </html>

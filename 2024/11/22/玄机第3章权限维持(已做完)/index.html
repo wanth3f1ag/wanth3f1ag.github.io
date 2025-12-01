@@ -1,18 +1,51 @@
 <!DOCTYPE html>
-<html lang=en>
+<html lang="zh-CN">
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="0x01前言第三章在计划中，继续学习，感谢师傅的wp贡献让我学习的更深入 玄机——第三章 权限维持-linux权限维持-隐藏 wp-CSDN博客 0x02正文什么是linux权限维持?首先在 Linux 系统上，权限维持是黑客攻击过程中的一个重要环节。攻击者成功获得系统权限后，会采取各种手段来保持对系统的访问控制，防止被发现并移除。这些手段可以分为多种，包括隐藏进程、文件、网络连接等。 一些常见的">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="玄机第三章权限维持">
 <meta property="og:type" content="article">
 <meta property="og:title" content="玄机第三章权限维持">
 <meta property="og:url" content="https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/index.html">
 <meta property="og:site_name" content="root@wanth3f1ag">
-<meta property="og:description" content="0x01前言第三章在计划中，继续学习，感谢师傅的wp贡献让我学习的更深入 玄机——第三章 权限维持-linux权限维持-隐藏 wp-CSDN博客 0x02正文什么是linux权限维持?首先在 Linux 系统上，权限维持是黑客攻击过程中的一个重要环节。攻击者成功获得系统权限后，会采取各种手段来保持对系统的访问控制，防止被发现并移除。这些手段可以分为多种，包括隐藏进程、文件、网络连接等。 一些常见的">
-<meta property="og:locale" content="en_US">
+<meta property="og:description" content="玄机第三章权限维持">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/image-20241122145355820.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/image-20241122150211106.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/image-20241123114551853.png">
@@ -23,166 +56,277 @@
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/image-20241123122304188.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/image-20241123122352244.png">
 <meta property="article:published_time" content="2024-11-22T06:05:30.000Z">
-<meta property="article:modified_time" content="2025-01-09T16:30:29.109Z">
+<meta property="article:modified_time" content="2025-12-01T11:23:15.950Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="玄机第三章权限维持">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/image-20241122145355820.png">
-    
-    
-      
-        
-          <link rel="shortcut icon" href="/images/favicon.ico">
-        
-      
-      
-        
-          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-        
-      
-    
-    <!-- title -->
-    <title>玄机第三章权限维持</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
 
 
-    <!-- Umami Analytics -->
+<link rel="canonical" href="https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/">
 
 
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/","path":"2024/11/22/玄机第3章权限维持(已做完)/","title":"玄机第三章权限维持"}</script>
 
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">H0me</a></li><!--
-     --><!--
-       --><li><a href="/about/">A6out</a></li><!--
-     --><!--
-       --><li><a href="/tags/">T6gs</a></li><!--
-     --><!--
-       --><li><a href="/categories/">Catagory</a></li><!--
-     --><!--
-       --><li><a href="/links/">L1nks</a></li><!--
-     --><!--
-       --><li><a href="/search/">s4arch</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="Previous post" href="/2024/11/25/BUGKU-web/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="Next post" href="/2024/11/17/%E8%9C%80%E9%81%93%E5%B1%B1%E9%AB%98%E6%A0%A1%E8%81%94%E5%90%88%E5%85%AC%E7%9B%8A%E8%B5%9B/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&text=玄机第三章权限维持"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第三章权限维持"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&is_video=false&description=玄机第三章权限维持"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=玄机第三章权限维持&body=Check out this article: https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第三章权限维持"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第三章权限维持"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第三章权限维持"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第三章权限维持"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&name=玄机第三章权限维持&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&t=玄机第三章权限维持"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E6%AD%A3%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">0x02正文</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFlinux%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81"><span class="toc-number">2.1.</span> <span class="toc-text">什么是linux权限维持?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%B8%B8%E8%A7%81%E7%9A%84-Linux-%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E5%92%8C%E9%9A%90%E8%97%8F%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="toc-number">2.2.</span> <span class="toc-text">一些常见的 Linux 权限维持和隐藏方法：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%8E%E9%97%A8%E7%A8%8B%E5%BA%8F"><span class="toc-number">2.2.0.1.</span> <span class="toc-text">后门程序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Rootkit"><span class="toc-number">2.2.0.2.</span> <span class="toc-text">Rootkit</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%81%E4%B9%85%E5%8C%96%E6%9C%BA%E5%88%B6"><span class="toc-number">2.2.0.3.</span> <span class="toc-text">持久化机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E9%9A%90%E8%97%8F"><span class="toc-number">2.2.0.4.</span> <span class="toc-text">文件隐藏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E9%9A%90%E8%97%8F"><span class="toc-number">2.2.0.5.</span> <span class="toc-text">网络连接隐藏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%B8%85%E9%99%A4"><span class="toc-number">2.2.0.6.</span> <span class="toc-text">日志清除</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%90%88%E6%B3%95%E8%BF%9B%E7%A8%8B"><span class="toc-number">2.2.0.7.</span> <span class="toc-text">使用合法进程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%981%EF%BC%9A%E9%BB%91%E5%AE%A2%E9%9A%90%E8%97%8F%E7%9A%84%E9%9A%90%E8%97%8F%E7%9A%84%E6%96%87%E4%BB%B6-%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84md5"><span class="toc-number">2.3.</span> <span class="toc-text">问题1：黑客隐藏的隐藏的文件 完整路径md5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%982-%E9%BB%91%E5%AE%A2%E9%9A%90%E8%97%8F%E7%9A%84%E6%96%87%E4%BB%B6%E5%8F%8D%E5%BC%B9shell%E7%9A%84ip-%E7%AB%AF%E5%8F%A3-ip-port"><span class="toc-number">2.4.</span> <span class="toc-text">问题2:黑客隐藏的文件反弹shell的ip+端口 {ip:port}</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%983-%E9%BB%91%E5%AE%A2%E6%8F%90%E6%9D%83%E6%89%80%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4-%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84%E7%9A%84md5-flag-md5"><span class="toc-number">2.5.</span> <span class="toc-text">问题3:黑客提权所用的命令 完整路径的md5 flag{md5}</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFSUID%E6%8F%90%E6%9D%83"><span class="toc-number">2.5.1.</span> <span class="toc-text">什么是SUID提权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E8%BF%9B%E8%A1%8CSUID%E6%8F%90%E6%9D%83"><span class="toc-number">2.5.2.</span> <span class="toc-text">怎么进行SUID提权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E6%96%87%E4%BB%B6%E6%98%AF%E5%90%A6%E5%8F%AF%E8%83%BD%E8%A2%AB%E5%88%A9%E7%94%A8%E8%BF%9B%E8%A1%8C%E6%8F%90%E6%9D%83%EF%BC%9F"><span class="toc-number">2.5.3.</span> <span class="toc-text">如何判断文件是否可能被利用进行提权？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFfind%E5%91%BD%E4%BB%A4"><span class="toc-number">2.5.4.</span> <span class="toc-text">什么是find命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%83%E9%99%90%E5%AD%97%E7%AC%A6"><span class="toc-number">2.5.5.</span> <span class="toc-text">权限字符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-find-%E7%89%B9%E5%88%AB%E5%8D%B1%E9%99%A9%EF%BC%9F"><span class="toc-number">2.5.6.</span> <span class="toc-text">为什么 find 特别危险？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%984%EF%BC%9A%E9%BB%91%E5%AE%A2%E5%B0%9D%E8%AF%95%E6%B3%A8%E5%85%A5%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E7%9A%84%E5%B7%A5%E5%85%B7%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84md5"><span class="toc-number">2.6.</span> <span class="toc-text">问题4：黑客尝试注入恶意代码的工具完整路径md5</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7"><span class="toc-number">2.6.1.</span> <span class="toc-text">常用的注入工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#opt%E7%9B%AE%E5%BD%95"><span class="toc-number">2.6.2.</span> <span class="toc-text">&#x2F;opt目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cymothoa%E5%90%8E%E9%97%A8%E5%B7%A5%E5%85%B7"><span class="toc-number">2.6.3.</span> <span class="toc-text">Cymothoa后门工具</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%985%EF%BC%9A%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%BF%90%E8%A1%8C-x-xx-%E6%89%A7%E8%A1%8C%E8%AF%A5%E6%96%87%E4%BB%B6-%E5%B0%86%E6%9F%A5%E8%AF%A2%E7%9A%84-Exec-%E5%80%BC%E4%BD%9C%E4%B8%BAflag%E6%8F%90%E4%BA%A4-flag-xxx-xxx-xxx"><span class="toc-number">2.7.</span> <span class="toc-text">问题5：使用命令运行 .&#x2F;x.xx 执行该文件 将查询的 Exec****** 值作为flag提交 flag{&#x2F;xxx&#x2F;xxx&#x2F;xxx}</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Exec%E5%80%BC"><span class="toc-number">2.7.1.</span> <span class="toc-text">Exec值</span></a></li></ol></li></ol></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        玄机第三章权限维持
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">wanTh3flag</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2024-11-22T06:05:30.000Z" class="dt-published" itemprop="datePublished">2024-11-22</time>
-        
-        (Updated: <time datetime="2025-01-09T16:30:29.109Z" class="dt-updated" itemprop="dateModified">2025-01-10</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/%E7%8E%84%E6%9C%BA/">玄机</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/" rel="tag">玄机第三章权限维持</a>
-    </div>
-
-
-    </div>
-  </header>
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>玄机第三章权限维持 | root@wanth3f1ag</title>
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>第三章在计划中，继续学习，感谢师傅的wp贡献让我学习的更深入</p>
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">0x01前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02%E6%AD%A3%E6%96%87"><span class="nav-number">2.</span> <span class="nav-text">0x02正文</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFlinux%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81"><span class="nav-number">2.1.</span> <span class="nav-text">什么是linux权限维持?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E5%B8%B8%E8%A7%81%E7%9A%84-Linux-%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E5%92%8C%E9%9A%90%E8%97%8F%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="nav-number">2.2.</span> <span class="nav-text">一些常见的 Linux 权限维持和隐藏方法：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8E%E9%97%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.2.0.1.</span> <span class="nav-text">后门程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Rootkit"><span class="nav-number">2.2.0.2.</span> <span class="nav-text">Rootkit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%81%E4%B9%85%E5%8C%96%E6%9C%BA%E5%88%B6"><span class="nav-number">2.2.0.3.</span> <span class="nav-text">持久化机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E9%9A%90%E8%97%8F"><span class="nav-number">2.2.0.4.</span> <span class="nav-text">文件隐藏</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E9%9A%90%E8%97%8F"><span class="nav-number">2.2.0.5.</span> <span class="nav-text">网络连接隐藏</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E6%B8%85%E9%99%A4"><span class="nav-number">2.2.0.6.</span> <span class="nav-text">日志清除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%90%88%E6%B3%95%E8%BF%9B%E7%A8%8B"><span class="nav-number">2.2.0.7.</span> <span class="nav-text">使用合法进程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%981%EF%BC%9A%E9%BB%91%E5%AE%A2%E9%9A%90%E8%97%8F%E7%9A%84%E9%9A%90%E8%97%8F%E7%9A%84%E6%96%87%E4%BB%B6-%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84md5"><span class="nav-number">2.3.</span> <span class="nav-text">问题1：黑客隐藏的隐藏的文件 完整路径md5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%982-%E9%BB%91%E5%AE%A2%E9%9A%90%E8%97%8F%E7%9A%84%E6%96%87%E4%BB%B6%E5%8F%8D%E5%BC%B9shell%E7%9A%84ip-%E7%AB%AF%E5%8F%A3-ip-port"><span class="nav-number">2.4.</span> <span class="nav-text">问题2:黑客隐藏的文件反弹shell的ip+端口 {ip:port}</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%983-%E9%BB%91%E5%AE%A2%E6%8F%90%E6%9D%83%E6%89%80%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4-%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84%E7%9A%84md5-flag-md5"><span class="nav-number">2.5.</span> <span class="nav-text">问题3:黑客提权所用的命令 完整路径的md5 flag{md5}</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFSUID%E6%8F%90%E6%9D%83"><span class="nav-number">2.5.1.</span> <span class="nav-text">什么是SUID提权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E8%BF%9B%E8%A1%8CSUID%E6%8F%90%E6%9D%83"><span class="nav-number">2.5.2.</span> <span class="nav-text">怎么进行SUID提权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E6%96%87%E4%BB%B6%E6%98%AF%E5%90%A6%E5%8F%AF%E8%83%BD%E8%A2%AB%E5%88%A9%E7%94%A8%E8%BF%9B%E8%A1%8C%E6%8F%90%E6%9D%83%EF%BC%9F"><span class="nav-number">2.5.3.</span> <span class="nav-text">如何判断文件是否可能被利用进行提权？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFfind%E5%91%BD%E4%BB%A4"><span class="nav-number">2.5.4.</span> <span class="nav-text">什么是find命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E5%AD%97%E7%AC%A6"><span class="nav-number">2.5.5.</span> <span class="nav-text">权限字符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-find-%E7%89%B9%E5%88%AB%E5%8D%B1%E9%99%A9%EF%BC%9F"><span class="nav-number">2.5.6.</span> <span class="nav-text">为什么 find 特别危险？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%984%EF%BC%9A%E9%BB%91%E5%AE%A2%E5%B0%9D%E8%AF%95%E6%B3%A8%E5%85%A5%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E7%9A%84%E5%B7%A5%E5%85%B7%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84md5"><span class="nav-number">2.6.</span> <span class="nav-text">问题4：黑客尝试注入恶意代码的工具完整路径md5</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7"><span class="nav-number">2.6.1.</span> <span class="nav-text">常用的注入工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#opt%E7%9B%AE%E5%BD%95"><span class="nav-number">2.6.2.</span> <span class="nav-text">&#x2F;opt目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cymothoa%E5%90%8E%E9%97%A8%E5%B7%A5%E5%85%B7"><span class="nav-number">2.6.3.</span> <span class="nav-text">Cymothoa后门工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%985%EF%BC%9A%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%BF%90%E8%A1%8C-x-xx-%E6%89%A7%E8%A1%8C%E8%AF%A5%E6%96%87%E4%BB%B6-%E5%B0%86%E6%9F%A5%E8%AF%A2%E7%9A%84-Exec-%E5%80%BC%E4%BD%9C%E4%B8%BAflag%E6%8F%90%E4%BA%A4-flag-xxx-xxx-xxx"><span class="nav-number">2.7.</span> <span class="nav-text">问题5：使用命令运行 .&#x2F;x.xx 执行该文件 将查询的 Exec****** 值作为flag提交 flag{&#x2F;xxx&#x2F;xxx&#x2F;xxx}</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Exec%E5%80%BC"><span class="nav-number">2.7.1.</span> <span class="nav-text">Exec值</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">117</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="玄机第三章权限维持 | root@wanth3f1ag">
+      <meta itemprop="description" content="玄机第三章权限维持">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          玄机第三章权限维持
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-11-22 14:05:30" itemprop="dateCreated datePublished" datetime="2024-11-22T14:05:30+08:00">2024-11-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-12-01 19:23:15" itemprop="dateModified" datetime="2025-12-01T19:23:15+08:00">2025-12-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%8E%84%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">玄机</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">玄机第三章权限维持</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>第三章在计划中，继续学习，感谢师傅的wp贡献让我学习的更深入</p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/administratorlws/article/details/140159790">玄机——第三章 权限维持-linux权限维持-隐藏 wp-CSDN博客</a></p>
 <h1 id="0x02正文"><a href="#0x02正文" class="headerlink" title="0x02正文"></a>0x02正文</h1><h2 id="什么是linux权限维持"><a href="#什么是linux权限维持" class="headerlink" title="什么是linux权限维持?"></a>什么是linux权限维持?</h2><p>首先在 Linux 系统上，权限维持是黑客攻击过程中的一个重要环节。攻击者成功获得系统权限后，会采取各种手段来保持对系统的访问控制，防止被发现并移除。这些手段可以分为多种，包括隐藏进程、文件、网络连接等。</p>
 <h2 id="一些常见的-Linux-权限维持和隐藏方法："><a href="#一些常见的-Linux-权限维持和隐藏方法：" class="headerlink" title="一些常见的 Linux 权限维持和隐藏方法："></a>一些常见的 Linux 权限维持和隐藏方法：</h2><h4 id="后门程序"><a href="#后门程序" class="headerlink" title="后门程序"></a>后门程序</h4><p>后门程序（Backdoor）是一种恶意软件或程序，允许攻击者绕过正常的身份验证或安全措施，以便在系统中获得未经授权的访问权限。后门程序可以被攻击者使用来在目标计算机上实现持久的控制，通常在攻击者已经成功入侵系统后安装。</p>
@@ -249,7 +393,7 @@
 <p>这些权限维持和隐藏技术使得攻击者能够长时间保持对系统的控制权，同时降低被检测和移除的风险。</p>
 <h2 id="问题1：黑客隐藏的隐藏的文件-完整路径md5"><a href="#问题1：黑客隐藏的隐藏的文件-完整路径md5" class="headerlink" title="问题1：黑客隐藏的隐藏的文件 完整路径md5"></a>问题1：黑客隐藏的隐藏的文件 完整路径md5</h2><p>根据上面的权限维持方法可以知道，隐藏文件的方法有文件名伪装或者隐藏目录和隐藏文件，因为 Unix&#x2F;Linux 系统中，文件名以 <code>.</code> 开头的文件默认是隐藏文件。这些文件不会显示在普通的 <code>ls</code> 命令输出中，除非使用 <code>ls -a</code>。黑客常常利用这种特性，将恶意文件或脚本以 <code>.</code> 开头来隐藏。</p>
 <p><strong>那我们可以直接使用find来进行查找以点开头的隐藏文件</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -name &quot;.*&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">find</span> / -name <span class="string">&quot;.*&quot;</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/image-20241122145355820.png" alt="image-20241122145355820"></p>
 <p>这里可以看到有很多文件，不过黑客经常会将隐藏文件放在<code>/tmp</code>目录下，因此先去这个目录下找，发现有一个<code>.temp</code>文件</p>
@@ -399,11 +543,11 @@
 <li>利用SUIDfind获取root shell</li>
 </ul>
 <p>假设 find 命令具有 SUID 位，可以使用以下方法获取 root shell：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/find . -exec /bin/sh \; -quit</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/find . -<span class="built_in">exec</span> /bin/sh \; -quit</span><br></pre></td></tr></table></figure>
 
 <p>这里，find 将在当前目录（.）搜索，并使用 -exec 选项执行 &#x2F;bin&#x2F;sh（一个新的 shell）。因为 find 具有 SUID 位，这个 shell 将以 root 权限运行。</p>
 <p>这里我们使用命令:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -perm -u=s -type f 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">find</span> / -perm <span class="attribute">-u</span>=s -type f 2&gt;/dev/<span class="literal">null</span></span><br></pre></td></tr></table></figure>
 
 <p>这个命令用于查找系统上所有设置了 SUID 位的文件。具体解释如下：</p>
 <ul>
@@ -423,10 +567,10 @@
 <h3 id="什么是find命令"><a href="#什么是find命令" class="headerlink" title="什么是find命令"></a>什么是find命令</h3><p><code>find</code> 是一个非常强大的命令行工具，用于在目录树中搜索文件并执行各种操作。<code>find</code> 可以执行指定的命令或脚本，这使得它在具有 SUID 位时变得特别危险。</p>
 <p>当 <code>find</code> 命令设置了 SUID 位，并且该命令存在已知漏洞或不当配置，攻击者可以利用它来执行任意命令，从而提升权限</p>
 <p>我们先检查一下find命令的权限</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -l /usr/bin/find</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -l /usr/bin/find</span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/image-20241123114926772.png" alt="image-20241123114926772"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-rwsr-xr-x. 1 root root 229992 Jan  6  2014 /usr/bin/find</span><br></pre></td></tr></table></figure>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-rwsr-xr-x.<span class="number"> 1 </span>root root<span class="number"> 229992 </span>Jan <span class="number"> 6 </span><span class="number"> 2014 </span>/usr/bin/find</span><br></pre></td></tr></table></figure>
 
 <p>我们来分析一下这个find命令</p>
 <h3 id="权限字符"><a href="#权限字符" class="headerlink" title="权限字符"></a>权限字符</h3><table>
@@ -552,17 +696,17 @@
 
 <p>发现默认是“#!&#x2F;usr&#x2F;bin&#x2F;python3” ，即pyton3运行1.py</p>
 <p>那我们就先运行一下1.py文件，并查看端口情况判断是否成功执行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python3 1.py</span><br><span class="line">netstat -anlpt</span><br></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">python3</span> <span class="number">1</span>.<span class="keyword">py</span></span><br><span class="line">netstat -anlpt</span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/image-20241123122116964.png" alt="image-20241123122116964"></p>
 <p>这里可以看到是成功执行了并且有网络连接</p>
 <p><strong>据之前已经可以确认IP地址：114.114.114.121:9999就是反弹shell的IP，</strong></p>
 <p>那我们查找一下python3</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">which python3</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">which</span> python3</span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/image-20241123122304188.png" alt="image-20241123122304188"></p>
 <p>看到目录了我们就直接查看这个文件的权限设置，找到我们想要的exec值</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -la /usr/bin/python3</span><br></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ls</span> -<span class="keyword">la</span> /usr/bin/<span class="keyword">python3</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/./../image/achieve/202411/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/image-20241123122352244.png" alt="image-20241123122352244"></p>
 <p>所以flag就是flag{&#x2F;usr&#x2F;bin&#x2F;python3.4}</p>
@@ -575,164 +719,117 @@
 </ul>
 <p>所以，根据符号链接指向的实际文件 <code>python3.4</code> 的权限设置，<code>/usr/bin/python3</code> 作为一个符号链接，继承了指向文件的执行权限。</p>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">H0me</a></li>
-        
-          <li><a href="/about/">A6out</a></li>
-        
-          <li><a href="/tags/">T6gs</a></li>
-        
-          <li><a href="/categories/">Catagory</a></li>
-        
-          <li><a href="/links/">L1nks</a></li>
-        
-          <li><a href="/search/">s4arch</a></li>
-        
-      </ul>
     </div>
 
     
     
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02%E6%AD%A3%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">0x02正文</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFlinux%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81"><span class="toc-number">2.1.</span> <span class="toc-text">什么是linux权限维持?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%B8%B8%E8%A7%81%E7%9A%84-Linux-%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E5%92%8C%E9%9A%90%E8%97%8F%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="toc-number">2.2.</span> <span class="toc-text">一些常见的 Linux 权限维持和隐藏方法：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%8E%E9%97%A8%E7%A8%8B%E5%BA%8F"><span class="toc-number">2.2.0.1.</span> <span class="toc-text">后门程序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Rootkit"><span class="toc-number">2.2.0.2.</span> <span class="toc-text">Rootkit</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%81%E4%B9%85%E5%8C%96%E6%9C%BA%E5%88%B6"><span class="toc-number">2.2.0.3.</span> <span class="toc-text">持久化机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E9%9A%90%E8%97%8F"><span class="toc-number">2.2.0.4.</span> <span class="toc-text">文件隐藏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E9%9A%90%E8%97%8F"><span class="toc-number">2.2.0.5.</span> <span class="toc-text">网络连接隐藏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%B8%85%E9%99%A4"><span class="toc-number">2.2.0.6.</span> <span class="toc-text">日志清除</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%90%88%E6%B3%95%E8%BF%9B%E7%A8%8B"><span class="toc-number">2.2.0.7.</span> <span class="toc-text">使用合法进程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%981%EF%BC%9A%E9%BB%91%E5%AE%A2%E9%9A%90%E8%97%8F%E7%9A%84%E9%9A%90%E8%97%8F%E7%9A%84%E6%96%87%E4%BB%B6-%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84md5"><span class="toc-number">2.3.</span> <span class="toc-text">问题1：黑客隐藏的隐藏的文件 完整路径md5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%982-%E9%BB%91%E5%AE%A2%E9%9A%90%E8%97%8F%E7%9A%84%E6%96%87%E4%BB%B6%E5%8F%8D%E5%BC%B9shell%E7%9A%84ip-%E7%AB%AF%E5%8F%A3-ip-port"><span class="toc-number">2.4.</span> <span class="toc-text">问题2:黑客隐藏的文件反弹shell的ip+端口 {ip:port}</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%983-%E9%BB%91%E5%AE%A2%E6%8F%90%E6%9D%83%E6%89%80%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4-%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84%E7%9A%84md5-flag-md5"><span class="toc-number">2.5.</span> <span class="toc-text">问题3:黑客提权所用的命令 完整路径的md5 flag{md5}</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFSUID%E6%8F%90%E6%9D%83"><span class="toc-number">2.5.1.</span> <span class="toc-text">什么是SUID提权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E8%BF%9B%E8%A1%8CSUID%E6%8F%90%E6%9D%83"><span class="toc-number">2.5.2.</span> <span class="toc-text">怎么进行SUID提权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E6%96%87%E4%BB%B6%E6%98%AF%E5%90%A6%E5%8F%AF%E8%83%BD%E8%A2%AB%E5%88%A9%E7%94%A8%E8%BF%9B%E8%A1%8C%E6%8F%90%E6%9D%83%EF%BC%9F"><span class="toc-number">2.5.3.</span> <span class="toc-text">如何判断文件是否可能被利用进行提权？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFfind%E5%91%BD%E4%BB%A4"><span class="toc-number">2.5.4.</span> <span class="toc-text">什么是find命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%83%E9%99%90%E5%AD%97%E7%AC%A6"><span class="toc-number">2.5.5.</span> <span class="toc-text">权限字符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-find-%E7%89%B9%E5%88%AB%E5%8D%B1%E9%99%A9%EF%BC%9F"><span class="toc-number">2.5.6.</span> <span class="toc-text">为什么 find 特别危险？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%984%EF%BC%9A%E9%BB%91%E5%AE%A2%E5%B0%9D%E8%AF%95%E6%B3%A8%E5%85%A5%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E7%9A%84%E5%B7%A5%E5%85%B7%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84md5"><span class="toc-number">2.6.</span> <span class="toc-text">问题4：黑客尝试注入恶意代码的工具完整路径md5</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7"><span class="toc-number">2.6.1.</span> <span class="toc-text">常用的注入工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#opt%E7%9B%AE%E5%BD%95"><span class="toc-number">2.6.2.</span> <span class="toc-text">&#x2F;opt目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cymothoa%E5%90%8E%E9%97%A8%E5%B7%A5%E5%85%B7"><span class="toc-number">2.6.3.</span> <span class="toc-text">Cymothoa后门工具</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%985%EF%BC%9A%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%BF%90%E8%A1%8C-x-xx-%E6%89%A7%E8%A1%8C%E8%AF%A5%E6%96%87%E4%BB%B6-%E5%B0%86%E6%9F%A5%E8%AF%A2%E7%9A%84-Exec-%E5%80%BC%E4%BD%9C%E4%B8%BAflag%E6%8F%90%E4%BA%A4-flag-xxx-xxx-xxx"><span class="toc-number">2.7.</span> <span class="toc-text">问题5：使用命令运行 .&#x2F;x.xx 执行该文件 将查询的 Exec****** 值作为flag提交 flag{&#x2F;xxx&#x2F;xxx&#x2F;xxx}</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Exec%E5%80%BC"><span class="toc-number">2.7.1.</span> <span class="toc-text">Exec值</span></a></li></ol></li></ol></li></ol>
-      </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&text=玄机第三章权限维持"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第三章权限维持"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&is_video=false&description=玄机第三章权限维持"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=玄机第三章权限维持&body=Check out this article: https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第三章权限维持"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第三章权限维持"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第三章权限维持"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&title=玄机第三章权限维持"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&name=玄机第三章权限维持&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/&t=玄机第三章权限维持"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
 </div>
 
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2024/11/22/%E7%8E%84%E6%9C%BA%E7%AC%AC3%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81(%E5%B7%B2%E5%81%9A%E5%AE%8C)/" title="玄机第三章权限维持">https://wanth3f1ag.top/2024/11/22/玄机第3章权限维持(已做完)/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%8E%84%E6%9C%BA%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/" rel="tag"># 玄机第三章权限维持</a>
+          </div>
+
         
-        
-<footer id="footer">
-    <div class="footer-left">
-        Copyright ©
-        
-        
-        2024-2025
-        wanTh3flag
-        <br>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/11/17/%E8%9C%80%E9%81%93%E5%B1%B1%E9%AB%98%E6%A0%A1%E8%81%94%E5%90%88%E5%85%AC%E7%9B%8A%E8%B5%9B/" rel="prev" title="蜀道山高校联合公益赛">
+                  <i class="fa fa-angle-left"></i> 蜀道山高校联合公益赛
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/11/25/BUGKU-web/" rel="next" title="BUGKU--web">
+                  BUGKU--web <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:12</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
     </div>
-    
-    <div class="footer-right">
-        <nav>
-            <ul>
-                <!--
-                --><li><a href="/">H0me</a></li><!--
-                --><!--
-                --><li><a href="/about/">A6out</a></li><!--
-                --><!--
-                --><li><a href="/tags/">T6gs</a></li><!--
-                --><!--
-                --><li><a href="/categories/">Catagory</a></li><!--
-                --><!--
-                --><li><a href="/links/">L1nks</a></li><!--
-                --><!--
-                --><li><a href="/search/">s4arch</a></li><!--
-                -->
-            </ul>
-            <ul>
-                
-                <!-- 不蒜子统计 -->
-                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
-                <span class="post-meta-divider">|</span>
-                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
-                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-                
-            </ul>
-        </nav>
-    </div>
-</footer>
-
-
-    </div>
-    <!-- styles -->
-
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
+  </footer>
 
   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
-      }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "Copied!");
-      e.clearSelection();
-    })
-  })
-  </script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-
-<script src="/js/main.js"></script>
-
-<!-- search -->
-
-<!-- Baidu Analytics -->
-
-<!-- Cloudflare Analytics -->
-
-<!-- Disqus Comments -->
-
-<!-- utterances Comments -->
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
 </body>
 </html>

