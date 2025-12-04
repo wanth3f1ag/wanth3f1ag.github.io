@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="主要是写给自己看的，之前对Spring了解少之甚少">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java之Spring基础">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/12/02/Java%E4%B9%8BSpring%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="主要是写给自己看的，之前对Spring了解少之甚少">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/1676540576_63edfaa0e3378c684b5a6.jpeg">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/ed1b5fbc2c282d647d4719d336015287.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/8ed44a61cc34f13026e66e114829f3c5.png">
+<meta property="article:published_time" content="2025-12-02T08:16:47.000Z">
+<meta property="article:modified_time" content="2025-12-04T13:21:38.217Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="Spring基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/1676540576_63edfaa0e3378c684b5a6.jpeg">
+
+
+<link rel="canonical" href="https://wanth3f1ag.top/2025/12/02/Java%E4%B9%8BSpring%E5%9F%BA%E7%A1%80/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2025/12/02/Java%E4%B9%8BSpring%E5%9F%BA%E7%A1%80/","path":"2025/12/02/Java之Spring基础/","title":"Java之Spring基础"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Java之Spring基础 | root@wanth3f1ag</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring%E6%98%AF%E6%A1%86%E6%9E%B6%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">Spring是框架？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring%E6%A1%86%E6%9E%B6%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">2.</span> <span class="nav-text">Spring框架的特性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC-IoC-%E5%92%8C%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5-DI"><span class="nav-number">2.1.</span> <span class="nav-text">控制反转(IoC)和依赖注入(DI)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2-AOP"><span class="nav-number">2.2.</span> <span class="nav-text">面向切面(AOP)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AOP%E7%9A%84%E5%87%A0%E4%B8%AA%E6%A0%B8%E5%BF%83%E6%B3%A8%E8%A7%A3"><span class="nav-number">2.2.1.</span> <span class="nav-text">AOP的几个核心注解</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring%E6%A1%86%E6%9E%B6%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-number">3.</span> <span class="nav-text">Spring框架的组成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-MVC%E6%9E%B6%E6%9E%84"><span class="nav-number">4.</span> <span class="nav-text">Spring MVC架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88MVC%E5%A5%BD"><span class="nav-number">4.1.</span> <span class="nav-text">为什么MVC好</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-MVC%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-number">4.2.</span> <span class="nav-text">Spring MVC架构模式的组成</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MVC%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B"><span class="nav-number">4.2.1.</span> <span class="nav-text">MVC请求流程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SpringBoot"><span class="nav-number">5.</span> <span class="nav-text">SpringBoot</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Starter%E4%BE%9D%E8%B5%96"><span class="nav-number">5.1.</span> <span class="nav-text">Starter依赖</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">164</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">120</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2025/12/02/Java%E4%B9%8BSpring%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Java之Spring基础 | root@wanth3f1ag">
+      <meta itemprop="description" content="主要是写给自己看的，之前对Spring了解少之甚少">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java之Spring基础
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-02 16:16:47" itemprop="dateCreated datePublished" datetime="2025-12-02T16:16:47+08:00">2025-12-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-12-04 21:21:38" itemprop="dateModified" datetime="2025-12-04T21:21:38+08:00">2025-12-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/javasec/" itemprop="url" rel="index"><span itemprop="name">javasec</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">主要是写给自己看的，之前对Spring了解少之甚少</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Spring是框架？"><a href="#Spring是框架？" class="headerlink" title="Spring是框架？"></a>Spring是框架？</h1><p>其实这个问题困扰了我大几个月，有人说Spring是框架，也有人说Spring是一个生态系统，我更偏向于后者吧，广义上来说Spring不是一个简单的框架，而是构成一个完整的生态体系，但是往往我们口中的Spring都会被特指成Spring Framework，所以也就有极大部分人把Spring看成是一个框架。那我们后面就把他当作是一个框架（Spring Framework）吧</p>
+<p>官方文档：<a target="_blank" rel="noopener" href="https://spring.io/">https://spring.io/</a></p>
+<p>总结来说：Spring框架是一个开源的轻量级的控制反转（IoC）和面向切面（AOP）的容器框架</p>
+<h1 id="Spring框架的特性"><a href="#Spring框架的特性" class="headerlink" title="Spring框架的特性"></a>Spring框架的特性</h1><h2 id="控制反转-IoC-和依赖注入-DI"><a href="#控制反转-IoC-和依赖注入-DI" class="headerlink" title="控制反转(IoC)和依赖注入(DI)"></a>控制反转(IoC)和依赖注入(DI)</h2><p>什么是控制反转呢？</p>
+<p>在传统的Java开发中，对象需要自己创建并查找依赖对象建立依赖关系</p>
+<p>例如</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用户服务类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="comment">// 自己创建依赖对象</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">UserRepository</span> <span class="variable">userRepository</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserRepository</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">getUser</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userRepository.findById(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 用户数据访问类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserRepository</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">findById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="comment">// 从数据库查询用户</span></span><br><span class="line">        <span class="keyword">return</span> user;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种传统方式下存在的问题：</p>
+<ol>
+<li>高耦合度，UserService 和 UserRepository 紧密绑定,UserService 必须知道如何创建 UserRepository</li>
+<li>测试困难，当我们需要测试UserService 时，必须实例化一个真实的UserRepository，这样会加大测试的工作量</li>
+<li>紧密关联带来的低灵活性，如果我们想改变UserRepository的实现代码，就必须对UserService 代码也进行改变</li>
+</ol>
+<p>但是在IoC中，Spring容器会负责创建对象并注入依赖关系，顾名思义就是“控制权发生了反转”</p>
+<p>IoC的写法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line">UserService userService;</span><br></pre></td></tr></table></figure>
+
+<p>这样就大大降低了组件之间的耦合度,提高了代码的可测试性和可维护性。</p>
+<p>依赖注入(DI)其实就是IoC的具体实现方式，依赖注入的方式包括：</p>
+<ul>
+<li>构造器注入（推荐）</li>
+<li>字段注入</li>
+<li>Setter注入</li>
+<li>接口注入</li>
+</ul>
+<p>写个代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方式1: 构造器注入 (推荐)</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserRepository userRepository;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Spring 会自动调用这个构造器,并注入 UserRepository</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserService</span><span class="params">(UserRepository userRepository)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userRepository = userRepository;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">getUser</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userRepository.findById(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式2: 字段注入</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="comment">// Spring 直接给这个字段赋值</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">getUser</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userRepository.findById(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式3: Setter 注入</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Spring 会调用这个 setter 方法注入</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setUserRepository</span><span class="params">(UserRepository userRepository)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userRepository = userRepository;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">getUser</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userRepository.findById(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// UserRepository 也交给 Spring 管理</span></span><br><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserRepository</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">findById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="comment">// 从数据库查询</span></span><br><span class="line">        <span class="keyword">return</span> user;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，DI不等于IoC，DI只是IoC里面对依赖和对象的具体处理方式</p>
+<h2 id="面向切面-AOP"><a href="#面向切面-AOP" class="headerlink" title="面向切面(AOP)"></a>面向切面(AOP)</h2><p>先了解AOP中的几个关键概念：</p>
+<p>1.<strong>横切关注点</strong>：就是一些跟业务逻辑无关但是又必须存在的公共功能</p>
+<p>常见的横切关注点包括：</p>
+<ul>
+<li><strong>日志记录</strong>: 方法执行前后记录日志</li>
+<li><strong>权限控制</strong>: 检查用户是否有权限</li>
+<li><strong>事务管理</strong>: 开启、提交、回滚事务</li>
+<li><strong>性能监控</strong>: 统计方法执行时间</li>
+<li><strong>异常处理</strong>: 统一处理异常</li>
+<li><strong>缓存</strong>: 缓存方法结果</li>
+<li><strong>数据验证</strong>: 验证参数</li>
+</ul>
+<p>2.<strong>切面</strong>：横切关注点的模块化</p>
+<p>3.<strong>连接点</strong>：可以插入切面的程序执行点，通常是方法的调用或执行点</p>
+<p>4.<strong>切入点</strong>：定义在哪些连接点需要切面</p>
+<p>5.<strong>通知</strong>：在切入点上要执行的具体操作，例如前置(Before)、后置(After)、返回后(After Returing)、异常后(After Throwing)、环绕(Around)</p>
+<p>6.<strong>织入</strong>：将切面应用到目标对象的过程，Spring支持基于代理的运行时织入</p>
+<p>7.<strong>代理</strong>：Spring AOP 通过 JDK 动态代理或 CGLIB 代理来实现织入</p>
+<p>AOP其实就是一种编程思想，将这些公共功能从业务逻辑中抽离出来统一进行处理，即通过<code>切面</code>来封装这些横切关注点，并在运行时或编译时”织入”到目标代码中，从而实现模块化管理，也能提高代码的灵活性。</p>
+<h3 id="AOP的几个核心注解"><a href="#AOP的几个核心注解" class="headerlink" title="AOP的几个核心注解"></a>AOP的几个核心注解</h3><ol>
+<li><code>@Aspect</code>：声明一个横切关注点切面</li>
+<li><code>@Pointcut</code>：定义一个切入点</li>
+<li><code>@Before</code>：前置通知，即在方法执行前执行切面</li>
+<li><code>@After</code>：后置通知，即在方法执行后执行切面，无论方法是否成功执行</li>
+<li><code>@AfterReturning</code>：返回后通知，即方法成功返回后执行切面</li>
+<li><code>@AfterThrowing </code>：异常通知，即方法抛出异常后执行切面</li>
+<li><code>@Around</code>：环绕通知，是前面几种通知的组合</li>
+</ol>
+<h1 id="Spring框架的组成"><a href="#Spring框架的组成" class="headerlink" title="Spring框架的组成"></a>Spring框架的组成</h1><p>Spring Framework作为最核心的框架，主要包含：</p>
+<ul>
+<li>Core Container 核心容器：主要负责IoC控制反转和DI依赖注入</li>
+</ul>
+<p>核心容器包含模块：spring-core，spring-beans，spring-context，spring-expression (SpEL)</p>
+<p>spring-core和spring-beans是框架最基础的部分，包括控制反转和依赖注入功能</p>
+<p>spring-context提供了访问对象的方式，有点类似于JNDI注册</p>
+<p>spring-expression提供了一种很强大的表达式，即SpEL表达式，可以在运行时查询和操作对象</p>
+<ul>
+<li>AOP模块：主要负责切面编程的实现</li>
+</ul>
+<p>主要包含模块：spring-aop，spring-ascpects，spring-instrument，spring-instrument-tomcat</p>
+<p>spring-aop主要是提供了基于代理的AOP实现</p>
+<p>spring-ascpects集成了AspectJ，实现更强大的AOP</p>
+<p>spring-instrument提供了类工具的支持和类加载器的实现，可以在特定的应用服务器中使用。</p>
+<p>spring-instrument-tomcat模块提供针对tomcat的instrument实现。</p>
+<ul>
+<li>Data Access&#x2F;Integration 数据访问&#x2F;集成模块：主要负责JDBC数据库操作以及事务管理</li>
+</ul>
+<p>主要包含模块：spring-jdbc，spring-tx，spring-orm，spring-oxm，spring-jms</p>
+<p>spring-jdbc提供了对JDBC的封装，简化了数据库访问和操作</p>
+<p>spring-tx提供了一套统一的事务抽象，让不同数据源的事务用同一种方式集中管理</p>
+<p>spring-orm提供与流行的“对象-关系”映射框架无缝集成的 API，包括 JPA、JDO、Hibernate 和 MyBatis 等</p>
+<p>spring-oxm提供了一个支持 Object &#x2F;XML 映射的抽象层实现</p>
+<p>spring-jms是对JMS标准的封装，提供发送消息和接收消息等消息服务功能</p>
+<ul>
+<li>Web模块：提供Web模块的功能包括基础Web执行，MVC架构</li>
+</ul>
+<p>主要包含：spring-web，spring-webmvc，spring-websocket，spring-webflux</p>
+<p>spring-web提供了最基础的web支持例如Servlet，文件上传等</p>
+<p>spring-webmvc提供了一个 Spring MVC Web 框架实现。Spring MVC 框架提供了基于注解的请求资源注入、更简单的数据绑定、数据验证等及一套非常易用的 JSP 标签，并且能很好的和其他功能结合协同办公</p>
+<p>spring-websocket提供了WebSocket 支持进行实时通讯</p>
+<p>spring-webflux是响应式 Web 框架，特点是少量线程处理多个请求，可支持异步大并发请求</p>
+<ul>
+<li>Test测试模块，就是一个测试框架，主要包括spring-test</li>
+<li>Messaging消息模块，统一消息抽象，主要包括spring-messaging</li>
+</ul>
+<p>官方的图</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/1676540576_63edfaa0e3378c684b5a6.jpeg" alt="img"></p>
+<p>总结来说：Spring 框架是一个分层的 Java 应用开发框架，由 6 大模块构成：核心容器（IoC&#x2F;DI）、AOP 模块、数据访问模块、Web 模块、消息模块和测试模块。这些模块协作支持从底层容器管理，到面向切面编程、数据访问、MVC Web 开发及测试的完整开发体系。</p>
+<h1 id="Spring-MVC架构"><a href="#Spring-MVC架构" class="headerlink" title="Spring MVC架构"></a>Spring MVC架构</h1><p>参考文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/zzuhkp/article/details/120685952">https://blog.csdn.net/zzuhkp/article/details/120685952</a></p>
+<p>Spring MVC架构主要是Web层的框架，MVC（Model View Controller）指的是模型-视图-控制器三个核心组件，MVC架构主要是将用户交互拆分到这三个组件中，接下来我们分开讲讲</p>
+<ol>
+<li>**模型(Model)**：模型封装了数据及对数据的操作，可以直接对数据库进行访问，不依赖视图和控制器，也就是说模型并不关注数据如何展示，只负责提供数据。GUI 程序模型中数据的变化一般会通过观察者模式通知视图，而在 web 中则不会这样。</li>
+<li>**视图(View)**：视图从模型中拉取数据，只负责展示，没有具体的程序逻辑。</li>
+<li>**控制器(Controller)**：控制器用于控制程序的流程，将模型中的数据展示到视图中。</li>
+</ol>
+<h2 id="为什么MVC好"><a href="#为什么MVC好" class="headerlink" title="为什么MVC好"></a>为什么MVC好</h2><p>我觉得这个原因是比较重要的，知道他好在哪里才会喜欢用他嘛</p>
+<p>早期的JavaEE项目通常使用Servlet去处理请求，但是Servlet的缺点是会产生大量的冗余代码，不适合输出复杂的HTML，后来Sun公司根</p>
+<p>据asp提出了JSP，JSP是基于 Java 的一种 <strong>动态网页技术</strong>。JSP 文件本质上就是一个 <strong>HTML + Java 代码的混合文件</strong>，后缀是 <code>.jsp</code>，虽然他很适合进行HTML+Java的开发，但是也不适合编写复杂的Java代码</p>
+<p>哎，可以看到这两个其实在优缺点上是互补的，那么是否可以结合这两个从而发挥出其最大的作用呢？</p>
+<p>有的兄弟，有的，Web MVC被提出，JavaBean充当模型，而JSP文件作为视图，Servlet作为控制器</p>
+<p>借鉴一下师傅的流程图</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/ed1b5fbc2c282d647d4719d336015287.png" alt="Java Web MVC"></p>
+<p>客户端发送请求后先经过Servlet，Servlet会使用JavaBean查询并存储数据，然后将数据交给JSP进行渲染生成视图，那么这就是早期的Web MVC架构</p>
+<p>直到后来出现了Spring MVC结构模式</p>
+<h2 id="Spring-MVC架构模式的组成"><a href="#Spring-MVC架构模式的组成" class="headerlink" title="Spring MVC架构模式的组成"></a>Spring MVC架构模式的组成</h2><p>Spring MVC架构遵循了Servlet规范 ，并对早期的Web MVC加以拓展，将控制器拆分成前端控制器DispatcherServlet，处理器映射器HandlerMapping和后端控制器Controller，将模型拆分成业务层Service和数据访问层Repository，同时也不止支持JSP，还支持入FreeMarker等</p>
+<p>具体的请求流程还是借鉴师傅的图</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/8ed44a61cc34f13026e66e114829f3c5.png" alt="Spring Web MVC"></p>
+<h3 id="MVC请求流程"><a href="#MVC请求流程" class="headerlink" title="MVC请求流程"></a>MVC请求流程</h3><ol>
+<li>客户端发送请求到前端控制器DispatcherServlet，前端控制器DispatcherServlet根据HandlerMapping找到对应的Controller方法进行分发请求给后端控制器Controller</li>
+<li>后端控制器Controller根据请求选择合适的 <strong>Model</strong> 和 <strong>View 名称</strong></li>
+<li><code>ViewResolver</code> 根据后端控制器返回的View名称找到真正需要的 View</li>
+<li><code>View</code> 接收返回的 Model 进行渲染</li>
+<li>DispatcherServlet前端控制器将渲染的结果返回给客户端用户</li>
+</ol>
+<h1 id="SpringBoot"><a href="#SpringBoot" class="headerlink" title="SpringBoot"></a>SpringBoot</h1><p>SpringBoot主要是用来快速构建Spring应用的</p>
+<p>在之前我们开发一个Spring Web项目通常需要配置很多东西例如web.xml，Spring MVC，事务管理等，而Spring Boot会根据我们加入我依赖自动配置需要的Bean，并且还内置了Tomcat&#x2F;Jerry&#x2F;Netty等服务器，这让我们的Java Web服务启动更加便捷</p>
+<h2 id="Starter依赖"><a href="#Starter依赖" class="headerlink" title="Starter依赖"></a>Starter依赖</h2><p>Starter依赖的作用主要是继承了某一类功能所需要的所有依赖，例如spring-boot-starter-web，当我们导入这个依赖后Spring Web开发所需要的依赖都集成在里面可供使用，并且Starter依赖由Spring Boot 统一管理版本，非常的方便和美味</p>
+<p>Spring Boot 官方的几种Starter依赖：</p>
+<table>
+<thead>
+<tr>
+<th>Starter</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>spring-boot-starter-web</td>
+<td>构建 Web&#x2F;MVC&#x2F;REST API</td>
+</tr>
+<tr>
+<td>spring-boot-starter-test</td>
+<td>测试工具集</td>
+</tr>
+<tr>
+<td>spring-boot-starter-data-jpa</td>
+<td>JPA + Hibernate</td>
+</tr>
+<tr>
+<td>spring-boot-starter-thymeleaf</td>
+<td>Thymeleaf 模板引擎</td>
+</tr>
+<tr>
+<td>spring-boot-starter-security</td>
+<td>Spring Security 认证授权</td>
+</tr>
+<tr>
+<td>spring-boot-starter-actuator</td>
+<td>监控与健康检查</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2025/12/02/Java%E4%B9%8BSpring%E5%9F%BA%E7%A1%80/" title="Java之Spring基础">https://wanth3f1ag.top/2025/12/02/Java之Spring基础/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Spring%E5%9F%BA%E7%A1%80/" rel="tag"># Spring基础</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/12/02/Java%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5%E4%B9%8BThymeleaf/" rel="prev" title="Java模板注入之Thymeleaf">
+                  <i class="fa fa-angle-left"></i> Java模板注入之Thymeleaf
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/12/03/ISCTF2025Web%E9%A2%98%E8%A7%A3/" rel="next" title="ISCTF2025Web题解">
+                  ISCTF2025Web题解 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3.1m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">46:40</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
