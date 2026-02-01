@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="学点高级玩意儿">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JDK17强封装&amp;高版本JDK反射调用">
+<meta property="og:url" content="https://wanth3f1ag.top/2026/02/01/Java%E4%B9%8BJDK17%E5%BC%BA%E5%B0%81%E8%A3%85-%E9%AB%98%E7%89%88%E6%9C%ACJDK%E5%8F%8D%E5%B0%84%E8%B0%83%E7%94%A8/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="学点高级玩意儿">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260201132155868.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260201140606084.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260201143927419.png">
+<meta property="article:published_time" content="2026-02-01T03:52:26.000Z">
+<meta property="article:modified_time" content="2026-02-01T16:34:23.251Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="javasec">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260201132155868.png">
+
+
+<link rel="canonical" href="https://wanth3f1ag.top/2026/02/01/Java%E4%B9%8BJDK17%E5%BC%BA%E5%B0%81%E8%A3%85-%E9%AB%98%E7%89%88%E6%9C%ACJDK%E5%8F%8D%E5%B0%84%E8%B0%83%E7%94%A8/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2026/02/01/Java%E4%B9%8BJDK17%E5%BC%BA%E5%B0%81%E8%A3%85-%E9%AB%98%E7%89%88%E6%9C%ACJDK%E5%8F%8D%E5%B0%84%E8%B0%83%E7%94%A8/","path":"2026/02/01/Java之JDK17强封装-高版本JDK反射调用/","title":"JDK17强封装&高版本JDK反射调用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>JDK17强封装&高版本JDK反射调用 | root@wanth3f1ag</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-JDK9%E4%B9%8B%E5%90%8E%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">0x01 JDK9之后的模块化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-JDK17%E7%9A%84%E5%BC%BA%E5%B0%81%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">0x02 JDK17的强封装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-Unsafe%E5%B8%B8%E7%94%A8%E7%B1%BB%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">0x03 Unsafe常用类方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#sun-misc-Unsafe-objectFieldOffset"><span class="nav-number">3.1.</span> <span class="nav-text">sun.misc.Unsafe#objectFieldOffset()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sun-misc-Unsafe-staticFieldOffset"><span class="nav-number">3.2.</span> <span class="nav-text">sun.misc.Unsafe#staticFieldOffset()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sun-misc-Unsafe-getObject"><span class="nav-number">3.3.</span> <span class="nav-text">sun.misc.Unsafe#getObject()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sun-misc-Unsafe-staticFieldBase"><span class="nav-number">3.4.</span> <span class="nav-text">sun.misc.Unsafe#staticFieldBase()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sun-misc-Unsafe-allocateInstance"><span class="nav-number">3.5.</span> <span class="nav-text">sun.misc.Unsafe#allocateInstance()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sun-misc-Unsafe-ensureClassInitialized"><span class="nav-number">3.6.</span> <span class="nav-text">sun.misc.Unsafe#ensureClassInitialized()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sun-misc-Unsafe-getAndSetObject"><span class="nav-number">3.7.</span> <span class="nav-text">sun.misc.Unsafe#getAndSetObject()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sun-misc-Unsafe-putObject"><span class="nav-number">3.8.</span> <span class="nav-text">sun.misc.Unsafe#putObject()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sun-misc-Unsafe-getUnsafe"><span class="nav-number">3.9.</span> <span class="nav-text">sun.misc.Unsafe#getUnsafe()</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-Unsafe%E4%BF%AE%E6%94%B9%E7%B1%BB%E6%89%80%E5%B1%9Emodule"><span class="nav-number">4.</span> <span class="nav-text">0x04 Unsafe修改类所属module</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x05-JDK17-module%E7%BB%95%E8%BF%87%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95"><span class="nav-number">5.</span> <span class="nav-text">0x05 JDK17-module绕过工具方法</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">178</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2026/02/01/Java%E4%B9%8BJDK17%E5%BC%BA%E5%B0%81%E8%A3%85-%E9%AB%98%E7%89%88%E6%9C%ACJDK%E5%8F%8D%E5%B0%84%E8%B0%83%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="JDK17强封装&amp;高版本JDK反射调用 | root@wanth3f1ag">
+      <meta itemprop="description" content="学点高级玩意儿">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JDK17强封装&高版本JDK反射调用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-02-01 11:52:26" itemprop="dateCreated datePublished" datetime="2026-02-01T11:52:26+08:00">2026-02-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-02-02 00:34:23" itemprop="dateModified" datetime="2026-02-02T00:34:23+08:00">2026-02-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/javasec/" itemprop="url" rel="index"><span itemprop="name">javasec</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">学点高级玩意儿</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>先浅读一下官方文档：<a target="_blank" rel="noopener" href="https://docs.oracle.com/en/java/javase/17/migrate/migrating-jdk-8-later-jdk-releases.html?utm_source=chatgpt.com#GUID-7744EF96-5899-4FB2-B34E-86D49B2E89B6">https://docs.oracle.com/en/java/javase/17/migrate/migrating-jdk-8-later-jdk-releases.html?utm_source=chatgpt.com#GUID-7744EF96-5899-4FB2-B34E-86D49B2E89B6</a></p>
+<p>在讲17之前先讲讲JDK9之后的模块化</p>
+<h1 id="0x01-JDK9之后的模块化"><a href="#0x01-JDK9之后的模块化" class="headerlink" title="0x01 JDK9之后的模块化"></a>0x01 JDK9之后的模块化</h1><p>只要学过Javasec的都知道jdk8到底有多香，所有 <code>.class</code> 都丢进 classpath并且所有代码都能访问任何类，反射犹如一把万能钥匙一样穿梭在不同类之中。</p>
+<p>在jdk9之前，Java 项目由一堆 JAR 包组成，而每个jar包里面都会有单独的多个class文件，这些class文件分为两种，一种是用户开发自己项目的class，一种是导入各种依赖的class，JVM并不关系JAR包之间的关系，他仅仅只是用来包装class文件的，而JVM也只负责把他们的class文件放入classpath中。这时候一旦漏传了某个依赖JAR，程序在运行时就会抛出<code>ClassNotFoundException</code>报错</p>
+<p>为了处理这个问题，JDK9之后推出了模块化，从起初的模块化到最终的封装内部API都有了明确的说明</p>
+<p><a target="_blank" rel="noopener" href="https://openjdk.org/jeps/200">https://openjdk.org/jeps/200</a></p>
+<p><a target="_blank" rel="noopener" href="https://openjdk.org/jeps/260?utm_source=chatgpt.com">https://openjdk.org/jeps/260?utm_source=chatgpt.com</a></p>
+<p>模块化具体表现在</p>
+<ul>
+<li>如果a.jar依赖于b.jar，那么对于a这个jar就需要写一份依赖说明，让a程序编译运行的时候能够直接定位到b.jar。这个功能主要就是通过<code>module-info.class</code>中的定义的。</li>
+<li>模块外的代码只能访问该模块导出的包的公共和保护元素，并且保护元素只能从定义它们的类的子类中访问。</li>
+</ul>
+<p>在模块化之后，访问权限被严格限制在模块内部。除非目标模块在 <code>module-info</code> 中显式 <code>exports</code>或<code>opens</code>了某个包，否则外部无法通过反射访问其中的类，甚至连<code>setAccessible(true)</code>都会失效。 这直接导致了大量依赖私有属性修改的 Gadget 链在高版本 JDK 中断裂。</p>
+<p>并且java启动器选项 <code>--illegal-access</code> 在 JDK 9 到 JDK 16 中允许反射访问 JDK 内部。您可以指定以下参数：</p>
+<ul>
+<li><code>--illegal-access=permit</code>：允许类路径上的代码反射访问 JDK 8 中存在的 java.* 包的内部。对任何此类元素的第一次反射访问操作会发出警告，但在此之后不再发出警告。</li>
+<li><code>--illegal-access=warn</code>：对每个非法反射访问操作发出警告消息。</li>
+<li><code>--illegal-access=debug</code>：对每个非法反射访问操作显示警告消息和堆栈跟踪。</li>
+<li><code>--illegal-access=deny</code>：禁用所有非法反射访问操作，除非由其他命令行选项启用，例如 –add-opens。</li>
+</ul>
+<h1 id="0x02-JDK17的强封装"><a href="#0x02-JDK17的强封装" class="headerlink" title="0x02 JDK17的强封装"></a>0x02 JDK17的强封装</h1><p>官方文档中提到了JDK17的Strong Encapsulation，一些工具和库使用反射来访问JDK中仅限于内部使用的部分，JDK的强封装主要是针对java.*API的非公共字段和方法，如果利用反射调用就会抛出InaccessibleObjectException。</p>
+<p><strong>为了帮助迁移，JDK 9至JDK 16允许这种反射继续进行，但会发出关于非法反射访问的警告。JDK 17具有强封装性，因此默认情况下不再允许这种反射。</strong></p>
+<p>写个Demo看看</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javassist.ClassPool;</span><br><span class="line"><span class="keyword">import</span> javassist.CtClass;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Demo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">ClassPool</span> <span class="variable">pool</span> <span class="operator">=</span> ClassPool.getDefault();</span><br><span class="line">        <span class="type">CtClass</span> <span class="variable">evilClass</span> <span class="operator">=</span> pool.get(<span class="string">&quot;org.example.Evil&quot;</span>);</span><br><span class="line">        evilClass.setName(<span class="string">&quot;Evil&quot;</span> + System.nanoTime());</span><br><span class="line">        <span class="type">byte</span>[] bytecodes = evilClass.toBytecode();</span><br><span class="line"></span><br><span class="line">        Method defineClass= ClassLoader.class.getDeclaredMethod(<span class="string">&quot;defineClass&quot;</span>, String.class, <span class="type">byte</span>[].class, <span class="type">int</span>.class, <span class="type">int</span>.class);</span><br><span class="line">        defineClass.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        defineClass.invoke(ClassLoader.getSystemClassLoader(), <span class="string">&quot;attack&quot;</span>, bytecodes, <span class="number">0</span>, bytecodes.length);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们的恶意类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Evil</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行Demo后出现报错</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260201132155868.png" alt="image-20260201132155868"></p>
+<p>具体问题出现在setAccessible中，我们看看setAccessible的逻辑变成什么样了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAccessible</span><span class="params">(<span class="type">boolean</span> flag)</span> &#123;</span><br><span class="line">    AccessibleObject.checkPermission();</span><br><span class="line">    <span class="keyword">if</span> (flag) checkCanSetAccessible(Reflection.getCallerClass());</span><br><span class="line">    setAccessible0(flag);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>反观JDK8</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAccessible</span><span class="params">(<span class="type">boolean</span> flag)</span> <span class="keyword">throws</span> SecurityException &#123;</span><br><span class="line">    <span class="type">SecurityManager</span> <span class="variable">sm</span> <span class="operator">=</span> System.getSecurityManager();</span><br><span class="line">    <span class="keyword">if</span> (sm != <span class="literal">null</span>) sm.checkPermission(ACCESS_PERMISSION);</span><br><span class="line">    setAccessible0(<span class="built_in">this</span>, flag);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>JDK17的setAccessible0就是将当前反射获取到的变量中<code>override</code>属性值设置为true，JDK8和JDK17近乎一样</p>
+<p>jdk17</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="title function_">setAccessible0</span><span class="params">(<span class="type">boolean</span> flag)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.override = flag;</span><br><span class="line">    <span class="keyword">return</span> flag;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>主要问题是在checkCanSetAccessible中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="type">boolean</span> <span class="title function_">checkCanSetAccessible</span><span class="params">(Class&lt;?&gt; caller,</span></span><br><span class="line"><span class="params">                                      Class&lt;?&gt; declaringClass,</span></span><br><span class="line"><span class="params">                                      <span class="type">boolean</span> throwExceptionIfDenied)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (caller == MethodHandle.class) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalCallerException</span>();   <span class="comment">// should not happen</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//调用者所在模块</span></span><br><span class="line">    <span class="type">Module</span> <span class="variable">callerModule</span> <span class="operator">=</span> caller.getModule();</span><br><span class="line">    <span class="comment">//被调用的变量所在模块</span></span><br><span class="line">    <span class="type">Module</span> <span class="variable">declaringModule</span> <span class="operator">=</span> declaringClass.getModule();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//如果被调用的变量所在模块和调用者所在模块相同，返回true</span></span><br><span class="line">    <span class="keyword">if</span> (callerModule == declaringModule) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="comment">//如果调用者所在模块和object所在模块相同，返回true</span></span><br><span class="line">    <span class="keyword">if</span> (callerModule == Object.class.getModule()) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="comment">//做了一个JDK8的兼容，如果被调用的模块是未命名模块，返回true</span></span><br><span class="line">    <span class="keyword">if</span> (!declaringModule.isNamed()) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">String</span> <span class="variable">pn</span> <span class="operator">=</span> declaringClass.getPackageName();</span><br><span class="line">    <span class="type">int</span> modifiers;</span><br><span class="line">    <span class="comment">//判断当前反射对象到底是哪一种</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">this</span> <span class="keyword">instanceof</span> Executable) &#123;</span><br><span class="line">        <span class="comment">//Method 或 Constructor（Executable 是它们的共同父接口，Java 8+ 引入）</span></span><br><span class="line">        modifiers = ((Executable) <span class="built_in">this</span>).getModifiers();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//Field字段</span></span><br><span class="line">        modifiers = ((Field) <span class="built_in">this</span>).getModifiers();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// class is public and package is exported to caller</span></span><br><span class="line">    <span class="comment">//如果类是public公共类并且包被exported给调用者</span></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">isClassPublic</span> <span class="operator">=</span> Modifier.isPublic(declaringClass.getModifiers());</span><br><span class="line">    <span class="keyword">if</span> (isClassPublic &amp;&amp; declaringModule.isExported(pn, callerModule)) &#123;</span><br><span class="line">        <span class="comment">// member is public</span></span><br><span class="line">        <span class="comment">//如果成员是public属性直接返回true</span></span><br><span class="line">        <span class="keyword">if</span> (Modifier.isPublic(modifiers)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// member is protected-static</span></span><br><span class="line">        <span class="comment">//如果成员是protected和static，并且调用者类是被调用类的子类，则返回true</span></span><br><span class="line">        <span class="keyword">if</span> (Modifier.isProtected(modifiers)</span><br><span class="line">            &amp;&amp; Modifier.isStatic(modifiers)</span><br><span class="line">            &amp;&amp; isSubclassOf(caller, declaringClass)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// package is open to caller</span></span><br><span class="line">    <span class="comment">//如果包被open给调用者，直接返回true</span></span><br><span class="line">    <span class="keyword">if</span> (declaringModule.isOpen(pn, callerModule)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (throwExceptionIfDenied) &#123;</span><br><span class="line">        <span class="comment">// not accessible</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">msg</span> <span class="operator">=</span> <span class="string">&quot;Unable to make &quot;</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span> <span class="keyword">instanceof</span> Field)</span><br><span class="line">            msg += <span class="string">&quot;field &quot;</span>;</span><br><span class="line">        msg += <span class="built_in">this</span> + <span class="string">&quot; accessible: &quot;</span> + declaringModule + <span class="string">&quot; does not \&quot;&quot;</span>;</span><br><span class="line">        <span class="keyword">if</span> (isClassPublic &amp;&amp; Modifier.isPublic(modifiers))</span><br><span class="line">            msg += <span class="string">&quot;exports&quot;</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            msg += <span class="string">&quot;opens&quot;</span>;</span><br><span class="line">        msg += <span class="string">&quot; &quot;</span> + pn + <span class="string">&quot;\&quot; to &quot;</span> + callerModule;</span><br><span class="line">        <span class="type">InaccessibleObjectException</span> <span class="variable">e</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InaccessibleObjectException</span>(msg);</span><br><span class="line">        <span class="keyword">if</span> (printStackTraceWhenAccessFails()) &#123;</span><br><span class="line">            e.printStackTrace(System.err);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">throw</span> e;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>未命名模块就是没有 <code>module-info.java</code>，走传统 <strong>classpath</strong>的模块，这是为了兼容java8做的配置</p>
+<p>但是传入的throwExceptionIfDenied默认是true</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260201140606084.png" alt="image-20260201140606084"></p>
+<p>也就是说反射 private 和 protected 被完全堵死了，那么有什么绕过的方法吗？那必然是有的</p>
+<p>总结一下返回true的几种方法：</p>
+<ul>
+<li>被调用的变量所在模块和调用者所在模块相同</li>
+<li>调用者所在模块和object所在模块相同</li>
+<li>被调用的模块是未命名模块</li>
+<li>public公共类并且包被exported给调用者，里面分为几种</li>
+</ul>
+<ol>
+<li>反射的成员是public属性</li>
+<li>反射的成员是protected受保护和static静态，并且调用者类是被调用类的子类</li>
+<li>被调用的类所在模块被open给调用者所在模块</li>
+</ol>
+<p>后面跟成员有关的方法是我们无法控制的，但对于前面三种方法还是有操作空间的</p>
+<h1 id="0x03-Unsafe常用类方法"><a href="#0x03-Unsafe常用类方法" class="headerlink" title="0x03 Unsafe常用类方法"></a>0x03 Unsafe常用类方法</h1><p>过Unsafe模块进行目标类所在moule进行修改，整体的思路为：获取Object中module属性的内存偏移量，之后再通过unsafe中方法，将Object的module属性set进我们当前操作类的module属性中。</p>
+<p>先介绍Unsafe中的几个常见的方法</p>
+<p>我们看到sun.misc.Unsafe#objectFieldOffset()</p>
+<h2 id="sun-misc-Unsafe-objectFieldOffset"><a href="#sun-misc-Unsafe-objectFieldOffset" class="headerlink" title="sun.misc.Unsafe#objectFieldOffset()"></a>sun.misc.Unsafe#objectFieldOffset()</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ForceInline</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">long</span> <span class="title function_">objectFieldOffset</span><span class="params">(Field f)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (f == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    Class&lt;?&gt; declaringClass = f.getDeclaringClass();</span><br><span class="line">    <span class="keyword">if</span> (declaringClass.isHidden()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedOperationException</span>(<span class="string">&quot;can&#x27;t get field offset on a hidden class: &quot;</span> + f);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (declaringClass.isRecord()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedOperationException</span>(<span class="string">&quot;can&#x27;t get field offset on a record class: &quot;</span> + f);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> theInternalUnsafe.objectFieldOffset(f);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>传入一个反射的 <code>Field</code> 对象（非静态字段），会返回该字段在对象内存布局中的偏移量 (offset)</p>
+<h2 id="sun-misc-Unsafe-staticFieldOffset"><a href="#sun-misc-Unsafe-staticFieldOffset" class="headerlink" title="sun.misc.Unsafe#staticFieldOffset()"></a>sun.misc.Unsafe#staticFieldOffset()</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ForceInline</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">long</span> <span class="title function_">staticFieldOffset</span><span class="params">(Field f)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (f == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    Class&lt;?&gt; declaringClass = f.getDeclaringClass();</span><br><span class="line">    <span class="keyword">if</span> (declaringClass.isHidden()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedOperationException</span>(<span class="string">&quot;can&#x27;t get field offset on a hidden class: &quot;</span> + f);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (declaringClass.isRecord()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedOperationException</span>(<span class="string">&quot;can&#x27;t get field offset on a record class: &quot;</span> + f);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> theInternalUnsafe.staticFieldOffset(f);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>返回静态字段的内存偏移值offet</p>
+<h2 id="sun-misc-Unsafe-getObject"><a href="#sun-misc-Unsafe-getObject" class="headerlink" title="sun.misc.Unsafe#getObject()"></a>sun.misc.Unsafe#getObject()</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ForceInline</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">getObject</span><span class="params">(Object o, <span class="type">long</span> offset)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> theInternalUnsafe.getReference(o, offset);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据对象和偏移值获取到该地址处存放的 <strong>对象引用</strong></p>
+<h2 id="sun-misc-Unsafe-staticFieldBase"><a href="#sun-misc-Unsafe-staticFieldBase" class="headerlink" title="sun.misc.Unsafe#staticFieldBase()"></a>sun.misc.Unsafe#staticFieldBase()</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ForceInline</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">staticFieldBase</span><span class="params">(Field f)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (f == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    Class&lt;?&gt; declaringClass = f.getDeclaringClass();</span><br><span class="line">    <span class="keyword">if</span> (declaringClass.isHidden()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedOperationException</span>(<span class="string">&quot;can&#x27;t get base address on a hidden class: &quot;</span> + f);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (declaringClass.isRecord()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedOperationException</span>(<span class="string">&quot;can&#x27;t get base address on a record class: &quot;</span> + f);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> theInternalUnsafe.staticFieldBase(f);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>返回静态字段所属的基准对象（base）</p>
+<h2 id="sun-misc-Unsafe-allocateInstance"><a href="#sun-misc-Unsafe-allocateInstance" class="headerlink" title="sun.misc.Unsafe#allocateInstance()"></a>sun.misc.Unsafe#allocateInstance()</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ForceInline</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">allocateInstance</span><span class="params">(Class&lt;?&gt; cls)</span></span><br><span class="line">    <span class="keyword">throws</span> InstantiationException &#123;</span><br><span class="line">    <span class="keyword">return</span> theInternalUnsafe.allocateInstance(cls);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>分配内存并返回一个类的实例，但不执行任何构造函数</p>
+<h2 id="sun-misc-Unsafe-ensureClassInitialized"><a href="#sun-misc-Unsafe-ensureClassInitialized" class="headerlink" title="sun.misc.Unsafe#ensureClassInitialized()"></a>sun.misc.Unsafe#ensureClassInitialized()</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Deprecated(since = &quot;15&quot;, forRemoval = true)</span></span><br><span class="line"><span class="meta">@ForceInline</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">ensureClassInitialized</span><span class="params">(Class&lt;?&gt; c)</span> &#123;</span><br><span class="line">    theInternalUnsafe.ensureClassInitialized(c);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>强制执行初始化类，会执行里面的<code>static&#123;&#125;</code>静态代码块</p>
+<h2 id="sun-misc-Unsafe-getAndSetObject"><a href="#sun-misc-Unsafe-getAndSetObject" class="headerlink" title="sun.misc.Unsafe#getAndSetObject()"></a>sun.misc.Unsafe#getAndSetObject()</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ForceInline</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> Object <span class="title function_">getAndSetObject</span><span class="params">(Object o, <span class="type">long</span> offset, Object newValue)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> theInternalUnsafe.getAndSetReference(o, offset, newValue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据内存偏移量以及具体值，来给指定对象的内存空间进行变量设置。同时也会返回旧的值</p>
+<h2 id="sun-misc-Unsafe-putObject"><a href="#sun-misc-Unsafe-putObject" class="headerlink" title="sun.misc.Unsafe#putObject()"></a>sun.misc.Unsafe#putObject()</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ForceInline</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">putObject</span><span class="params">(Object o, <span class="type">long</span> offset, Object x)</span> &#123;</span><br><span class="line">    theInternalUnsafe.putReference(o, offset, x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>直接把一个对象引用，写到 <code>o + offset</code> 指向的内存位置上，有点类似于<code>Field.set(obj, newValue)</code>。</p>
+<h2 id="sun-misc-Unsafe-getUnsafe"><a href="#sun-misc-Unsafe-getUnsafe" class="headerlink" title="sun.misc.Unsafe#getUnsafe()"></a>sun.misc.Unsafe#getUnsafe()</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@CallerSensitive</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Unsafe <span class="title function_">getUnsafe</span><span class="params">()</span> &#123;</span><br><span class="line">    Class&lt;?&gt; caller = Reflection.getCallerClass();</span><br><span class="line">    <span class="keyword">if</span> (!VM.isSystemDomainLoader(caller.getClassLoader()))</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Unsafe&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> theUnsafe;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在普通应用代码里直接调用<code>Unsafe.getUnsafe()</code>会抛出 SecurityException，需要反射调用</p>
+<h1 id="0x04-Unsafe修改类所属module"><a href="#0x04-Unsafe修改类所属module" class="headerlink" title="0x04 Unsafe修改类所属module"></a>0x04 Unsafe修改类所属module</h1><p>根据上面的方法，我们可以试着写一下绕过的步骤</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javassist.ClassPool;</span><br><span class="line"><span class="keyword">import</span> javassist.CtClass;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">import</span> sun.misc.Unsafe;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Demo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">ClassPool</span> <span class="variable">pool</span> <span class="operator">=</span> ClassPool.getDefault();</span><br><span class="line">        <span class="type">CtClass</span> <span class="variable">evilClass</span> <span class="operator">=</span> pool.get(<span class="string">&quot;org.example.Evil&quot;</span>);</span><br><span class="line">        evilClass.setName(<span class="string">&quot;Evil&quot;</span> + System.nanoTime());</span><br><span class="line">        <span class="type">byte</span>[] bytecodes = evilClass.toBytecode();</span><br><span class="line"></span><br><span class="line"><span class="comment">//        Class UnsafeClass = Class.forName(&quot;sun.misc.unsafe&quot;);</span></span><br><span class="line">        <span class="type">Field</span> <span class="variable">f</span> <span class="operator">=</span> Unsafe.class.getDeclaredField(<span class="string">&quot;theUnsafe&quot;</span>);</span><br><span class="line">        f.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        Unsafe unsafe= (Unsafe) f.get(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">Module</span> <span class="variable">ObjectModule</span> <span class="operator">=</span> Object.class.getModule();</span><br><span class="line">        <span class="type">Class</span> <span class="variable">currentClass</span> <span class="operator">=</span> Demo.class;</span><br><span class="line">        <span class="type">long</span> <span class="variable">addr</span> <span class="operator">=</span> unsafe.objectFieldOffset(Class.class.getDeclaredField(<span class="string">&quot;module&quot;</span>));</span><br><span class="line">        unsafe.putObject(currentClass, addr, ObjectModule);</span><br><span class="line"></span><br><span class="line">        Method defineClass= ClassLoader.class.getDeclaredMethod(<span class="string">&quot;defineClass&quot;</span>, String.class, <span class="type">byte</span>[].class, <span class="type">int</span>.class, <span class="type">int</span>.class);</span><br><span class="line">        defineClass.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        ((Class)defineClass.invoke(ClassLoader.getSystemClassLoader(), evilClass.getName(), bytecodes, <span class="number">0</span>, bytecodes.length)).newInstance();;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260201143927419.png" alt="image-20260201143927419"></p>
+<p>因为所有的类都是继承自Class类的，并且module属性值不是某一个特定类的特定属性值，而是Class类中定义的，用于给所有类都设置的一段属性值。所以可以先获取Class类在内存中的偏移值，再通过设置将调用类绑定到java.base类的位置上，从而实现伪装的情况</p>
+<p>整合成一个工具方法</p>
+<h1 id="0x05-JDK17-module绕过工具方法"><a href="#0x05-JDK17-module绕过工具方法" class="headerlink" title="0x05 JDK17-module绕过工具方法"></a>0x05 JDK17-module绕过工具方法</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">patchModule</span><span class="params">(Class&lt;?&gt; classname)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="type">Field</span> <span class="variable">f</span> <span class="operator">=</span> Unsafe.class.getDeclaredField(<span class="string">&quot;theUnsafe&quot;</span>);</span><br><span class="line">        f.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        Unsafe unsafe= (Unsafe) f.get(<span class="literal">null</span>);</span><br><span class="line">        <span class="type">Module</span> <span class="variable">ObjectModule</span> <span class="operator">=</span> Object.class.getModule();</span><br><span class="line">        <span class="type">long</span> <span class="variable">addr</span> <span class="operator">=</span> unsafe.objectFieldOffset(Class.class.getDeclaredField(<span class="string">&quot;module&quot;</span>));</span><br><span class="line">        unsafe.putObject(classname, addr, ObjectModule);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>给一个更完整的吧：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Method <span class="title function_">getMethod</span><span class="params">(Class clazz, String methodName, Class[]</span></span><br><span class="line"><span class="params">            params)</span> &#123;</span><br><span class="line">        <span class="type">Method</span> <span class="variable">method</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">while</span> (clazz!=<span class="literal">null</span>)&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                method = clazz.getDeclaredMethod(methodName,params);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;<span class="keyword">catch</span> (NoSuchMethodException e)&#123;</span><br><span class="line">                clazz = clazz.getSuperclass();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> method;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Unsafe <span class="title function_">getUnsafe</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">Unsafe</span> <span class="variable">unsafe</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Field</span> <span class="variable">field</span> <span class="operator">=</span> Unsafe.class.getDeclaredField(<span class="string">&quot;theUnsafe&quot;</span>);</span><br><span class="line">            field.setAccessible(<span class="literal">true</span>);</span><br><span class="line">            unsafe = (Unsafe) field.get(<span class="literal">null</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">AssertionError</span>(e);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> unsafe;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">patchModule</span><span class="params">(ArrayList&lt;Class&gt; classes)</span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Unsafe</span> <span class="variable">unsafe</span> <span class="operator">=</span> getUnsafe();</span><br><span class="line">            <span class="type">Class</span> <span class="variable">currentClass</span> <span class="operator">=</span> <span class="built_in">this</span>.getClass();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="type">Method</span> <span class="variable">getModuleMethod</span> <span class="operator">=</span> getMethod(Class.class, <span class="string">&quot;getModule&quot;</span>, <span class="keyword">new</span></span><br><span class="line">                        <span class="title class_">Class</span>[<span class="number">0</span>]);</span><br><span class="line">                <span class="keyword">if</span> (getModuleMethod != <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">for</span> (Class aClass : classes) &#123;</span><br><span class="line">                        <span class="type">Object</span> <span class="variable">targetModule</span> <span class="operator">=</span> getModuleMethod.invoke(aClass, <span class="keyword">new</span></span><br><span class="line">                                <span class="title class_">Object</span>[]&#123;&#125;);</span><br><span class="line">                        unsafe.getAndSetObject(currentClass,</span><br><span class="line">                                unsafe.objectFieldOffset(Class.class.getDeclaredField(<span class="string">&quot;module&quot;</span>)), targetModule);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2026/02/01/Java%E4%B9%8BJDK17%E5%BC%BA%E5%B0%81%E8%A3%85-%E9%AB%98%E7%89%88%E6%9C%ACJDK%E5%8F%8D%E5%B0%84%E8%B0%83%E7%94%A8/" title="JDK17强封装&amp;高版本JDK反射调用">https://wanth3f1ag.top/2026/02/01/Java之JDK17强封装-高版本JDK反射调用/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/javasec/" rel="tag"># javasec</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/01/31/VNCTF2026/" rel="prev" title="VNCTF2026">
+                  <i class="fa fa-angle-left"></i> VNCTF2026
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3.4m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">51:48</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
