@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="废话比较多，但对初学者很友好，尽可能地深入代码层去分析原理和过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java反序列化之JNDI基础">
+<meta property="og:url" content="https://wanth3f1ag.top/2026/02/03/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BJNDI%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="废话比较多，但对初学者很友好，尽可能地深入代码层去分析原理和过程">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/20200417190150188.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/l5qgw3jccj.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260203225217660.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260203225519827.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260203225702561.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260203231631980.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260203231906753.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260203232233811.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204095648190.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204095908978.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204100145244.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204101156213.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204101802422.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204102420677.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204102501559.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6-1-1024x255.png">
+<meta property="article:published_time" content="2026-02-03T07:11:30.000Z">
+<meta property="article:modified_time" content="2026-02-04T03:04:17.613Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="javasec">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/20200417190150188.png">
+
+
+<link rel="canonical" href="https://wanth3f1ag.top/2026/02/03/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BJNDI%E5%9F%BA%E7%A1%80/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2026/02/03/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BJNDI%E5%9F%BA%E7%A1%80/","path":"2026/02/03/Java反序列化之JNDI基础/","title":"Java反序列化之JNDI基础"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Java反序列化之JNDI基础 | root@wanth3f1ag</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-1-%E4%BB%80%E4%B9%88%E6%98%AF-jndi"><span class="nav-number">1.</span> <span class="nav-text">0x01-1 什么是 jndi</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-2-%E4%BB%80%E4%B9%88%E6%98%AF%E5%91%BD%E5%90%8D%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.</span> <span class="nav-text">0x01-2 什么是命名服务</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-3-%E4%BB%80%E4%B9%88%E6%98%AF%E7%9B%AE%E5%BD%95%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.</span> <span class="nav-text">0x01-3 什么是目录服务</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-JNDI-%E6%9E%B6%E6%9E%84"><span class="nav-number">4.</span> <span class="nav-text">0x02 JNDI 架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-JNDI%E7%9A%84%E5%87%A0%E4%B8%AA%E5%8C%85"><span class="nav-number">5.</span> <span class="nav-text">0x03 JNDI的几个包</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-JNDI-%E7%9A%84%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">6.</span> <span class="nav-text">0x04 JNDI 的利用方式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JNDI-RMI"><span class="nav-number">6.1.</span> <span class="nav-text">JNDI+RMI</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lookup%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">6.1.1.</span> <span class="nav-text">lookup代码分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x05-JNDI%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">7.</span> <span class="nav-text">0x05 JNDI的工作流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96Context%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">7.1.</span> <span class="nav-text">初始化Context的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">7.1.1.</span> <span class="nav-text">初始化代码分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AFContext%E4%B8%8E%E6%9C%8D%E5%8A%A1%E4%BA%A4%E4%BA%92"><span class="nav-number">7.2.</span> <span class="nav-text">客户端Context与服务交互</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x06-JNDI%E5%91%BD%E5%90%8D%E5%BC%95%E7%94%A8%E6%9C%BA%E5%88%B6"><span class="nav-number">8.</span> <span class="nav-text">0x06 JNDI命名引用机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JNDI%E4%B8%ADReference%E7%B1%BB"><span class="nav-number">8.1.</span> <span class="nav-text">JNDI中Reference类</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2026/02/03/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BJNDI%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Java反序列化之JNDI基础 | root@wanth3f1ag">
+      <meta itemprop="description" content="废话比较多，但对初学者很友好，尽可能地深入代码层去分析原理和过程">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java反序列化之JNDI基础
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-02-03 15:11:30" itemprop="dateCreated datePublished" datetime="2026-02-03T15:11:30+08:00">2026-02-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-02-04 11:04:17" itemprop="dateModified" datetime="2026-02-04T11:04:17+08:00">2026-02-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/javasec/" itemprop="url" rel="index"><span itemprop="name">javasec</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">废话比较多，但对初学者很友好，尽可能地深入代码层去分析原理和过程</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>依旧先学基础，毕竟JNDI的内容比较多</p>
+<p>md本来想翻一下官方文档的，结果官方文档没了，好神奇</p>
+<h1 id="0x01-1-什么是-jndi"><a href="#0x01-1-什么是-jndi" class="headerlink" title="0x01-1 什么是 jndi"></a>0x01-1 什么是 jndi</h1><p>JNDI（Java Naming and Directory Interface，Java命名和目录接口）是SUN公司提供的一种标准的Java命名系统接口。JNDI提供统一的客户端API，并由管理者将JNDI API映射为特定的<strong>命名服务</strong>和<strong>目录服务</strong>，为开发人员查找和访问各种资源提供了统一的通用接口。简单来说，开发人员通过合理的使用JNDI，能够让用户通过统一的方式访问获取网络上的各种资源和服务。</p>
+<p>JNDI主要提供以下四种服务：</p>
+<ul>
+<li>LDAP：轻量级目录访问协议</li>
+<li>通用对象请求代理架构(CORBA)；通用对象服务(COS)名称服务</li>
+<li>Java 远程方法调用(RMI) 注册表</li>
+<li>DNS 服务</li>
+</ul>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/20200417190150188.png" alt="img"></p>
+<p>总的来说：JNDI提供了一个统一的接口来访问各种命名和目录服务，比如DNS、LDAP、RMI注册表、CORBA命名服务等。它允许Java应用程序通过名称来查找和访问数据和对象。</p>
+<h1 id="0x01-2-什么是命名服务"><a href="#0x01-2-什么是命名服务" class="headerlink" title="0x01-2 什么是命名服务"></a>0x01-2 什么是命名服务</h1><p>简单来说就是通过名称来查找实际对象的服务。一个名称对应一个对象，在命名服务中，并不需要关注对象的具体细节，只需要关注对象映射的名称即可。比如我们的RMI协议，通过名称来查找并调用具体的远程对象方法，亦或者是DNS协议，通过域名来查找具体的IP地址。这些都可以叫做命名服务。</p>
+<p>举个生活中的例子，比如我们的联系人电话簿，一个名字（名称）对应一个电话（对象），我们可以根据名字去找到对应的电话，此时这个电话簿就是命名服务。</p>
+<h1 id="0x01-3-什么是目录服务"><a href="#0x01-3-什么是目录服务" class="headerlink" title="0x01-3 什么是目录服务"></a>0x01-3 什么是目录服务</h1><p>其实就是命名服务的plus版，它不仅限于在名称上查找对象，还能给对象附加属性（Attributes），通过属性的值进行查找对象</p>
+<p><strong>常见的目录服务：</strong></p>
+<ul>
+<li><strong>LDAP</strong> (Lightweight Directory Access Protocol) - 最常用的目录服务协议</li>
+<li><strong>Active Directory</strong> (微软) - Windows域环境中的目录服务</li>
+<li><strong>Apache Directory Server</strong></li>
+<li><strong>OpenLDAP</strong></li>
+</ul>
+<p>依旧是上面的例子，如果我们给电话簿中的联系人加上一些属性，例如某某公司某某员工，此时又可以多出一种检索的方法。</p>
+<h1 id="0x02-JNDI-架构"><a href="#0x02-JNDI-架构" class="headerlink" title="0x02 JNDI 架构"></a>0x02 JNDI 架构</h1><p>JNDI 架构主要包括两部分，即Java的应用层接口和SPI，如图所示</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/l5qgw3jccj.png" alt="img"></p>
+<p>SPI（Service Provider Interface），即服务供应接口，主要作用是为底层的具体目录服务提供统一接口，从而实现目录服务的可插拔式安装。</p>
+<h1 id="0x03-JNDI的几个包"><a href="#0x03-JNDI的几个包" class="headerlink" title="0x03 JNDI的几个包"></a>0x03 JNDI的几个包</h1><p>基于上面所提到的JNDI的四种服务，可以对应四个包外加一个主包</p>
+<ul>
+<li><code>javax.naming</code>：主要用于命名操作，它包含了命名服务的类和接口，该包定义了Context接口和InitialContext类</li>
+<li><code>javax.naming.directory</code>：主要用于目录操作，它定义了DirContext接口和InitialDir-Context类</li>
+<li><code>javax.naming.event</code>：在命名目录服务器中请求事件通知</li>
+<li><code>javax.naming.ldap</code>：提供LDAP服务支持</li>
+<li><code>javax.naming.spi</code>：允许动态插入不同实现，为不同命名目录服务供应商的开发人员提供开发和实现的途径，以便应用程序通过JNDI可以访问相关服务</li>
+</ul>
+<p><code>javax.naming</code>是JNDI的核心包，包含访问命名服务的基本类和接口，比如Context命名上下文接口，Name通用名称的接口，Bindings名称到对象的绑定等，其中<strong>InitialContext</strong> 为初始化上下文的类</p>
+<p>举个简单的例子</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.naming.*;</span><br><span class="line"></span><br><span class="line"><span class="type">Context</span> <span class="variable">ctx</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line"><span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> ctx.lookup(<span class="string">&quot;myObject&quot;</span>);</span><br><span class="line">ctx.bind(<span class="string">&quot;newName&quot;</span>, myObject);</span><br><span class="line">ctx.unbind(<span class="string">&quot;oldName&quot;</span>);</span><br><span class="line">ctx.close();</span><br></pre></td></tr></table></figure>
+
+<p>一般的应用也就是先 <code>new InitialContext()</code>，再调用 API 即可</p>
+<p>Jndi 在对不同服务进行调用的时候，会去调用 xxxContext 这个类，比如调用 RMI 服务的时候就是调的 RegistryContext，这一点是很重要的</p>
+<h1 id="0x04-JNDI-的利用方式"><a href="#0x04-JNDI-的利用方式" class="headerlink" title="0x04 JNDI 的利用方式"></a>0x04 JNDI 的利用方式</h1><h2 id="JNDI-RMI"><a href="#JNDI-RMI" class="headerlink" title="JNDI+RMI"></a>JNDI+RMI</h2><p>JDK版本为<code>JDK8u_65</code></p>
+<p>首先肯定是本地需要起一个JNDI的RMI服务</p>
+<p>RMI之前没细学过，先参考一下drun1baby师傅的文章：<a target="_blank" rel="noopener" href="https://drun1baby.top/2022/07/19/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BRMI%E4%B8%93%E9%A2%9801-RMI%E5%9F%BA%E7%A1%80/">https://drun1baby.top/2022/07/19/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BRMI%E4%B8%93%E9%A2%9801-RMI%E5%9F%BA%E7%A1%80/</a></p>
+<p>写一个RMI远程接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.Remote;</span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">RemoteObj</span> <span class="keyword">extends</span> <span class="title class_">Remote</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">(String words)</span> <span class="keyword">throws</span> RemoteException;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>此远程接口要求作用域为 public；</li>
+<li>继承 Remote 接口；</li>
+<li>让其中的接口方法抛出异常</li>
+</ul>
+<p>然后写接口的实现类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.server.UnicastRemoteObject;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RemoteObjImpl</span> <span class="keyword">extends</span> <span class="title class_">UnicastRemoteObject</span> <span class="keyword">implements</span> <span class="title class_">RemoteObj</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RemoteObjImpl</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException &#123;</span><br><span class="line"><span class="comment">//        UnicastRemoteObject.exportObject(this, 0);// 如果不能继承 UnicastRemoteObject 就需要手工导出</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">(String words)</span> <span class="keyword">throws</span> RemoteException&#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">InputWords</span> <span class="operator">=</span> words.toUpperCase();</span><br><span class="line">        System.out.println(InputWords);</span><br><span class="line">        <span class="keyword">return</span> InputWords;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>实现远程接口</li>
+<li>继承 UnicastRemoteObject 类，用于生成 Stub（存根）和 Skeleton（骨架）。 </li>
+<li>构造函数需要抛出一个RemoteException错误</li>
+<li>实现类中使用的对象必须都可序列化，即都继承<code>java.io.Serializable</code></li>
+</ul>
+<p>然后写JNDI的RMI服务端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.Registry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDIRMIServer</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">//初始化上下文</span></span><br><span class="line">        <span class="type">InitialContext</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">        <span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        <span class="comment">//使用JNDI API进行绑定rmi://localhost:1099/remoteObj</span></span><br><span class="line">        initialContext.rebind(<span class="string">&quot;rmi://localhost:1099/remoteObj&quot;</span>, <span class="keyword">new</span> <span class="title class_">RemoteObjImpl</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行启动服务端</p>
+<p>接着写客户端进行RMI调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDIRMIClient</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">InitialContext</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">        <span class="type">RemoteObj</span> <span class="variable">remoteObj</span> <span class="operator">=</span> (RemoteObj) initialContext.lookup(<span class="string">&quot;rmi://localhost:1099/remoteObj&quot;</span>);</span><br><span class="line">        System.out.println(remoteObj.sayHello(<span class="string">&quot;Hello World&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260203225217660.png" alt="image-20260203225217660"></p>
+<p>需要注意客户端也同样需要实现相同接口并且包名和RMI Server端相同，不然会报错<code>no security manager: RMI class loader disabled</code></p>
+<h3 id="lookup代码分析"><a href="#lookup代码分析" class="headerlink" title="lookup代码分析"></a>lookup代码分析</h3><p>把断点打在<code>javax.naming.InitialContext#lookup(java.lang.String)</code></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260203225519827.png" alt="image-20260203225519827"></p>
+<p>继续跟进里面的lookup方法，来到<code>com.sun.jndi.toolkit.url.GenericURLContext#lookup(java.lang.String)</code></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260203225702561.png" alt="image-20260203225702561"></p>
+<p>这里的getRootURLContext可以跟进去看一下，了解一下这里的上下文解析，跟进来到<code>com.sun.jndi.url.rmi.rmiURLContext#getRootURLContext</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> ResolveResult <span class="title function_">getRootURLContext</span><span class="params">(String var1, Hashtable&lt;?, ?&gt; var2)</span> <span class="keyword">throws</span> NamingException &#123;</span><br><span class="line">    <span class="comment">//检查是否是rmi:格式的URL地址</span></span><br><span class="line">    <span class="keyword">if</span> (!var1.startsWith(<span class="string">&quot;rmi:&quot;</span>)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;rmiURLContext: name is not an RMI URL: &quot;</span> + var1);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">var3</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">var4</span> <span class="operator">=</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">var5</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">var6</span> <span class="operator">=</span> <span class="number">4</span>;</span><br><span class="line">        <span class="comment">//检查rmi:后是否是&quot;//&quot;</span></span><br><span class="line">        <span class="keyword">if</span> (var1.startsWith(<span class="string">&quot;//&quot;</span>, var6)) &#123;</span><br><span class="line">            var6 += <span class="number">2</span>;</span><br><span class="line">            <span class="comment">//查找下一个&quot;/&quot;</span></span><br><span class="line">            <span class="type">int</span> <span class="variable">var7</span> <span class="operator">=</span> var1.indexOf(<span class="number">47</span>, var6);</span><br><span class="line">            <span class="keyword">if</span> (var7 &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                var7 = var1.length();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//支持IPv6地址，查找是否rmi:后是否存在&quot;[&quot;</span></span><br><span class="line">            <span class="keyword">if</span> (var1.startsWith(<span class="string">&quot;[&quot;</span>, var6)) &#123;</span><br><span class="line">                <span class="comment">//查找IPv6地址结尾&quot;]&quot;</span></span><br><span class="line">                <span class="type">int</span> <span class="variable">var8</span> <span class="operator">=</span> var1.indexOf(<span class="number">93</span>, var6 + <span class="number">1</span>);</span><br><span class="line">                <span class="keyword">if</span> (var8 &lt; <span class="number">0</span> || var8 &gt; var7) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;rmiURLContext: name is an Invalid URL: &quot;</span> + var1);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                var3 = var1.substring(var6, var8 + <span class="number">1</span>);<span class="comment">//提取IPv6地址</span></span><br><span class="line">                var6 = var8 + <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">//查找&quot;:&quot;</span></span><br><span class="line">                <span class="type">int</span> <span class="variable">var14</span> <span class="operator">=</span> var1.indexOf(<span class="number">58</span>, var6);</span><br><span class="line">                <span class="type">int</span> <span class="variable">var9</span> <span class="operator">=</span> var14 &gt;= <span class="number">0</span> &amp;&amp; var14 &lt;= var7 ? var14 : var7;</span><br><span class="line">                <span class="keyword">if</span> (var6 &lt; var9) &#123;</span><br><span class="line">                    var3 = var1.substring(var6, var9);<span class="comment">//提取主机名localhost</span></span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                var6 = var9;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (var6 + <span class="number">1</span> &lt; var7) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!var1.startsWith(<span class="string">&quot;:&quot;</span>, var6)) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;rmiURLContext: name is an Invalid URL: &quot;</span> + var1);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                ++var6;<span class="comment">// 跳过 &#x27;:&#x27;</span></span><br><span class="line">                var4 = Integer.parseInt(var1.substring(var6, var7));<span class="comment">//提取端口号并转化成int类型</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            var6 = var7;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="string">&quot;&quot;</span>.equals(var3)) &#123;</span><br><span class="line">            var3 = <span class="literal">null</span>;<span class="comment">// 空字符串转为null，使用默认localhost</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (var1.startsWith(<span class="string">&quot;/&quot;</span>, var6)) &#123;</span><br><span class="line">            ++var6;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (var6 &lt; var1.length()) &#123;</span><br><span class="line">            var5 = var1.substring(var6);<span class="comment">//提取远程对象名称</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">CompositeName</span> <span class="variable">var13</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CompositeName</span>();</span><br><span class="line">        <span class="keyword">if</span> (var5 != <span class="literal">null</span>) &#123;</span><br><span class="line">            var13.add(var5);<span class="comment">//将对象名添加到复合名称中</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">RegistryContext</span> <span class="variable">var15</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RegistryContext</span>(var3, var4, var2);<span class="comment">//创建RMI注册表上下文</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ResolveResult</span>(var15, var13);<span class="comment">//返回ResolveResult，包含上下文和</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>是JNDI RMI URL解析器，负责解析RMI URL并创建相应的注册表上下文。最后会返回ResolveResult</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260203231631980.png" alt="image-20260203231631980"></p>
+<p>这里会调用setter方法设置<code>remainingName</code>字段，但返回后就会调用getter取出resolvedObj和remainingName字段，也就是注册上下文和远程对象</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260203231906753.png" alt="image-20260203231906753"></p>
+<p>随后就再次调用了lookup，并且是RegistryContext类的，也就是 RMI 对应 <code>lookup()</code> 方法的类</p>
+<p>其实从这里就可以判断出来其实<strong>JNDI调用RMI服务的时候本质上也是在调用RMI原生的lookup，尽管API是JNDI的</strong></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260203232233811.png" alt="image-20260203232233811"></p>
+<p>基于上面我们继续来深入JNDI的工作流程</p>
+<h1 id="0x05-JNDI的工作流程"><a href="#0x05-JNDI的工作流程" class="headerlink" title="0x05 JNDI的工作流程"></a>0x05 JNDI的工作流程</h1><h2 id="初始化Context的方法"><a href="#初始化Context的方法" class="headerlink" title="初始化Context的方法"></a>初始化Context的方法</h2><p>初始化上下文Context通常是用InitialContext类进行的，我们看看InitialContext类的构造函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">//构建一个默认的初始上下文</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">InitialContext</span><span class="params">()</span> <span class="keyword">throws</span> NamingException &#123;</span><br><span class="line">       init(<span class="literal">null</span>);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//构造一个初始上下文，并选择不初始化它。</span></span><br><span class="line"><span class="keyword">protected</span> <span class="title function_">InitialContext</span><span class="params">(<span class="type">boolean</span> lazy)</span> <span class="keyword">throws</span> NamingException &#123;</span><br><span class="line">       <span class="keyword">if</span> (!lazy) &#123;</span><br><span class="line">           init(<span class="literal">null</span>);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用提供的环境变量初始化上下文。</span></span><br><span class="line">   <span class="keyword">public</span> <span class="title function_">InitialContext</span><span class="params">(Hashtable&lt;?,?&gt; environment)</span></span><br><span class="line">       <span class="keyword">throws</span> NamingException</span><br><span class="line">   &#123;</span><br><span class="line">       <span class="keyword">if</span> (environment != <span class="literal">null</span>) &#123;</span><br><span class="line">           environment = (Hashtable)environment.clone();</span><br><span class="line">       &#125;</span><br><span class="line">       init(environment);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>第一个很容易理解，就是我们刚刚的例子，重点看看第三个，第三个构造函数可以传入Hashtable类型的环境变量，常见的属性有：</p>
+<ul>
+<li><code>INITIAL_CONTEXT_FACTORY</code>用于指定使用哪个工厂类来创建初始上下文（InitialContext），不同的命名服务需要不同的工厂，例如RMI服务需要<code>com.sun.jndi.rmi.registry.RegistryContextFactory</code>进行初始化上下文</li>
+<li><code>PROVIDER_URL</code>用于指定命名服务提供者的<strong>地址和位置</strong>，例如RMI服务就是<code>rmi://localhost:1099</code></li>
+</ul>
+<p>基于这种方式，我们可以这样进行服务端的构造</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.Registry;</span><br><span class="line"><span class="keyword">import</span> java.util.Hashtable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDIRMIServer</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        Hashtable&lt;String, String&gt; env = <span class="keyword">new</span> <span class="title class_">Hashtable</span>&lt;&gt;();</span><br><span class="line">        env.put(Context.INITIAL_CONTEXT_FACTORY, <span class="string">&quot;com.sun.jndi.rmi.registry.RegistryContextFactory&quot;</span>);</span><br><span class="line">        env.put(Context.PROVIDER_URL, <span class="string">&quot;rmi://localhost:1099&quot;</span>);</span><br><span class="line">        <span class="type">InitialContext</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>(env);</span><br><span class="line"></span><br><span class="line">        <span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        initialContext.rebind(<span class="string">&quot;remoteObj&quot;</span>, <span class="keyword">new</span> <span class="title class_">RemoteObjImpl</span>());</span><br><span class="line">        System.out.println(<span class="string">&quot;Server started&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重绑定中只写对象名，就会使用PROVIDER_URL中的地址</p>
+<p>接下来我们看看具体的初始化细节</p>
+<h3 id="初始化代码分析"><a href="#初始化代码分析" class="headerlink" title="初始化代码分析"></a>初始化代码分析</h3><p>打好断点后调试</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204095648190.png" alt="image-20260204095648190"></p>
+<p>首先就是调用构造函数，通过我们传入的env进行init操作</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204095908978.png" alt="image-20260204095908978"></p>
+<p>如果配置了INITIAL_CONTEXT_FACTORY工厂类就会进入<code>InitialContext#getDefaultInitCtx</code></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204100145244.png" alt="image-20260204100145244"></p>
+<p>因为我们是传入的env，所以不是默认配置，gotDefault为false，进入<code>NamingManager#getInitialContext</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Context <span class="title function_">getInitialContext</span><span class="params">(Hashtable&lt;?,?&gt; env)</span></span><br><span class="line">    <span class="keyword">throws</span> NamingException &#123;</span><br><span class="line">    InitialContextFactory factory;</span><br><span class="line"></span><br><span class="line">    <span class="type">InitialContextFactoryBuilder</span> <span class="variable">builder</span> <span class="operator">=</span> getInitialContextFactoryBuilder();</span><br><span class="line">    <span class="keyword">if</span> (builder == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// No factory installed, use property</span></span><br><span class="line">        <span class="comment">// Get initial context factory class name</span></span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">className</span> <span class="operator">=</span> env != <span class="literal">null</span> ?</span><br><span class="line">            (String)env.get(Context.INITIAL_CONTEXT_FACTORY) : <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (className == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="type">NoInitialContextException</span> <span class="variable">ne</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NoInitialContextException</span>(</span><br><span class="line">                <span class="string">&quot;Need to specify class name in environment or system &quot;</span> +</span><br><span class="line">                <span class="string">&quot;property, or as an applet parameter, or in an &quot;</span> +</span><br><span class="line">                <span class="string">&quot;application resource file:  &quot;</span> +</span><br><span class="line">                Context.INITIAL_CONTEXT_FACTORY);</span><br><span class="line">            <span class="keyword">throw</span> ne;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            factory = (InitialContextFactory)</span><br><span class="line">                helper.loadClass(className).newInstance();</span><br><span class="line">        &#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">            <span class="type">NoInitialContextException</span> <span class="variable">ne</span> <span class="operator">=</span></span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">NoInitialContextException</span>(</span><br><span class="line">                    <span class="string">&quot;Cannot instantiate class: &quot;</span> + className);</span><br><span class="line">            ne.setRootCause(e);</span><br><span class="line">            <span class="keyword">throw</span> ne;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        factory = builder.createInitialContextFactory(env);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> factory.getInitialContext(env);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从环境变量中获取工厂类，并且会反射动态加载并实例化 InitialContextFactory，最终调用的其实是<code>RegistryContextFactory#getInitialContext()</code>方法，通过我们的设置工厂类来初始化上下文Context。</p>
+<p>所以到这里我们就能看出JNDI是如何进行初始化操作的了，会根据是否有设置<code>INITIAL_CONTEXT_FACTORY</code>属性来判断将上下文初始化为何种类型，进而调用该类型上下文所对应的服务。</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6.png" alt="img"></p>
+<p>然后我们来看JNDI是如何处理我们传入的URL远程服务地址和获取服务资源的</p>
+<p>进入<code>RegistryContextFactory#getInitialContext()</code>会调用到<code>URLToContext(getInitCtxURL(var1), var1);</code></p>
+<p>先看到<code>getInitCtxURL</code>函数</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204101156213.png" alt="image-20260204101156213"></p>
+<p>尝试获取属性<code>java.naming.provider.url</code>的值，如果没有就返回<code>rmi:</code>前缀，然后再做后续处理</p>
+<p>接着看到<code>URLToContext</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Context <span class="title function_">URLToContext</span><span class="params">(String var0, Hashtable&lt;?, ?&gt; var1)</span> <span class="keyword">throws</span> NamingException &#123;</span><br><span class="line">    <span class="comment">//创建 RMI URL 上下文工厂</span></span><br><span class="line">    <span class="type">rmiURLContextFactory</span> <span class="variable">var2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">rmiURLContextFactory</span>();</span><br><span class="line">    <span class="comment">//通过工厂获取对象实例</span></span><br><span class="line">    <span class="type">Object</span> <span class="variable">var3</span> <span class="operator">=</span> var2.getObjectInstance(var0, (Name)<span class="literal">null</span>, (Context)<span class="literal">null</span>, var1);</span><br><span class="line">    <span class="comment">//检查返回的对象是否是 Context，是就返回，否则抛出异常</span></span><br><span class="line">    <span class="keyword">if</span> (var3 <span class="keyword">instanceof</span> Context) &#123;</span><br><span class="line">        <span class="keyword">return</span> (Context)var3;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NotContextException</span>(var0);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟进到getObjectInstance获取对象实例中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">getObjectInstance</span><span class="params">(Object var1, Name var2, Context var3, Hashtable&lt;?, ?&gt; var4)</span> <span class="keyword">throws</span> NamingException &#123;</span><br><span class="line">    <span class="keyword">if</span> (var1 == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">rmiURLContext</span>(var4);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (var1 <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">        <span class="keyword">return</span> getUsingURL((String)var1, var4);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (var1 <span class="keyword">instanceof</span> String[]) &#123;</span><br><span class="line">        <span class="keyword">return</span> getUsingURLs((String[])var1, var4);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">ConfigurationException</span>(<span class="string">&quot;rmiURLContextFactory.getObjectInstance: argument must be an RMI URL String or an array of them&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟到<code>rmiURLContextFactory#getUsingURL()</code>中</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204101802422.png" alt="image-20260204101802422"></p>
+<p>发现这里会实例化一个rmiURL上下文并调用了lookup方法，随后进入<code>com.sun.jndi.rmi.registry.RegistryContext#lookup(javax.naming.Name)</code></p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204102420677.png" alt="image-20260204102420677"></p>
+<p>但是getRemainingName在初始化的时候并没有获取到名称，所以并不会调用lookup</p>
+<p>由此可以看到，最终初始化的时候获取了一系列RMI通信过程中所需的资源</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260204102501559.png" alt="image-20260204102501559"></p>
+<p>所以初始化的流程如下图：</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6-1-1024x255.png" alt="img"></p>
+<h2 id="客户端Context与服务交互"><a href="#客户端Context与服务交互" class="headerlink" title="客户端Context与服务交互"></a>客户端Context与服务交互</h2><p>和服务的交互主要是这几种方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将名称绑定到对象</span></span><br><span class="line">bind(Name name, Object obj)</span><br><span class="line"> </span><br><span class="line"><span class="comment">//枚举在命名上下文中绑定的名称以及绑定到它们的对象的类名</span></span><br><span class="line">list(String name) </span><br><span class="line"> </span><br><span class="line"><span class="comment">//检索命名对象</span></span><br><span class="line">lookup(String name)</span><br><span class="line"> </span><br><span class="line"><span class="comment">//将名称重绑定到对象 </span></span><br><span class="line">rebind(String name, Object obj) </span><br><span class="line"> </span><br><span class="line"><span class="comment">//取消绑定命名对象</span></span><br><span class="line">unbind(String name) </span><br></pre></td></tr></table></figure>
+
+<p>这个没啥好说的，都挺简单，具体的lookup刚刚也分析过哈哈哈</p>
+<h1 id="0x06-JNDI命名引用机制"><a href="#0x06-JNDI命名引用机制" class="headerlink" title="0x06 JNDI命名引用机制"></a>0x06 JNDI命名引用机制</h1><h2 id="JNDI中Reference类"><a href="#JNDI中Reference类" class="headerlink" title="JNDI中Reference类"></a>JNDI中Reference类</h2><p><code>Reference</code> 类是 JNDI 引用机制的核心类，它位于 <code>javax.naming</code> 包中。Reference类表示对存在于命名&#x2F;目录系统以外的对象的引用。比如远程获取 RMI 服务上的对象是 Reference 类或者其子类，则在客户端获取到远程对象存根实例时，可以从其他服务器上加载class文件来进行实例化。他不直接存储对象本身，而是存储”重建对象的配方”</p>
+<p>Reference的主要字段</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 目标对象的类名</span></span><br><span class="line"><span class="keyword">protected</span> String className;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 存储属性的向量（引用地址列表）</span></span><br><span class="line"><span class="keyword">protected</span> Vector&lt;RefAddr&gt; addrs;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象工厂的类名</span></span><br><span class="line"><span class="keyword">protected</span> String classFactory;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象工厂的位置（codebase）</span></span><br><span class="line"><span class="keyword">protected</span> String classFactoryLocation;</span><br></pre></td></tr></table></figure>
+
+<p>Reference的构造函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 只指定类名</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">Reference</span><span class="params">(String className)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定类名和工厂类名</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">Reference</span><span class="params">(String className, String factory, String factoryLocation)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定类名和引用地址</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">Reference</span><span class="params">(String className, RefAddr addr)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定类名、引用地址、工厂类名和位置</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">Reference</span><span class="params">(String className, RefAddr addr, String factory, String factoryLocation)</span></span><br></pre></td></tr></table></figure>
+
+<p>有点像RMI中Codebase的功能？当在本地找不到所调用的类时，我们可以通过Reference类来调用位于远程服务器的类。</p>
+
+    </div>
+
+    
+    
+    
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2026/02/03/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BJNDI%E5%9F%BA%E7%A1%80/" title="Java反序列化之JNDI基础">https://wanth3f1ag.top/2026/02/03/Java反序列化之JNDI基础/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/javasec/" rel="tag"># javasec</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/02/02/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8B%E9%AB%98%E7%89%88%E6%9C%AC%E8%A7%A6%E5%8F%91toString%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/" rel="prev" title="高版本触发toString的几种方法">
+                  <i class="fa fa-angle-left"></i> 高版本触发toString的几种方法
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3.4m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">52:06</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
