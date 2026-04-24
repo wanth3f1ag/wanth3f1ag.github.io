@@ -91,16 +91,18 @@
             {{- $menu_item_url := (cond (strings.HasSuffix .URL "/") .URL (printf "%s/" .URL) ) | absLangURL }}
             {{- $page_url:= $currentPage.Permalink | absLangURL }}
             {{- $is_search := eq $item_key "search" }}
-            <li>
+            <li{{ if $is_search }} class="menu-search-item"{{ end }}>
                 {{- if $is_search }}
                 <button
                     type="button"
                     class="menu-search-button"
                     title="{{ .Title | default .Name }} (Ctrl + K)"
                     data-search-open
+                    aria-label="{{ .Title | default .Name }}"
+                    aria-keyshortcuts="Control+K Meta+K"
                     aria-haspopup="dialog"
                     aria-controls="site-search">
-                    <span>{{ .Name }}</span>
+                    <span class="menu-search-label">{{ .Name }}</span>
                     <span class="menu-search-shortcut">Ctrl K</span>
                 </button>
                 {{- else }}
