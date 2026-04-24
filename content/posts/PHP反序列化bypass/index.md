@@ -1,7 +1,7 @@
----
+﻿---
 title: "PHP反序列化bypass"
 date: 2025-08-12T11:54:57+08:00
-description: "PHP反序列化bypass"
+summary: "PHP反序列化bypass"
 url: "/posts/PHP反序列化bypass/"
 categories:
   - "PHP"

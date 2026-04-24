@@ -1,7 +1,7 @@
----
+﻿---
 title: "高版本触发toString的几种方法"
 date: 2026-02-02T14:51:31+08:00
-description: "继续JDK17"
+summary: "继续JDK17"
 url: "/posts/Java反序列化之高版本触发toString的几种方法/"
 categories:
   - "javasec"

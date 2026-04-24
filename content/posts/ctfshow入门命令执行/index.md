@@ -1,7 +1,7 @@
----
+﻿---
 title: "ctfshow入门命令执行"
 date: 2025-06-29T17:20:28+08:00
-description: "ctfshow入门命令执行"
+summary: "ctfshow入门命令执行"
 url: "/posts/ctfshow入门命令执行/"
 categories:
   - "ctfshow"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "web入门文件包含篇-ctfshow"
 date: 2024-12-03T14:29:06+08:00
-description: "web入门文件包含篇-ctfshow"
+summary: "web入门文件包含篇-ctfshow"
 url: "/posts/web入门文件包含篇-ctfshow/"
 categories:
   - "ctfshow"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "VNCTF2026 black coffee"
 date: 2026-03-08T12:28:56+08:00
-description: "复现一下java题"
+summary: "复现一下java题"
 url: "/posts/Java题目之VNCTF2026-black-coffee/"
 categories:
   - "javasec"

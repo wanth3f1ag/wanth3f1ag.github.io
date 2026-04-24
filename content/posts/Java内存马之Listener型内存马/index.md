@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java内存马二之Listener型内存马"
 date: 2026-03-18T14:50:52+08:00
-description: "Listener型内存马"
+summary: "Listener型内存马"
 url: "/posts/Java内存马之Listener型内存马/"
 categories:
   - "javasec"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java模板注入之Thymeleaf"
 date: 2025-12-02T15:17:42+08:00
-description: "感觉还可以"
+summary: "感觉还可以"
 url: "/posts/Java模板注入之Thymeleaf/"
 categories:
   - "javasec"

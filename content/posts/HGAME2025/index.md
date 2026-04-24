@@ -1,7 +1,7 @@
----
+﻿---
 title: "HGAME2025"
 date: 2025-02-22T11:43:00+08:00
-description: "HGAME2025"
+summary: "HGAME2025"
 url: "/posts/HGAME2025/"
 categories:
   - "赛题wp"

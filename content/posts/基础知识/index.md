@@ -1,7 +1,7 @@
----
+﻿---
 title: "基础知识"
 date: 2024-12-13T15:16:45+08:00
-description: "放点基础知识"
+summary: "放点基础知识"
 url: "/posts/基础知识/"
 categories:
   - "前置知识"

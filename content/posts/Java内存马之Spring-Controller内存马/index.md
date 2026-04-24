@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java内存马四之Spring Controller内存马"
 date: 2026-04-05T12:05:09+08:00
-description: "Spring Controller内存马"
+summary: "Spring Controller内存马"
 url: "/posts/Java内存马之Spring-Controller内存马/"
 categories:
   - "javasec"

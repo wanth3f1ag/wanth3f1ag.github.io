@@ -1,7 +1,7 @@
----
+﻿---
 title: "基于Jabref的PR的一些XXE猜测"
 date: 2025-09-25T16:31:03+08:00
-description: "基于Jabref的PR的一些XXE猜测"
+summary: "基于Jabref的PR的一些XXE猜测"
 url: "/posts/基于Jabref的PR的一些猜测/"
 categories:
   - "漏洞分析"

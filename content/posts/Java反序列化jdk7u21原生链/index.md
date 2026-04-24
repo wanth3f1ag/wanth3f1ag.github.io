@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化之jJDK7u21原生链"
 date: 2025-09-09T10:19:06+08:00
-description: "Java反序列化之jJDK7u21原生链"
+summary: "Java反序列化之jJDK7u21原生链"
 url: "/posts/Java反序列化jdk7u21原生链/"
 categories:
   - "javasec"

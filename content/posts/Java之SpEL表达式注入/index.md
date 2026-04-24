@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java之SpEL表达式注入"
 date: 2025-08-05T13:55:46+08:00
-description: "Java之SpEL表达式注入"
+summary: "Java之SpEL表达式注入"
 url: "/posts/Java之SpEL表达式注入/"
 categories:
   - "javasec"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化CC5链"
 date: 2025-06-28T19:50:24+08:00
-description: "Java反序列化CC5链"
+summary: "Java反序列化CC5链"
 url: "/posts/Java反序列化CC5链/"
 categories:
   - "javasec"

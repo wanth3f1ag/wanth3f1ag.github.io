@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化CC3链"
 date: 2025-06-18T11:22:38+08:00
-description: "Java反序列化CC3链"
+summary: "Java反序列化CC3链"
 url: "/posts/Java反序列化CC3链/"
 categories:
   - "javasec"

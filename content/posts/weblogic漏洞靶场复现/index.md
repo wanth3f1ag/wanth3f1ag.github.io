@@ -1,7 +1,7 @@
----
+﻿---
 title: "记一次weblogic-10.3.6.0靶场漏洞利用"
 date: 2025-03-23T19:17:18+08:00
-description: "记一次weblogic-10.3.6.0靶场漏洞利用"
+summary: "记一次weblogic-10.3.6.0靶场漏洞利用"
 url: "/posts/weblogic漏洞靶场复现/"
 categories:
   - "CVE"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "ctfshow内部赛(已做完)"
 date: 2025-06-19T14:39:58+08:00
-description: "ctfshow内部赛(已做完)"
+summary: "ctfshow内部赛(已做完)"
 url: "/posts/ctfshow内部赛(已做完)/"
 categories:
   - "ctfshow"

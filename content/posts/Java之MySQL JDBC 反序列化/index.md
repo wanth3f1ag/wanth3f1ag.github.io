@@ -1,7 +1,7 @@
----
+﻿---
 title: "MySQL JDBC反序列化链"
 date: 2025-09-04T15:11:36+08:00
-description: "MySQL JDBC Attack"
+summary: "MySQL JDBC Attack"
 url: "/posts/Java之MySQL JDBC 反序列化/"
 categories:
   - "javasec"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "EventListenerList触发任意toString"
 date: 2025-12-08T12:17:27+08:00
-description: "EventListenerList触发任意toString"
+summary: "EventListenerList触发任意toString"
 url: "/posts/Java反序列化之EventListenerList触发任意toString/"
 categories:
   - "javasec"

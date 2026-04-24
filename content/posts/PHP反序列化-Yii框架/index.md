@@ -1,7 +1,7 @@
----
+﻿---
 title: "PHP反序列化-Yii框架"
 date: 2025-05-23T12:33:30+08:00
-description: "PHP反序列化-Yii框架"
+summary: "PHP反序列化-Yii框架"
 url: "/posts/PHP反序列化-Yii框架/"
 categories:
   - "PHP"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化CC4链"
 date: 2025-06-25T22:00:18+08:00
-description: "Java反序列化CC4链"
+summary: "Java反序列化CC4链"
 url: "/posts/Java反序列化CC4链/"
 categories:
   - "javasec"

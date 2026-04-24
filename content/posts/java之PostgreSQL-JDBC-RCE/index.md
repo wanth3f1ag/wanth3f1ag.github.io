@@ -1,7 +1,7 @@
----
+﻿---
 title: "PostgreSQL JDBC RCE命令执行"
 date: 2026-02-27T13:09:53+08:00
-description: "CVE-2022-21724"
+summary: "CVE-2022-21724"
 url: "/posts/java之PostgreSQL-JDBC-RCE/"
 categories:
   - "javasec"

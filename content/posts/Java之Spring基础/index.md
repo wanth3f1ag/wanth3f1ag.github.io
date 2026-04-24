@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java之Spring基础"
 date: 2025-12-02T16:16:47+08:00
-description: "主要是写给自己看的，之前对Spring了解少之甚少"
+summary: "主要是写给自己看的，之前对Spring了解少之甚少"
 url: "/posts/Java之Spring基础/"
 categories:
   - "javasec"

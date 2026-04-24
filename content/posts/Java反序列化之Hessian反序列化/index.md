@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化之Hessian反序列化"
 date: 2025-11-23T13:31:40+08:00
-description: "Java反序列化之Hessian反序列化"
+summary: "Java反序列化之Hessian反序列化"
 url: "/posts/Java反序列化之Hessian反序列化/"
 categories:
   - "javasec"

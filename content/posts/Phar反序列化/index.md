@@ -1,7 +1,7 @@
----
+﻿---
 title: "Phar反序列化"
 date: 2025-03-30T12:36:52+08:00
-description: "Phar反序列化"
+summary: "Phar反序列化"
 url: "/posts/Phar反序列化/"
 categories:
   - "PHP"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "PHP的一些小技巧"
 date: 2025-05-07T19:46:51+08:00
-description: " "
+summary: " "
 url: "/posts/PHP的一些小技巧/"
 categories:
   - "PHP"

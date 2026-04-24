@@ -1,7 +1,7 @@
----
+﻿---
 title: "春秋云镜BruteRoad"
 date: 2025-11-06T10:22:16+08:00
-description: "考点: redis主从复制rce base64命令提权 sweetpotato提权 约束性委派"
+summary: "考点: redis主从复制rce base64命令提权 sweetpotato提权 约束性委派"
 url: "/posts/春秋云镜BruteRoad/"
 categories:
   - "春秋云镜"

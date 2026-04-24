@@ -1,7 +1,7 @@
----
+﻿---
 title: "web入门SSTI篇--ctfshow"
 date: 2025-01-27T01:05:41+08:00
-description: "web入门SSTI篇--ctfshow"
+summary: "web入门SSTI篇--ctfshow"
 url: "/posts/web入门SSTI篇-ctfshow/"
 categories:
   - "ctfshow"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "XYCTF2024复现"
 date: 2025-07-16T19:27:19+08:00
-description: "XYCTF2024复现"
+summary: "XYCTF2024复现"
 url: "/posts/XYCTF2024复现/"
 categories:
   - "赛题wp"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "域渗透之Kerberos协议"
 date: 2025-11-07T12:19:10+08:00
-description: "域渗透之Kerberos协议"
+summary: "域渗透之Kerberos协议"
 url: "/posts/域渗透之Kerberos协议/"
 categories:
   - "内网渗透"

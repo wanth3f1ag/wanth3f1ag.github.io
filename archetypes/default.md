@@ -1,10 +1,10 @@
----
+﻿---
 title: "{{ .File.ContentBaseName }}"
 date: {{ .Date }}
 lastmod: {{ .Date }}
-description: "{{ .File.ContentBaseName }}"
+summary: " "
 url: "/posts/{{ .File.ContentBaseName }}/"
-categories: []
-tags: []
+categories:
+tags:
 draft: false
 ---

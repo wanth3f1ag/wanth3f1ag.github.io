@@ -1,7 +1,7 @@
----
+﻿---
 title: "JNDI基础"
 date: 2026-02-03T15:11:30+08:00
-description: "废话比较多，但对初学者很友好，尽可能地深入代码层去分析原理和过程"
+summary: "废话比较多，但对初学者很友好，尽可能地深入代码层去分析原理和过程"
 url: "/posts/Java反序列化之JNDI基础/"
 categories:
   - "javasec"

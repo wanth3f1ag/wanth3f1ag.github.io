@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化之Fastjson原生反序列化"
 date: 2025-07-07T10:07:06+08:00
-description: "Java反序列化之Fastjson原生反序列化"
+summary: "Java反序列化之Fastjson原生反序列化"
 url: "/posts/Java反序列化之Fastjson原生反序列化/"
 categories:
   - "javasec"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java中动态加载字节码的几种方式"
 date: 2026-01-23T11:28:53+08:00
-description: "Java动态加载字节码"
+summary: "Java动态加载字节码"
 url: "/posts/Java中动态加载字节码的几种方式/"
 categories:
   - "javasec"

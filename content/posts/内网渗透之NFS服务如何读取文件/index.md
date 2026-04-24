@@ -1,7 +1,7 @@
----
+﻿---
 title: "内网渗透之NFS服务如何读取文件"
 date: 2025-04-29T14:49:21+08:00
-description: "一次项目中的发现"
+summary: "一次项目中的发现"
 url: "/posts/内网渗透之NFS服务如何读取文件/"
 categories:
   - "内网渗透"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "PolarCTF2024夏季个人挑战赛web题解"
 date: 2025-09-28T11:20:26+08:00
-description: "PolarCTF2024夏季个人挑战赛web题解"
+summary: "PolarCTF2024夏季个人挑战赛web题解"
 url: "/posts/PolarCTF2024夏季个人挑战赛web题解/"
 categories:
   - "赛题wp"

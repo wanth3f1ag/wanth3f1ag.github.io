@@ -62,11 +62,13 @@ if (searchRoot) {
     };
 
     const snippetFor = (item, tokens) => {
-        const source = item.summary || item.title || "";
-        if (!source) {
+        const sources = [item.summary, item.content, item.title].filter(Boolean);
+        if (!sources.length) {
             return "";
         }
 
+        const matchedSource = sources.find((source) => tokens.some((token) => source.toLowerCase().includes(token.toLowerCase())));
+        const source = matchedSource || sources[0];
         const lowered = source.toLowerCase();
         let matchIndex = -1;
 
@@ -113,11 +115,13 @@ if (searchRoot) {
     const prepareItems = (items) => items.map((item) => {
         const title = item.title || "";
         const summary = item.summary || "";
+        const content = item.content || "";
         const tags = Array.isArray(item.tags) ? item.tags : [];
         const categories = Array.isArray(item.categories) ? item.categories : [];
         const keywords = Array.isArray(item.keywords) ? item.keywords : [];
         const titleNorm = normalize(title);
         const summaryNorm = normalize(summary);
+        const contentNorm = normalize(content);
         const tagNorm = normalize(tags.join(" "));
         const categoryNorm = normalize(categories.join(" "));
         const keywordNorm = normalize(keywords.join(" "));
@@ -129,6 +133,7 @@ if (searchRoot) {
             title,
             permalink: item.permalink || "#",
             summary,
+            content,
             tags,
             categories,
             keywords,
@@ -138,11 +143,12 @@ if (searchRoot) {
             lastmodTs,
             titleNorm,
             summaryNorm,
+            contentNorm,
             tagNorm,
             categoryNorm,
             keywordNorm,
             recencyBoost,
-            searchNorm: [titleNorm, summaryNorm, tagNorm, categoryNorm, keywordNorm].join(" ").trim(),
+            searchNorm: [titleNorm, summaryNorm, contentNorm, tagNorm, categoryNorm, keywordNorm].join(" ").trim(),
         };
     });
 
@@ -174,6 +180,10 @@ if (searchRoot) {
             score += 75;
         }
 
+        if (item.contentNorm.includes(normalizedQuery)) {
+            score += 50;
+        }
+
         if (item.keywordNorm.includes(normalizedQuery)) {
             score += 60;
         }
@@ -201,6 +211,10 @@ if (searchRoot) {
 
             if (item.summaryNorm.includes(token)) {
                 tokenScore += 20;
+            }
+
+            if (item.contentNorm.includes(token)) {
+                tokenScore += 14;
             }
 
             if (tokenScore > 0) {

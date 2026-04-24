@@ -1,7 +1,7 @@
----
+﻿---
 title: "javasec学习中遇到的一些问题"
 date: 2025-11-30T12:56:50+08:00
-description: "浅浅总结一下这段时间javasec学习中遇到的一些问题吧"
+summary: "浅浅总结一下这段时间javasec学习中遇到的一些问题吧"
 url: "/posts/javasec学习中遇到的一些问题/"
 categories:
   - "javasec"

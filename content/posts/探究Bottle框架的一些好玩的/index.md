@@ -1,7 +1,7 @@
----
+﻿---
 title: "探究Bottle框架的一些好玩的"
 date: 2025-08-15T14:55:24+08:00
-description: "Bottle里面也有好多好玩的"
+summary: "Bottle里面也有好多好玩的"
 url: "/posts/探究Bottle框架的一些好玩的/"
 categories:
   - "python"

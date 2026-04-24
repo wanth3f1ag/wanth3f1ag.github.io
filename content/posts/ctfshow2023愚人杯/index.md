@@ -1,7 +1,7 @@
----
+﻿---
 title: "ctfshow2023愚人杯"
 date: 2025-08-12T18:00:03+08:00
-description: "ctfshow2023愚人杯"
+summary: "ctfshow2023愚人杯"
 url: "/posts/ctfshow2023愚人杯/"
 categories:
   - "ctfshow"

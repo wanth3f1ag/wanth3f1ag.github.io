@@ -1,7 +1,7 @@
----
+﻿---
 title: "GXYCTF"
 date: 2024-11-12T20:17:28+08:00
-description: "GXYCTF"
+summary: "GXYCTF"
 url: "/posts/GXYCTF(已做完)/"
 categories:
   - "赛题wp"

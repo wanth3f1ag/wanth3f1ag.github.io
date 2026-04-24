@@ -1,7 +1,7 @@
----
+﻿---
 title: "python原型链污染"
 date: 2025-04-30T15:25:12+08:00
-description: "python原型链污染"
+summary: "python原型链污染"
 url: "/posts/pyhton原型链污染/"
 categories:
   - "python"

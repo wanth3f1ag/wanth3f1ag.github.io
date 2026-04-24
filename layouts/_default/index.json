@@ -5,6 +5,7 @@
 {{- $index := slice -}}
 {{- range $pages -}}
 {{- $summary := .Description | default (.Summary | plainify | htmlUnescape) | strings.TrimSpace | truncate 220 -}}
+{{- $content := .Plain | htmlUnescape | replaceRE "\\s+" " " | strings.TrimSpace -}}
 {{- $tags := .Params.tags | default (slice) -}}
 {{- $categories := .Params.categories | default (slice) -}}
 {{- $keywords := .Params.keywords | default (slice) -}}
@@ -12,6 +13,7 @@
   "title" .Title
   "permalink" .RelPermalink
   "summary" $summary
+  "content" $content
   "tags" $tags
   "categories" $categories
   "keywords" $keywords

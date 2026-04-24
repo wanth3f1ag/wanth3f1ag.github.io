@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化之jdk8u20原生链"
 date: 2025-09-11T12:03:28+08:00
-description: "Java反序列化之jdk8u20原生链"
+summary: "Java反序列化之jdk8u20原生链"
 url: "/posts/Java反序列化jdk8u20原生链/"
 categories:
   - "javasec"

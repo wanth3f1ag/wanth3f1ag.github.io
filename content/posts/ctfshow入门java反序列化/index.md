@@ -1,7 +1,7 @@
----
+﻿---
 title: "ctfshow入门java反序列化"
 date: 2026-02-24T14:28:18+08:00
-description: "ctfshow入门java反序列化"
+summary: "ctfshow入门java反序列化"
 url: "/posts/ctfshow入门java反序列化/"
 categories:
   - "ctfshow"

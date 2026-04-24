@@ -1,7 +1,7 @@
----
+﻿---
 title: "Tomcat 内存马如何回显"
 date: 2026-03-18T20:19:11+08:00
-description: "不得不佩服前人的伟大"
+summary: "不得不佩服前人的伟大"
 url: "/posts/Java内存马之Tomcat-内存马如何回显/"
 categories:
   - "javasec"

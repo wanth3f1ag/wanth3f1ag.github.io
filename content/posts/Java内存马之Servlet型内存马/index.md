@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java内存马三之Servlet型内存马"
 date: 2026-03-18T14:50:52+08:00
-description: "Servlet型内存马"
+summary: "Servlet型内存马"
 url: "/posts/Java内存马之Servlet型内存马/"
 categories:
   - "javasec"

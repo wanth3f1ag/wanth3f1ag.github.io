@@ -1,7 +1,7 @@
----
+﻿---
 title: "CISCN2023 Deserbug"
 date: 2025-12-01T12:05:42+08:00
-description: "CISCN2023 Deserbug"
+summary: "CISCN2023 Deserbug"
 url: "/posts/Java题目之CISCN2023-Deserbug/"
 categories:
   - "javasec"

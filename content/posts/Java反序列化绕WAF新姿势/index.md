@@ -1,7 +1,7 @@
----
+﻿---
 title: "学习Java反序列化绕WAF新姿势"
 date: 2025-12-08T18:26:35+08:00
-description: "又是让我学到了"
+summary: "又是让我学到了"
 url: "/posts/Java反序列化绕WAF新姿势/"
 categories:
   - "javasec"

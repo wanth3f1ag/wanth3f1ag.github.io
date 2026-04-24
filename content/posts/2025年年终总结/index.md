@@ -1,7 +1,7 @@
----
+﻿---
 title: "2025年年终总结"
 date: 2025-12-29T14:21:07+08:00
-description: "总结完，再出发"
+summary: "总结完，再出发"
 url: "/posts/2025年年终总结/"
 categories:
   - "瞎聊些什么"

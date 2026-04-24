@@ -1,7 +1,7 @@
----
+﻿---
 title: "PHP反序列化-TP5.1.x框架"
 date: 2025-06-02T16:38:33+08:00
-description: "PHP反序列化-TP5.1.x框架"
+summary: "PHP反序列化-TP5.1.x框架"
 url: "/posts/PHP反序列化-TP5框架/"
 categories:
   - "PHP"

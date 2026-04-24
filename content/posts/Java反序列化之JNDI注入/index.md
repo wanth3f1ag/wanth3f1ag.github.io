@@ -1,7 +1,7 @@
----
+﻿---
 title: "JNDI注入"
 date: 2026-02-05T10:11:27+08:00
-description: " "
+summary: " "
 url: "/posts/Java反序列化之JNDI注入/"
 categories:
   - "javasec"

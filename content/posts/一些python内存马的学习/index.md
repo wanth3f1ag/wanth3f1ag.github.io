@@ -1,7 +1,7 @@
----
+﻿---
 title: "一些python内存马的学习"
 date: 2025-06-09T10:22:51+08:00
-description: "python内存马！！！"
+summary: "python内存马！！！"
 url: "/posts/一些python内存马的学习/"
 categories:
   - "python"

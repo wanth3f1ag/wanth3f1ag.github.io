@@ -1,7 +1,7 @@
----
+﻿---
 title: "ctfshow入门反序列化"
 date: 2025-05-21T19:06:51+08:00
-description: "ctfshow入门反序列化"
+summary: "ctfshow入门反序列化"
 url: "/posts/ctfshow入门反序列化/"
 categories:
   - "ctfshow"

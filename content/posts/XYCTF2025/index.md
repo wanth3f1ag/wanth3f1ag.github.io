@@ -1,7 +1,7 @@
----
+﻿---
 title: "XYCTF2025Web"
 date: 2025-04-08T18:43:41+08:00
-description: "XYCTF2025web"
+summary: "XYCTF2025web"
 url: "/posts/XYCTF2025/"
 categories:
   - "赛题wp"

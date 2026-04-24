@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化URLDNS利用链"
 date: 2025-06-15T15:17:52+08:00
-description: "Java反序列化URLDNS利用链"
+summary: "Java反序列化URLDNS利用链"
 url: "/posts/Java反序列化URLDNS利用链/"
 categories:
   - "javasec"

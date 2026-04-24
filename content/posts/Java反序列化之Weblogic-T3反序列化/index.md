@@ -1,7 +1,7 @@
----
+﻿---
 title: "WebLogic T3反序列化"
 date: 2026-04-15T18:03:16+08:00
-description: " "
+summary: " "
 url: "/posts/Java反序列化之Weblogic-T3反序列化/"
 categories:
   - "javasec"

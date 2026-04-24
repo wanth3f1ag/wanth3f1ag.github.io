@@ -1,7 +1,7 @@
----
+﻿---
 title: "LilacCTF2026--web"
 date: 2026-01-24T14:38:40+08:00
-description: "比想象中发挥要好一点"
+summary: "比想象中发挥要好一点"
 url: "/posts/LilacCTF2026-web/"
 categories:
   - "赛题wp"

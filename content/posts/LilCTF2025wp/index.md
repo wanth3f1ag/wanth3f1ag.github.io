@@ -1,7 +1,7 @@
----
+﻿---
 title: "LilCTF2025wp"
 date: 2025-08-09T17:34:21+08:00
-description: "LilCTF2025wp"
+summary: "LilCTF2025wp"
 url: "/posts/LilCTF2025wp/"
 categories:
   - "赛题wp"

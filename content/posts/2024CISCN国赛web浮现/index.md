@@ -1,7 +1,7 @@
----
+﻿---
 title: "2024CISCN国赛web浮现"
 date: 2026-03-06T16:21:57+08:00
-description: "2024CISCN国赛web"
+summary: "2024CISCN国赛web"
 url: "/posts/2024CISCN国赛web浮现/"
 categories:
   - "赛题wp"

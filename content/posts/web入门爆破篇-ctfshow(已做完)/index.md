@@ -1,7 +1,7 @@
----
+﻿---
 title: "web入门爆破篇-ctfshow(已做完)"
 date: 2024-11-05T22:49:00+08:00
-description: "web入门爆破篇-ctfshow(已做完)"
+summary: "web入门爆破篇-ctfshow(已做完)"
 url: "/posts/web入门爆破篇-ctfshow(已做完)/"
 categories:
   - "ctfshow"

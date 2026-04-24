@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化之Jackson反序列化"
 date: 2025-12-05T18:04:39+08:00
-description: "懵懵懂懂"
+summary: "懵懵懂懂"
 url: "/posts/Java反序列化之Jackson反序列化/"
 categories:
   - "javasec"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "ctfshow元旦水友赛"
 date: 2025-11-04T19:54:13+08:00
-description: "ctfshow元旦水友赛"
+summary: "ctfshow元旦水友赛"
 url: "/posts/ctfshow元旦水友赛/"
 categories:
   - "ctfshow"

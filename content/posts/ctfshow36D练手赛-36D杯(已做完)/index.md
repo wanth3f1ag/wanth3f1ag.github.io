@@ -1,7 +1,7 @@
----
+﻿---
 title: "ctfshow36D练手赛+36D杯(已做完)"
 date: 2025-05-15T16:42:23+08:00
-description: "ctfshow36D练手赛+36D杯"
+summary: "ctfshow36D练手赛+36D杯"
 url: "/posts/ctfshow36D练手赛-36D杯(已做完)/"
 categories:
   - "ctfshow"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "pickle反序列化"
 date: 2025-04-08T16:01:01+08:00
-description: "pickle反序列化"
+summary: "pickle反序列化"
 url: "/posts/pickle反序列化/"
 categories:
   - "python"

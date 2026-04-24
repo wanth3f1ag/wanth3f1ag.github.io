@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化之Jackson原生反序列化"
 date: 2025-12-02T12:45:49+08:00
-description: " "
+summary: " "
 url: "/posts/Java反序列化之Jackson原生反序列化/"
 categories:
   - "javasec"

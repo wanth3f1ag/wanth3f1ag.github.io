@@ -1,7 +1,7 @@
----
+﻿---
 title: "sqlmap基础命令的摘录"
 date: 2024-12-02T21:49:06+08:00
-description: "sqlmap基础命令的摘录"
+summary: "sqlmap基础命令的摘录"
 url: "/posts/sqlmap基础命令的摘录/"
 categories:
   - "sqlmap"

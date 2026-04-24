@@ -1,7 +1,7 @@
----
+﻿---
 title: "春秋云镜Initial"
 date: 2025-11-04T17:24:17+08:00
-description: "考点: thinkphp 5.0.23 RCE mysql命令提权 信呼文件上传nday ms17-010(永恒之蓝) DCSync"
+summary: "考点: thinkphp 5.0.23 RCE mysql命令提权 信呼文件上传nday ms17-010(永恒之蓝) DCSync"
 url: "/posts/春秋云镜Initial/"
 categories:
   - "春秋云镜"

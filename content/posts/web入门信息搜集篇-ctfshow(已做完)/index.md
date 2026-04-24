@@ -1,7 +1,7 @@
----
+﻿---
 title: "web入门信息搜集篇-ctfshow"
 date: 2024-11-15T11:05:04+08:00
-description: "web入门信息搜集篇-ctfshow"
+summary: "web入门信息搜集篇-ctfshow"
 url: "/posts/web入门信息搜集篇-ctfshow(已做完)/"
 categories:
   - "ctfshow"

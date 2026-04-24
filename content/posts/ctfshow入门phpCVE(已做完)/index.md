@@ -1,7 +1,7 @@
----
+﻿---
 title: "ctfshow入门phpCVE"
 date: 2025-06-06T13:17:44+08:00
-description: "ctfshow入门phpCVE"
+summary: "ctfshow入门phpCVE"
 url: "/posts/ctfshow入门phpCVE(已做完)/"
 categories:
   - "ctfshow"

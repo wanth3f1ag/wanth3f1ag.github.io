@@ -1,7 +1,7 @@
----
+﻿---
 title: "BUGKU--web"
 date: 2024-11-25T15:24:08+08:00
-description: "BUGKU--web"
+summary: "BUGKU--web"
 url: "/posts/BUGKU-web/"
 categories:
   - "赛题wp"

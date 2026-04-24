@@ -1,7 +1,7 @@
----
+﻿---
 title: "Log4j2的JNDI注入漏洞"
 date: 2026-01-27T23:20:57+08:00
-description: "神奇的开发加上一切的巧合"
+summary: "神奇的开发加上一切的巧合"
 url: "/posts/Java之Log4j2的JNDI注入漏洞复现/"
 categories:
   - "javasec"

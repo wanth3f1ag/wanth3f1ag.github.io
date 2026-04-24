@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化CB链"
 date: 2025-07-06T11:45:42+08:00
-description: "Java反序列化CB链"
+summary: "Java反序列化CB链"
 url: "/posts/Java反序列化CB链/"
 categories:
   - "javasec"

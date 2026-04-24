@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化之Fastjson1.2.4x绕过"
 date: 2026-02-28T13:30:28+08:00
-description: "Fastjson1.2.41-1.2.47补丁绕过"
+summary: "Fastjson1.2.41-1.2.47补丁绕过"
 url: "/posts/Java反序列化之Fastjson1.2.4x绕过/"
 categories:
   - "javasec"

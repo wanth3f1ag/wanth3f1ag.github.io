@@ -1,7 +1,7 @@
----
+﻿---
 title: "PHP反序列化-Laravel框架"
 date: 2025-06-02T12:14:32+08:00
-description: "PHP反序列化-Laravel框架"
+summary: "PHP反序列化-Laravel框架"
 url: "/posts/PHP反序列化-Laravel框架/"
 categories:
   - "PHP"

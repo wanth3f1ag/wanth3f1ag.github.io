@@ -1,7 +1,7 @@
----
+﻿---
 title: "ctfshow入门SQL注入"
 date: 2025-05-21T19:03:50+08:00
-description: "ctfshow入门SQL注入"
+summary: "ctfshow入门SQL注入"
 url: "/posts/ctfshow入门SQL注入(已做完)/"
 categories:
   - "ctfshow"

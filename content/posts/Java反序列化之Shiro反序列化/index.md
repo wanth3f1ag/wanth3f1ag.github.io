@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化之Shiro反序列化"
 date: 2025-07-31T14:50:00+08:00
-description: "Java反序列化之Shiro反序列化"
+summary: "Java反序列化之Shiro反序列化"
 url: "/posts/Java反序列化之Shiro反序列化/"
 categories:
   - "javasec"

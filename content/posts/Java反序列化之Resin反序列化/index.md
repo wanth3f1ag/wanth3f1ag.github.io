@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化之Resin反序列化"
 date: 2025-11-20T15:55:29+08:00
-description: "Java反序列化之Resin反序列化"
+summary: "Java反序列化之Resin反序列化"
 url: "/posts/Java反序列化之Resin反序列化/"
 categories:
   - "javasec"

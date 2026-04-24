@@ -1,7 +1,7 @@
----
+﻿---
 title: "VNCTF2026"
 date: 2026-01-31T10:37:02+08:00
-description: "有点可惜，啥都想看一下，结果啥都只做了一半"
+summary: "有点可惜，啥都想看一下，结果啥都只做了一半"
 url: "/posts/VNCTF2026/"
 categories:
   - "赛题wp"

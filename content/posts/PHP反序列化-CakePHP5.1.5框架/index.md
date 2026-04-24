@@ -1,7 +1,7 @@
----
+﻿---
 title: "PHP反序列化-CakePHP5.1.5框架"
 date: 2025-07-04T19:24:58+08:00
-description: "PHP反序列化-CakePHP5.1.5框架"
+summary: "PHP反序列化-CakePHP5.1.5框架"
 url: "/posts/PHP反序列化-CakePHP5.1.5框架/"
 categories:
   - "PHP"

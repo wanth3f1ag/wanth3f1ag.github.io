@@ -1,7 +1,7 @@
----
+﻿---
 title: "NepCTF2025"
 date: 2025-07-25T19:36:11+08:00
-description: "NepCTF2025"
+summary: "NepCTF2025"
 url: "/posts/NepCTF2025/"
 categories:
   - "赛题wp"

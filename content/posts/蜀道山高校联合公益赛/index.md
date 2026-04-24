@@ -1,7 +1,7 @@
----
+﻿---
 title: "蜀道山高校联合公益赛"
 date: 2024-11-17T11:18:02+08:00
-description: "蜀道山高校联合公益赛"
+summary: "蜀道山高校联合公益赛"
 url: "/posts/蜀道山高校联合公益赛/"
 categories:
   - "赛题wp"

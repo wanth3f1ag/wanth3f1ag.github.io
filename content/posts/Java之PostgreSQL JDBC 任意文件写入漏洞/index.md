@@ -1,7 +1,7 @@
----
+﻿---
 title: "PostgreSQL JDBC 任意文件写入漏洞"
 date: 2026-02-27T14:08:50+08:00
-description: "尽量多放代码块不放图片吧，感觉上篇放图片太多了加载有点慢"
+summary: "尽量多放代码块不放图片吧，感觉上篇放图片太多了加载有点慢"
 url: "/posts/Java之PostgreSQL JDBC 任意文件写入漏洞/"
 categories:
   - "javasec"

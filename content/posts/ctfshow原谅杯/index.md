@@ -1,7 +1,7 @@
----
+﻿---
 title: "ctfshow原谅杯"
 date: 2025-08-14T16:58:29+08:00
-description: "ctfshow原谅杯"
+summary: "ctfshow原谅杯"
 url: "/posts/ctfshow原谅杯/"
 categories:
   - "ctfshow"

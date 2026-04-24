@@ -1,7 +1,7 @@
----
+﻿---
 title: "Tomcat session反序列化漏洞"
 date: 2026-02-27T14:32:39+08:00
-description: "CVE-2020-9484"
+summary: "CVE-2020-9484"
 url: "/posts/java之Tomcat-session反序列化漏洞/"
 categories:
   - "javasec"

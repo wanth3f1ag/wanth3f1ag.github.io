@@ -1,7 +1,7 @@
----
+﻿---
 title: "高版本JDK下的JNDI注入绕过"
 date: 2026-02-15T13:09:38+08:00
-description: " "
+summary: " "
 url: "/posts/Java反序列化之高版本JDK下的JNDI注入/"
 categories:
   - "javasec"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "Vite任意文件读取漏洞"
 date: 2025-04-14T16:00:27+08:00
-description: "Vite任意文件读取漏洞"
+summary: "Vite任意文件读取漏洞"
 url: "/posts/Vite任意文件读取漏洞/"
 categories:
   - "CVE"

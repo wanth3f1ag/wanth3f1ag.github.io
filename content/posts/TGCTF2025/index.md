@@ -1,7 +1,7 @@
----
+﻿---
 title: "TGCTF2025"
 date: 2025-04-16T19:46:51+08:00
-description: "TGCTF2025"
+summary: "TGCTF2025"
 url: "/posts/TGCTF2025/"
 categories:
   - "赛题wp"

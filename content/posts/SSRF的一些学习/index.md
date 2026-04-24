@@ -1,7 +1,7 @@
----
+﻿---
 title: "SSRF的一些学习"
 date: 2025-02-07T13:00:18+08:00
-description: "SSRF的一些学习"
+summary: "SSRF的一些学习"
 url: "/posts/SSRF的一些学习/"
 categories:
   - "CSRF&SSRF"

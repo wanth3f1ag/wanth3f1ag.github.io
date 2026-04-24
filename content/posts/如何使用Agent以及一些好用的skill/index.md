@@ -1,7 +1,7 @@
----
+﻿---
 title: "如何使用Agent以及一些好用的MCP&SKILL"
 date: 2026-04-01T10:45:56+08:00
-description: "没AI是真不行啊"
+summary: "没AI是真不行啊"
 url: "/posts/如何使用Agent以及一些好用的skill/"
 categories:
   - "Agent"

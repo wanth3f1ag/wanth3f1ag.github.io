@@ -1,7 +1,7 @@
----
+﻿---
 title: "c语言复习纪录"
 date: 2025-02-20T09:55:52+08:00
-description: "c语言复习纪录"
+summary: "c语言复习纪录"
 url: "/posts/c语言复习纪录/"
 categories:
   - "C语言"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化之Fastjson<=1.2.24反序列化"
 date: 2025-11-18T16:33:03+08:00
-description: ""
+summary: ""
 url: "/posts/Java反序列化之Fastjson1.2.24反序列化/"
 categories:
   - "javasec"

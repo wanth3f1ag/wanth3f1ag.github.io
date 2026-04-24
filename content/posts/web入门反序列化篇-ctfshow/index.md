@@ -1,7 +1,7 @@
----
+﻿---
 title: "web入门反序列化篇-ctfshow"
 date: 2024-11-05T20:23:35+08:00
-description: "web入门反序列化篇-ctfshow"
+summary: "web入门反序列化篇-ctfshow"
 url: "/posts/web入门反序列化篇-ctfshow/"
 categories:
   - "ctfshow"

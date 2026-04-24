@@ -1,7 +1,7 @@
----
+﻿---
 title: "jfinal CMSv5.1.0 Fastjson反序列化漏洞复现"
 date: 2025-12-12T19:06:52+08:00
-description: "一个比较简单的漏洞拿来当复习了"
+summary: "一个比较简单的漏洞拿来当复习了"
 url: "/posts/jfinal-CMSv5-1-0-Fastjson反序列化漏洞复现/"
 categories:
   - "javasec"

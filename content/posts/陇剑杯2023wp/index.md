@@ -1,7 +1,7 @@
----
+﻿---
 title: "陇剑杯2023wp"
 date: 2025-04-21T23:25:18+08:00
-description: "陇剑杯2023wp"
+summary: "陇剑杯2023wp"
 url: "/posts/陇剑杯2023wp/"
 categories:
   - "赛题wp"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "HKCERTCTF2025 Labyrinth"
 date: 2025-12-24T14:01:55+08:00
-description: "HKCERTCTF2025 Labyrinth"
+summary: "HKCERTCTF2025 Labyrinth"
 url: "/posts/Java题目之HKCERTCTF2025-Labyrinth/"
 categories:
   - "javasec"

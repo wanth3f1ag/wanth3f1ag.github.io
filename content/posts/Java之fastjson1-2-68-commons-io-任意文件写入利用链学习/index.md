@@ -1,7 +1,7 @@
----
+﻿---
 title: "fastjson1.2.68 commons-io2.x 任意文件写入利用链学习"
 date: 2026-03-01T13:07:28+08:00
-description: "fastjson1.2.68 commons-io 任意文件写入利用链"
+summary: "fastjson1.2.68 commons-io 任意文件写入利用链"
 url: "/posts/Java之fastjson1-2-68-commons-io-任意文件写入利用链学习/"
 categories:
   - "javasec"

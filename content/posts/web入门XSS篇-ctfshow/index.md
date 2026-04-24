@@ -1,7 +1,7 @@
----
+﻿---
 title: "web入门xss篇--ctfshow"
 date: 2024-11-05T23:30:17+08:00
-description: "web入门xss篇--ctfshow"
+summary: "web入门xss篇--ctfshow"
 url: "/posts/web入门XSS篇-ctfshow/"
 categories:
   - "ctfshow"

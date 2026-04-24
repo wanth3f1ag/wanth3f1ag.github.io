@@ -1,7 +1,7 @@
----
+﻿---
 title: "ctfshow入门sqli-labs"
 date: 2025-06-04T09:29:03+08:00
-description: "ctfshow入门sqli-labs"
+summary: "ctfshow入门sqli-labs"
 url: "/posts/ctfshow入门sqli-labs(已做完)/"
 categories:
   - "ctfshow"

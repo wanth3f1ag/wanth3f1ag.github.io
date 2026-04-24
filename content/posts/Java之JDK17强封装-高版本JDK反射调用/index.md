@@ -1,7 +1,7 @@
----
+﻿---
 title: "JDK17强封装&高版本JDK反射调用"
 date: 2026-02-01T11:52:26+08:00
-description: "学点高级玩意儿"
+summary: "学点高级玩意儿"
 url: "/posts/Java之JDK17强封装-高版本JDK反射调用/"
 categories:
   - "javasec"

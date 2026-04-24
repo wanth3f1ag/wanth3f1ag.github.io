@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化基础"
 date: 2026-01-23T11:22:52+08:00
-description: "Java反序列化"
+summary: "Java反序列化"
 url: "/posts/Java反序列化/"
 categories:
   - "javasec"

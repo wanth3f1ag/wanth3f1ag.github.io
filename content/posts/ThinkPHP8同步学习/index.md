@@ -1,7 +1,7 @@
----
+﻿---
 title: "ThinkPHP8同步学习"
 date: 2025-04-28T11:24:19+08:00
-description: "ThinkPHP8同步学习"
+summary: "ThinkPHP8同步学习"
 url: "/posts/ThinkPHP8同步学习/"
 categories:
   - "框架学习"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "web入门SSRF篇--ctfshow"
 date: 2024-11-30T00:50:52+08:00
-description: "web入门SSRF篇--ctfshow"
+summary: "web入门SSRF篇--ctfshow"
 url: "/posts/web入门SSRF篇--ctfshow/"
 categories:
   - "ctfshow"

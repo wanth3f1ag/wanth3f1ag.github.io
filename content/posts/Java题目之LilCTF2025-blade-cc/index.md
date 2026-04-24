@@ -1,7 +1,7 @@
----
+﻿---
 title: "LilCTF2025 blade_cc"
 date: 2026-03-09T16:01:06+08:00
-description: "复现一下java题"
+summary: "复现一下java题"
 url: "/posts/Java题目之LilCTF2025-blade-cc/"
 categories:
   - "javasec"

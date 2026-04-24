@@ -1,7 +1,7 @@
----
+﻿---
 title: "PHP反序列化-ThinkPHP8.1.x框架"
 date: 2025-04-28T10:48:55+08:00
-description: "PHP反序列化-ThinkPHP8.1.x框架"
+summary: "PHP反序列化-ThinkPHP8.1.x框架"
 url: "/posts/PHP反序列化-ThinkPHP8.1.2框架/"
 categories:
   - "PHP"

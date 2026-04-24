@@ -1,7 +1,7 @@
----
+﻿---
 title: "php函数知识点积累"
 date: 2024-12-19T23:12:02+08:00
-description: "php函数知识点积累"
+summary: "php函数知识点积累"
 url: "/posts/php函数知识点积累/"
 categories:
   - "PHP"

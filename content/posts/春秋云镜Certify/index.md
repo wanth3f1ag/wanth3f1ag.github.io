@@ -1,7 +1,7 @@
----
+﻿---
 title: "春秋云镜Certify"
 date: 2025-11-09T11:38:23+08:00
-description: "考点: log4j2 jndi注入 grc提权 SMB 密码喷洒 Kerberoasting ESC1"
+summary: "考点: log4j2 jndi注入 grc提权 SMB 密码喷洒 Kerberoasting ESC1"
 url: "/posts/春秋云镜Certify/"
 categories:
   - "春秋云镜"

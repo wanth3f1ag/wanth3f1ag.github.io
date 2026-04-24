@@ -1,7 +1,7 @@
----
+﻿---
 title: "ctfshow1024杯"
 date: 2025-03-29T00:11:38+08:00
-description: "ctfshow1024杯"
+summary: "ctfshow1024杯"
 url: "/posts/ctfshow1024杯/"
 categories:
   - "ctfshow"

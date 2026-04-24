@@ -1,7 +1,7 @@
----
+﻿---
 title: "春秋云镜Delegation"
 date: 2025-11-10T19:27:13+08:00
-description: "考点: cve-2021-42643 diff提权 rdp密码爆破 rdesktop远程重置过期密码 注册表提权 DFSCoerce强制域认证+非约束性委派"
+summary: "考点: cve-2021-42643 diff提权 rdp密码爆破 rdesktop远程重置过期密码 注册表提权 DFSCoerce强制域认证+非约束性委派"
 url: "/posts/春秋云镜Delegation/"
 categories:
   - "春秋云镜"

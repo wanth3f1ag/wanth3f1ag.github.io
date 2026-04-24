@@ -1,7 +1,7 @@
----
+﻿---
 title: "ctfshow入门常用姿势"
 date: 2025-11-11T16:29:08+08:00
-description: "ctfshow入门常用姿势"
+summary: "ctfshow入门常用姿势"
 url: "/posts/ctfshow入门常用姿势/"
 categories:
   - "ctfshow"

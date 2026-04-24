@@ -1,7 +1,7 @@
----
+﻿---
 title: "PHP反序列化"
 date: 2025-08-12T12:28:19+08:00
-description: "PHP反序列化"
+summary: "PHP反序列化"
 url: "/posts/PHP反序列化/"
 categories:
   - "PHP"

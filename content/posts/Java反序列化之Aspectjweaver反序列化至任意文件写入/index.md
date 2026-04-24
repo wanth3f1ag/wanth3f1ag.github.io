@@ -1,7 +1,7 @@
----
+﻿---
 title: "Aspectjweaver反序列化至任意文件写入"
 date: 2026-02-28T11:36:00+08:00
-description: "Aspectjweaver反序列化"
+summary: "Aspectjweaver反序列化"
 url: "/posts/Java反序列化之Aspectjweaver反序列化至任意文件写入/"
 categories:
   - "javasec"

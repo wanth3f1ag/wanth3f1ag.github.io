@@ -1,7 +1,7 @@
----
+﻿---
 title: "Java反序列化之ROME原生链"
 date: 2025-11-18T19:56:20+08:00
-description: "Java反序列化之ROME原生链"
+summary: "Java反序列化之ROME原生链"
 url: "/posts/Java反序列化之ROME原生链/"
 categories:
   - "javasec"

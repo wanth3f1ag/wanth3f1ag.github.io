@@ -1,7 +1,7 @@
----
+﻿---
 title: "PolarCTF2025夏季个人挑战赛web题解"
 date: 2025-12-09T16:04:17+08:00
-description: "总体来说偏简单，主要是看到里面有一个java的题才去做的"
+summary: "总体来说偏简单，主要是看到里面有一个java的题才去做的"
 url: "/posts/PolarCTF2025夏季个人挑战赛web题解/"
 categories:
   - "赛题wp"

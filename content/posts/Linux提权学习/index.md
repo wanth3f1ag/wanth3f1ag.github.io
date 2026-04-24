@@ -1,7 +1,7 @@
----
+﻿---
 title: "Linux提权学习"
 date: 2025-11-04T19:50:35+08:00
-description: "Linux提权学习"
+summary: "Linux提权学习"
 url: "/posts/Linux提权学习/"
 categories:
   - "内网渗透"

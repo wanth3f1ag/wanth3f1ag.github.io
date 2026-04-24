@@ -1,7 +1,7 @@
 ---
 title: "BurpSuite配置验证码识别"
 date: 2026-04-13T16:13:04+08:00
-description: " "
+summary: "也是终于配置上了"
 url: "/posts/BurpSuite配置验证码识别/"
 categories:
   - "瞎聊些什么"

@@ -1,7 +1,7 @@
----
+﻿---
 title: "春秋云镜Tsclient"
 date: 2025-11-05T18:39:27+08:00
-description: "考点: mssql弱口令 SweetPotato提权 CS注入在线用户进程上线 共享文件 CS不出网转发上线 映像劫持提权(放大镜提权) Dcsync"
+summary: "考点: mssql弱口令 SweetPotato提权 CS注入在线用户进程上线 共享文件 CS不出网转发上线 映像劫持提权(放大镜提权) Dcsync"
 url: "/posts/春秋云镜Tsclient/"
 categories:
   - "春秋云镜"
