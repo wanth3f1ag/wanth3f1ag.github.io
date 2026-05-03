@@ -940,9 +940,123 @@ c.close() / conn.close()
 
 ### PHP
 
-通常使用PDO进行w
+通常使用PDO进行操作，当前也可以用sqlite3拓展
+
+PDO方式
 
 ```php
+<?php
+try{
+    $db = new PDO('sqlite:'.__DIR__.'/demo.db');
+
+    //开启异常模式便于调试
+    $db -> setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+
+    //创建数据表
+    $db -> exec("
+        CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY not null,
+        username TEXT NOT NULL,
+        password TEXT NOT NULL
+        )
+    ");
+    //2.插入数据
+    $stmt = $db -> prepare("INSERT INTO users (id, username, password) VALUES (?, ?, ?)");
+    $stmt -> execute([1,'wanth3f1ag','123123']);
+
+    //3.查询数据
+    $stmt = $db -> query("SELECT * FROM users");
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($rows as $row){
+        echo "ID: " . $row['id']. "\n". "username: " . $row['username'] . "\n" . "password: " . $row['password'] . PHP_EOL;
+    }
+
+    //4.update更新数据
+    $stmt = $db -> prepare("UPDATE users SET username = ?, password = ? WHERE id = ?");
+    $stmt -> execute(['baozongwi','1008611',1]);
+
+    //重新查询
+    $stmt = $db -> query("SELECT * FROM users");
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($rows as $row){
+        echo "ID: " . $row['id']. "\n". "username: " . $row['username'] . "\n" . "password: " . $row['password'] . PHP_EOL;
+    }
+
+    //5.删除数据
+    $db -> query("DELETE FROM users WHERE id = 1");
+
+    //重新查询
+    $stmt = $db -> query("SELECT * FROM users");
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($rows as $row){
+        echo "ID: " . $row['id']. "\n". "username: " . $row['username'] . "\n" . "password: " . $row['password'] . PHP_EOL;
+    }
+}catch(PDOException $e){
+    echo "数据库错误: ".$e->getMessage();
+}
+```
+
+输出结果是
+
+```php
+ID: 1
+username: wanth3f1ag
+password: 123123
+ID: 1
+username: baozongwi
+password: 1008611
+```
+
+解释几个语法和函数
+
+- query()函数：`query()` 是 PDO 中**直接执行 SQL 语句**的方法，适合执行**不需要传入参数**的查询。
+- prepare()函数：`prepare()` 是 PDO 中用于**预处理 SQL 语句**的方法，先将 SQL 发送给数据库编译，再通过 `execute()` 传入参数执行。
+- fetchAll()函数/fetch()函数：`fetchAll()` 是 PDO 中用于**一次性获取查询结果的所有行**；而`fetch()` 是 PDO 中用于**每次获取一行**查询结果的方法。
+
+常见的FETCH 模式
+
+| 模式               | 说明                         |
+| ------------------ | ---------------------------- |
+| `PDO::FETCH_ASSOC` | 返回关联数组（字段名 => 值） |
+| `PDO::FETCH_NUM`   | 返回索引数组                 |
+| `PDO::FETCH_OBJ`   | 返回对象                     |
+| `PDO::FETCH_BOTH`  | 同时返回关联 + 索引（默认）  |
+
+然后就是sqlite拓展的方法（记得开启sqlite3拓展）
+
+```php
+<?php
+$db = new SQLite3(__DIR__ . '/demo.db');
+
+$db->exec("CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    age INTEGER
+)");
+
+$db->exec("INSERT INTO users (name, age) VALUES ('Jerry', 22)");
+
+$result = $db->query("SELECT * FROM users");
+while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+    print_r($row);
+}
+
+$db->close();
+
+```
+
+输出结果
+
+```php
+Array
+(
+    [id] => 1
+    [name] => Jerry
+    [age] => 22
+)
 ```
 
 # SQLite注入
